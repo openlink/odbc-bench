@@ -19,7 +19,7 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-pkgdata_DATA = \
+dist_pkgdata_DATA = \
 	odbc-bench.dtd \
 	create.mssql create.ora create.syb create.virt \
 	drop.mssql drop.ora drop.syb drop.virt
