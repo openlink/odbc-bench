@@ -4461,9 +4461,9 @@ CalcStats (BOOL runStatus, int nOk,
 	  lpBench->tpc.a.dOverhead);
       pane_log ("\tTotal transactions:     \t\t%ld\r\n", lTranCnt);
       pane_log ("\tTransactions per second:\t\t%f\r\n", lpBench->tpc.a.ftps);
-      pane_log ("\t%c less than 1 second:  \t\t%f\r\n", '%',
+      pane_log ("\t%c less than 1 second:   \t\t%f\r\n", '%',
 	  lpBench->tpc.a.fsub1);
-      pane_log ("\t%c 1 < n < 2 seconds:   \t\t%f\r\n", '%',
+      pane_log ("\t%c 1 < n < 2 seconds:    \t\t%f\r\n", '%',
 	  lpBench->tpc.a.fsub2);
       pane_log ("\tAverage processing time:\t\t%f\r\n",
 	  lpBench->tpc.a.fAvgTPTime);
