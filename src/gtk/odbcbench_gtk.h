@@ -48,7 +48,7 @@ void do_ShowProgress (GtkWidget * parent, gchar * title,
     gboolean bForceSingle, float nMax);
 void do_SetWorkingItem (char *pszWorking);
 void do_SetProgressText (char *pszProgress, int nConn, int thread_no,
-    float value, int nTrnPerCall);
+    float percent, int nTrnPerCall, long secs_remain, double tpca_dDiffSum);
 void do_StopProgress (void);
 int do_fCancel (void);
 void do_ShowCancel (int fShow);
