@@ -1,0 +1,80 @@
+#
+#  odbc-bench.spec
+#
+#  $Id$
+#
+#  RPM specification file to build binary distribution set
+#
+#  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+#  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+# ----------------------------------------------------------------------
+# BASE PACKAGE
+# ----------------------------------------------------------------------
+Summary: a TPC-A and TPC-C like benchmark program for databases
+name: odbc-bench
+version: @VERSION@
+release: 1
+Group: Applications/Databases
+Vendor: OpenLink Software
+Packager: OpenLink Software <odbc-bench@openlinksw.com>
+Copyright: GPL
+URL: http://www.iodbc.org/odbc-bench/
+Source: http://www.iodbc.org/dist/odbc-bench-%{PACKAGE_VERSION}.tar.gz
+Prefix: /opt/OpenLink
+BuildRoot:/var/tmp/build-odbc-bench-%{PACKAGE_VERSION}
+AutoReqProv: no
+
+%description
+The ODBC-Bench program provides a testbed for testing ODBC driver
+capabilities and performance against both local and remote databases. 
+
+DISCLAIMER
+==========
+The benchmarks in this application are loosely based on the TPC-A and
+TPC-C standard benchmarks, but this application does not claim to be a
+full or precise implementation, nor are the results obtained by this
+application necessarily comparable to the vendor's published results.
+
+%prep
+%setup
+%build
+./configure --enable-pthreads
+make
+
+%install
+#rm -rf $RPM_BUILD_ROOT
+
+#
+#  Make sure we can find the necessary libraries
+#
+LIBRARY_PATH=$RPM_BUILD_ROOT/opt/OpenLink/lib
+export LIBRARY_PATH
+
+#
+#  Install binaries, include files and libraries
+#
+make install prefix=$RPM_BUILD_ROOT/opt/OpenLink
+
+
+%clean
+#rm -rf $RPM_BUILD_ROOT
+
+%files 
+%attr(0755, root, root) /opt/OpenLink/bin/odbc-bench-*
+%attr(0644, root, root) /opt/OpenLink/share/odbc-bench/*

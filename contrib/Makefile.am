@@ -19,50 +19,5 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-AUTOMAKE_OPTIONS	= gnu dist-zip 1.4-p5
-SUBDIRS			= lib src scripts contrib
-
-
-# ----------------------------------------------------------------------
-#
-#  Maintainers only
-# 
-# ----------------------------------------------------------------------
-
-MAINTAINERCLEANFILES	= Makefile.in aclocal.m4 configure
-
-
-if MAINTAINER_MODE
-
-#
-#  Create Linux RPM's
-#
-linux-rpm:
-	$(MAKE) dist-gzip
-	cp odbc-bench-$(VERSION).tar.gz /usr/src/redhat/SOURCES
-	rpm -ba contrib/RedHat/odbc-bench.spec
-
-#
-#  Create a tar file containing the library and include files
-#
-binary-tar:
-	-mkdir @build@
-	$(MAKE) install-strip prefix=`pwd`/@build@
-	tar cvf @build@.tar @build@
-	gzip -9vf @build@.tar
-	rm -rf @build@
-
-#
-#  Create a source snapshot package
-#
-snapshot:
-	$(MAKE) dist-gzip distdir=$(PACKAGE)-`date +"%Y%m%d"`
-
-
-#
-#  Create an official release package
-#
-release:
-	$(MAKE) distcheck
-
-endif
+EXTRA_DIST	= \
+	RedHat/odbc-bench.spec.in

@@ -474,6 +474,8 @@ AC_CONFIG_FILES([
     src/Makefile
     src/gtk/Makefile
     scripts/Makefile
+    contrib/Makefile
+    contrib/RedHat/odbc-bench.spec
 ])
 AC_CONFIG_COMMANDS([default], [])
 AC_OUTPUT
