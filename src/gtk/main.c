@@ -781,8 +781,7 @@ run_selected (GtkWidget * widget, gpointer data)
 	  do_logout (ptest);
 
 	  ptest->tpc._.nMinutes = nMinutes;
-	  if (ptest->hdbc)
-	    switch (ptest->TestType)
+	  switch (ptest->TestType)
 	      {
 	      case TPC_A:
 		if (bRunAll)
