@@ -1,3 +1,39 @@
+2003-08-08 16:13  source
+
+	* Added OpenLink style .taz package target (pvk)
+	
+2003-08-08 16:12  source
+
+	* Updated version number to 0.99.18 (pvk)
+	
+2003-08-08 16:10  source
+
+	* Report how many threads returned an error (pvk)
+	
+2003-08-08 16:10  source
+
+	* Removed mutex around connect as the driver manager takes care of this (pvk)
+	
+2003-08-08 16:09  source
+
+	* Use -x for transaction flag (pvk)
+	
+2003-03-17 09:12  source
+
+	* Added mutex around output functions (sergei)
+	
+2003-03-17 09:09  source
+
+	* Aligned commandline defaults with gtk based version (sergei)
+	
+2003-03-08 13:05  source
+
+	* Fixed namespace clash on AIX (pvk)
+	
+2003-03-08 13:04  source
+
+	* Added entry to generate ChangeLog using cvs2cl script (pvk)
+	
 2003-03-07 14:44  source
 
 	* Updated version number to 0.99.17
