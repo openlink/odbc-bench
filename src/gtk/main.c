@@ -377,6 +377,7 @@ edit_login (GtkWidget * widget, gpointer data)
       if (!ptest)
 	ptest = iter->data;
 
+      ptest->tpc.a.uwDrvIdx = -1;
       do_login_gtk (login, ptest);
       ptest->is_dirty = TRUE;
       if (ptest->szSQLError[0])
@@ -392,7 +393,8 @@ edit_login (GtkWidget * widget, gpointer data)
       while (NULL != (iter = g_list_next (iter)))
 	{
 	  test_t *ptest = (test_t *) iter->data;
-	  do_login_gtk (login, ptest);
+          ptest->tpc.a.uwDrvIdx = -1;
+      	  do_login_gtk (login, ptest);
 	  get_dsn_data (ptest);
 	  do_logout (ptest);
 	  ptest->is_dirty = TRUE;
@@ -781,6 +783,7 @@ run_selected (GtkWidget * widget, gpointer data)
 	  do_logout (ptest);
 
 	  ptest->tpc._.nMinutes = nMinutes;
+
 	  switch (ptest->TestType)
 	      {
 	      case TPC_A:
