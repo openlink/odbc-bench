@@ -27,6 +27,7 @@
 #include <string.h>
 
 #include "odbcbench.h"
+#include "ArrayParams.h"
 #include "ThreadOptions.h"
 #include "TPCARunProps.h"
 #include "tpca_code.h"
@@ -122,6 +123,9 @@ load_config (TPCARunProps * dlg)
       dlg->lpBench->tpc.a.fUseCommit);
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dlg->do100row),
       dlg->lpBench->tpc.a.fDoQuery);
+
+  ArrayParams_load_config (ARRAY_PARAMS (dlg->array_params),
+      &dlg->lpBench->tpc.a);
 
   ThreadOptions_load_config (THREAD_OPTIONS (dlg->thread_opts),
       &dlg->lpBench->tpc._);
@@ -225,6 +229,7 @@ TPCARunProps_save_config (TPCARunProps * dlg)
   dlg->lpBench->tpc.a.fUseCommit = GTK_TOGGLE_BUTTON (dlg->trans)->active;
   dlg->lpBench->tpc.a.fDoQuery = GTK_TOGGLE_BUTTON (dlg->do100row)->active;
 
+  ArrayParams_save_config (ARRAY_PARAMS (dlg->array_params));
   ThreadOptions_save_config (THREAD_OPTIONS (dlg->thread_opts));
 
   for (index = 0;
@@ -336,6 +341,9 @@ TPCARunProps_init (TPCARunProps * dlg)
 
   dlg->thread_opts = ThreadOptions_new ();
   gtk_box_pack_start (GTK_BOX (left_column), dlg->thread_opts, TRUE, TRUE, 0);
+
+  dlg->array_params = ArrayParams_new ();
+  gtk_box_pack_start (GTK_BOX (left_column), dlg->array_params, TRUE, TRUE, 0);
 
   Frame = gtk_frame_new ("SQL Options");
   gtk_widget_show (Frame);

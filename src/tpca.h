@@ -29,6 +29,7 @@ typedef struct tpca_s
 
   int fAuto;			/* TRUE to run all combinations */
 
+  int nArrayParSize;
   int fExecAsync;		/* TRUE to execute in async mode */
   int fDoQuery;			/* TRUE if 100 row query should be run */
   int fClearHistory;		/* TRUE if delete rows from history table first */

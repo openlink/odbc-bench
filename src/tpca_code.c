@@ -1529,10 +1529,12 @@ vLoadBranch (test_t * ptest	/* Run Configuration Parameters */
   RETCODE rc;
   UDWORD udwBranch;
   double dBalance = 1000.0;
+  SDWORD cbBalance;
   UDWORD udwMod;
   char szSQLBuffer[128];
   SDWORD cbFiller = 84;
   UWORD uwBindIdx;
+  SDWORD cbBranch, dbBalance;
 
   uwBindIdx = DriverMap[ptest->tpc.a.uwDrvIdx].uwBTM;
 
@@ -1550,17 +1552,17 @@ vLoadBranch (test_t * ptest	/* Run Configuration Parameters */
   /* Branch ID */
   rc = fSQLBindParameter (ptest->hstmt, 1, SQL_PARAM_INPUT, SQL_C_LONG,
       BindTypeMap[uwBindIdx].swInt,
-      BindTypeMap[uwBindIdx].uwInt, 0, (PTR) & udwBranch, 0, 0);
+      BindTypeMap[uwBindIdx].uwInt, 0, (PTR) & udwBranch, 0, &cbBranch);
 
   /* Filler ID */
   rc = fSQLBindParameter (ptest->hstmt, 2, SQL_PARAM_INPUT, SQL_C_LONG,
       BindTypeMap[uwBindIdx].swInt,
-      BindTypeMap[uwBindIdx].uwInt, 0, (PTR) & udwBranch, 0, 0);
+      BindTypeMap[uwBindIdx].uwInt, 0, (PTR) & udwBranch, 0, &cbBranch);
 
   /* Balance */
   rc = fSQLBindParameter (ptest->hstmt, 3, SQL_PARAM_INPUT, SQL_C_DOUBLE,
       BindTypeMap[uwBindIdx].swFloat,
-      BindTypeMap[uwBindIdx].uwFloat, 0, (PTR) & dBalance, 0, 0);
+      BindTypeMap[uwBindIdx].uwFloat, 0, (PTR) & dBalance, 0, &cbBalance);
 
   /* Filler char */
   rc = fSQLBindParameter (ptest->hstmt, 4, SQL_PARAM_INPUT, SQL_C_CHAR,
@@ -1570,7 +1572,7 @@ vLoadBranch (test_t * ptest	/* Run Configuration Parameters */
   sprintf (szSQLBuffer, szRowsInserted, (UDWORD) 0,
       (UDWORD) ptest->tpc.a.udwMaxBranch);
   if (ptest->SetProgressText)
-    ptest->SetProgressText (szSQLBuffer, 0, 0, 0);
+    ptest->SetProgressText (szSQLBuffer, 0, 0, 0, 1);
   udwMod = (UDWORD) (ptest->tpc.a.udwMaxBranch / 50);
   udwMod = udwMod ? udwMod : 1;
 
@@ -1592,7 +1594,7 @@ vLoadBranch (test_t * ptest	/* Run Configuration Parameters */
 	  sprintf (szSQLBuffer, szRowsInserted, udwBranch,
 	      ptest->tpc.a.udwMaxBranch);
 	  if (ptest->SetProgressText)
-	    ptest->SetProgressText (szSQLBuffer, 0, 0, udwBranch);
+	    ptest->SetProgressText (szSQLBuffer, 0, 0, udwBranch, 1);
 	  if (ptest->fCancel && ptest->fCancel ())
 	    goto DONE;
 	}
@@ -1624,6 +1626,7 @@ vLoadTeller (test_t * ptest	/* Run Configuration Parameters */
   char szSQLBuffer[128];
   SDWORD cbFiller = 84;
   UWORD uwBindIdx;
+  SDWORD cbTeller, cbBranch, cbBalance;
 
   uwBindIdx = DriverMap[ptest->tpc.a.uwDrvIdx].uwBTM;
 
@@ -1642,17 +1645,17 @@ vLoadTeller (test_t * ptest	/* Run Configuration Parameters */
   /* Teller ID */
   rc = fSQLBindParameter (ptest->hstmt, 1, SQL_PARAM_INPUT,
       SQL_C_LONG, BindTypeMap[uwBindIdx].swInt,
-      BindTypeMap[uwBindIdx].uwInt, 0, (PTR) & udwTeller, 0, 0);
+      BindTypeMap[uwBindIdx].uwInt, 0, (PTR) & udwTeller, 0, &cbTeller);
 
   /* Branch ID */
   rc = fSQLBindParameter (ptest->hstmt, 2, SQL_PARAM_INPUT,
       SQL_C_LONG, BindTypeMap[uwBindIdx].swInt,
-      BindTypeMap[uwBindIdx].uwInt, 0, (PTR) & udwBranch, 0, 0);
+      BindTypeMap[uwBindIdx].uwInt, 0, (PTR) & udwBranch, 0, &cbBranch);
 
   /* Balance */
   rc = fSQLBindParameter (ptest->hstmt, 3, SQL_PARAM_INPUT,
       SQL_C_DOUBLE, BindTypeMap[uwBindIdx].swFloat,
-      BindTypeMap[uwBindIdx].uwFloat, 0, (PTR) & dBalance, 0, 0);
+      BindTypeMap[uwBindIdx].uwFloat, 0, (PTR) & dBalance, 0, &cbBalance);
 
   /* Filler char */
   rc = fSQLBindParameter (ptest->hstmt, 4, SQL_PARAM_INPUT,
@@ -1663,7 +1666,7 @@ vLoadTeller (test_t * ptest	/* Run Configuration Parameters */
   sprintf (szSQLBuffer, szRowsInserted, (UDWORD) 0,
       (UDWORD) ptest->tpc.a.udwMaxTeller);
   if (ptest->SetProgressText)
-    ptest->SetProgressText (szSQLBuffer, 0, 0, 0);
+    ptest->SetProgressText (szSQLBuffer, 0, 0, 0, 1);
   udwMod = (UDWORD) (ptest->tpc.a.udwMaxTeller / 50);
   udwMod = udwMod ? udwMod : 1;
 
@@ -1687,7 +1690,7 @@ vLoadTeller (test_t * ptest	/* Run Configuration Parameters */
 	  sprintf (szSQLBuffer, szRowsInserted, udwTeller,
 	      ptest->tpc.a.udwMaxTeller);
 	  if (ptest->SetProgressText)
-	    ptest->SetProgressText (szSQLBuffer, 0, 0, ((float) udwTeller));
+	    ptest->SetProgressText (szSQLBuffer, 0, 0, ((float) udwTeller), 1);
 	  if (ptest->fCancel && ptest->fCancel ())
 	    goto DONE;
 	}
@@ -1720,6 +1723,7 @@ vLoadAccount (test_t * ptest	/* Run Configuration Parameters */
   UDWORD udwMod;
   SDWORD cbFiller = 84;
   UWORD uwBindIdx;
+  SDWORD cbAcct, cbBranch, cbBalance;
 
   uwBindIdx = DriverMap[ptest->tpc.a.uwDrvIdx].uwBTM;
 
@@ -1738,17 +1742,17 @@ vLoadAccount (test_t * ptest	/* Run Configuration Parameters */
   /* Account ID */
   rc = fSQLBindParameter (ptest->hstmt, 1, SQL_PARAM_INPUT, SQL_C_LONG,
       BindTypeMap[uwBindIdx].swInt,
-      BindTypeMap[uwBindIdx].uwInt, 0, (PTR) & udwAcct, 0, 0);
+      BindTypeMap[uwBindIdx].uwInt, 0, (PTR) & udwAcct, 0, &cbAcct);
 
   /* Branch ID */
   rc = fSQLBindParameter (ptest->hstmt, 2, SQL_PARAM_INPUT, SQL_C_LONG,
       BindTypeMap[uwBindIdx].swInt,
-      BindTypeMap[uwBindIdx].uwInt, 0, (PTR) & udwBranch, 0, 0);
+      BindTypeMap[uwBindIdx].uwInt, 0, (PTR) & udwBranch, 0, &cbBranch);
 
   /* Balance */
   rc = fSQLBindParameter (ptest->hstmt, 3, SQL_PARAM_INPUT, SQL_C_DOUBLE,
       BindTypeMap[uwBindIdx].swFloat,
-      BindTypeMap[uwBindIdx].uwFloat, 0, (PTR) & dBalance, 0, 0);
+      BindTypeMap[uwBindIdx].uwFloat, 0, (PTR) & dBalance, 0, &cbBalance);
 
   /* Filler char */
   rc = fSQLBindParameter (ptest->hstmt, 4, SQL_PARAM_INPUT, SQL_C_CHAR,
@@ -1759,7 +1763,7 @@ vLoadAccount (test_t * ptest	/* Run Configuration Parameters */
   sprintf (szSQLBuffer, szRowsInserted, (UDWORD) 0,
       (UDWORD) ptest->tpc.a.udwMaxAccount);
   if (ptest->SetProgressText)
-    ptest->SetProgressText (szSQLBuffer, 0, 0, 0);
+    ptest->SetProgressText (szSQLBuffer, 0, 0, 0, 1);
   udwMod = (UDWORD) (ptest->tpc.a.udwMaxAccount / 50);
   udwMod = udwMod ? udwMod : 1;
 
@@ -1784,7 +1788,7 @@ vLoadAccount (test_t * ptest	/* Run Configuration Parameters */
 	  sprintf (szSQLBuffer, szRowsInserted, udwAcct,
 	      ptest->tpc.a.udwMaxAccount);
 	  if (ptest->SetProgressText)
-	    ptest->SetProgressText (szSQLBuffer, 0, 0, ((float) udwAcct));
+	    ptest->SetProgressText (szSQLBuffer, 0, 0, ((float) udwAcct), 1);
 	  if (ptest->fCancel && ptest->fCancel ())
 	    goto DONE;
 	}
@@ -2701,6 +2705,7 @@ if (SQL_ERROR == (foo)) \
   goto tag; \
 }
 
+#define XFREE(X)  if (X) free(X);
 
 #define MAX_MIN_SIZE		2
 
@@ -3379,6 +3384,630 @@ fBindParameters (test_t * lpBench,
 }
 
 
+static BOOL
+fBindParametersArray (test_t * lpBench,
+    SDWORD nArrayParSize,
+    UDWORD * nParamsProcessed,
+    SDWORD * pnAcctNum,
+    SDWORD * pnTellerNum,
+    SDWORD * pnBranchNum,
+    double *pdDelta,
+    double *pdBalance,
+    SDWORD *pID,
+    SDWORD * pIndAcctNum,
+    SDWORD * pIndTellerNum,
+    SDWORD * pIndBranchNum,
+    SDWORD *pIndDelta,
+    SDWORD *pIndBalance,
+    SDWORD *pIndID,
+    SDWORD * nAcctNum,
+    HSTMT hstmtUpdAcct,
+    HSTMT hstmtSelBal,
+    HSTMT hstmtUpdTeller, HSTMT hstmtUpdBranch, HSTMT hstmtInsHist)
+{
+  BOOL fSuccess;
+  RETCODE rc;
+  static char filler[] = "1234567890123456789012";
+
+  if (IDX_PARAMS == lpBench->tpc.a.fSQLOption)
+    {
+      /* If we are using Prepare/Execute of each statement, then the parameters */
+      /* for each statement must be bound separately on a separate hstmt. */
+      /* Like the sproc method we bind parameters so that in the main */
+      /* loop we just call SQLExecute for each statement and the driver will use */
+      /* the current values of the parameters. */
+      fSuccess = TRUE;
+
+      /* Update Account */
+      fSuccess &= fSQLParamOptions(hstmtUpdAcct, nArrayParSize, nParamsProcessed);
+      fSuccess &= fSQLBindParameter (hstmtUpdAcct, 1, SQL_PARAM_INPUT,
+	  SQL_C_DOUBLE, SQL_DOUBLE, sizeof (double), 0,
+	  pdDelta, 0, pIndDelta);
+      fSuccess &= fSQLBindParameter (hstmtUpdAcct, 2, SQL_PARAM_INPUT,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  pnAcctNum, 0, pIndAcctNum);
+      if (fSuccess)
+	{
+	  do
+	    {
+	      rc = SQLPrepare (hstmtUpdAcct,
+		  "UPDATE ACCOUNT SET BALANCE = BALANCE + ? WHERE ACCOUNT = ?",
+		  SQL_NTS);
+	    }
+	  while (SQL_STILL_EXECUTING == rc);
+
+	  if (SQL_SUCCESS != rc)
+	    {
+	      vShowErrors (lpBench->hwndMain, SQL_NULL_HENV, SQL_NULL_HDBC,
+		  hstmtUpdAcct, lpBench);
+	      fSuccess = FALSE;
+	    }
+	}
+
+
+      /* Select balance */
+      if (lpBench->fSQLBatchSupported)
+        {
+          fSuccess &= fSQLParamOptions(hstmtSelBal, nArrayParSize,
+              nParamsProcessed);
+          fSuccess &= fSQLBindParameter (hstmtSelBal, 1, SQL_PARAM_INPUT,
+	      SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	      pnAcctNum, 0, pIndAcctNum);
+        }
+      else
+        { 
+          fSuccess &= fSQLBindParameter (hstmtSelBal, 1, SQL_PARAM_INPUT,
+ 	      SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	      nAcctNum, sizeof (*nAcctNum), NULL);
+        }
+      if (fSuccess)
+	{
+	  do
+	    {
+	      rc = SQLPrepare (hstmtSelBal,
+		  "SELECT BALANCE FROM ACCOUNT WHERE ACCOUNT = ?", SQL_NTS);
+	    }
+	  while (SQL_STILL_EXECUTING == rc);
+
+	  if (SQL_SUCCESS != rc)
+	    {
+	      vShowErrors (lpBench->hwndMain, SQL_NULL_HENV, SQL_NULL_HDBC,
+		  hstmtSelBal, lpBench);
+	      fSuccess = FALSE;
+	    }
+	}
+
+
+      /* Update teller */
+      fSuccess &= fSQLParamOptions(hstmtUpdTeller, nArrayParSize, nParamsProcessed);
+      fSuccess &= fSQLBindParameter (hstmtUpdTeller, 1, SQL_PARAM_INPUT,
+	  SQL_C_DOUBLE, SQL_DOUBLE, sizeof (double), 0,
+	  pdDelta, 0, pIndDelta);
+      fSuccess &= fSQLBindParameter (hstmtUpdTeller, 2, SQL_PARAM_INPUT,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  pnTellerNum, 0, pIndTellerNum);
+      if (fSuccess)
+	{
+
+	  do
+	    {
+	      rc = SQLPrepare (hstmtUpdTeller,
+		  "UPDATE TELLER SET BALANCE = BALANCE + ? WHERE TELLER = ?",
+		  SQL_NTS);
+	    }
+	  while (SQL_STILL_EXECUTING == rc);
+
+	  if (SQL_SUCCESS != rc)
+	    {
+	      vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC,
+		  hstmtUpdTeller, lpBench);
+	      fSuccess = FALSE;
+	    }
+	}
+
+
+      /* Update Branch */
+      fSuccess &= fSQLParamOptions(hstmtUpdBranch, nArrayParSize, nParamsProcessed);
+      fSuccess &= fSQLBindParameter (hstmtUpdBranch, 1, SQL_PARAM_INPUT,
+	  SQL_C_DOUBLE, SQL_DOUBLE, sizeof (double), 0,
+	  pdDelta, 0, pIndDelta);
+      fSuccess &= fSQLBindParameter (hstmtUpdBranch, 2, SQL_PARAM_INPUT,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  pnBranchNum, 0, pIndBranchNum);
+      if (fSuccess)
+	{
+
+	  do
+	    {
+	      rc = SQLPrepare (hstmtUpdBranch,
+		  "UPDATE BRANCH SET BALANCE = BALANCE + ? WHERE BRANCH = ?",
+		  SQL_NTS);
+	    }
+	  while (SQL_STILL_EXECUTING == rc);
+
+	  if (SQL_SUCCESS != rc)
+	    {
+	      vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC,
+		  hstmtUpdBranch, lpBench);
+	      fSuccess = FALSE;
+	    }
+	}
+
+
+      /* Insert History record */
+      fSuccess &= fSQLParamOptions(hstmtInsHist, nArrayParSize, nParamsProcessed);
+      fSuccess &= fSQLBindParameter (hstmtInsHist, 1, SQL_PARAM_INPUT,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  pID, 0, pIndID);
+      fSuccess &= fSQLBindParameter (hstmtInsHist, 2, SQL_PARAM_INPUT,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  pnAcctNum, 0, pIndAcctNum);
+      fSuccess &= fSQLBindParameter (hstmtInsHist, 3, SQL_PARAM_INPUT,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  pnTellerNum, 0, pIndTellerNum);
+      fSuccess &= fSQLBindParameter (hstmtInsHist, 4, SQL_PARAM_INPUT,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  pnBranchNum, 0, pIndBranchNum);
+      fSuccess &= fSQLBindParameter (hstmtInsHist, 5, SQL_PARAM_INPUT,
+	  SQL_C_DOUBLE, SQL_DOUBLE, sizeof (double), 0,
+	  pdDelta, 0, pIndDelta);
+      if (fSuccess)
+	{
+	  char szInsStmt[220];
+
+	  sprintf (szInsStmt,
+	      "INSERT INTO HISTORY (HISTID, ACCOUNT, TELLER, BRANCH, AMOUNT, TIMEOFTXN, FILLER) "
+	      "VALUES (?, ?, ?, ?, ?, {fn %s()}, '%s')",
+	      lpBench->pszDateTimeSQLFunc, filler);
+
+	  do
+	    {
+	      rc = SQLPrepare (hstmtInsHist, szInsStmt, SQL_NTS);
+	    }
+	  while (SQL_STILL_EXECUTING == rc);
+
+	  if (SQL_SUCCESS != rc)
+	    {
+	      vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmtInsHist, lpBench);
+	      fSuccess = FALSE;
+	    }
+	}
+    }
+  else
+    fSuccess = TRUE;
+
+  return fSuccess;
+}
+
+
+/***************************************************************************
+ fRunTransArray - Run the transaction test
+
+ Returns:  TRUE if successful, FALSE on error
+***************************************************************************/
+BOOL
+fRunTransArray (test_t * lpBench,	/* Benchmark info */
+    char *szTitle)
+{
+  BOOL fRtn = FALSE;		/* Assume the worst */
+
+  BOOL fDone = FALSE;		/* Loop control */
+
+  BOOL fTrace = FALSE;		/* Debugging variable */
+
+  RETCODE rc;			/* Return code for ODBC calls */
+
+  /* Timing information */
+  double dDiff;			/* Track time left for run */
+
+  double dTransDiff;		/* Transaction total time */
+
+  double dTimeToRun;		/* Time to run for */
+
+  time_t tStartTime;		/* Start time */
+
+  time_t tCurTime;		/* The current time */
+
+  time_t tTransStartTime;	/* Transaction start time */
+
+  time_t tTransEndTime;		/* End time for transaction */
+
+  /* Data values */
+  short nWorkStn;		/* Workstation id */
+
+  SDWORD *pnAcctNum = NULL;		/* Account numbers  */
+  SDWORD nAcctNum;			/* Account number  */
+
+  SDWORD *pnBranchNum = NULL;		/* Branch number */
+
+  SDWORD *pnTellerNum = NULL;		/* Teller number */
+
+  double *pdBalance = NULL; // = 0;	/* Balance for transaction */
+
+  double *pdDelta = NULL;		/* Delta, randomly set */
+
+  SDWORD *pID = NULL;
+
+  SDWORD *pIndAcctNum = NULL;		
+  SDWORD *pIndBranchNum = NULL;	
+  SDWORD *pIndTellerNum = NULL;
+  SDWORD *pIndBalance = NULL;
+  SDWORD *pIndDelta = NULL;
+  SDWORD *pIndID = NULL;
+
+
+  /* hstmts for bound parameters for Prepare/Execute method */
+  HSTMT hstmtUpdAcct;		/* Update account table */
+
+  HSTMT hstmtSelBal;		/* Select new balance from account */
+
+  HSTMT hstmtUpdTeller;		/* Update teller table */
+
+  HSTMT hstmtUpdBranch;		/* Update branch table */
+
+  HSTMT hstmtInsHist;		/* Insert history record */
+
+  BOOL fSuccess;
+
+  DECLARE_FOR_SQLERROR;
+
+  SDWORD cbBal;
+
+  int ret_code;
+  int i, nCallCnt;
+  int nArrayParSize;
+  UDWORD  nParamsProcessed;
+
+  if (IDX_PARAMS != lpBench->tpc.a.fSQLOption)
+    goto general_error;
+
+  /* clear history table; get limits for each value  */
+  /* to be randomly generated */
+  if (!GetMaxVals (lpBench))
+    return FALSE;
+
+  nArrayParSize = lpBench->tpc.a.nArrayParSize;
+
+  if (nArrayParSize == 0)
+    nArrayParSize = 1;
+
+  if ((pnAcctNum = (SDWORD *)malloc(sizeof(SDWORD) * nArrayParSize)) == NULL)
+    goto general_error;
+  if ((pnBranchNum = (SDWORD *)malloc(sizeof(SDWORD) * nArrayParSize)) == NULL)
+    goto general_error;
+  if ((pnTellerNum = (SDWORD *)malloc(sizeof(SDWORD) * nArrayParSize)) == NULL)
+    goto general_error;
+  if ((pdBalance = (double *)calloc(nArrayParSize, sizeof(double))) == NULL)
+    goto general_error;
+  if ((pdDelta = (double *)calloc(nArrayParSize, sizeof(double))) == NULL)
+    goto general_error;
+  if ((pID = (SDWORD *)malloc(sizeof(SDWORD) * nArrayParSize)) == NULL)
+    goto general_error;
+
+  if ((pIndAcctNum = (SDWORD *)malloc(sizeof(SDWORD) * nArrayParSize)) == NULL)
+    goto general_error;
+  if ((pIndBranchNum = (SDWORD *)malloc(sizeof(SDWORD) * nArrayParSize)) == NULL)
+    goto general_error;
+  if ((pIndTellerNum = (SDWORD *)malloc(sizeof(SDWORD) * nArrayParSize)) == NULL)
+    goto general_error;
+  if ((pIndBalance = (SDWORD *)malloc(sizeof(SDWORD) * nArrayParSize)) == NULL)
+    goto general_error;
+  if ((pIndDelta = (SDWORD *)malloc(sizeof(SDWORD) * nArrayParSize)) == NULL)
+    goto general_error;
+  if ((pIndID = (SDWORD *)malloc(sizeof(SDWORD) * nArrayParSize)) == NULL)
+    goto general_error;
+
+  /* Clear out any previous runs */
+  lpBench->tpc.a.nTrnCnt = 0;
+  lpBench->tpc.a.nTrnCnt1Sec = 0;
+  lpBench->tpc.a.nTrnCnt2Sec = 0;
+  lpBench->tpc.a.dDiffSum = 0;
+
+  /* Tell the user we are starting */
+  if (lpBench->ShowProgress)
+    lpBench->ShowProgress (NULL, szTitle ? szTitle : "Running Benchmark...",
+	FALSE, lpBench->tpc._.nMinutes * 60);
+
+  /* Get the start time */
+  time (&tStartTime);
+  time (&tCurTime);
+  dDiff = difftime (tCurTime, tStartTime);
+
+  /* Set run-time options */
+  /* Note setting async on the hdbc enables it for all hstmts on the hdbc */
+  rc = SQLSetConnectOption (lpBench->hdbc, SQL_AUTOCOMMIT,
+      (lpBench->tpc.a.fUseCommit) ? SQL_AUTOCOMMIT_OFF : SQL_AUTOCOMMIT_ON);
+  rc = SQLSetConnectOption (lpBench->hdbc, SQL_ASYNC_ENABLE,
+      (lpBench->tpc.a.fExecAsync) ? SQL_ASYNC_ENABLE_ON : SQL_ASYNC_ENABLE_OFF);
+
+  /* Create a unique workstation id by using our instance handle */
+#ifndef WIN32
+  nWorkStn = (short) getpid ();
+#else  
+  nWorkStn = (short) _getpid ();
+#endif
+
+  /* allocate the statements */
+  _IF_ERR_GO (hstmtUpdAcct, general_error, SQLAllocStmt (lpBench->hdbc,
+      &hstmtUpdAcct));
+  _IF_ERR_GO (hstmtSelBal, general_error, SQLAllocStmt (lpBench->hdbc,
+      &hstmtSelBal));
+  _IF_ERR_GO (hstmtUpdTeller, general_error, SQLAllocStmt (lpBench->hdbc,
+      &hstmtUpdTeller));
+  _IF_ERR_GO (hstmtUpdBranch, general_error, SQLAllocStmt (lpBench->hdbc,
+      &hstmtUpdBranch));
+  _IF_ERR_GO (hstmtInsHist, general_error, SQLAllocStmt (lpBench->hdbc,
+      &hstmtInsHist));
+
+  if (!(fSuccess = fBindParametersArray (lpBench, nArrayParSize, &nParamsProcessed,
+	      pnAcctNum, pnTellerNum, pnBranchNum, pdDelta, pdBalance, pID,
+	      pIndAcctNum, pIndTellerNum, pIndBranchNum, pIndDelta, pIndBalance, 
+              pIndID, &nAcctNum,
+	      hstmtUpdAcct, hstmtSelBal, hstmtUpdTeller, hstmtUpdBranch,
+	      hstmtInsHist)))
+    fDone = TRUE;
+
+  /* Main loop executes the transactions and checks for the duration */
+  /* and the possibility that the user may cancel. */
+  dTimeToRun = lpBench->tpc._.nMinutes * 60;
+  srand ((unsigned) time (NULL));
+  nCallCnt = 0;
+  while ((dDiff <= dTimeToRun) && !fDone)
+    {
+      SDWORD id;
+      
+      id = lpBench->tpc.a.nTrnCnt + 1;
+      for (i = 0; i < nArrayParSize; i++)
+        {
+          /* Generate random data for each field and amount */
+          pnAcctNum[i] = ((rand () * rand ()) % lpBench->tpc.a.udwMaxAccount) + 1;
+          assert (pnAcctNum[i] > -1);
+
+          pnBranchNum[i] = (rand () % lpBench->tpc.a.udwMaxBranch) + 1;
+          assert (pnBranchNum[i] > -1);
+
+          pnTellerNum[i] = (rand () % lpBench->tpc.a.udwMaxTeller) + 1;
+          assert (pnTellerNum[i] > -1);
+
+          /* Arbitrarily set bank transaction to a random amount */
+          /* no greater than the number of tellers. The type of */
+          /* transaction (deposit or withdrawal) is determined */
+          /* by the C runtime function 'time' being even or odd */
+          pdDelta[i] = ((rand () % lpBench->tpc.a.udwMaxTeller) + 1) *
+	      (double) (((long) time (NULL) % 2) ? 1 : -1);
+	  pID[i] = id;
+	  id++;
+	}
+      /* Add to transaction counter */
+      lpBench->tpc.a.nTrnCnt += nArrayParSize;
+
+      nCallCnt++;
+
+    txn_start_over:
+      /* Obtain the start time for this transaction */
+      time (&tTransStartTime);
+
+      /* Now execute this transaction */
+
+      /* Prepare/Execute with parameters */
+	fRtn = TRUE;
+	if (lpBench->SetWorkingItem)
+	  lpBench->SetWorkingItem
+		("Executing prepared statement with parameters");
+	/* Update account */
+	if (lpBench->fCancel && lpBench->fCancel ())
+	  {
+	    fDone = TRUE;
+	    fRtn = FALSE;
+	    pane_log ("*** Canceled ***\r\n");
+	  }
+	do
+	  {
+	    rc = SQLExecute (hstmtUpdAcct);
+	  }
+	while (SQL_STILL_EXECUTING == rc);
+	IF_DEADLOCK_OR_ERR_GO_WITH_ROLLBACK (hstmtUpdAcct, general_error,
+	      rc, deadlock_main);
+
+	/* Select new balance for the account just updated */
+        if (lpBench->fSQLBatchSupported)
+          {
+	    i = 0;
+	    do
+	      {
+	        rc = SQLExecute (hstmtSelBal);
+	      }
+	    while (SQL_STILL_EXECUTING == rc);
+	    IF_DEADLOCK_OR_ERR_GO_WITH_ROLLBACK (hstmtSelBal, general_error, rc,
+	        deadlock_main);
+
+            ret_code = SQL_SUCCESS;
+            do 
+	      {
+	        rc = SQLFetch (hstmtSelBal);
+	        IF_DEADLOCK_OR_ERR_GO_WITH_ROLLBACK (hstmtSelBal, general_error, 
+                    rc, deadlock_main);
+	        rc = SQLGetData (hstmtSelBal, 1, SQL_C_DOUBLE, pdBalance + i, 
+                    0, &cbBal);
+	        IF_DEADLOCK_OR_ERR_GO_WITH_ROLLBACK (hstmtSelBal, general_error,
+                    rc, deadlock_main);
+                do
+	          {
+	            rc = SQLMoreResults(hstmtSelBal);
+	          }
+	        while (SQL_STILL_EXECUTING == rc);
+	        IF_DEADLOCK_OR_ERR_GO_WITH_ROLLBACK (hstmtSelBal, general_error,
+                    rc, deadlock_main);
+	        ret_code = rc;
+	        i++;
+	      }
+	    while (SQL_SUCCESS == ret_code && i < nArrayParSize);
+
+            SQLFreeStmt (hstmtSelBal, SQL_CLOSE);
+          }
+        else /*** if Arrays binding for Selects isn't suported ***/
+          for (i = 0; i < nArrayParSize; i++)
+            {
+              nAcctNum = pnAcctNum[i];
+	      do
+	        {
+	          rc = SQLExecute (hstmtSelBal);
+	        }
+	      while (SQL_STILL_EXECUTING == rc);
+	      IF_DEADLOCK_OR_ERR_GO_WITH_ROLLBACK (hstmtSelBal, general_error,
+                rc, deadlock_main);
+
+	      rc = SQLFetch (hstmtSelBal);
+	      IF_DEADLOCK_OR_ERR_GO_WITH_ROLLBACK (hstmtSelBal, general_error, 
+                    rc, deadlock_main);
+	      rc = SQLGetData (hstmtSelBal, 1, SQL_C_DOUBLE, pdBalance + i, 
+                    0, &cbBal);
+	      IF_DEADLOCK_OR_ERR_GO_WITH_ROLLBACK (hstmtSelBal, general_error,
+                    rc, deadlock_main);
+
+              SQLFreeStmt (hstmtSelBal, SQL_CLOSE);
+            }
+
+	/* Update teller */
+	do
+	  {
+	    rc = SQLExecute (hstmtUpdTeller);
+	  }
+	while (SQL_STILL_EXECUTING == rc);
+	IF_DEADLOCK_OR_ERR_GO_WITH_ROLLBACK (hstmtUpdTeller, general_error,
+	    rc, deadlock_main);
+
+	/* Update branch */
+	do
+	  {
+	    rc = SQLExecute (hstmtUpdBranch);
+	  }
+	while (SQL_STILL_EXECUTING == rc);
+	IF_DEADLOCK_OR_ERR_GO_WITH_ROLLBACK (hstmtUpdBranch, general_error,
+	    rc, deadlock_main);
+
+	/* Insert into history table */
+	do
+	  {
+	    rc = SQLExecute (hstmtInsHist);
+	  }
+	while (SQL_STILL_EXECUTING == rc);
+	IF_DEADLOCK_OR_ERR_GO_WITH_ROLLBACK (hstmtInsHist, general_error,
+	    rc, deadlock_main);
+	ret_code = fExecuteQuery (lpBench, TRUE);
+	ROLLBACK_OR_EXIT (ret_code, deadlock_main, general_error);
+
+      if (fTrace)
+        for (i = 0; i < nArrayParSize; i++)
+          {
+	    pane_log
+	        ("Account # = %ld, Teller = %ld, Branch = %ld, Amount = %f, Balance=%f\r\n",
+	        pnAcctNum[i], pnTellerNum[i], pnBranchNum[i], pdDelta[i], pdBalance[i]);
+           }
+
+      /* Commit the transaction based on success */
+      /* Note: For stored procedure method this has no effect; */
+      /* the commit happens in the sproc */
+      if (lpBench->tpc.a.fUseCommit)
+	{
+	  rc = SQLTransact (SQL_NULL_HENV, lpBench->hdbc,
+	      (UWORD) ((fRtn) ? SQL_COMMIT : SQL_ROLLBACK));
+	  fRtn &= RC_SUCCESSFUL (rc);
+	}
+
+      /* Get the end time and the elapsed time */
+      time (&tTransEndTime);
+      dTransDiff = difftime (tTransEndTime, tTransStartTime);
+      lpBench->tpc.a.dDiffSum += dTransDiff;
+
+      /* Track 1-second and 2-second transactions */
+      if (dTransDiff <= 1)
+	lpBench->tpc.a.nTrnCnt1Sec += nArrayParSize;
+      if (dTransDiff > 1 && dTransDiff <= 2)
+	lpBench->tpc.a.nTrnCnt2Sec += nArrayParSize;
+
+      /* Get elapsed time now to see whether we should quit */
+      time (&tCurTime);
+      dDiff = difftime (tCurTime, tStartTime);
+      /* Every five transactions, see whether we need to cancel */
+      if (0 == (nCallCnt % bench_get_long_pref (A_REFRESH_RATE)))
+	{
+	  char szBuff[50];
+	  sprintf (szBuff, "%10ld txns, %10ld secs remaining",
+	      lpBench->tpc.a.nTrnCnt, (long int) (dTimeToRun - dDiff));
+	  if (lpBench->SetProgressText)
+	    lpBench->SetProgressText (szBuff, lpBench->tpc._.nConn,
+		lpBench->tpc._.nThreadNo, dDiff, nArrayParSize);
+	  if (lpBench->fCancel && lpBench->fCancel ())
+	    {
+	      fDone = TRUE;
+	      fRtn = FALSE;
+	      pane_log ("*** Cancelled ***\n");
+	    }
+	}
+      continue;
+
+    deadlock_main:
+      if (bench_get_long_pref (LOCK_TIMEOUT) > 0
+	  && lpBench->tpc.a.txn_isolation > SQL_TXN_READ_UNCOMMITTED)
+	sleep_msecs (bench_get_long_pref (LOCK_TIMEOUT));
+#if 0
+      if (!(fSuccess = fBindParameters (lpBench,
+		  &nAcctNum, &nTellerNum, &nBranchNum, &dDelta, &dBalance,
+		  hstmtUpdAcct, hstmtSelBal, hstmtUpdTeller, hstmtUpdBranch,
+		  hstmtInsHist)))
+	fDone = TRUE;
+#endif
+      time (&tCurTime);
+      dDiff = difftime (tCurTime, tStartTime);
+      if (dDiff <= dTimeToRun)
+	goto txn_start_over;
+    }				/* end main loop */
+  fDone = TRUE;
+  if (dDiff >= dTimeToRun)
+    fRtn = TRUE;
+
+
+  /* We're done, so dismiss the dialog */
+  if (lpBench->StopProgress)
+    lpBench->StopProgress ();
+  pane_log ("Benchmark finished.\r\n");
+
+  SQLFreeStmt (lpBench->hstmt, SQL_CLOSE);
+  SQLFreeStmt (lpBench->hstmt, SQL_UNBIND);
+  SQLFreeStmt (lpBench->hstmt, SQL_RESET_PARAMS);
+  if (IDX_PARAMS == lpBench->tpc.a.fSQLOption)
+    {
+      SQLFreeStmt (hstmtUpdAcct, SQL_DROP);
+      SQLFreeStmt (hstmtSelBal, SQL_DROP);
+      SQLFreeStmt (hstmtUpdTeller, SQL_DROP);
+      SQLFreeStmt (hstmtUpdBranch, SQL_DROP);
+      SQLFreeStmt (hstmtInsHist, SQL_DROP);
+    }
+
+  /* If we where not cancelled due to an error */
+general_error:
+  XFREE(pnAcctNum);
+  XFREE(pnBranchNum);
+  XFREE(pnTellerNum);
+  XFREE(pdBalance);
+  XFREE(pdDelta);
+  XFREE(pID);
+
+  XFREE(pIndAcctNum);
+  XFREE(pIndBranchNum);
+  XFREE(pIndTellerNum);
+  XFREE(pIndBalance);
+  XFREE(pIndDelta);
+  XFREE(pIndID);
+
+  if (!fDone)
+    fRtn = FALSE;
+
+  return fRtn;
+}
+
+
 /***************************************************************************
  fRunTrans - Run the transaction test
 
@@ -3443,6 +4072,11 @@ fRunTrans (test_t * lpBench,	/* Benchmark info */
   SDWORD cbBal;
 
   int ret_code;
+
+  if (IDX_PARAMS == lpBench->tpc.a.fSQLOption 
+      && lpBench->tpc.a.nArrayParSize > 0
+      && lpBench->fBatchSupported)
+    return fRunTransArray (lpBench, szTitle);
 
   /* clear history table; get limits for each value  */
   /* to be randomly generated */
@@ -3664,7 +4298,7 @@ a.fExecAsync) ? SQL_ASYNC_ENABLE_ON : SQL_ASYNC_ENABLE_OFF);
 	      lpBench->tpc.a.nTrnCnt, (long int) (dTimeToRun - dDiff));
 	  if (lpBench->SetProgressText)
 	    lpBench->SetProgressText (szBuff, lpBench->tpc._.nConn,
-		lpBench->tpc._.nThreadNo, dDiff);
+		lpBench->tpc._.nThreadNo, dDiff, 1);
 	  if (lpBench->fCancel && lpBench->fCancel ())
 	    {
 	      fDone = TRUE;
@@ -3809,6 +4443,11 @@ CalcStats (test_t * lpBench,	/* Main stat information */
       sprintf (szBuf, "%d Threads/", lpBench->tpc._.nThreads);
       strcat (szOptions, szBuf);
     }
+  if (lpBench->tpc.a.nArrayParSize)
+    {
+      sprintf (szBuf, "%d ArrParSize/", lpBench->tpc.a.nArrayParSize);
+      strcat (szOptions, szBuf);
+    }
   if (lpBench->tpc.a.fExecAsync)
     strcat (szOptions, "Async/");
   if (lpBench->tpc.a.fUseCommit)
@@ -3866,6 +4505,22 @@ CalcStats (test_t * lpBench,	/* Main stat information */
   pane_log ("\t%c less than 1 second:\t\t\t%f\n", '%', lpBench->tpc.a.fsub1);
   pane_log ("\t%c 1 < n < 2 seconds:\t\t\t%f\n", '%', lpBench->tpc.a.fsub2);
   pane_log ("\tAverage processing time:\t\t%f\n", lpBench->tpc.a.fAvgTPTime);
+  if (lpBench->tpc.a.nArrayParSize > 1 
+      && (!lpBench->fBatchSupported || !lpBench->fSQLBatchSupported))
+    {
+      if (!lpBench->fBatchSupported)
+        {
+          pane_log ("\t   The ODBC driver '%s' doesn't support the 'SQLParamOptions' call, \n",
+		lpBench->szDriverName);
+	  pane_log ("\t therefore the 'ArrayOptimization' was disabled\n");
+	}
+      else if (!lpBench->fSQLBatchSupported)
+        {
+          pane_log ("\t   The ODBC driver '%s' doesn't support batches for SELECT queries, \n",
+		lpBench->szDriverName);
+	  pane_log ("\t therefore the 'ArrayOptimization' for SELECT queries was disabled\n");
+	}
+    }
 
   do_add_results_record ("TPC-A", szOptions,
       henv, lpBench->hdbc, lpBench->hstmt,

@@ -39,10 +39,10 @@
 #define PACKAGE			"odbc-bench"
 #define PACKAGE_BUGREPORT	"odbc-bench@openlinksw.com"
 #define PACKAGE_NAME 		"OpenLink ODBC Benchmark Utility"
-#define PACKAGE_STRING 		"OpenLink ODBC Benchmark Utility 0.99.1"
+#define PACKAGE_STRING 		"OpenLink ODBC Benchmark Utility 0.99.2"
 #define PACKAGE_TARNAME 	"odbc-bench"
-#define PACKAGE_VERSION 	"0.99.1"
-#define VERSION			"0.99.1"
+#define PACKAGE_VERSION 	"0.99.2"
+#define VERSION			"0.99.2"
 #endif
 
 /* status log handling routines - status.c */
@@ -74,12 +74,13 @@ void do_ShowProgress (GtkWidget * parent, gchar * title,
     gboolean bForceSingle, float nMax);
 void do_SetWorkingItem (char *pszWorking);
 void do_SetProgressText (char *pszProgress, int nConn, int thread_no,
-    float value);
+    float value, int nTrnPerCall);
 void do_StopProgress (void);
 int do_fCancel (void);
 void do_ShowCancel (int fShow);
 void do_RestartProgress (void);
 void do_MarkFinished (int nConn, int nThread);
+BOOL isCancelled(void);
 
 #if 0
 void pipe_trough_isql (char *szFileName);
@@ -140,6 +141,8 @@ typedef struct test_s
   int fAsyncSupported;		/* TRUE if async mode is supported */
   int fCommitSupported;		/* TRUE if commitment control is supported */
   int fProcsSupported;		/* TRUE if sprocs are supported */
+  int fBatchSupported;
+  int fSQLBatchSupported;
   unsigned long nCursorsSupported;	/* the bitmask of supported cursor types */
   unsigned long nIsolationsSupported;	/* the bitmask of supported isolation levels */
   long default_txn_isolation;	/* txn_isolation_mode */
@@ -149,7 +152,7 @@ typedef struct test_s
       gboolean bForceSingle, float nMax);
   void (*SetWorkingItem) (char *pszWorking);
   void (*SetProgressText) (char *pszProgress, int n_conn, int thread_no,
-      float nValue);
+      float nValue, int nTrnPerCall);
   void (*StopProgress) (void);
   int (*fCancel) (void);
 
@@ -196,6 +199,7 @@ BOOL fSQLGetData (HSTMT hstmt, UWORD icol, SWORD fCType, PTR rgbValue,
     SDWORD cbValueMax, SDWORD FAR * pcbValue);
 BOOL fSQLBindCol (HSTMT hstmt, UWORD icol, SWORD fCType, PTR rgbValue,
     SDWORD cbValueMax, SDWORD FAR * pcbValue);
+BOOL fSQLParamOptions (HSTMT hstmt, UDWORD crow, UDWORD *pirow);
 
 #if defined(WIN32)
 #define sleep_msecs(x) Sleep(x)

@@ -336,7 +336,7 @@ do_SetWorkingItem (char *pszWorking)
 
 void
 do_SetProgressText (char *pszProgress, int nConn, int thread_no,
-    float percent)
+    float percent, int nTrnPerCall)
 {
   long time_now = get_msec_count ();
   if (time_now - curr_time_msec > BARS_REFRESH_INTERVAL)
@@ -349,7 +349,7 @@ do_SetProgressText (char *pszProgress, int nConn, int thread_no,
 	{
 	  if (test_types[nConn] == TPC_A)
 	    pTrnTimes[nConn][thread_no] +=
-		bench_get_long_pref (A_REFRESH_RATE);
+	      (bench_get_long_pref (A_REFRESH_RATE) * nTrnPerCall);
 	  else
 	    pTrnTimes[nConn][thread_no] += 1;
 	  if (time_now - curr_time_msec > BARS_REFRESH_INTERVAL)
@@ -367,7 +367,7 @@ do_SetProgressText (char *pszProgress, int nConn, int thread_no,
 
 	  pTrnTimes[nConn][thread_no] = percent;
 	  fOldValues[nConn][thread_no] +=
-	      test_types[nConn] == TPC_A ? nProgressIncrement : 1;
+	      test_types[nConn] == TPC_A ? nProgressIncrement * nTrnPerCall: 1;
 	  if (time_now - curr_time_msec > BARS_REFRESH_INTERVAL)
 	    {
 	      gtk_progress_set_value (pToSet, fOldValues[nConn][thread_no]);
@@ -380,8 +380,7 @@ do_SetProgressText (char *pszProgress, int nConn, int thread_no,
 			continue;
 		      else
 			{
-			  fCurrTps =
-			      gtk_progress_get_value (GTK_PROGRESS
+			  fCurrTps = gtk_progress_get_value (GTK_PROGRESS
 			      (threads_progress[conn][thr])) /
 			      pTrnTimes[conn][thr];
 			  if (test_types[conn] == TPC_A
@@ -519,4 +518,10 @@ void
 do_RestartProgress (void)
 {
   gfCancel = FALSE;
+}
+
+BOOL
+isCancelled(void)
+{
+  return gfCancel;
 }

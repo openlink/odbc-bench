@@ -29,6 +29,7 @@
 #include "testpool.h"
 #include "LoginBox.h"
 #include "results.h"
+#include "ArrayParams.h"
 #include "ThreadOptions.h"
 #include "TPCATableProps.h"
 #include "TPCCTableProps.h"
@@ -473,6 +474,10 @@ edit_run (GtkWidget * widget, gpointer data)
 	    gtk_signal_connect_object (GTK_OBJECT (btn), "clicked",
 		GTK_SIGNAL_FUNC (ThreadOptions_save_config),
 		GTK_OBJECT (props));
+	  else if (IS_ARRAY_PARAMS (props))
+	    gtk_signal_connect_object (GTK_OBJECT (btn), "clicked",
+		GTK_SIGNAL_FUNC (ArrayParams_save_config),
+		GTK_OBJECT (props));
 	  gtk_signal_connect_object (GTK_OBJECT (btn), "clicked",
 	      GTK_SIGNAL_FUNC (gtk_widget_destroy), GTK_OBJECT (dlg));
 	  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->action_area), btn,
@@ -673,6 +678,8 @@ run_selected (GtkWidget * widget, gpointer data)
 
   gtk_widget_show_all (dlg);
   gtk_main ();
+
+  do_RestartProgress();
 
   if (bOk)
     {

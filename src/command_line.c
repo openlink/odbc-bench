@@ -95,7 +95,7 @@ stdout_showprogress (GtkWidget * widget, gchar * title, int nThreads,
 
 static void
 stdout_setprogresstext (char *pszProgress, int n_conn, int thread_no,
-    float nValue)
+    float nValue, int nTrnPerCall)
 {
   static BOOL bLEFT = TRUE;
   fputc (bLEFT ? '(' : ')', stderr);
@@ -122,7 +122,7 @@ dummy_setworkingitem (char *pszWorking)
 
 static void
 dummy_setprogresstext (char *pszProgress, int n_conn, int thread_no,
-    float nValue)
+    float nValue, int nTrnPerCall)
 {
 }
 

@@ -177,6 +177,8 @@ make_test_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
       run = xmlNewChild (tst, ns, "arun", NULL);
       sprintf (szProp, "%d", test->tpc._.nThreads);
       _xmlNewProp (run, "threads", szProp);
+      sprintf (szProp, "%d", test->tpc.a.nArrayParSize);
+      _xmlNewProp (run, "arrayparsize", szProp);
       sprintf (szProp, "%d", test->tpc.a.fUseCommit);
       _xmlNewProp (run, "transactions", szProp);
       sprintf (szProp, "%d", test->tpc.a.fDoQuery);
@@ -522,6 +524,9 @@ make_test_from_node (xmlNodePtr cur)
 	{
 	  XML_GET_PROP (cur, "threads", "");
 	  ret->tpc._.nThreads = atoi (szProp);
+
+	  XML_GET_PROP (cur, "arrayparsize", "");
+	  ret->tpc.a.nArrayParSize = atoi (szProp);
 
 	  XML_GET_PROP (cur, "transactions", "");
 	  ret->tpc.a.fUseCommit = atoi (szProp);
@@ -927,6 +932,7 @@ do_threads_run_all (int nTests, GList * tests_orig, int nMinutes,
   int nOption;			/* Index for sql options */
   int nIsolation;		/* Index for sql options */
   int nCursor;			/* Index for sql options */
+  int fParOpt;
   GList *iter = tests_orig, *tests = NULL;
   int supported;
   xmlAttrPtr prop;
@@ -1024,9 +1030,18 @@ do_threads_run_all (int nTests, GList * tests_orig, int nMinutes,
 			  FOR_ALL_TESTS (test->tpc.a.fSQLOption =
 			      grgiOption[nOption]);
 
+                          for(fParOpt = FALSE; fParOpt <= TRUE; fParOpt++)
+			    {
+			      CONTINUE_IF_NOT_SUPPORTED ((fParOpt == TRUE
+			        && (nOption != IDX_PARAMS || 
+			            !test->fBatchSupported)));
+			      FOR_ALL_TESTS (test->tpc.a.nArrayParSize =
+			          (fParOpt ? 10 : 0));
+
 			  /* All options are set, so do the run */
-			  sprintf (szTemp, "%s%s%s%s%s%s for",
+			      sprintf (szTemp, "%s%s%s%s%s%s%s for",
 			      grgiOptionNames[nOption],
+			        (fParOpt ? "/ArrParams" : ""),
 			      (fAsync ? "/Async" : ""),
 			      (fQuery ? "/Query" : ""),
 			      (fTrans ? "/Trans" : ""),
@@ -1045,6 +1060,7 @@ do_threads_run_all (int nTests, GList * tests_orig, int nMinutes,
 				      root));
 			    }
 			}
+		    }
 		    }
 		}		/* SQL options */
 	    }			/* Execution query  */
@@ -1068,6 +1084,7 @@ DoRunAll (test_t * test_orig, char *filename)
   int nOption;			/* Index for sql options */
   int nIsolation;		/* Index for sql options */
   int nCursor;			/* Index for sql options */
+  int fParOpt;
   char szTemp[128];
   xmlDocPtr doc;
   xmlNsPtr ns;
@@ -1144,15 +1161,24 @@ DoRunAll (test_t * test_orig, char *filename)
 		      for (nOption = 0; nOption < NUMITEMS (grgiOption);
 			  nOption++)
 			{
+			  /* If sprocs are not supported, then we have to skip */
+			  test->tpc.a.fSQLOption = grgiOption[nOption];
 			  if ((test->tpc.a.fSQLOption == IDX_SPROCS
 				  && !test->fProcsSupported))
 			    continue;
-			  /* If sprocs are not supported, then we have to skip */
-			  test->tpc.a.fSQLOption = grgiOption[nOption];
+
+                          for(fParOpt = FALSE; fParOpt <= TRUE; fParOpt++)
+			    {
+			      test->tpc.a.nArrayParSize = (fParOpt ? 10 : 0);
+			      if ((fParOpt == TRUE
+			         && (nOption != IDX_PARAMS || 
+			             !test->fBatchSupported)));
+			        continue;
 
 			  /* All options are set, so do the run */
-			  sprintf (szTemp, "%s%s%s%s%s%s for",
+			      sprintf (szTemp, "%s%s%s%s%s%s%s for",
 			      grgiOptionNames[nOption],
+			          (fParOpt ? "/ArrParams" : ""),
 			      (fAsync ? "/Async" : ""),
 			      (fQuery ? "/Query" : ""),
 			      (fTrans ? "/Trans" : ""),
@@ -1160,14 +1186,18 @@ DoRunAll (test_t * test_orig, char *filename)
 			      (fQuery ? crsr_names[nCursor] : ""));
 			  if (!DoRun (test, szTemp))
 			    {
-			      if (test->szSQLError[0])
+			          if (test->szSQLError[0]) {
 				make_result_node (test, ns, root);
+				    test->szSQLError[0] = '\0';
+			          } if (isCancelled())
 			      goto end;
 			    }
 			  else
 			    {
 			      make_result_node (test, ns, root);
 			    }
+			    }
+			  
 			}
 		    }
 		}		/* SQL options */

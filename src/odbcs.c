@@ -83,6 +83,7 @@ do_login (GtkWidget * widget, gpointer data)
   char szBuff[256];
   test_t *ptest = (test_t *) data;
   char *szDSN, *szUID, *szPWD;
+  HSTMT hstmt;
 
   if (widget)
     {
@@ -130,12 +131,48 @@ do_login (GtkWidget * widget, gpointer data)
       goto done;
     }
 
+  ptest->fBatchSupported = FALSE;
+  ptest->fSQLBatchSupported = FALSE;
+
   if (IS_A (*ptest))
     {
+      UDWORD  irow;
+      
+      rc = SQLAllocStmt (ptest->hdbc, &hstmt);
+      if (rc == SQL_ERROR)
+        {
+          SQLError (henv, ptest->hdbc, SQL_NULL_HSTMT, ptest->szSQLState, NULL,
+	      ptest->szSQLError, sizeof (ptest->szSQLError), NULL);
+          goto done;
+        }
+
+      rc = SQLParamOptions(hstmt, 10, &irow);
+      ptest->fBatchSupported = RC_SUCCESSFUL (rc);
+      SQLFreeStmt (hstmt, SQL_DROP);
+
+      if (ptest->fBatchSupported)
+        {
+          char szBuff[10];
+          rc = SQLGetInfo (ptest->hdbc,
+                 SQL_DRIVER_ODBC_VER, szBuff, sizeof (szBuff), NULL);
+          if (RC_SUCCESSFUL (rc))
+            {
+              UDWORD param;
+
+              szBuff[2] = 0;
+              if (atoi(szBuff) >= 3);
+                {
+                  rc = SQLGetInfo (ptest->hdbc, SQL_PARAM_ARRAY_SELECTS,
+                         &param, sizeof (param), NULL);
+                  if (RC_SUCCESSFUL (rc) && param == SQL_PAS_BATCH )
+                     ptest->fSQLBatchSupported = 1;
+                }
+            }
+        }
+
       if (ptest->nIsolationsSupported > 0 && ptest->tpc.a.txn_isolation > 0)
 	{
-	  rc =
-	      SQLSetConnectOption (ptest->hdbc, SQL_TXN_ISOLATION,
+	  rc = SQLSetConnectOption (ptest->hdbc, SQL_TXN_ISOLATION,
 	      ptest->tpc.a.txn_isolation);
 	  if (!RC_SUCCESSFUL (rc))
 	    ptest->tpc.a.txn_isolation = 0;
@@ -347,6 +384,25 @@ print_error (HENV env, HDBC dbc, HSTMT stmt, void *_test)
 	  strncpy (test->szSQLState, szState, sizeof (test->szSQLState));
 	}
     }
+}
+
+/*-------------------------------------------------------------------------*/
+/* fSQLParamOption 
+/*                                                                                                                                                 */
+/* Returns:  TRUE if function was successful, FALSE if there was an error  */
+/*-------------------------------------------------------------------------*/
+BOOL
+fSQLParamOptions (HSTMT hstmt,
+UDWORD crow,
+UDWORD *pirow)
+{
+  RETCODE rc;
+
+  rc = SQLParamOptions (hstmt, crow, pirow);
+  if (SQL_SUCCESS != rc)
+    vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, NULL);
+
+  return (RC_SUCCESSFUL (rc));
 }
 
 /*-------------------------------------------------------------------------*/

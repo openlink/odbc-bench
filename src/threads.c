@@ -45,19 +45,21 @@ typedef struct msg_s
   int nConn;
   int nThread;
   float percent;
+  int nTrnPerCall;
 }
 msg_t;
 
 
 static void
 threaded_SendProgress (char *pszProgress, int conn_no, int thread_no,
-    float percent)
+    float percent, int nTrnPerCall)
 {
   msg_t msg;
   msg.Type = 'R';
   msg.nConn = conn_no;
   msg.nThread = thread_no;
   msg.percent = percent;
+  msg.nTrnPerCall = nTrnPerCall;
   if (!signal_pipe[1] || sizeof (msg_t) != write (signal_pipe[1], &msg, sizeof (msg_t)))
     abort ();
 }
@@ -306,7 +308,7 @@ do_threads_run (int nConnCount, GList * tests, int nMinutes, char *szTitle)
       test->tpc._.nMinutes = nMinutes;
       do_login (NULL, test);
       get_dsn_data (test);
-      if (test->hdbc > 0 && IS_A (*test))
+      if (test->hdbc && IS_A (*test))
 	{
 	  fExecuteSql (test, "delete from HISTORY");
 	  SQLTransact (SQL_NULL_HENV, test->hdbc, SQL_COMMIT);
@@ -357,7 +359,7 @@ do_threads_run (int nConnCount, GList * tests, int nMinutes, char *szTitle)
 	      (time_remaining > 0 ? time_remaining : 0));
 	  nRuns += 1;
 	  lpBenchInfo->SetProgressText (szTemp, msg.nConn, msg.nThread,
-	      msg.percent);
+	      msg.percent, msg.nTrnPerCall);
 	  break;
 	}
     }

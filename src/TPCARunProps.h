@@ -46,6 +46,7 @@ extern "C"
     GtkVBox parent;
     test_t *lpBench;
 
+    GtkWidget *array_params;
     GtkWidget *thread_opts;
     GtkWidget *execdirect, *prepare_execute, *procedures;
     GtkWidget *async, *trans, *do100row;

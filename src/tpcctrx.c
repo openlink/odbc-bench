@@ -530,7 +530,7 @@ tpcc_run_test (GtkWidget * widget, test_t * lpCfg)
 	  lpCfg->tpc.c.nRounds,
 	  (long int) (lpCfg->tpc._.nMinutes * 60 - dDiff));
       lpCfg->SetProgressText (szTemp, lpCfg->tpc._.nConn,
-	  lpCfg->tpc._.nThreadNo, curr_time - start_time);
+	  lpCfg->tpc._.nThreadNo, curr_time - start_time, 1);
       if (lpCfg->fCancel ())
 	break;
       if (!do_10_pack (lpCfg))

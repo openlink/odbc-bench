@@ -33,6 +33,7 @@ odbc_bench_LDADD	= \
 	@XML_LIBS@
 
 odbc_bench_SOURCES = \
+	ArrayParams.c \
 	LoginBox.c \
 	ServerDSN.c \
 	TPCARunProps.c \
@@ -57,6 +58,7 @@ odbc_bench_SOURCES = \
 
 
 noinst_HEADERS	= \
+	ArrayParams.h \
 	LoginBox.h \
 	ServerDSN.h \
 	TPCARunProps.h \
