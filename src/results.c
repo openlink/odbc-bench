@@ -162,7 +162,7 @@ do_add_results_record (char *test_type, char *result_test_type,
 
   if (!res_fHaveResults && !driver_has_results)
     return;
-  if (!lstmt || ldbc)
+  if (!lstmt || !ldbc)
     {
       pane_log ("Not Connected\r\n");
       return;
