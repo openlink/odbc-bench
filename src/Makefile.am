@@ -19,36 +19,30 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
+SUBDIRS		= gtk
+
 bin_PROGRAMS	= odbc-bench
 
 INCLUDES	= \
 	-I$(top_srcdir)/odbc-bench \
+	-I$(top_srcdir)/odbc-bench/gtk \
 	@ODBC_CFLAGS@ \
 	@GTK_CFLAGS@ \
 	@XML_CFLAGS@
 
 odbc_bench_LDADD	= \
+	gtk/libodbcbench-gtk.la \
 	@ODBC_LIBS@ \
 	@GTK_LIBS@ \
 	@XML_LIBS@
 
 odbc_bench_SOURCES = \
-	ArrayParams.c \
-	LoginBox.c \
-	ServerDSN.c \
-	TPCARunProps.c \
-	TPCATableProps.c \
-	TPCCTableProps.c \
-	ThreadOptions.c \
 	command_line.c \
-	dialog.c \
 	isql_interface.c \
-	main.c \
 	odbcs.c \
+	olist.c \
 	prefs.c \
 	results.c \
-	status.c \
-	testpool.c \
 	tests.c \
 	threads.c \
 	time.c \
@@ -58,20 +52,13 @@ odbc_bench_SOURCES = \
 
 
 noinst_HEADERS	= \
-	ArrayParams.h \
-	LoginBox.h \
-	ServerDSN.h \
-	TPCARunProps.h \
-	TPCATableProps.h \
-	TPCCTableProps.h \
-	ThreadOptions.h \
 	odbcbench.h \
 	odbcinc.h \
 	results.h \
-	testpool.h \
 	thr.h \
 	timeacct.h \
 	tpca.h \
 	tpca_code.h \
 	tpcc.h \
-	tpccfun.h
+	tpccfun.h \
+	olist.h

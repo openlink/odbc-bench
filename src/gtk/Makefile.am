@@ -19,42 +19,30 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-bin_PROGRAMS	= odbc-bench
+lib_LTLIBRARIES		= libodbcbench-gtk.la
 
 INCLUDES	= \
 	-I$(top_srcdir)/odbc-bench \
+	-I$(top_srcdir)/odbc-bench/gtk \
 	@ODBC_CFLAGS@ \
 	@GTK_CFLAGS@ \
 	@XML_CFLAGS@
 
-odbc_bench_LDADD	= \
-	@ODBC_LIBS@ \
-	@GTK_LIBS@ \
-	@XML_LIBS@
-
-odbc_bench_SOURCES = \
+libodbcbench_gtk_la_LDFLAGS	= -static
+libodbcbench_gtk_la_SOURCES	= \
 	ArrayParams.c \
+	dialog.c \
 	LoginBox.c \
+	main.c \
+	results_gtk.c \
 	ServerDSN.c \
+	status.c \
+	testpool.c \
+	ThreadOptions.c \
 	TPCARunProps.c \
 	TPCATableProps.c \
 	TPCCTableProps.c \
-	ThreadOptions.c \
-	command_line.c \
-	dialog.c \
-	isql_interface.c \
-	main.c \
-	odbcs.c \
-	prefs.c \
-	results.c \
-	status.c \
-	testpool.c \
-	tests.c \
-	threads.c \
-	time.c \
-	tpca_code.c \
-	tpcc.c \
-	tpcctrx.c
+	util.c
 
 
 noinst_HEADERS	= \
@@ -65,13 +53,7 @@ noinst_HEADERS	= \
 	TPCATableProps.h \
 	TPCCTableProps.h \
 	ThreadOptions.h \
-	odbcbench.h \
-	odbcinc.h \
-	results.h \
+	odbcbench_gtk.h \
+	results_gtk.h \
 	testpool.h \
-	thr.h \
-	timeacct.h \
-	tpca.h \
-	tpca_code.h \
-	tpcc.h \
-	tpccfun.h
+	util.h
