@@ -1,3 +1,35 @@
+2003-08-27 15:39  source
+
+	* Updated version number to 0.99.19 (pvk)
+	
+2003-08-14 11:44  source
+
+	* Generate RPM for Linux in ./distrib so we do not have to be root (pvk)
+	
+2003-08-14 11:42  source
+
+	* Updated version of support files (pvk)
+	
+2003-08-14 11:41  source
+
+	* Fixed wrong tag in --enable-pthreads (pvk)
+	
+2003-08-14 11:38  source
+
+	* More files to ignore (pvk)
+	
+2003-08-12 23:18  source
+
+	* Removed mutex around disconnect as driver manager takes care of this (pvk)
+	
+2003-08-12 08:18  source
+
+	* Initialize data structure before use (pvk)
+	
+2003-08-08 16:14  source
+
+	* Updated log (pvk)
+	
 2003-08-08 16:13  source
 
 	* Added OpenLink style .taz package target (pvk)
@@ -207,7 +239,11 @@
 	
 2002-12-04 23:31  source
 
-	file getopt1.c was initially added on branch v_0_99_2-sergei.
+	file getopt.c was initially added on branch v_0_99_2-sergei.
+	
+2002-12-04 23:31  source
+
+	file .cvsignore was initially added on branch v_0_99_2-sergei.
 	
 2002-12-04 23:31  source
 
@@ -219,11 +255,7 @@
 	
 2002-12-04 23:31  source
 
-	file getopt.c was initially added on branch v_0_99_2-sergei.
-	
-2002-12-04 23:31  source
-
-	file .cvsignore was initially added on branch v_0_99_2-sergei.
+	file getopt.h was initially added on branch v_0_99_2-sergei.
 	
 2002-12-04 23:31  source
 
@@ -231,7 +263,7 @@
 	
 2002-12-04 23:31  source
 
-	file getopt.h was initially added on branch v_0_99_2-sergei.
+	file getopt1.c was initially added on branch v_0_99_2-sergei.
 	
 2002-12-04 17:39  source
 
@@ -286,18 +318,26 @@
 	* If a single tests fails, do not abort RUNALL mode
 	  (sergei)
 	
+2002-11-22 17:03  source
+
+	* Updated getopt version for windows (sergei)
+	
+2002-11-22 17:03  source
+
+	file getopt1.c was initially added on branch v_0_99_2-sergei.
+	
 2002-11-21 16:45  source
 
 	* This library does not need to be installed (pvk)
 	
 2002-11-20 10:16  source
 
-	file main_cmd.c was initially added on branch v_0_99_2-sergei.
+	* Added pure commandline version for systems that do not have GTK
+	  (sergei)
 	
 2002-11-20 10:16  source
 
-	* Added pure commandline version for systems that do not have GTK
-	  (sergei)
+	file main_cmd.c was initially added on branch v_0_99_2-sergei.
 	
 2002-11-18 11:10  source
 
@@ -329,23 +369,7 @@
 	
 2002-11-15 13:52  source
 
-	file util.c was initially added on branch v_0_99_2-sergei.
-	
-2002-11-15 13:52  source
-
-	file ThreadOptions.h was initially added on branch v_0_99_2-sergei.
-	
-2002-11-15 13:52  source
-
-	file Makefile.am was initially added on branch v_0_99_2-sergei.
-	
-2002-11-15 13:52  source
-
-	file olist.h was initially added on branch v_0_99_2-sergei.
-	
-2002-11-15 13:52  source
-
-	file results_gtk.c was initially added on branch v_0_99_2-sergei.
+	file LoginBox.h was initially added on branch v_0_99_2-sergei.
 	
 2002-11-15 13:52  source
 
@@ -353,15 +377,23 @@
 	
 2002-11-15 13:52  source
 
-	file ServerDSN.h was initially added on branch v_0_99_2-sergei.
+	file results_gtk.c was initially added on branch v_0_99_2-sergei.
 	
 2002-11-15 13:52  source
 
-	file gtk_bench.dsp was initially added on branch v_0_99_2-sergei.
+	file results_gtk.h was initially added on branch v_0_99_2-sergei.
 	
 2002-11-15 13:52  source
 
-	file testpool.c was initially added on branch v_0_99_2-sergei.
+	file ArrayParams.c was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file TPCARunProps.c was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file TPCCTableProps.c was initially added on branch v_0_99_2-sergei.
 	
 2002-11-15 13:52  source
 
@@ -369,35 +401,7 @@
 	
 2002-11-15 13:52  source
 
-	file TPCCTableProps.h was initially added on branch v_0_99_2-sergei.
-	
-2002-11-15 13:52  source
-
-	file ArrayParams.h was initially added on branch v_0_99_2-sergei.
-	
-2002-11-15 13:52  source
-
-	file ThreadOptions.c was initially added on branch v_0_99_2-sergei.
-	
-2002-11-15 13:52  source
-
-	file dialog.c was initially added on branch v_0_99_2-sergei.
-	
-2002-11-15 13:52  source
-
-	file LoginBox.h was initially added on branch v_0_99_2-sergei.
-	
-2002-11-15 13:52  source
-
-	file olist.c was initially added on branch v_0_99_2-sergei.
-	
-2002-11-15 13:52  source
-
-	file TPCATableProps.h was initially added on branch v_0_99_2-sergei.
-	
-2002-11-15 13:52  source
-
-	file ServerDSN.c was initially added on branch v_0_99_2-sergei.
+	file TPCATableProps.c was initially added on branch v_0_99_2-sergei.
 	
 2002-11-15 13:52  source
 
@@ -405,7 +409,47 @@
 	
 2002-11-15 13:52  source
 
-	file TPCARunProps.c was initially added on branch v_0_99_2-sergei.
+	file .cvsignore was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file TPCATableProps.h was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file ThreadOptions.c was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file ArrayParams.h was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file dialog.c was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file testpool.h was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file util.h was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file TPCCTableProps.h was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file util.c was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file ServerDSN.h was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file ServerDSN.c was initially added on branch v_0_99_2-sergei.
 	
 2002-11-15 13:52  source
 
@@ -414,23 +458,11 @@
 	
 2002-11-15 13:52  source
 
-	file TPCCTableProps.c was initially added on branch v_0_99_2-sergei.
+	file testpool.c was initially added on branch v_0_99_2-sergei.
 	
 2002-11-15 13:52  source
 
-	file util.h was initially added on branch v_0_99_2-sergei.
-	
-2002-11-15 13:52  source
-
-	file ArrayParams.c was initially added on branch v_0_99_2-sergei.
-	
-2002-11-15 13:52  source
-
-	file .cvsignore was initially added on branch v_0_99_2-sergei.
-	
-2002-11-15 13:52  source
-
-	file status.c was initially added on branch v_0_99_2-sergei.
+	file gtk_bench.dsp was initially added on branch v_0_99_2-sergei.
 	
 2002-11-15 13:52  source
 
@@ -438,15 +470,23 @@
 	
 2002-11-15 13:52  source
 
-	file TPCATableProps.c was initially added on branch v_0_99_2-sergei.
+	file olist.h was initially added on branch v_0_99_2-sergei.
 	
 2002-11-15 13:52  source
 
-	file results_gtk.h was initially added on branch v_0_99_2-sergei.
+	file ThreadOptions.h was initially added on branch v_0_99_2-sergei.
 	
 2002-11-15 13:52  source
 
-	file testpool.h was initially added on branch v_0_99_2-sergei.
+	file status.c was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file olist.c was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file Makefile.am was initially added on branch v_0_99_2-sergei.
 	
 2002-07-01 13:24  source
 
