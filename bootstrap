@@ -26,6 +26,7 @@
 
 aclocal
 autoheader
-automake -a -c -f
+automake -a -c 
 autoconf
-./configure --enable-maintainer-mode --with-pthreads --with-iodbc=/usr/local/iODBC
+
+./configure --enable-maintainer-mode --with-pthreads

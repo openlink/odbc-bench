@@ -19,7 +19,7 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-AUTOMAKE_OPTIONS	= gnu dist-zip 1.6
+AUTOMAKE_OPTIONS	= gnu dist-zip 1.4-p5
 SUBDIRS			= src scripts
 
 
