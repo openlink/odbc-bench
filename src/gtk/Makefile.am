@@ -19,15 +19,15 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-noinst_LTLIBRARIES		= libodbcbench-gtk.la
+noinst_LIBRARIES		= libodbcbench-gtk.a
 
 INCLUDES	= \
+	-I$(top_srcdir)/src \
 	@ODBC_CFLAGS@ \
 	@GTK_CFLAGS@ \
 	@XML_CFLAGS@
 
-libodbcbench_gtk_la_LDFLAGS	= -static
-libodbcbench_gtk_la_SOURCES	= \
+libodbcbench_gtk_a_SOURCES	= \
 	ArrayParams.c \
 	dialog.c \
 	LoginBox.c \
