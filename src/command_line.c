@@ -57,7 +57,7 @@ static double *ptpca_dDiffSum = NULL;
 #define BARS_REFRESH_INTERVAL bench_get_long_pref (DISPLAY_REFRESH_RATE)
 
 
-#define SHORT_OPTIONS "d:u:p:r:m:t:P:s:c:i:S:K:T:n1avVRCD"
+#define SHORT_OPTIONS "d:u:p:r:m:t:P:s:c:i:S:K:T:x1avVRCD"
 
 static void
 usage (void)
@@ -78,20 +78,21 @@ usage (void)
   "  -u -uid   - user id\n"
   "  -p -pwd   - password\n"
   "  -r -runs  - number of runs (default 1)\n"
-  "  -m -time  - duration of the run (mins) (default 5)\n"
+  "  -m -time  - duration of the run (mins) (default 1)\n"
   "  -t -threads    - number of threads (default 1)\n"
   "  -P -arrayparm  - size for used array of parameters (default 1) \n"
-  "  -s -test       - exec | proc | prepare (default RunAll tests)\n"
-  "  -n -autocommit - don't try to use transactions\n"
+  "  -s -test       - exec | proc | prepare | runall (default 'exec' test)\n"
+  "  -x -txn        - use transactions (default 'don't use transactions')\n"
   "  -1 -query      - do 100 row query\n"
   "  -a -async      - asynchronous execution\n"
   "  -c -cursor_type    - cursor type = forward | static | keyset | dynamic "
-  "                                   | mixed\n"
+  "                                   | mixed (default 'forward')\n"
   "  -i -txn_isolation  - transaction isolation level = uncommitted | committed \n"
   "                                                   | repeatable | serializable\n"
-  "  -S -rowset_size    - rowset size\n"
-  "  -K -keyset_size    - keyset size\n"
-  "  -T -trav_count     - traversal count\n"
+  "                                   (default 'Driver Default')\n"
+  "  -S -rowset_size    - rowset size (default 1)\n"
+  "  -K -keyset_size    - keyset size (default 1)\n"
+  "  -T -trav_count     - traversal count (default 1)\n"
   "  -C -create_tables  - create the tables and procedures, then exit\n"
   "  -D -drop_tables    - drop the tables and procedures, then exit\n"
   "  -rcreate_table     - create the results table, then exit\n"
@@ -283,7 +284,7 @@ static struct option long_options[] = {
   {"threads", 1, 0, 't'},
   {"arrayparm", 1, 0, 'P'},
   {"test", 1, 0, 's'},
-  {"autocommit", 0, 0, 'n'},
+  {"txn", 0, 0, 'x'},
   {"query", 0, 0, '1'},
   {"async", 0, 0, 'a'},
   {"cursor_type", 1, 0, 'c'},
@@ -336,12 +337,16 @@ do_command_line (int argc, char *argv[])
       test.SetProgressText = dummy_setprogresstext;
       test.StopProgress = dummy_stopprogress;
       test.fCancel = dummy_fcancel;
-      test.tpc.a.fUseCommit = TRUE;
       test.tpc.a.fExecAsync = FALSE;
       test.tpc.a.fDoQuery = FALSE;
       test.tpc.a.fSQLOption = -1;
+      test.tpc.a.fUseCommit = FALSE;
 
+      test.tpc._.nMinutes = 1;
       test.tpc.a.nTraversalCount = 1;
+      test.tpc.a.nRowsetSize = 1;
+      test.tpc.a.nKeysetSize = 1;
+      test.tpc.a.fSQLOption = IDX_PLAINSQL;
       pane_log = dummy_pane_log;
       memset (&test.szSQLError, 0, sizeof (test.szSQLError));
 
@@ -372,19 +377,19 @@ do_command_line (int argc, char *argv[])
 	  case 'm':
 	    test.tpc._.nMinutes = atoi (optarg);
 	    if (test.tpc._.nMinutes < 1)
-	      test.tpc._.nMinutes = 5;
+	      test.tpc._.nMinutes = 1;
 	    break;
 
 	  case 't':
 	    test.tpc._.nThreads = atoi (optarg);
-	    if (test.tpc._.nThreads < 0)
-	      test.tpc._.nThreads = 0;
+	    if (test.tpc._.nThreads < 2)
+	      test.tpc._.nThreads = 2;
 	    break;
 
 	  case 'P':
 	    test.tpc.a.nArrayParSize = atoi (optarg);
-	    if (test.tpc.a.nArrayParSize < 0)
-	      test.tpc.a.nArrayParSize = 0;
+	    if (test.tpc.a.nArrayParSize < 10)
+	      test.tpc.a.nArrayParSize = 10;
 	    break;
 
 	  case 's':
@@ -394,6 +399,8 @@ do_command_line (int argc, char *argv[])
 	      test.tpc.a.fSQLOption = IDX_PARAMS;
 	    else if (!strncmp (optarg, "exec", 4))
 	      test.tpc.a.fSQLOption = IDX_PLAINSQL;
+	    else if (!strncmp (optarg, "runall", 6))
+	      test.tpc.a.fSQLOption = -1;
 	    else
 	      {
 		fprintf (stdout, "Unknown test type : %s\n", optarg);
@@ -403,7 +410,7 @@ do_command_line (int argc, char *argv[])
 	    break;
 
 	  case 'n':
-	    test.tpc.a.fUseCommit = FALSE;
+	    test.tpc.a.fUseCommit = TRUE;
 	    break;
 	  case '1':
 	    test.tpc.a.fDoQuery = TRUE;
@@ -463,14 +470,20 @@ do_command_line (int argc, char *argv[])
 
 	  case 'S':
 	    test.tpc.a.nRowsetSize = atoi (optarg);
+	    if (test.tpc.a.nRowsetSize < 1)
+	      test.tpc.a.nRowsetSize = 1;
 	    break;
 
 	  case 'K':
 	    test.tpc.a.nKeysetSize = atoi (optarg);
+	    if (test.tpc.a.nKeysetSize < 1)
+	      test.tpc.a.nKeysetSize = 1;
 	    break;
 
 	  case 'T':
 	    test.tpc.a.nTraversalCount = atoi (optarg);
+	    if (test.tpc.a.nTraversalCount < 1)
+	      test.tpc.a.nTraversalCount = 1;
 	    break;
 
 	  case 'C':
