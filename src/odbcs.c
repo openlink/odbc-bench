@@ -99,8 +99,8 @@ do_login (test_t *ptest)
     }
   do_logout (ptest);
 
-  pane_log ("\n\nConnecting to %s : DSN=<%s> UID=<%s> PWD=<%s>\n",
-	ptest->szName, szDSN, szUID, szPWD);
+  pane_log ("\n\nConnecting to %s : DSN=<%s> UID=<%s>\n",
+	ptest->szName, szDSN, szUID);
 
   MUTEX_ENTER (env_mutex);
   rc = SQLAllocConnect (henv, &ptest->hdbc);
