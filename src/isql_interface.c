@@ -29,12 +29,12 @@
 
 #define SCRIPT_DELIMITER ';'
 
-#ifndef GTKBENCH_DEF_DIR
-#ifdef WIN32
-#define GTKBENCH_DEF_DIR "c:"
-#else
-#define GTKBENCH_DEF_DIR "/usr/lib/gtkbench"
-#endif
+#ifndef ODBCBENCH_DEF_DIR
+# ifdef WIN32
+#  define ODBCBENCH_DEF_DIR "C:/ODBCBench"
+# else
+#  define ODBCBENCH_DEF_DIR "/usr/lib/odbcbench"
+# endif
 #endif
 
 
@@ -45,11 +45,18 @@ open_file (char *szFileName, char *szMode)
   char *szNewName = NULL, *szHelper;
   FILE *fi = NULL;
 
-  if (NULL != (fi = fopen (szFileName, szMode)))	/* straight */
+  /*
+   *  File in current directory
+   */
+  if (NULL != (fi = fopen (szFileName, szMode)))
     return fi;
 
-  if (NULL != (szHelper = getenv ("GTKBENCH")))
-    {				/* from the environment */
+
+  /*
+   * File in environment  $ODBCBENCH
+   */
+  if (NULL != (szHelper = getenv ("ODBCBENCH")))
+    {
       szNewName = (char *) malloc (nFileName + strlen (szHelper) + 2);
       sprintf (szNewName, "%s/%s", szHelper, szFileName);
       fi = fopen (szNewName, szMode);
@@ -57,12 +64,17 @@ open_file (char *szFileName, char *szMode)
       if (fi)
 	return fi;
     }
-#if 0
-  {				/* registry */
+
+
+  /*
+   *  Via registery
+   */
+#ifdef WIN32
+  {
     HKEY GtkKey;
     DWORD Type, datasize = 0;
     if (ERROR_SUCCESS == RegOpenKey (HKEY_LOCAL_MACHINE,
-	    "SOFTWARE/OpenLink Software/GTKBench", &GtkKey))
+	    "SOFTWARE/OpenLink Software/ODBCBench", &GtkKey))
       {
 	if (ERROR_SUCCESS == RegQueryValueEx (GtkKey, "ScriptDir", NULL,
 		&Type, NULL, &datasize) && Type == REG_SZ)
@@ -88,13 +100,19 @@ open_file (char *szFileName, char *szMode)
 	g_free (szNewName);
 	szNewName = NULL;
       }
-    return fi;
+    if (fi)
+      return fi;
   }
 #endif
-  szNewName = (char *) malloc (nFileName + strlen (GTKBENCH_DEF_DIR) + 2);
-  sprintf (szNewName, "%s/%s", GTKBENCH_DEF_DIR, szFileName);
+
+  /*
+   *  Compiled in default
+   */
+  szNewName = (char *) malloc (nFileName + strlen (ODBCBENCH_DEF_DIR) + 2);
+  sprintf (szNewName, "%s/%s", ODBCBENCH_DEF_DIR, szFileName);
   fi = fopen (szNewName, szMode);
   XFREE (szNewName);
+
   return fi;
 }
 
