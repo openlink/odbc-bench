@@ -1,5 +1,427 @@
-Jun 28 2002, V0.99.2:
-  * Added Array Parameter support
+2003-03-07 14:44  source
 
-Jun 28 2002, V0.99.1:
-  * First release of odbc-bench source code
+	* Updated version number to 0.99.17
+	
+2003-03-07 14:37  source
+
+	* Use xmlSaveFormatFile to write more readable and indented .xml files
+	  (pvk)
+	
+2003-03-07 10:19  source
+
+	* Fixed writing resuls into remote ODBC database (sergei)
+	
+2003-03-06 16:37  source
+
+	* Updated version number to 0.99.16 (pvk)
+	
+2003-03-06 16:33  source
+
+	* Make pane_log output a little more readable (pvk)
+	
+2003-03-06 13:57  source
+
+	* Fixed problem creating tables with the odbc-bench-gtk program (ep)
+	
+2003-03-06 11:33  source
+
+	* Initialize rowcounters to 0
+	* Fixed displaying negative rowcounters
+	* Use correct rowcounter when displaying messages
+	  (pvk)
+	
+2003-03-06 11:26  source
+
+	* Removed -E commandline argument
+	* Commandline arguments -C and -D now exit after completion
+	* Do not continue processing after a failed login
+	* Fixed error handling
+	  (sergei)
+	
+2003-03-05 09:17  source
+
+	* Added extra commandline options (sergei)
+	
+2003-03-04 18:28  source
+
+	* Updated version numbers (pvk)
+	
+2003-03-04 18:19  source
+
+	* Removed PWD= from output log (pvk)
+	
+2003-02-11 12:16  source
+
+	* Added support to generate source and binary RPMs for RedHat (pvk)
+	
+2003-02-06 20:14  source
+
+	* Changed --with-pthreads into --enable-pthreads construction
+	* By default build pthread enabled applications
+	  (pvk)
+	
+2003-02-06 20:11  source
+
+	* Strip the binaries before installing them in a tarball
+	  (pvk)
+	
+2003-02-06 20:10  source
+
+	* Link with gtk/libodbcbench-gtk.a library instead of convenience library
+	* Link some libraries in statically, so we do not have to ship them
+	  along with the binaries
+	  (pvk)
+	
+2003-02-06 20:07  source
+
+	* Fixed problem with make distcheck
+	* Build a standard library instead of a libtool convenience library
+	  (pvk)
+	
+2003-02-06 14:47  source
+
+	* Added disclaimer about usability of scores
+	* Fixed comment in source headers
+	* Renamed tests to "TPC-A like benchmark" and "TPC-C like benchmark"
+	  (pvk)
+	
+2003-01-16 10:04  source
+
+	* Updated version number to 0.99.12 (pvk)
+	
+2003-01-16 10:02  source
+
+	* Reset Database type when changing DSN's (sergei/B-3965)
+	
+2003-01-10 08:46  source
+
+	* Updated version number to 0.99.11 (pvk)
+	
+2003-01-07 02:44  source
+
+	* Fixed name of RESULTS table to be uppercase (pvk)
+	
+2003-01-07 02:12  source
+
+	* Fixed bug so the tests actually run (sergei)
+	
+2003-01-03 14:54  source
+
+	* Removed C++ comments as some C compilers cannot deal with them (pvk)
+	
+2003-01-03 10:43  source
+
+	* Updated version to 0.99.10 (sergei)
+	
+2003-01-03 10:42  source
+
+	* Fixed problem with transaction isolation commandline flag
+	* Fixed problem logging errors
+	* Added commandline flag to create results table
+	* Start each test on a fresh connection
+	  (sergei)
+	
+2002-12-27 08:46  source
+
+	* Updated version to 0.99.9 (sergei)
+	
+2002-12-27 08:45  source
+
+	* Added status information for each test to the results table (sergei)
+	
+2002-12-27 08:42  source
+
+	* Added message (sergei)
+	
+2002-12-27 08:40  source
+
+	* Added extra messages during connect (sergei)
+	
+2002-12-27 08:39  source
+
+	* Fixed size of various fields  (sergei)
+	
+2002-12-27 08:34  source
+
+	* Fixed divide by zero problem (sergei)
+	
+2002-12-05 00:17  source
+
+	* Updated version number to 0.99.8 (pvk)
+	
+2002-12-05 00:10  source
+
+	* Merged v_0_99_2-sergei branch back to HEAD (pvk)
+	
+2002-12-04 23:43  source
+
+	* Updated version number to 0.99.7 (pvk)
+	
+2002-12-04 23:41  source
+
+	* Cleaned up include path settings (pvk)
+	
+2002-12-04 23:40  source
+
+	* Always include getopt.h (pvk)
+	
+2002-12-04 23:38  source
+
+	* Moved files from ~/src/win32 to ~/lib (pvk)
+	
+2002-12-04 23:31  source
+
+	file getopt1.c was initially added on branch v_0_99_2-sergei.
+	
+2002-12-04 23:31  source
+
+	file mycrt.c was initially added on branch v_0_99_2-sergei.
+	
+2002-12-04 23:31  source
+
+	* Moved files from ~/src/win32 to ~/lib (pvk)
+	
+2002-12-04 23:31  source
+
+	file getopt.c was initially added on branch v_0_99_2-sergei.
+	
+2002-12-04 23:31  source
+
+	file .cvsignore was initially added on branch v_0_99_2-sergei.
+	
+2002-12-04 23:31  source
+
+	file Makefile.am was initially added on branch v_0_99_2-sergei.
+	
+2002-12-04 23:31  source
+
+	file getopt.h was initially added on branch v_0_99_2-sergei.
+	
+2002-12-04 17:39  source
+
+	* Updated version number to 0.99.6 (pvk)
+	
+2002-12-04 16:15  source
+
+	* Switches server type names so Sybase can be used for recent versions
+	  and Sybase4 for backward compatibility (pvk)
+	
+2002-12-04 16:07  source
+
+	* Regenerated (pvk)
+	
+2002-12-04 16:05  source
+
+	* Not all machines have TRUE and FALSE defines in their header files (pvk)
+	
+2002-12-04 16:04  source
+
+	* These files need to be distributed for Windows builds (pvk)
+	
+2002-12-04 16:02  source
+
+	* Fixed build process so only the commandline version of ODBC-Bench
+	  can be build on systems that have no GTK support
+	  (pvk)
+	
+2002-12-04 16:00  source
+
+	* These scripts need to be distributed as well (pvk)
+	
+2002-12-04 15:57  source
+
+	* Rewrote sleep_msecs as a portable function instead of a simple macro (pvk)
+	
+2002-12-02 13:37  source
+
+	* Added new stored TPCA stored procedure for Sybase
+	* Fixed output of traversal count
+	* Fixed compiler warnings
+	
+2002-12-02 13:32  source
+
+	* Fixed prototype (sergei)
+	
+2002-11-22 17:06  source
+
+	* Added new commandline option
+	* Fixed command line handling on windows
+	* Fixed bug in RUNALL mode
+	* If a single tests fails, do not abort RUNALL mode
+	  (sergei)
+	
+2002-11-21 16:45  source
+
+	* This library does not need to be installed (pvk)
+	
+2002-11-20 10:16  source
+
+	file main_cmd.c was initially added on branch v_0_99_2-sergei.
+	
+2002-11-20 10:16  source
+
+	* Added pure commandline version for systems that do not have GTK
+	  (sergei)
+	
+2002-11-18 11:10  source
+
+	* More files to ignore (sergei)
+	
+2002-11-18 11:10  source
+
+	* Fixed small build issues on Unix (sergei)
+	
+2002-11-18 11:09  source
+
+	* Fixed handling of messages (sergei)
+	
+2002-11-18 11:09  source
+
+	* Fixed Makefile.am rules so odbc-bench can be build on Unix (sergei)
+	
+2002-11-18 11:05  source
+
+	file .cvsignore was initially added on branch v_0_99_2-sergei.
+	
+2002-11-18 11:05  source
+
+	* Updated configure support files (sergei)
+	
+2002-11-18 11:04  source
+
+	* Added libtool support (sergei)
+	
+2002-11-15 13:52  source
+
+	file util.c was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file ThreadOptions.h was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file Makefile.am was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file olist.h was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file results_gtk.c was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file main.c was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file ServerDSN.h was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file gtk_bench.dsp was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file testpool.c was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file TPCARunProps.h was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file TPCCTableProps.h was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file ArrayParams.h was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file ThreadOptions.c was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file dialog.c was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file LoginBox.h was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file olist.c was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file TPCATableProps.h was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file ServerDSN.c was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file odbcbench_gtk.h was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file TPCARunProps.c was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	* Split code into graphic and non-graphic parts
+	  (sergei)
+	
+2002-11-15 13:52  source
+
+	file TPCCTableProps.c was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file util.h was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file ArrayParams.c was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file .cvsignore was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file status.c was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file LoginBox.c was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file TPCATableProps.c was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file results_gtk.h was initially added on branch v_0_99_2-sergei.
+	
+2002-11-15 13:52  source
+
+	file testpool.h was initially added on branch v_0_99_2-sergei.
+	
+2002-07-01 13:24  source
+
+	* Fixed backward compatibility with automake-1.4-p5 as most distributions
+	  still use this (pvk)
+	
+2002-06-28 13:06  source
+
+	* Added Array Parameter support (sm)
+	
+2002-06-28 12:17  source
+
+	* Initial checkin of odbc-bench source code (pvk)
+	
