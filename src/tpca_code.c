@@ -2871,8 +2871,7 @@ fExecuteQuery (test_t * lpBench,	/* Bench info */
     {
       SQLSetStmtOption (hstmt, SQL_CURSOR_TYPE,
 	  lpBench->tpc.a.nCursorType ==
-	  SQL_CURSOR_MIXED ? SQL_CURSOR_KEYSET_DRIVEN : lpBench->tpc.
-	  a.nCursorType);
+	  SQL_CURSOR_MIXED ? SQL_CURSOR_KEYSET_DRIVEN : lpBench->tpc.a.nCursorType);
       if (lpBench->tpc.a.nCursorType == SQL_CURSOR_MIXED)
 	SQLSetStmtOption (hstmt, SQL_KEYSET_SIZE, lpBench->tpc.a.nKeysetSize);
       SQLSetStmtOption (hstmt, SQL_ROWSET_SIZE, lpBench->tpc.a.nRowsetSize);
@@ -3308,7 +3307,7 @@ fBindParameters (test_t * lpBench,
 static BOOL
 fBindParametersArray (test_t * lpBench,
     int nArrayParSize,
-    unsigned long * nParamsProcessed,
+    SQLULEN * nParamsProcessed,
     long * pnAcctNum,
     long * pnTellerNum,
     long * pnBranchNum,
@@ -3577,7 +3576,7 @@ fRunTransArray (test_t * lpBench,	/* Benchmark info */
   int ret_code;
   int i, nCallCnt;
   int nArrayParSize;
-  unsigned long  nParamsProcessed;
+  SQLULEN  nParamsProcessed;
 
   hstmtUpdAcct = hstmtSelBal = hstmtUpdTeller = hstmtUpdBranch = 
     hstmtInsHist = SQL_NULL_HSTMT;
@@ -3902,7 +3901,7 @@ general_error:
   if (fDone)
     pane_log ("\r\n\r\nBenchmark finished.\r\n");
   else
-    pane_log ("\r\n\r\nBenchmark is ended with an error.\r\n");
+    pane_log ("\r\n\r\nBenchmark ended with an error.\r\n");
 
   SQLFreeStmt (lpBench->hstmt, SQL_CLOSE);
   SQLFreeStmt (lpBench->hstmt, SQL_UNBIND);
@@ -4276,7 +4275,7 @@ general_error:
   if (fDone)
     pane_log ("\r\n\r\nBenchmark finished.\r\n");
   else
-    pane_log ("\r\n\r\nBenchmark is ended with an error.\r\n");
+    pane_log ("\r\n\r\nBenchmark ended with an error.\r\n");
 
   SQLFreeStmt (lpBench->hstmt, SQL_CLOSE);
   SQLFreeStmt (lpBench->hstmt, SQL_UNBIND);

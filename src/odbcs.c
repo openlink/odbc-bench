@@ -159,7 +159,7 @@ do_login (test_t *ptest)
               SQLINTEGER param;
 
               szBuff[2] = 0;
-              if (atoi(szBuff) >= 3);
+              if (atoi(szBuff) >= 3)
                 {
                   rc = SQLGetInfo (ptest->hdbc, SQL_PARAM_ARRAY_SELECTS,
                          &param, sizeof (param), NULL);

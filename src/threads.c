@@ -107,7 +107,7 @@ dummy_StopProgress (void)
 static void *
 worker_func (void *data)
 #elif defined(WIN32)
-     static DWORD WINAPI worker_func (void *data)
+static unsigned int WINAPI worker_func (void *data)
 #endif
 {
   test_t *lpBenchInfo = (test_t *) data;
@@ -152,9 +152,9 @@ worker_func (void *data)
     abort ();
 
 #if defined(PTHREADS)
-  return ((void *) result);
+  return ((void *) (long) result);
 #elif defined(WIN32)
-  return ((DWORD) result);
+  return ((unsigned int) result);
 #endif
 }
 
