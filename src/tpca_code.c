@@ -296,6 +296,7 @@ DRIVERMAP DriverMap[] = {
   {"TEXT", 1, 2, -1, FALSE, -1},
   {"BTRIEVE", 7, 2, 0, FALSE, -1},
   {"ANSI", 8, 0, 0, FALSE, -1},
+  {"Sybase 10", 5, 0, 0, FALSE, 6},
   {"Sybase", 5, 0, 0, FALSE, 1},
   {"Intersolv dBASE", 9, 2, 0, FALSE, -1},
   {"Informix", 10, 0, 0, FALSE, 4},
@@ -338,9 +339,9 @@ static INDEXTYPEMAP IndexTypeMap[] = {
   {"unique clustered"}
 };
 
-static char *procedures[] = {
+static char *procedures[][2] = {
   /* 0: Virtuoso */
-  "create procedure ODBC_BENCHMARK(\n"
+  {"create procedure ODBC_BENCHMARK(\n"
       "	IN vhistid   integer,\n"
       "	IN  acct     integer,\n"
       "	IN  vteller  integer,\n"
@@ -364,9 +365,11 @@ static char *procedures[] = {
       "	values\n"
       "		(vhistid, acct, vteller, vbranch, delta, now(), vfiller);\n"
       "}\n",
+      NULL
+  },
 
   /* 1: SQLServer */
-  "CREATE PROCEDURE ODBC_BENCHMARK\n"
+  {"CREATE PROCEDURE ODBC_BENCHMARK\n"
       "        @histid  int, \n"
       "        @acct    int, \n"
       "        @teller  int, \n"
@@ -393,9 +396,11 @@ static char *procedures[] = {
       "VALUES\n"
       "	(@histid, @acct, @teller, @branch, @delta, getdate(), @filler)\n"
       "COMMIT TRANSACTION\n",
+      NULL
+  },
 
   /* 2: Oracle */
-  "create or replace procedure ODBC_BENCHMARK(\n"
+  {"create or replace procedure ODBC_BENCHMARK(\n"
       "	vhistid IN  number,\n"
       "	acct    IN  number,\n"
       "	vteller IN  number,\n"
@@ -413,9 +418,11 @@ static char *procedures[] = {
       "values\n"
       "	(vhistid, acct, vteller, vbranch, delta, SYSDATE, vfiller);\n"
       "COMMIT WORK;\n" "END  ODBC_BENCHMARK;\n",
+      NULL
+  },
 
   /* 3: Ingres II */
-  "CREATE PROCEDURE ODBC_BENCHMARK (\n"
+  {"CREATE PROCEDURE ODBC_BENCHMARK (\n"
   "   histid  integer, \n"
   "   acct    integer, \n"
   "   telid   integer, \n"
@@ -434,9 +441,11 @@ static char *procedures[] = {
   "   VALUES\n"
   "   (:histid, :acct, :telid, :branch, :delta, date('now'), :filler);\n"
   " END\n",
+      NULL
+  },
 
   /* 4: Informix */
-  "create procedure odbc_benchmark (\n"
+  {"create procedure odbc_benchmark (\n"
   " vhistid  integer,\n"
   " acct     integer,\n"
   " vteller  integer,\n"
@@ -452,9 +461,11 @@ static char *procedures[] = {
   "    values\n"
   "      (vhistid, acct, vteller, vbranch, delta, current, vfiller);\n"
   "end procedure;\n",
+      NULL
+  },
 
   /* 5: Progress 9.1 SQL92 */
-  "create procedure ODBC_BENCHMARK (IN vhistid integer, IN acct  integer, "
+  {"create procedure ODBC_BENCHMARK (IN vhistid integer, IN acct  integer, "
   "  IN vteller integer, IN vbranch integer, IN delta  float, " 
   "  INOUT balance float, IN vfiller varchar(23))\n"
   "BEGIN\n"
@@ -497,7 +508,40 @@ static char *procedures[] = {
   "  Update_Teller.execute();\n"
   "  Update_Branch.execute();\n"
   "  Insert_History.execute();\n"
-  "END"
+  "END",
+  NULL
+  },
+
+  /* 6: Sybase 10 */
+  {"CREATE PROCEDURE ODBC_BENCHMARK\n"
+      "        @histid  int, \n"
+      "        @acct    int, \n"
+      "        @teller  int, \n"
+      "        @branch  int, \n"
+      "        @delta   float,\n"
+      "        @balance float output,\n"
+      "        @filler  char(22)\n"
+      "AS\n"
+      "BEGIN TRANSACTION\n"
+      "UPDATE    ACCOUNT\n"
+      "    SET   BALANCE = BALANCE + @delta\n"
+      "    WHERE ACCOUNT = @acct\n"
+      "SELECT    @balance = BALANCE\n"
+      "    FROM  ACCOUNT \n"
+      "    WHERE ACCOUNT = @acct\n"
+      "UPDATE    TELLER\n"
+      "    SET   BALANCE = BALANCE + @delta\n"
+      "    WHERE TELLER  = @teller\n"
+      "UPDATE    BRANCH\n"
+      "    SET   BALANCE = BALANCE + @delta\n"
+      "    WHERE BRANCH  = @branch\n"
+      "INSERT HISTORY\n"
+      "	(HISTID, ACCOUNT, TELLER, BRANCH, AMOUNT, TIMEOFTXN, FILLER)\n"
+      "VALUES\n"
+      "	(@histid, @acct, @teller, @branch, @delta, getdate(), @filler)\n"
+      "COMMIT TRANSACTION\n",
+      "exec sp_procxmode ODBC_BENCHMARK, 'anymode'"
+  },
 };
 
 int
@@ -1007,8 +1051,13 @@ vCreateProcedure (test_t * ptest	/* Run Configuration Parameters */
       pane_log ("Adding a procedure for %s\r\n",
 	  DriverMap[ptest->tpc.a.uwDrvIdx].szDbName);
       /* Execute Index Create Statement */
-      rc = SQLExecDirect (ptest->hstmt, procedures[uwIdx], SQL_NTS);
+      rc = SQLExecDirect (ptest->hstmt, procedures[uwIdx][0], SQL_NTS);
       IF_ERR (ptest->hstmt, rc, ptest);
+      if (procedures[uwIdx][1])
+        {
+          rc = SQLExecDirect (ptest->hstmt, procedures[uwIdx][1], SQL_NTS);
+          IF_ERR (ptest->hstmt, rc, ptest);
+        }
     }
 
   pane_log ("\r\n\r\n");
@@ -4319,8 +4368,8 @@ CalcStats (test_t * lpBench,	/* Main stat information */
   if (lpBench->tpc.a.fDoQuery)
     {
       strcat (szOptions, "Query/");
-      if (lpBench->tpc.a.nCursorType > 0 && lpBench->nCursorsSupported > 0 &&
-	  lpBench->tpc.a.fSQLOption != IDX_SPROCS)
+      if (lpBench->tpc.a.nCursorType > 0 && lpBench->nCursorsSupported > 0)
+/*	  lpBench->tpc.a.fSQLOption != IDX_SPROCS)*/
 	{
 	  sprintf (szBuf, "%s crsr (rowset %d)/",
 	      cursor_type_name (lpBench->tpc.a.nCursorType, "Unknown"),
@@ -4329,7 +4378,7 @@ CalcStats (test_t * lpBench,	/* Main stat information */
 
 	  if (lpBench->tpc.a.nTraversalCount > 1)
 	    {
-	      sprintf (szBuf, "%d Traversals",
+	      sprintf (szBuf, "%d Traversals/",
 		  lpBench->tpc.a.nTraversalCount);
 	      strcat (szOptions, szBuf);
 	    }
