@@ -40,7 +40,7 @@ static volatile BOOL do_cancel = FALSE;
 static int signal_pipe[2];
 int nProgressIncrement = 0;
 
-typedef struct msg_s
+typedef struct bench_msg_s
 {
   char Type;
   int nConn;
@@ -50,14 +50,14 @@ typedef struct msg_s
   long secs_remain;
   double tpca_dDiffSum;
 }
-msg_t;
+bench_msg_t;
 
 
 static void
 threaded_SendProgress (char *pszProgress, int conn_no, int thread_no,
     float percent, int nTrnPerCall, long secs_remain, double tpca_dDiffSum)
 {
-  msg_t msg;
+  bench_msg_t msg;
   msg.Type = 'R';
   msg.nConn = conn_no;
   msg.nThread = thread_no;
@@ -65,7 +65,7 @@ threaded_SendProgress (char *pszProgress, int conn_no, int thread_no,
   msg.nTrnPerCall = nTrnPerCall;
   msg.secs_remain = secs_remain;
   msg.tpca_dDiffSum = tpca_dDiffSum;
-  if (!signal_pipe[1] || sizeof (msg_t) != write (signal_pipe[1], &msg, sizeof (msg_t)))
+  if (!signal_pipe[1] || sizeof (bench_msg_t) != write (signal_pipe[1], &msg, sizeof (bench_msg_t)))
     abort ();
 }
 
@@ -110,7 +110,7 @@ worker_func (void *data)
 {
   test_t *lpBenchInfo = (test_t *) data;
   DWORD result = TRUE;
-  msg_t msg;
+  bench_msg_t msg;
 
   msg.Type = 'F';
   msg.nConn = lpBenchInfo->tpc._.nConn;
@@ -145,7 +145,7 @@ worker_func (void *data)
 	}
     }
 
-  if (!signal_pipe[1] || sizeof (msg_t) != write (signal_pipe[1], &msg, sizeof (msg_t)))
+  if (!signal_pipe[1] || sizeof (bench_msg_t) != write (signal_pipe[1], &msg, sizeof (bench_msg_t)))
     abort ();
 
 #if defined(PTHREADS)
@@ -294,7 +294,7 @@ do_threads_run (int nConnCount, OList * tests, int nMinutes, char *szTitle)
   long nRuns = 0;
   FILE *fi;
   THREAD_T **workers;
-  msg_t msg;
+  bench_msg_t msg;
   time_t start_time, now_time;
   long time_remaining;
 #ifdef WIN32
@@ -363,7 +363,7 @@ do_threads_run (int nConnCount, OList * tests, int nMinutes, char *szTitle)
     }
 
   nThreadsWork = nThreads;
-  while (nThreadsWork && fread (&msg, sizeof (msg_t), 1, fi))
+  while (nThreadsWork && fread (&msg, sizeof (bench_msg_t), 1, fi))
     {
       if (lpBenchInfo->fCancel ())
 	do_cancel = TRUE;
