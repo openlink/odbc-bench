@@ -1,0 +1,426 @@
+AC_PREREQ(2.53)
+AC_REVISION($Id$)
+#
+#  configure.in
+#  
+#  odbc-bench - a TPCA and TPCC benchmark program for databases 
+#  Copyright (C) 2000-2002 OpenLink Software <odbc-bench@openlinksw.com>
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+##########################################################################
+##									##
+##  Initialization							##
+##									##
+##########################################################################
+
+AC_INIT([OpenLink ODBC Benchmark Utility],
+        [0.99.1],
+	[odbc-bench@openlinksw.com],
+	[odbc-bench])
+
+AC_CONFIG_SRCDIR([src/odbcbench.h])
+AC_CONFIG_AUX_DIR(admin)
+AM_CONFIG_HEADER(src/config.h)
+AM_INIT_AUTOMAKE([odbc-bench], [0.99.1])
+AC_CANONICAL_HOST
+AM_MAINTAINER_MODE
+
+
+##########################################################################
+##									##
+##  Check whether config.cache belongs to this machine			##
+##									##
+##########################################################################
+
+AC_MSG_CHECKING(cached information)
+hostcheck="$host"
+AC_CACHE_VAL(ac_cv_hostcheck, [ ac_cv_hostcheck="$hostcheck" ])
+if test "$ac_cv_hostcheck" != "$hostcheck"; then
+    AC_MSG_RESULT(changed)
+
+    AC_MSG_WARN([Running on a different architecture.])
+    AC_MSG_WARN([Can't use cached values.])
+    AC_MSG_ERROR([Please remove the invalid config.cache file, then try again.])
+else
+    AC_MSG_RESULT(ok)
+fi
+
+
+##########################################################################
+##									##
+##  Check for C compiler						##
+##									##
+##########################################################################
+
+AC_PROG_CC
+AC_PROG_CC_C_O
+AC_PROG_CC_STDC
+AC_PROG_CPP
+AC_LANG([C])
+
+
+##########################################################################
+##									##
+##  Check for standard programs						##
+##									##
+##########################################################################
+
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+dnl AC_PROG_RANLIB
+dnl AC_LIBTOOL_DLOPEN
+dnl AM_PROG_LIBTOOL
+
+
+##########################################################################
+##									##
+##  Check for standard header files					##
+##									##
+##########################################################################
+
+AC_HEADER_STDC
+
+
+##########################################################################
+##									##
+##  Check for specific library functions				##
+##									##
+##########################################################################
+
+AC_CHECK_FUNCS(strerror setenv)
+
+
+##########################################################################
+##									##
+##  Check for GTK library functions					##
+##									##
+##########################################################################
+
+AM_PATH_GTK(1.2.3, [], [], gthread )
+
+
+##########################################################################
+##									##
+##  Check for XML2 library functions					##
+##									##
+##########################################################################
+
+AM_PATH_XML2(2.4.0)
+
+
+##########################################################################
+##									##
+##  Check for dynamic load module					##
+##									##
+##########################################################################
+
+AC_CHECK_HEADERS(dlfcn.h dl.h dld.h)
+
+LIBADD_DL=
+
+AC_CHECK_LIB(dl, dlopen, 
+[
+    AC_DEFINE(HAVE_LIBDL, 1, [Define if you have the -ldl library]) 
+    LIBADD_DL="-ldl"
+],
+[
+    AC_CHECK_FUNCS(dlopen _dlopen, 
+    [
+	AC_DEFINE(HAVE_LIBDL, 1,[Define if you have the -ldl library])
+    ])
+])
+
+AC_CHECK_FUNC(shl_load, 
+[
+    AC_DEFINE(HAVE_SHL_LOAD, 1, [Define if you have the shl_load function])
+],
+[
+    AC_CHECK_LIB(dld, shl_load, 
+    [
+	AC_DEFINE(HAVE_SHL_LOAD, 1, [Define if you have the shl_load function]) 
+	LIBADD_DL="$LIBADD_DL -ldld"
+    ])
+])
+
+AC_CHECK_LIB(dld, dld_link, 
+[
+    AC_DEFINE(HAVE_DLD, 1, [Define if you have the -ldld library])
+    test "x$ac_cv_lib_dld_shl_load" = yes || LIBADD_DL="$LIBADD_DL -ldld"
+])
+
+AC_CHECK_FUNC(NSCreateObjectFileImageFromFile,
+[
+    AC_DEFINE(HAVE_DYLD, 1, [Define if you have the DYLD library])
+])
+
+AC_SUBST(LIBADD_DL)
+
+
+##########################################################################
+##									##
+##  Checkout pthread situation						##
+##									##
+##########################################################################
+
+AC_ARG_WITH(pthreads,
+[  --with-pthreads         build pthread implementation if possible],
+[
+    CFLAGS="$CFLAGS -DWITH_PTHREADS -D_REENTRANT"
+    AC_CHECK_LIB(pthreads, pthread_create,
+    [
+	if test "$host_os" = "osf3.2"
+	then
+	  CFLAGS="$CFLAGS -DOLD_PTHREADS"
+	  LIBS="$LIBS -lpthreads -lmach -lc_r"
+	else
+	  LIBS="$LIBS -lpthreads"
+	fi
+    ],
+    [
+	AC_CHECK_LIB(pthread, pthread_create, [LIBS="$LIBS -lpthread"])
+    ])
+])
+
+
+##########################################################################
+##									##
+##  Checkout ODBC situation						##
+##									##
+##########################################################################
+
+#
+#  Put separator between options
+#
+AC_ARG_WITH([],[
+ODBC configuration:],[])
+
+#
+#  Initialize variables
+#
+found_odbc=no
+ODBC_CFLAGS=
+ODBC_LIBS=
+
+
+#
+#  Check for iODBC support
+#
+if test "$found_odbc" = "no"
+then
+AC_ARG_WITH(iodbc,
+[  --with-iodbc(=DIR)      Select iODBC support. 
+                              DIR is the iODBC base install directory 
+                              (default=/usr/local)],
+[
+    if test "$withval" = "yes"
+    then
+	withval=/usr/local
+    fi
+
+    AC_PATH_PROG(IODBC_CONFIG, iodbc-config, no, [$PATH:$withval/bin])
+
+    AC_MSG_CHECKING([for iODBC support])
+    if test -x "$IODBC_CONFIG"
+    then
+	found_odbc=yes
+	ODBC_CFLAGS=`$IODBC_CONFIG --cflags`
+	ODBC_LIBS=`$IODBC_CONFIG --static-libs`
+	AC_MSG_RESULT(yes)
+    elif test -f "$withval/lib/libiodbc.a"
+    then
+	found_odbc=yes
+	ODBC_CFLAGS="-I$withval/include"
+	ODBC_LIBS="$withval/lib/libiodbc.a"
+	AC_MSG_RESULT(yes)
+    else
+	AC_MSG_RESULT(no)
+    fi
+])
+fi
+
+
+#
+#  Check for OpenLink odbcsdk support
+#
+if test "$found_odbc" = "no"
+then
+AC_ARG_WITH(odbcsdk,
+[  --with-odbcsdk(=DIR)    Select OpenLink odbcsdk support. 
+                              DIR is the odbcsdk base install directory 
+                              (default=/usr/local)],
+[
+    if test "$withval" = "yes"
+    then
+	withval=/usr/local
+    fi
+
+    AC_MSG_CHECKING([for OpenLink odbcsdk support])
+    if test -f "$withval/lib/libiodbc.a"
+    then
+	found_odbc=yes
+	ODBC_CFLAGS="-I$withval/include"
+	ODBC_LIBS="$withval/lib/libiodbc.a"
+	AC_MSG_RESULT(yes)
+    else
+	AC_MSG_RESULT(no)
+    fi
+])
+fi
+
+
+#
+#  Check for UnixODBC support
+#
+if test "$found_odbc" = "no"
+then
+AC_ARG_WITH(unixodbc,
+[  --with-unixodbc(=DIR)   Select UnixODBC support. 
+                              DIR is the UnixODBC base install directory 
+                              (default=/usr/local)],
+[
+    if test "$withval" = "yes"
+    then
+	withval=/usr/local
+    fi
+
+    AC_MSG_CHECKING([for UnixODBC support])
+    if test -f "$withval/lib/libodbc.la"
+    then
+	found_odbc=yes
+	ODBC_CFLAGS="-I$withval/include"
+	ODBC_LIBS="-L$withval/lib -lodbc"
+	AC_MSG_RESULT(yes)
+    else
+	AC_MSG_RESULT(no)
+    fi
+])
+fi
+
+
+#
+#  Check for custom ODBC support
+#
+if test "$found_odbc" = "no"
+then
+AC_ARG_WITH(odbc-include,
+[  --with-odbc-inc=DIR     Specify custom ODBC include directory.
+                              (default=/usr/local/include)],
+[
+    if test "$withval" = "yes"
+    then
+	withval=/usr/local/include
+    fi
+
+    AC_MSG_CHECKING([for sql.h])
+    if test -f "$withval/sql.h"
+    then
+	ODBC_CFLAGS="-I$withval"
+	AC_MSG_RESULT(yes)
+    else
+	AC_MSG_RESULT(no)
+    fi
+])
+AC_ARG_WITH(odbc-lib,
+[  --with-odbc-lib=DIR    Specify custom ODBC lib directory.
+                              (default=/usr/local/lib)],
+[
+    if test "$withval" = "yes"
+    then
+	    withval=/usr/local/lib
+    fi
+
+    ac_save_LDFLAGS=$LDFLAGS
+    test -n "$withval" && LDFLAGS="$LDFLAGS -L$withval"
+    AC_CHECK_LIB(iodbc, SQLConnect, 
+    [
+	ODBC_LIBS="-L$withval -liodbc"; found_odbc=yes
+    ],
+    [
+	AC_CHECK_LIB(odbc, SQLConnect,
+	[
+	    ODBC_LIBS="-L$withval -lodbc"; found_odbc=yes
+	])
+    ])
+    LDFLAGS=$ac_save_LDFLAGS
+])
+fi
+
+
+#
+#  Maybe the libraries are in some default directory
+#
+if test "$found_odbc" = "no"
+then
+    AC_PATH_PROG(IODBC_CONFIG, iodbc-config, no)
+
+    AC_MSG_CHECKING([for iODBC support])
+    if test -x "$IODBC_CONFIG"
+    then
+	found_odbc=yes
+	ODBC_CFLAGS=`$IODBC_CONFIG --cflags`
+	ODBC_LIBS=`$IODBC_CONFIG --static-libs`
+	AC_MSG_RESULT(yes)
+    fi
+fi 
+
+
+#
+#  Maybe the libraries are in some default directory
+#
+if test "$found_odbc" = "no"
+then
+    AC_CHECK_LIB(iodbc, SQLConnect, 
+    [
+	ODBC_LIBS="-liodbc"; found_odbc=yes
+    ],
+    [
+	AC_CHECK_LIB(odbc, SQLConnect,
+	[
+	    ODBC_LIBS="-lodbc"; found_odbc=yes
+	])
+    ])
+fi
+
+
+#
+#  Do not continue unless we found a valid ODBC implementation
+#
+if test "$found_odbc" = "no"
+then
+    AC_MSG_ERROR([could not find ODBC header files or libraries])
+fi
+
+#
+#  Expand our compile flags
+#
+AC_SUBST(ODBC_CFLAGS)
+AC_SUBST(ODBC_LIBS)
+
+
+########################################################################## 
+##									##
+##  Generate Makefiles etc.						##
+##									##
+##########################################################################
+AC_CONFIG_FILES([
+    Makefile 
+    src/Makefile
+    scripts/Makefile
+])
+AC_CONFIG_COMMANDS([default], [])
+AC_OUTPUT

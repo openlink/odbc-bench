@@ -1,0 +1,68 @@
+#
+#  Makefile.am
+# 
+#  odbc-bench - a TPCA and TPCC benchmark program for databases 
+#  Copyright (C) 2000-2002 OpenLink Software <odbc-bench@openlinksw.com>
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+AUTOMAKE_OPTIONS	= gnu dist-zip 1.6
+SUBDIRS			= src scripts
+
+
+# ----------------------------------------------------------------------
+#
+#  Maintainers only
+# 
+# ----------------------------------------------------------------------
+
+MAINTAINERCLEANFILES	= Makefile.in aclocal.m4 configure
+
+
+if MAINTAINER_MODE
+
+#
+#  Create Linux RPM's
+#
+linux-rpm:
+	$(MAKE) dist-gzip
+	cp odbc-bench-$(VERSION).tar.gz /usr/src/redhat/SOURCES
+	rpm -ba admin/odbc-bench.spec
+
+#
+#  Create a tar file containing the library and include files
+#
+binary-tar:
+	-mkdir @build@
+	$(MAKE) install prefix=`pwd`/@build@
+	tar cvf @build@.tar @build@
+	gzip -9vf @build@.tar
+	rm -rf @build@
+
+#
+#  Create a source snapshot package
+#
+snapshot:
+	$(MAKE) dist-gzip distdir=$(PACKAGE)-`date +"%Y%m%d"`
+
+
+#
+#  Create an official release package
+#
+release:
+	$(MAKE) distcheck
+
+endif

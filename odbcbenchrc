@@ -1,0 +1,10 @@
+# the special widget class "thread finished" is assigned to progressbars witch threads are finished 
+style "finished thread indicator"
+{
+	fg[PRELIGHT] = { 1, 0.0, 0.0 }
+	fg[ACTIVE] = { 1.0, 0, 0 }
+	fg[NORMAL] = { 1.0, 0, 0 }
+	fg[INSENSITIVE] = { 1.0, 0, 0 }
+}
+
+widget_class "*thread finished*" style "finished thread indicator"

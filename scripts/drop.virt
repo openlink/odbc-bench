@@ -1,0 +1,26 @@
+drop procedure slevel
+;
+drop procedure slevel2
+;
+drop procedure c_by_name
+;
+drop procedure call_c_by_name
+;
+drop procedure bc_c_data
+;
+drop procedure payment
+;
+drop procedure ol_stock
+;
+drop procedure ol_insert
+;
+drop procedure cust_info
+;
+drop procedure new_order
+;
+drop procedure delivery_1
+;
+drop procedure ostat
+;
+drop procedure order_check
+;

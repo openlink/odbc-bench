@@ -1,0 +1,66 @@
+<!ELEMENT tests (test)+>
+<!ELEMENT test (login, (aschema | cschema), (arun | crun))>
+<!ELEMENT login (dsn)>
+<!ELEMENT dsn EMPTY>
+<!ELEMENT aschema (table)+>
+<!ELEMENT table EMPTY>
+<!ELEMENT arun EMPTY>
+<!ELEMENT cschema (table)+>
+<!ELEMENT crun EMPTY>
+<!ELEMENT run (aresult)>
+<!ELEMENT aresult (test, TransactionTime, Transactions, Transactions1Sec, Transactions2Sec, TransactionsPerSec, Sub1SecPct, AvgProcTime)>
+<!ELEMENT TransactionTime (#PCDATA)>
+<!ELEMENT Transactions (#PCDATA)>
+<!ELEMENT Transactions1Sec (#PCDATA)>
+<!ELEMENT Transactions2Sec (#PCDATA)>
+<!ELEMENT TransactionsPerSec (#PCDATA)>
+<!ELEMENT Sub1SecPct (#PCDATA)>
+<!ELEMENT Sub2SecPct (#PCDATA)>
+<!ELEMENT AvgProcTime (#PCDATA)>
+
+<!ATTLIST test
+	id	CDATA			#REQUIRED
+	type	(tpc_a|tpc_c)		#REQUIRED>
+	
+<!ATTLIST dsn
+	id		CDATA			#REQUIRED
+	name		CDATA			#REQUIRED
+	uid		CDATA			"dba"
+	DBMS		CDATA			#IMPLIED
+	DBMSVer		CDATA			#IMPLIED
+	Driver		CDATA			#IMPLIED
+	DriverVer	CDATA			#IMPLIED>
+	
+<!ATTLIST aschema
+	procedures	(0|1)			"0"
+	indexes		(0|1)			"0"
+	type		CDATA			"ANSI">
+	
+<!ATTLIST table
+	name		CDATA			#REQUIRED
+	create		(0|1)			"1"
+	load		(0|1)			"1"
+	count		CDATA			#REQUIRED>
+
+<!ATTLIST arun
+	threads		CDATA			"0"
+	transactions	(0|1)			"0"
+	query		(0|1)			"0"
+	async		(0|1)			"0"
+	isolation	(uncommitted|committed|repeatable|serializable|default)			"default"
+	cursor		(Default|ForwardOnly|Static|Keyset|Dynamic|Mixed)	"ForwardOnly"
+	rowsetsize	CDATA			"0"
+	keysetsize	CDATA			"0"
+	traversal	CDATA			"0"
+	type		(execute|prepare|procedures)	"execute">
+	
+<!ATTLIST crun
+	threads		CDATA			"0">
+
+<!ATTLIST run
+	duration	CDATA			"1"
+	end		CDATA			#REQUIRED>
+
+<!ATTLIST aresult	
+	state		CDATA			#REQUIRED
+	message		CDATA			#IMPLIED>

@@ -1,0 +1,10 @@
+*.lo
+*.o
+Makefile.in
+Makefile
+.libs
+.deps
+config.h
+stamp-*
+odbc-bench
+*.xml

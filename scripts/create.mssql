@@ -1,0 +1,660 @@
+create proc new_order_proc
+       @w_id         smallint,
+       @d_id         tinyint,
+       @c_id         int,
+       @o_ol_cnt     tinyint,
+       @o_all_local  tinyint,
+       @i_id1  int = 0, @s_w_id1  smallint = 0, @ol_qty1  smallint = 0,
+       @i_id2  int = 0, @s_w_id2  smallint = 0, @ol_qty2  smallint = 0,
+       @i_id3  int = 0, @s_w_id3  smallint = 0, @ol_qty3  smallint = 0,
+       @i_id4  int = 0, @s_w_id4  smallint = 0, @ol_qty4  smallint = 0,
+       @i_id5  int = 0, @s_w_id5  smallint = 0, @ol_qty5  smallint = 0,
+       @i_id6  int = 0, @s_w_id6  smallint = 0, @ol_qty6  smallint = 0,
+       @i_id7  int = 0, @s_w_id7  smallint = 0, @ol_qty7  smallint = 0,
+       @i_id8  int = 0, @s_w_id8  smallint = 0, @ol_qty8  smallint = 0,
+       @i_id9  int = 0, @s_w_id9  smallint = 0, @ol_qty9  smallint = 0,
+       @i_id10 int = 0, @s_w_id10 smallint = 0, @ol_qty10 smallint = 0,
+       @i_id11 int = 0, @s_w_id11 smallint = 0, @ol_qty11 smallint = 0,
+       @i_id12 int = 0, @s_w_id12 smallint = 0, @ol_qty12 smallint = 0,
+       @i_id13 int = 0, @s_w_id13 smallint = 0, @ol_qty13 smallint = 0,
+       @i_id14 int = 0, @s_w_id14 smallint = 0, @ol_qty14 smallint = 0,
+       @i_id15 int = 0, @s_w_id15 smallint = 0, @ol_qty15 smallint = 0
+as
+    declare @w_tax       numeric(4,4),
+            @d_tax       numeric(4,4),
+            @c_last      char(16),
+            @c_credit    char(2),
+            @c_discount  numeric(4,4),
+            @i_price     numeric(5,2),
+            @i_name      char(24),
+            @i_data      char(50),
+            @o_entry_d   datetime,
+            @remote_flag int,
+            @s_quantity  smallint,
+            @s_data      char(50),
+            @s_dist      char(24),
+            @li_no       int,
+            @o_id        int,
+            @commit_flag int,
+            @li_id       int,
+            @li_s_w_id   smallint,
+            @li_qty      smallint,
+            @ol_number   int,
+            @c_id_local  int
+ 
+  begin
+
+      begin transaction n
+
+      /* get district tax and next available order id and update */
+      /* plus initialize local variables */
+
+      update DISTRICT
+             set @d_tax       = D_TAX,
+                 @o_id        = D_NEXT_O_ID,
+                 d_next_o_id  = D_NEXT_O_ID + 1,
+                 @o_entry_d   = getdate(),
+                 @li_no=0,
+                 @commit_flag = 1
+             where D_W_ID = @w_id and D_ID = @d_id
+
+      /* process orderlines */
+      while(@li_no < @o_ol_cnt)
+       begin
+
+         /* Set i_id, s_w_id and qty for this lineitem */
+
+         select @li_no=@li_no+1,
+                @li_id = case @li_no
+                           when 0  then @i_id1
+                           when 1  then @i_id2
+                           when 2  then @i_id3
+                           when 3  then @i_id4
+                           when 4  then @i_id5
+                           when 5  then @i_id6
+                           when 6  then @i_id7
+                           when 7  then @i_id8
+                           when 8  then @i_id9
+                           when 9  then @i_id10
+                           when 10 then @i_id11
+                           when 11 then @i_id12
+                           when 12 then @i_id13
+                           when 13 then @i_id14
+                           when 14 then @i_id15
+                         end,
+                @li_s_w_id = case @li_no
+                           when 0  then @s_w_id1
+                           when 1  then @s_w_id2
+                           when 2  then @s_w_id3
+                           when 3  then @s_w_id4
+                           when 4  then @s_w_id5
+                           when 5  then @s_w_id6
+                           when 6  then @s_w_id7
+                           when 7  then @s_w_id8
+                           when 8  then @s_w_id9
+                           when 9  then @s_w_id10
+                           when 10 then @s_w_id11
+                           when 11 then @s_w_id12
+                           when 12 then @s_w_id13
+                           when 13 then @s_w_id14
+                           when 14 then @s_w_id15
+                         end,
+                @li_qty = case @li_no
+                           when 0  then @ol_qty1
+                           when 1  then @ol_qty2
+                           when 2  then @ol_qty3
+                           when 3  then @ol_qty4
+                           when 4  then @ol_qty5
+                           when 5  then @ol_qty6
+                           when 6  then @ol_qty7
+                           when 7  then @ol_qty8
+                           when 8  then @ol_qty9
+                           when 9  then @ol_qty10
+                           when 10 then @ol_qty11
+                           when 11 then @ol_qty12
+                           when 12 then @ol_qty13
+                           when 13 then @ol_qty14
+                           when 14 then @ol_qty15
+                         end
+
+         /* get item data (no one updates item) */
+
+         select @i_price = I_PRICE,
+                @i_name  = I_NAME,
+                @i_data  = I_DATA
+                from ITEM (tablock holdlock)
+                where I_ID = @li_id
+
+         /* if there actually is an item with this id, go to work */
+
+         if (@@rowcount > 0)
+          begin
+           update STOCK set S_YTD       = S_YTD + @li_qty,
+                            S_QUANTITY  = S_QUANTITY - @li_qty +
+                                     case when (S_QUANTITY - @li_qty < 10)
+                                          then 91 else 0 end,
+                            @s_quantity = S_QUANTITY,
+                            S_CNT_ORDER = S_CNT_ORDER + 1,
+                            S_CNT_REMOTE = S_CNT_REMOTE +
+                        case when (@li_s_w_id = @w_id) then 0 else 1 end,
+                            @s_data     = S_DATA,
+                            @s_dist     = case @d_id
+                                            when 1  then S_DIST_01
+                                            when 2  then S_DIST_02
+                                            when 3  then S_DIST_03
+                                            when 4  then S_DIST_04
+                                            when 5  then S_DIST_05
+                                            when 6  then S_DIST_06
+                                            when 7  then S_DIST_07
+                                            when 8  then S_DIST_08
+                                            when 9  then S_DIST_09
+                                            when 10 then S_DIST_10
+                                          end
+                  where S_I_ID = @li_id and S_W_ID = @li_s_w_id
+
+           /* insert order_line data (using data from item and stock) */
+
+           insert into ORDER_LINE
+                  values(@o_id,          /* from district update */
+                         @d_id,          /* input param          */
+                         @w_id,          /* input param          */
+                         @li_no,         /* orderline number     */
+                         @li_id,         /* lineitem id          */
+                         @li_s_w_id,     /* lineitem warehouse   */
+                         'dec 31, 1889', /* constant             */
+                         @li_qty,        /* lineitem qty         */
+                         @i_price * @li_qty, /* ol_amount        */
+                         @s_dist)        /* from stock           */
+
+
+           /* send line-item data to client */
+
+           select @i_name, @s_quantity,
+                  b_g = case when ((patindex('%ORIGINAL%',@i_data) > 0) and
+                                   (patindex('%ORIGINAL%',@s_data) > 0))
+                        then 'B' else 'G' end,
+                  @i_price,
+                  @i_price * @li_qty
+
+          end  -- /* condition: if (@@rowcount > 0) */
+         else
+          begin
+           /* no item found - triggers rollback condition */
+           select '', '',0
+           select @commit_flag = 0
+         end
+
+       end -- /* of orderlines loop while(@li_no < @o_ol_cnt) */
+
+      /* get customer last name, discount, and credit rating */
+
+      select @c_last     = C_LAST,
+             @c_discount = C_DISCOUNT,
+             @c_credit   = C_CREDIT,
+             @c_id_local = C_ID
+          from CUSTOMER holdlock
+          where C_ID    = @c_id and
+                C_W_ID  = @w_id and
+                C_D_ID  = @d_id
+
+
+      /* insert fresh row into orders table */
+
+      insert into ORDERS values(@o_id, @d_id, @w_id, @c_id_local,
+                                @o_entry_d, 0, @o_ol_cnt, @o_all_local)
+
+
+      /* insert corresponding row into new-order table */
+
+      insert into NEW_ORDER values (@o_id, @d_id, @w_id)
+
+      /* select warehouse tax */
+
+      select @w_tax = W_TAX
+             from WAREHOUSE holdlock
+             where W_ID = @w_id
+
+      if (@commit_flag = 1)
+          commit transaction n
+      else
+          /* all that work for nothing!!! */
+          rollback transaction n
+
+
+      /* return order data to client */
+      select @w_tax,
+             @d_tax,
+             @o_id,
+             @c_last,
+             @c_discount,
+             @c_credit,
+             @o_entry_d,
+             @commit_flag
+
+  end
+;
+create procedure payment
+       @w_id         smallint,
+       @c_w_id       smallint,
+       @h_amount     float,
+       @d_id         tinyint,
+       @c_d_id       tinyint,
+       @c_id         int,
+       @c_last       char(16) = " "
+as
+    declare @w_street_1    char(20),
+            @w_street_2    char(20),
+            @w_city        char(20),
+            @w_state       char(2),
+            @w_zip         char(9),
+            @w_name        char(10),
+            @d_street_1    char(20),
+            @d_street_2    char(20),
+            @d_city        char(20),
+            @d_state       char(2),
+            @d_zip         char(9),
+            @d_name        char(10),
+            @c_first       char(16),
+            @c_middle      char(2),
+            @c_street_1    char(20),
+            @c_street_2    char(20),
+            @c_city        char(20),
+            @c_state       char(2),
+            @c_zip         char(9),
+            @c_phone       char(16),
+            @c_since       datetime,
+            @c_credit      char(2),
+            @c_credit_lim  float,
+            @c_balance     float,
+            @c_ytd_payment float,
+            @c_discount    float,
+            @data1         char(250),
+            @data2         char(250),
+            @c_data_1      char(250),
+            @c_data_2      char(250),
+            @datetime      datetime,
+            @w_ytd         float,
+            @d_ytd         float,
+            @cnt           smallint,
+            @val           smallint,
+            @screen_data   char(200),
+            @d_id_local    tinyint,
+            @w_id_local    smallint,
+            @c_id_local    int
+
+
+begin
+
+    select @screen_data = ''
+
+    begin transaction p
+
+    /* get payment date */
+
+    select @datetime = getdate()
+
+    if (@c_id = 0)
+     begin
+        /* get customer id and info using last name */
+        select @cnt = count(*)
+            from CUSTOMER holdlock
+            where C_LAST = @c_last and
+                  C_W_ID = @c_w_id and
+                  C_D_ID = @c_d_id
+
+        select @val = (@cnt + 1) / 2
+        set rowcount @val
+
+        select @c_id      = C_ID
+            from CUSTOMER holdlock
+            where C_LAST = @c_last and
+                  C_W_ID = @c_w_id and
+                  C_D_ID = @c_d_id
+            order BY C_W_ID, C_D_ID, C_LAST, C_FIRST
+
+        set rowcount 0
+     end
+
+    /* get customer info and update balances */
+
+    update CUSTOMER set
+        @c_balance = C_BALANCE - @h_amount,
+        C_BALANCE = @c_balance,
+        C_CNT_PAYMENT   = C_CNT_PAYMENT + 1,
+        @c_ytd_payment   = C_YTD_PAYMENT + 10.0 /* @h_amount */,
+        @c_first         = C_FIRST,
+        @c_middle        = C_MIDDLE,
+        @c_last          = C_LAST,
+        @c_street_1      = C_STREET_1,
+        @c_street_2      = C_STREET_2,
+        @c_city          = C_CITY,
+        @c_state         = C_STATE,
+        @c_zip           = C_ZIP,
+        @c_phone         = C_PHONE,
+        @c_credit        = C_CREDIT,
+        @c_credit_lim    = C_CREDIT_LIM,
+        @c_discount      = C_DISCOUNT,
+        @c_since         = C_SINCE,
+        @data1           = C_DATA_1,
+        @data2           = C_DATA_2,
+        @c_id_local      = C_ID
+       where C_ID   = @c_id and
+             C_W_ID = @c_w_id and
+             C_D_ID = @c_d_id
+
+    /* if customer has bad credit get some more info */
+
+    if (@c_credit = 'BC')
+     begin
+        /* compute new info (Kublissa on myos substring) */
+        select @c_data_2 = substring(@data1,209,42) +
+                           substring(@data2,1,208)
+        select @c_data_1 = convert(char(5),@c_id) + 
+                           convert(char(4),@c_d_id) +
+                           convert(char(5),@c_w_id) +
+                           convert(char(4),@d_id) +
+                           convert(char(5),@w_id) +
+                           convert(char(19),@h_amount) +
+                           substring(@data1, 1, 208)
+
+        /* update customer info */
+        update CUSTOMER set
+               C_DATA_1 = @c_data_1,
+               C_DATA_2 = @c_data_2
+            where C_ID   = @c_id and
+                  C_W_ID = @c_w_id and
+                  C_D_ID = @c_d_id
+
+
+        select @screen_data = substring(@c_data_1,1,200)
+
+     end
+
+
+    /* get district data and update year-to-date */
+
+    update DISTRICT
+        set D_YTD       = D_YTD + @h_amount,
+            @d_street_1 = D_STREET_1,
+            @d_street_2 = D_STREET_2,
+            @d_city     = D_CITY,
+            @d_state    = D_STATE,
+            @d_zip      = D_ZIP,
+            @d_name     = D_NAME,
+            @d_id_local = D_ID
+        where D_W_ID = @w_id and
+              D_ID   = @d_id
+
+    /* get warehouse data and update year-to-date */
+
+    update WAREHOUSE
+        set W_YTD       = W_YTD + @h_amount,
+            @w_street_1 = W_STREET_1,
+            @w_street_2 = W_STREET_2,
+            @w_city     = W_CITY,
+            @w_state    = W_STATE,
+            @w_zip      = W_ZIP,
+            @w_name     = W_NAME,
+            @w_id_local = W_ID
+        where W_ID = @w_id
+
+    /* create thistory record */
+
+    insert into THISTORY
+        values(@c_id_local,
+               @c_d_id,
+               @c_w_id,
+               @d_id_local,
+               @w_id_local,
+               @datetime,
+               @h_amount,
+               @w_name + '    ' + @d_name) /* 10 + 4 + 10 = 24 */
+
+    commit tran p
+
+    /* return data to client */
+
+    select @c_id,
+           @c_last,
+           @datetime,
+           @w_street_1,
+           @w_street_2,
+           @w_city,
+           @w_state,
+           @w_zip,
+           @d_street_1,
+           @d_street_2,
+           @d_city,
+           @d_state,
+           @d_zip,
+           @c_first,
+           @c_middle,
+           @c_street_1,
+           @c_street_2,
+           @c_city,
+           @c_state,
+           @c_zip,
+           @c_phone,
+           @c_since,
+           @c_credit,
+           @c_credit_lim,
+           @c_discount,
+           @c_balance,
+           @screen_data
+end
+;
+create proc delivery  @w_id smallint, @o_carrier_id smallint
+as
+    declare @d_id tinyint,
+            @o_id int,
+            @c_id int,
+            @total numeric(12,2),
+            @oid1 int,
+            @oid2 int,
+            @oid3 int,
+            @oid4 int,
+            @oid5 int,
+            @oid6 int,
+            @oid7 int,
+            @oid8 int,
+            @oid9 int,
+            @oid10 int
+
+    select @d_id = 0
+
+    begin tran d
+ 
+        while (@d_id < 10)
+        begin
+
+            select @d_id = @d_id + 1,
+                   @total = 0,
+                   @o_id = 0
+
+            select @o_id = min(NO_O_ID)
+                   from NEW_ORDER holdlock
+                   where NO_W_ID = @w_id and NO_D_ID = @d_id
+
+            if(@@rowcount <> 0)
+            begin
+
+--              /* claim the order for this district */
+
+                delete NEW_ORDER
+                       where NO_W_ID = @w_id and NO_D_ID = @d_id
+                         and NO_O_ID = @o_id
+
+--              /* set carrier_id on this order (and get customer id) */
+
+                update ORDERS
+                       set O_CARRIER_ID = @o_carrier_id, @c_id = O_C_ID
+                       where O_W_ID = @w_id and O_D_ID = @d_id
+                         and O_ID = @o_id
+
+--      /* set date in all lineitems for this order (and sum amounts) */
+
+
+                update ORDER_LINE
+                       set OL_DELIVERY_D = getdate(),
+                           @total = @total + OL_AMOUNT
+                       where OL_W_ID = @w_id and
+                             OL_D_ID = @d_id and
+                             OL_O_ID = @o_id
+
+--      /* accumulate lineitem amounts for this order into customer */
+
+                update CUSTOMER
+                       set C_BALANCE      = C_BALANCE + @total,
+                           C_CNT_DELIVERY = C_CNT_DELIVERY + 1
+                       where C_W_ID = @w_id and
+                             C_D_ID = @d_id and
+                             C_ID = @c_id
+
+            end
+
+            select @oid1  = case @d_id when 1  then @o_id else @oid1  end,
+                   @oid2  = case @d_id when 2  then @o_id else @oid2  end,
+                   @oid3  = case @d_id when 3  then @o_id else @oid3  end,
+                   @oid4  = case @d_id when 4  then @o_id else @oid4  end,
+                   @oid5  = case @d_id when 5  then @o_id else @oid5  end,
+                   @oid6  = case @d_id when 6  then @o_id else @oid6  end,
+                   @oid7  = case @d_id when 7  then @o_id else @oid7  end,
+                   @oid8  = case @d_id when 8  then @o_id else @oid8  end,
+                   @oid9  = case @d_id when 9  then @o_id else @oid9  end,
+                   @oid10 = case @d_id when 10 then @o_id else @oid10 end
+
+
+        end
+
+    commit tran d
+
+    select @oid1,
+           @oid2,
+           @oid3,
+           @oid4,
+           @oid5,
+           @oid6,
+           @oid7,
+           @oid8,
+           @oid9,
+           @oid10
+
+
+;
+create proc slevel
+       @w_id         smallint,
+       @d_id         tinyint,
+       @threshold   smallint
+as
+    declare @o_id int
+
+    select @o_id = D_NEXT_O_ID
+        from DISTRICT
+        where D_W_ID = @w_id and D_ID = @d_id
+
+    select count(*) from STOCK,
+           (select distinct(OL_I_ID) from ORDER_LINE
+               where OL_W_ID   = @w_id and
+                     OL_D_ID   = @d_id and
+                     OL_O_ID between (@o_id-20) and (@o_id-1)) OL
+
+           where S_W_ID     = @w_id and
+                 S_I_ID     = OL.OL_I_ID and
+                 S_QUANTITY < @threshold
+;
+create proc ostat
+       @w_id         smallint,
+       @d_id         tinyint,
+       @c_id         int,
+       @c_last       char(16) = " "
+as
+    declare @c_balance     numeric(12,2),
+            @c_first       char(16),
+            @c_middle      char(2),
+            @o_id          int,
+            @o_entry_d     datetime,
+            @o_carrier_id  smallint,
+            @cnt           smallint
+
+    begin tran o
+
+    if (@c_id = 0)
+     begin
+        /* get customer id and info using last name */
+        select @cnt = (count(*)+1)/2
+            from CUSTOMER holdlock
+            where C_LAST = @c_last and
+                  C_W_ID = @w_id and
+                  C_D_ID = @d_id
+        set rowcount @cnt
+
+        select @c_id      = C_ID,
+               @c_balance = C_BALANCE,
+               @c_first   = C_FIRST,
+               @c_last    = C_LAST,
+               @c_middle  = C_MIDDLE
+            from CUSTOMER holdlock
+            where C_LAST = @c_last and
+                  C_W_ID = @w_id and
+                  C_D_ID = @d_id
+            order by C_W_ID, C_D_ID, C_LAST, C_FIRST
+
+        set rowcount 0
+     end
+    else
+     begin
+        /* get customer info by id */
+        select @c_balance = C_BALANCE,
+               @c_first   = C_FIRST,
+               @c_middle  = C_MIDDLE,
+               @c_last    = C_LAST
+            from CUSTOMER holdlock
+            where C_ID   = @c_id and
+                  C_D_ID = @d_id and
+                  C_W_ID = @w_id
+
+        select @cnt = @@rowcount
+     end
+
+    /* if no such customer */
+    if (@cnt = 0)
+     begin
+        raiserror('Customer not found',18,1)
+        goto custnotfound
+     end
+
+    /* get order info */
+    select @o_id         = O_ID,
+           @o_entry_d    = O_ENTRY_D,
+           @o_carrier_id = O_CARRIER_ID
+        from ORDERS holdlock
+        where O_W_ID = @w_id and
+              O_D_ID = @d_id and
+              O_C_ID = @c_id
+
+    /* select order lines for the current order */
+    select OL_SUPPLY_W_ID,
+           OL_I_ID,
+           OL_QUANTITY,
+           OL_AMOUNT,
+           OL_DELIVERY_D
+        from ORDER_LINE holdlock
+        where OL_O_ID = @o_id and
+              OL_D_ID = @d_id and
+              OL_W_ID = @w_id
+
+custnotfound:
+
+    commit tran o
+
+    /* return data to client */
+
+    select @c_id,
+           @c_last,
+           @c_first,
+           @c_middle,
+           @o_entry_d,
+           @o_carrier_id,
+           @c_balance,
+           @o_id
+;

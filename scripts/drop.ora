@@ -1,0 +1,10 @@
+drop procedure NEW_ORDER_PROC
+;
+drop procedure PAYMENT
+;
+drop procedure DELIVERY
+;
+drop procedure SLEVEL
+;
+drop procedure OSTAT
+;

@@ -1,0 +1,981 @@
+/*
+ *  main.c
+ * 
+ *  $Id$
+ *
+ *  odbc-bench - a TPCA and TPCC benchmark program for databases 
+ *  Copyright (C) 2000-2002 OpenLink Software <odbc-bench@openlinksw.com>
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <gtk/gtk.h>
+
+#include "odbcbench.h"
+#include "testpool.h"
+#include "LoginBox.h"
+#include "results.h"
+#include "ThreadOptions.h"
+#include "TPCATableProps.h"
+#include "TPCCTableProps.h"
+#include "TPCARunProps.h"
+#include "tpca_code.h"
+#include "tpccfun.h"
+#include "thr.h"
+
+void close_test (GtkWidget * widget, gpointer data);
+GtkWidget *dlg = NULL, *scrolled, *windows, *status_box, *global_status;
+extern GtkWidget *status;
+static GtkWidget *menubar;
+
+char *
+do_close_selected_tests (char *filename, answer_code * rc)
+{
+  GList *tests = get_selected_tests (), *iter;
+  int is_dirty = 0;
+  char *retfile = NULL;
+  answer_code local_rc;
+  if (!rc)
+    rc = &local_rc;
+
+  *rc = DLG_YES;
+
+  iter = tests;
+  while (iter)
+    {
+      test_t *ptest = (test_t *) iter->data;
+      if (ptest->is_dirty)
+	{
+	  is_dirty = TRUE;
+	}
+      iter = g_list_next (iter);
+    }
+  if (is_dirty || getIsFileDirty ())
+    {
+      *rc = yes_no_cancel_dialog ("Do you want to save the changes", "Close");
+      if (*rc == DLG_YES)
+	{
+	  retfile = fill_file_name (filename, "Select output file", TRUE);
+	  if (retfile)
+	    {
+	      if (!do_save_selected (retfile, tests))
+		*rc = DLG_CANCEL;
+	    }
+	}
+    }
+  if (*rc != DLG_CANCEL)
+    {
+      remove_selected_tests ();
+      setIsFileDirty (TRUE);
+    }
+  g_list_free (tests);
+  return retfile;
+}
+
+
+void
+help_about_handler (GtkWidget * widget, gpointer data)
+{
+  char szTemp[1024], szTitle[1024];
+
+  sprintf (szTemp, "%s v.%s\n\n"
+      "(C) 2000-2002 OpenLink Software\n\n"
+      "Please report all bugs to\n%s\n\n"
+      "This utility is licensed under GPL", 
+	PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_BUGREPORT);
+  sprintf (szTitle, "About %s", PACKAGE);
+
+  message_box_new (widget, szTemp, szTitle);
+}
+
+
+void
+make_new_test (GtkWidget * widget, gpointer data)
+{
+  if (getFilesCount ())
+    {
+      GtkWidget *dlg, *name, *is_a, *is_c, *label, *box, *frame;
+      GtkWidget *button;
+      GSList *group;
+      gboolean bOk = FALSE;
+
+      dlg = gtk_dialog_new ();
+      gtk_window_set_title (GTK_WINDOW (dlg), "New Test");
+      gtk_window_set_modal (GTK_WINDOW (dlg), TRUE);
+      gtk_container_border_width (GTK_CONTAINER (dlg), 10);
+
+      box = gtk_hbox_new (FALSE, 0);
+      gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->vbox), box, TRUE, TRUE,
+	  0);
+
+      label = gtk_label_new ("Name");
+      gtk_box_pack_start (GTK_BOX (box), label, FALSE, FALSE, 0);
+
+      name = gtk_entry_new_with_max_length (128);
+      gtk_entry_set_text (GTK_ENTRY (name), "New test");
+      gtk_box_pack_start (GTK_BOX (box), name, TRUE, TRUE, 0);
+
+      frame = gtk_frame_new ("Type");
+      gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->vbox), frame, TRUE, TRUE,
+	  0);
+
+      box = gtk_vbox_new (TRUE, 0);
+      gtk_container_add (GTK_CONTAINER (frame), box);
+
+      is_a = gtk_radio_button_new_with_label (NULL, "TPC-A");
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (is_a), TRUE);
+      gtk_box_pack_start (GTK_BOX (box), is_a, TRUE, TRUE, 0);
+
+      group = gtk_radio_button_group (GTK_RADIO_BUTTON (is_a));
+      is_c = gtk_radio_button_new_with_label (group, "TPC-C");
+      gtk_box_pack_start (GTK_BOX (box), is_c, TRUE, TRUE, 0);
+
+
+      button = gtk_button_new_with_label ("OK");
+      GTK_WIDGET_SET_FLAGS (button, GTK_CAN_DEFAULT);
+      gtk_window_set_default (GTK_WINDOW (dlg), button);
+      gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->action_area), button,
+	  TRUE, TRUE, 0);
+      gtk_signal_connect (GTK_OBJECT (button), "clicked",
+	  GTK_SIGNAL_FUNC (do_flip), &bOk);
+      gtk_signal_connect_object (GTK_OBJECT (button), "clicked",
+	  GTK_SIGNAL_FUNC (gtk_widget_hide), GTK_OBJECT (dlg));
+      gtk_signal_connect_object (GTK_OBJECT (button), "clicked",
+	  GTK_SIGNAL_FUNC (gtk_main_quit), GTK_OBJECT (dlg));
+
+      button = gtk_button_new_with_label ("Cancel");
+      gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->action_area), button,
+	  TRUE, TRUE, 0);
+      gtk_signal_connect_object (GTK_OBJECT (button), "clicked",
+	  GTK_SIGNAL_FUNC (gtk_widget_hide), GTK_OBJECT (dlg));
+      gtk_signal_connect_object (GTK_OBJECT (button), "clicked",
+	  GTK_SIGNAL_FUNC (gtk_main_quit), GTK_OBJECT (dlg));
+
+      gtk_widget_show_all (dlg);
+      gtk_main ();
+
+      if (bOk)
+	{
+	  test_t *ptest = g_malloc (sizeof (test_t));
+	  memset (ptest, 0, sizeof (test_t));
+
+	  strncpy (ptest->szName, gtk_entry_get_text (GTK_ENTRY (name)),
+	      sizeof (ptest->szName));
+	  ptest->TestType = GTK_TOGGLE_BUTTON (is_a)->active ? TPC_A : TPC_C;
+	  ptest->is_dirty = TRUE;
+	  init_test (ptest);
+	  if (!add_test_to_the_pool (ptest))
+	    g_free (ptest);
+	}
+      gtk_widget_destroy (dlg);
+    }
+}
+
+
+void
+load_setup (GtkWidget * widget, gpointer data)
+{
+  char *filename;
+
+  filename = fill_file_name (NULL, "Select file to open", TRUE);
+  if (filename)
+    {
+      create_test_pool ();
+      do_load_test (filename);
+      setTheFileName (filename);
+      setIsFileDirty (FALSE);
+    }
+}
+
+
+void
+make_new_setup (GtkWidget * widget, gpointer data)
+{
+  create_test_pool ();
+  setTheFileName (NULL);
+  setIsFileDirty (FALSE);
+}
+
+
+void
+close_setup (GtkWidget * widget, gpointer data)
+{
+  char *retfile;
+  answer_code rc;
+  if (!getFilesCount ())
+    return;
+  for_all_in_pool ();
+  retfile = do_close_selected_tests (getCurrentFileName (), &rc);
+  if (rc != DLG_CANCEL)
+    close_file_pool ();
+  if (retfile)
+    g_free (retfile);
+}
+
+
+void
+insert_file (GtkWidget * widget, gpointer data)
+{
+  if (getFilesCount ())
+    {
+      char *filename = fill_file_name (NULL, "Select file to insert", TRUE);
+      if (filename)
+	{
+	  do_load_test (filename);
+	  g_free (filename);
+	  setIsFileDirty (TRUE);
+	}
+    }
+}
+
+
+void
+save_setup (GtkWidget * widget, gpointer data)
+{
+  GList *tests = NULL;
+  if (getFilesCount ())
+    {
+      char *filename =
+	  fill_file_name (getCurrentFileName (), "Select output file", TRUE);
+      if (filename)
+	{
+	  setTheFileName (filename);
+	  for_all_in_pool ();
+	  tests = get_selected_tests ();
+	  do_save_selected (filename, tests);
+	  g_list_free (tests);
+	  setIsFileDirty (FALSE);
+	}
+    }
+}
+
+
+void
+save_test_as (GtkWidget * widget, gpointer data)
+{
+  GList *tests = get_selected_tests ();
+  if (tests)
+    {
+      char *filename = fill_file_name (NULL, "Select output file", TRUE);
+      if (filename)
+	{
+	  do_save_selected (filename, tests);
+	  g_free (filename);
+	}
+      g_list_free (tests);
+    }
+}
+
+
+void
+save_setup_as (GtkWidget * widget, gpointer data)
+{
+  for_all_in_pool ();
+  save_test_as (widget, data);
+}
+
+
+void
+edit_login (GtkWidget * widget, gpointer data)
+{
+  GList *tests = get_selected_tests (), *iter;
+  int nTests = g_list_length (tests);
+  test_t *ptest = NULL;
+  gboolean bOk = FALSE;
+  GtkWidget *login;
+
+  if (!nTests)
+    {
+      ok_cancel_dialog ("There are no selected tests", "ODBC-Bench");
+      return;
+    }
+  if (nTests == 1)
+    ptest = (test_t *) tests->data;
+
+  login = LoginBox_new ("Login details",
+      get_dsn_list (),
+      ptest ? ptest->szLoginDSN : NULL,
+      ptest ? ptest->szLoginUID : NULL, ptest ? ptest->szLoginPWD : NULL);
+
+  gtk_signal_connect_object (GTK_OBJECT (login), "closed",
+      GTK_SIGNAL_FUNC (gtk_main_quit), GTK_OBJECT (login));
+  gtk_signal_connect (GTK_OBJECT (login), "do_the_work",
+      GTK_SIGNAL_FUNC (do_flip), &bOk);
+
+  gtk_widget_show (login);
+  gtk_main ();
+
+  if (bOk)
+    {
+      iter = tests;
+      if (!ptest)
+	ptest = iter->data;
+
+      do_login (login, ptest);
+      ptest->is_dirty = TRUE;
+      if (ptest->szSQLError[0])
+	{
+	  pane_log ("Connect Error %s : %s\n", ptest->szSQLState,
+	      ptest->szSQLError);
+	  g_list_free (tests);
+	  return;
+	}
+      get_dsn_data (ptest);
+      do_logout (NULL, ptest);
+
+      while (NULL != (iter = g_list_next (iter)))
+	{
+	  test_t *ptest = (test_t *) iter->data;
+	  do_login (login, ptest);
+	  get_dsn_data (ptest);
+	  do_logout (NULL, ptest);
+	  ptest->is_dirty = TRUE;
+	}
+      pool_update_selected ();
+    }
+  gtk_widget_destroy (login);
+
+  g_list_free (tests);
+}
+
+
+void
+edit_tables (GtkWidget * widget, gpointer data)
+{
+  GList *tests = get_selected_tests (), *iter;
+  GtkWidget *props = NULL;
+  GtkWidget *dlg, *btn;
+  iter = tests;
+
+  while (iter)
+    {
+      test_t *ptest = (test_t *) iter->data;
+      props = NULL;
+      if (!ptest->bTablePropsShown)
+	switch (ptest->TestType)
+	  {
+	  case TPC_A:
+	    props = TPCATableProps_new (ptest);
+	    break;
+
+	  case TPC_C:
+	    if (_stristr (ptest->szDBMS, "Virtuoso"))
+	      props = TPCCTableProps_new (ptest);
+	    break;
+	  }
+
+      if (props)
+	{
+	  char szTitle[512];
+	  dlg = gtk_dialog_new ();
+	  sprintf (szTitle, "Table details : %s", ptest->szName);
+	  gtk_window_set_title (GTK_WINDOW (dlg), szTitle);
+	  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->vbox), props, TRUE,
+	      TRUE, 0);
+
+	  btn = gtk_button_new_with_label ("OK");
+	  gtk_signal_connect_object (GTK_OBJECT (btn), "clicked",
+	      GTK_SIGNAL_FUNC (gtk_widget_hide), GTK_OBJECT (dlg));
+	  gtk_signal_connect (GTK_OBJECT (btn), "clicked",
+	      GTK_SIGNAL_FUNC (do_flip), &(ptest->bTablePropsShown));
+	  if (IS_TPCA_TABLE_PROPS (props))
+	    gtk_signal_connect_object (GTK_OBJECT (btn), "clicked",
+		GTK_SIGNAL_FUNC (TPCATableProps_save_config),
+		GTK_OBJECT (props));
+	  else if (IS_TPCC_TABLE_PROPS (props))
+	    gtk_signal_connect_object (GTK_OBJECT (btn), "clicked",
+		GTK_SIGNAL_FUNC (TPCCTableProps_save_config),
+		GTK_OBJECT (props));
+	  gtk_signal_connect_object (GTK_OBJECT (btn), "clicked",
+	      GTK_SIGNAL_FUNC (gtk_widget_destroy), GTK_OBJECT (dlg));
+	  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->action_area), btn,
+	      TRUE, TRUE, 0);
+	  if (!ptest->is_dirty)
+	    gtk_signal_connect (GTK_OBJECT (btn), "clicked",
+		GTK_SIGNAL_FUNC (do_flip), &ptest->is_dirty);
+
+	  btn = gtk_button_new_with_label ("Cancel");
+	  gtk_signal_connect (GTK_OBJECT (btn), "clicked",
+	      GTK_SIGNAL_FUNC (do_flip), &(ptest->bTablePropsShown));
+	  gtk_signal_connect_object (GTK_OBJECT (btn), "clicked",
+	      GTK_SIGNAL_FUNC (gtk_widget_destroy), GTK_OBJECT (dlg));
+	  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->action_area), btn,
+	      TRUE, TRUE, 0);
+
+	  ptest->bTablePropsShown = TRUE;
+	  gtk_widget_show_all (dlg);
+	}
+      iter = g_list_next (iter);
+    }
+  g_list_free (tests);
+}
+
+
+void
+edit_run (GtkWidget * widget, gpointer data)
+{
+  GList *tests = get_selected_tests (), *iter;
+  GtkWidget *props = NULL;
+  GtkWidget *dlg, *btn;
+  iter = tests;
+
+  while (iter)
+    {
+      test_t *ptest = (test_t *) iter->data;
+
+      props = NULL;
+      if (!ptest->bRunPropsShown)
+	switch (ptest->TestType)
+	  {
+	  case TPC_A:
+	    props = TPCARunProps_new (ptest);
+	    break;
+
+	  case TPC_C:
+	    props = ThreadOptions_new ();
+	    ThreadOptions_load_config (THREAD_OPTIONS (props), &ptest->tpc._);
+	    break;
+	  }
+
+      if (props)
+	{
+	  char szTitle[512];
+	  dlg = gtk_dialog_new ();
+	  sprintf (szTitle, "Run details : %s", ptest->szName);
+	  gtk_window_set_title (GTK_WINDOW (dlg), szTitle);
+	  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->vbox), props, TRUE,
+	      TRUE, 0);
+
+	  btn = gtk_button_new_with_label ("OK");
+	  gtk_signal_connect_object (GTK_OBJECT (btn), "clicked",
+	      GTK_SIGNAL_FUNC (gtk_widget_hide), GTK_OBJECT (dlg));
+	  gtk_signal_connect (GTK_OBJECT (btn), "clicked",
+	      GTK_SIGNAL_FUNC (do_flip), &ptest->bRunPropsShown);
+	  if (IS_TPCA_RUN_PROPS (props))
+	    gtk_signal_connect_object (GTK_OBJECT (btn), "clicked",
+		GTK_SIGNAL_FUNC (TPCARunProps_save_config),
+		GTK_OBJECT (props));
+	  else if (IS_THREAD_OPTIONS (props))
+	    gtk_signal_connect_object (GTK_OBJECT (btn), "clicked",
+		GTK_SIGNAL_FUNC (ThreadOptions_save_config),
+		GTK_OBJECT (props));
+	  gtk_signal_connect_object (GTK_OBJECT (btn), "clicked",
+	      GTK_SIGNAL_FUNC (gtk_widget_destroy), GTK_OBJECT (dlg));
+	  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->action_area), btn,
+	      TRUE, TRUE, 0);
+	  if (!ptest->is_dirty)
+	    gtk_signal_connect (GTK_OBJECT (btn), "clicked",
+		GTK_SIGNAL_FUNC (do_flip), &ptest->is_dirty);
+
+	  btn = gtk_button_new_with_label ("Cancel");
+	  gtk_signal_connect (GTK_OBJECT (btn), "clicked",
+	      GTK_SIGNAL_FUNC (do_flip), &ptest->bRunPropsShown);
+	  gtk_signal_connect_object (GTK_OBJECT (btn), "clicked",
+	      GTK_SIGNAL_FUNC (gtk_widget_destroy), GTK_OBJECT (dlg));
+	  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->action_area), btn,
+	      TRUE, TRUE, 0);
+
+	  ptest->bRunPropsShown = TRUE;
+	  gtk_widget_show_all (dlg);
+	}
+      iter = g_list_next (iter);
+    }
+  g_list_free (tests);
+}
+
+
+void
+create_tables (GtkWidget * widget, gpointer data)
+{
+  GList *tests = get_selected_tests (), *iter;
+  iter = tests;
+
+  if (tests)
+    pane_log ("CREATING SCHEMA STARTED\n");
+  if (menubar)
+    gtk_widget_set_sensitive (GTK_WIDGET (menubar), FALSE);
+  while (iter)
+    {
+      test_t *ptest = (test_t *) iter->data;
+      pool_set_selected_item (ptest);
+      do_login (NULL, ptest);
+      if (ptest->hdbc)
+	{
+	  switch (ptest->TestType)
+	    {
+	      case TPC_A:
+		  fBuildBench (ptest);
+		  break;
+
+	      case TPC_C:
+		  tpcc_schema_create (NULL, ptest);
+		  tpcc_create_db (NULL, ptest);
+		  break;
+	    }
+	  do_logout (NULL, ptest);
+	}
+      iter = g_list_next (iter);
+    }
+  pool_set_selected_items (tests);
+  g_list_free (tests);
+  if (menubar)
+    gtk_widget_set_sensitive (GTK_WIDGET (menubar), TRUE);
+  if (tests)
+    pane_log ("CREATING SCHEMA FINISHED\n");
+}
+
+
+void
+drop_tables (GtkWidget * widget, gpointer data)
+{
+  GList *tests = get_selected_tests (), *iter;
+  iter = tests;
+
+  if (tests)
+    pane_log ("CLEANUP STARTED\n");
+  if (menubar)
+    gtk_widget_set_sensitive (GTK_WIDGET (menubar), FALSE);
+  while (iter)
+    {
+      test_t *ptest = (test_t *) iter->data;
+      pool_set_selected_item (ptest);
+      do_login (NULL, ptest);
+      if (ptest->hdbc)
+	{
+	  switch (ptest->TestType)
+	    {
+	      case TPC_A:
+		  fCleanup (ptest);
+		  break;
+
+	      case TPC_C:
+		  tpcc_schema_cleanup (NULL, ptest);
+		  break;
+	    }
+	  do_logout (NULL, ptest);
+	}
+      iter = g_list_next (iter);
+    }
+  pool_set_selected_items (tests);
+  g_list_free (tests);
+  if (menubar)
+    gtk_widget_set_sensitive (GTK_WIDGET (menubar), TRUE);
+  if (tests)
+    pane_log ("CLEANUP FINISHED\n");
+}
+
+static void
+set_file_name (GtkWidget * widget)
+{
+  char *filename = fill_file_name (NULL, "Select output file name", TRUE);
+  if (filename)
+    {
+      gtk_entry_set_text (GTK_ENTRY (widget), filename);
+      g_free (filename);
+    }
+}
+
+void
+run_selected (GtkWidget * widget, gpointer data)
+{
+  GtkWidget *dlg, *label, *entry, *hbox, *btn, *filename;
+  gboolean bOk = FALSE, bRunAll = FALSE, canRunAll = TRUE;
+  int nTests = pool_connection_count ();
+  GList *tests = get_selected_tests (), *iter;
+  char *szFileName = NULL;
+
+  if (!nTests)
+    return;
+  dlg = gtk_dialog_new ();
+  gtk_window_set_title (GTK_WINDOW (dlg), "Run Duration");
+
+  hbox = gtk_hbox_new (FALSE, 5);
+  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->vbox), hbox, TRUE, TRUE, 5);
+
+  label = gtk_label_new ("Test duration (mins)");
+  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 5);
+
+  entry = gtk_entry_new_with_max_length (3);
+  gtk_entry_set_text (GTK_ENTRY (entry), "1");
+  gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 5);
+
+  hbox = gtk_hbox_new (FALSE, 5);
+  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->vbox), hbox, TRUE, TRUE, 5);
+
+  label = gtk_label_new ("Output file name");
+  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 5);
+
+  filename = gtk_entry_new ();
+  gtk_entry_set_text (GTK_ENTRY (filename), "results.xml");
+  gtk_box_pack_start (GTK_BOX (hbox), filename, TRUE, TRUE, 5);
+
+  btn = gtk_button_new_with_label ("Select ...");
+  gtk_signal_connect_object (GTK_OBJECT (btn), "clicked",
+      GTK_SIGNAL_FUNC (set_file_name), GTK_OBJECT (filename));
+  gtk_box_pack_start (GTK_BOX (hbox), btn, TRUE, TRUE, 0);
+
+  btn = gtk_button_new_with_label ("Start");
+  GTK_WIDGET_SET_FLAGS (btn, GTK_CAN_DEFAULT);
+  gtk_window_set_default (GTK_WINDOW (dlg), btn);
+  gtk_signal_connect_object (GTK_OBJECT (btn), "clicked",
+      GTK_SIGNAL_FUNC (gtk_widget_hide), GTK_OBJECT (dlg));
+  gtk_signal_connect (GTK_OBJECT (btn), "clicked",
+      GTK_SIGNAL_FUNC (do_flip), &bOk);
+  gtk_signal_connect_object (GTK_OBJECT (btn), "clicked",
+      GTK_SIGNAL_FUNC (gtk_main_quit), GTK_OBJECT (dlg));
+  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->action_area), btn, TRUE,
+      TRUE, 0);
+
+
+  iter = tests;
+  while (iter)
+    {
+      if (((test_t *) iter->data)->TestType != TPC_A)
+	canRunAll = FALSE;
+      iter = g_list_next (iter);
+    }
+  if (canRunAll)
+    {
+      btn = gtk_button_new_with_label ("Run All");
+      gtk_signal_connect_object (GTK_OBJECT (btn), "clicked",
+	  GTK_SIGNAL_FUNC (gtk_widget_hide), GTK_OBJECT (dlg));
+      gtk_signal_connect (GTK_OBJECT (btn), "clicked",
+	  GTK_SIGNAL_FUNC (do_flip), &bOk);
+      gtk_signal_connect (GTK_OBJECT (btn), "clicked",
+	  GTK_SIGNAL_FUNC (do_flip), &bRunAll);
+      gtk_signal_connect_object (GTK_OBJECT (btn), "clicked",
+	  GTK_SIGNAL_FUNC (gtk_main_quit), GTK_OBJECT (dlg));
+      gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->action_area), btn, TRUE,
+	  TRUE, 0);
+    }
+
+  btn = gtk_button_new_with_label ("Cancel");
+  gtk_signal_connect_object (GTK_OBJECT (btn), "clicked",
+      GTK_SIGNAL_FUNC (gtk_widget_hide), GTK_OBJECT (dlg));
+  gtk_signal_connect_object (GTK_OBJECT (btn), "clicked",
+      GTK_SIGNAL_FUNC (gtk_main_quit), GTK_OBJECT (dlg));
+  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->action_area), btn, TRUE,
+      TRUE, 0);
+
+  gtk_widget_show_all (dlg);
+  gtk_main ();
+
+  if (bOk)
+    {
+      test_t *ptest;
+      int nMinutes = atoi (gtk_entry_get_text (GTK_ENTRY (entry)));
+
+      szFileName = gtk_entry_get_text (GTK_ENTRY (filename));
+      if (!szFileName)
+	szFileName = "results.xml";
+      szFileName = fill_file_name (szFileName, "dummy", TRUE);
+
+      gtk_widget_destroy (dlg);
+      if (nMinutes < 1)
+	{
+	  goto end;
+	}
+
+      pane_log ("RUN STARTED\n");
+      if (menubar)
+	gtk_widget_set_sensitive (GTK_WIDGET (menubar), FALSE);
+      ptest = (test_t *) tests->data;
+      if (nTests > 1 || ptest->tpc._.nThreads > 1)
+	{
+#if defined(PTHREADS) || defined(WIN32)
+	  if (!bRunAll)
+	    {
+	      do_threads_run (nTests, tests, nMinutes, "");
+	      do_save_run_results (szFileName, tests, nMinutes);
+	    }
+	  else
+	    do_threads_run_all (nTests, tests, nMinutes, szFileName);
+#else
+	  pane_log ("More than one thread required and not supported");
+	  goto end;
+#endif
+	}
+      else
+	{
+	  memset (ptest->szSQLError, 0, sizeof (ptest->szSQLError));
+	  memset (ptest->szSQLState, 0, sizeof (ptest->szSQLState));
+	  do_login (NULL, ptest);
+	  get_dsn_data (ptest);
+	  ptest->tpc._.nMinutes = nMinutes;
+	  if (ptest->hdbc)
+	    switch (ptest->TestType)
+	      {
+	      case TPC_A:
+		fExecuteSql (ptest, "delete from HISTORY");
+		SQLTransact (SQL_NULL_HENV, ptest->hdbc, SQL_COMMIT);
+		if (bRunAll)
+		  DoRunAll (ptest, szFileName);
+		else
+		  {
+		    DoRun (ptest, NULL);
+		    do_save_run_results (szFileName, tests, nMinutes);
+		  }
+
+		break;
+
+	      case TPC_C:
+		if (tpcc_run_test (NULL, ptest))
+		  {
+		    add_tpcc_result (NULL, ptest);
+		  }
+		else
+		  pane_log ("TPC-C RUN FAILED\n");
+		do_save_run_results (szFileName, tests, nMinutes);
+		break;
+	      }
+	  do_logout (NULL, ptest);
+	}
+      if (menubar)
+	gtk_widget_set_sensitive (GTK_WIDGET (menubar), TRUE);
+      pane_log ("RUN FINISHED\n");
+    }
+end:
+  if (szFileName)
+    g_free (szFileName);
+  g_list_free (tests);
+}
+
+/*
+void
+run_all (GtkWidget * widget, gpointer data)
+{
+  for_all_in_pool ();
+  run_selected (widget, data);
+}
+*/
+
+void
+destroy_handler (GtkWidget * widget, gpointer data)
+{
+  char *file;
+  answer_code rc;
+  while (getFilesCount ())
+    {
+      for_all_in_pool ();
+      file = do_close_selected_tests (getCurrentFileName (), &rc);
+      if (file)
+	g_free (file);
+      if (rc == DLG_CANCEL)
+	return;
+      close_file_pool ();
+    }
+  do_free_env (widget, data);
+  gtk_main_quit ();
+}
+
+void
+close_test (GtkWidget * widget, gpointer data)
+{
+  GList *tests = get_selected_tests(), *iter;
+  char *file;
+  setIsFileDirty (FALSE);
+  for (iter = tests; iter; iter = g_list_next (iter))
+    {
+      test_t *ptest = (test_t *)iter->data;
+      ptest->is_dirty = FALSE;
+    }
+  file = do_close_selected_tests (NULL, NULL);
+  setIsFileDirty (TRUE);
+  g_free (file);
+  g_list_free (tests);
+}
+
+#ifdef PIPE_DEBUG
+static void
+pipe_trough_isql_handler (GtkWidget * widget, gpointer data)
+{
+  GList *tests = get_selected_tests(), *iter;
+  for (iter = tests; iter; iter = g_list_next (iter))
+    {
+      test_t *ptest = (test_t *)iter->data;
+      do_login (NULL, ptest);
+      pipe_trough_isql (ptest->hdbc, "gogo.sql", 1);
+      do_logout (NULL, ptest);
+    }
+  g_list_free (tests);
+}
+#endif
+
+static GtkItemFactoryEntry menu_items[] = {
+  {"/_File", NULL, NULL, 0, "<Branch>"},
+  {"/File/New", "<control>N", make_new_setup, 0, NULL},
+  {"/File/_Open...", "<control>O", load_setup, 0, NULL},
+  {"/File/_Save", "<control>S", save_setup, 0, NULL},
+  {"/File/Save _As...", "<control>A", save_setup_as, 0, NULL},
+  {"/File/_Close", NULL, close_setup, 0, NULL},
+  {"/File/sep1", NULL, NULL, 0, "<Separator>"},
+  {"/File/_Clear log", NULL, clear_status_handler, 0, NULL},
+#ifdef PIPE_DEBUG
+  {"/File/pipe trough isql", NULL, pipe_trough_isql_handler, 0, NULL},
+#endif  
+  {"/File/sep2", NULL, NULL, 0, "<Separator>"},
+  {"/File/E_xit", "<control>X", destroy_handler, 0, NULL},
+
+  {"/_Edit", NULL, NULL, 0, "<Branch>"},
+  {"/Edit/New Benchmark Item...", "<control>Insert", make_new_test, 0, NULL},
+  {"/Edit/Delete selected items", NULL, close_test, 0, NULL},
+  {"/Edit/Save selected items as...", NULL, save_test_as, 0, NULL},
+  {"/Edit/sep1", NULL, NULL, 0, "<Separator>"},
+  {"/Edit/_Login details...", "<control>L", edit_login, 0, NULL},
+  {"/Edit/_Table details...", "<control>T", edit_tables, 0, NULL},
+  {"/Edit/R_un details...", "<control>U", edit_run, 0, NULL},
+  {"/Edit/sep2", NULL, NULL, 0, "<Separator>"},
+  {"/Edit/_Insert file...", "<control>I", insert_file, 0, NULL},
+
+  {"/_Action", NULL, NULL, 0, "<Branch>"},
+  {"/Action/_Create tables&procedures", "<control>C", create_tables, 0, NULL},
+  {"/Action/_Drop tables&procedures", "<control>D", drop_tables, 0, NULL},
+  {"/Action/sep1", NULL, NULL, 0, "<Separator>"},
+  {"/Action/Run _Selected", "<control>R", run_selected, 0, NULL},
+
+  {"/_Results", NULL, NULL, 0, "<Branch>"},
+  {"/Results/_Connect...", NULL, results_login, 0, NULL},
+  {"/Results/_Disconnect", NULL, do_results_logout, 0, NULL},
+  {"/Results/sep1", NULL, NULL, 0, "<Separator>"},
+  {"/Results/C_reate the table", NULL, do_create_results_table, 0, NULL},
+  {"/Results/Dr_op the table", NULL, do_drop_results_table, 0, NULL},
+
+  {"/_Preferences", NULL, NULL, 0, "<Branch>"},
+
+  {"/Preferences/Display refresh rate...", NULL, set_display_refresh_rate,
+      0, NULL},
+  {"/Preferences/Lock timeout...", NULL, set_lock_timeout, 0, NULL},
+
+  {"/_Window", NULL, NULL, 0, "<Branch>"},
+
+  {"/_Help", NULL, NULL, 0, "<LastBranch>"},
+  {"/Help/_About", "<control>F1", help_about_handler, 0, NULL},
+};
+
+
+void
+get_main_menu (GtkWidget * window, GtkWidget ** menubar)
+{
+  GtkItemFactory *item_factory;
+  GtkAccelGroup *accel_group;
+  gint nmenu_items = sizeof (menu_items) / sizeof (menu_items[0]);
+
+  accel_group = gtk_accel_group_new ();
+
+  item_factory = gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>",
+      accel_group);
+
+  gtk_item_factory_create_items_ac (item_factory, nmenu_items, menu_items,
+      window, 2);
+
+  /* Attach the new accelerator group to the window. */
+  gtk_accel_group_attach (accel_group, GTK_OBJECT (window));
+
+  if (menubar)
+    /* Finally, return the actual menu bar created by the item factory. */
+    {
+      *menubar = gtk_item_factory_get_widget (item_factory, "<main>");
+      windows = gtk_item_factory_get_widget (item_factory, "/Window");
+    }
+}
+
+extern int do_command_line (int argc, char *argv[]);
+#ifndef WIN32
+
+int
+main (int argc, char *argv[])
+#else
+
+extern char **command_line_to_argv (char *pszSysCmdLine, int *_argc);
+int WINAPI
+WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
+    int nCmdShow)
+#endif
+{
+
+  GtkWidget *table;
+#ifdef WIN32
+  int argc;
+  char **argv;
+  argv = command_line_to_argv (GetCommandLine (), &argc);
+#endif
+  do_alloc_env (NULL, NULL);
+
+
+  if (argc > 2)
+    return do_command_line (argc, argv);
+
+  gtk_init (&argc, &argv);
+  gtk_set_locale ();
+  gtk_rc_add_default_file ("odbcbenchrc");
+
+  dlg = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_signal_connect (GTK_OBJECT (dlg), "destroy",
+      GTK_SIGNAL_FUNC (destroy_handler), NULL);
+  setTheFileName (NULL);
+  gtk_widget_set_usize (GTK_WIDGET (dlg), 420, 320);
+
+  table = gtk_table_new (11, 1, TRUE);
+  gtk_container_add (GTK_CONTAINER (dlg), table);
+  gtk_widget_show (table);
+
+  get_main_menu (dlg, &menubar);
+  gtk_table_attach (GTK_TABLE (table), menubar, 0, 1, 0, 1,
+      GTK_FILL | GTK_EXPAND, 0, 0, 0);
+  gtk_widget_show (menubar);
+
+  scrolled = gtk_scrolled_window_new (NULL, NULL);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled),
+      GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_container_set_border_width (GTK_CONTAINER (scrolled), 2);
+  gtk_widget_show (scrolled);
+  gtk_table_attach_defaults (GTK_TABLE (table), scrolled, 0, 1, 1, 5);
+
+  status_box = gtk_scrolled_window_new (NULL, NULL);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled),
+      GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+  gtk_widget_show (status_box);
+  create_status_widget ();
+  global_status = status;
+  gtk_container_add (GTK_CONTAINER (status_box), global_status);
+  gtk_table_attach_defaults (GTK_TABLE (table), status_box, 0, 1, 5, 11);
+
+  gtk_widget_show (dlg);
+  create_test_pool ();
+  if (argc > 1)
+    {
+      do_load_test (argv[1]);
+      setTheFileName (fill_file_name (argv[1], NULL, TRUE));
+      setIsFileDirty (FALSE);
+    }
+#if 0
+  if (lpCmdLine[0])
+    {
+      do_load_test (lpCmdLine);
+      setTheFileName (lpCmdLine);
+      setIsFileDirty (FALSE);
+    }
+#endif
+  else
+    {
+      setTheFileName (NULL);
+      setIsFileDirty (FALSE);
+    }
+  gtk_main ();
+
+  return (0);
+}

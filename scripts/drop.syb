@@ -1,0 +1,10 @@
+drop procedure new_order_proc
+;
+drop procedure payment
+;
+drop procedure delivery
+;
+drop procedure slevel
+;
+drop procedure ostat
+;

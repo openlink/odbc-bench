@@ -1,0 +1,800 @@
+--
+--  tpccddk.sql
+--
+--  $Id$
+--
+--  TPC-C Benchmark
+--
+--
+
+-- slevel - The transaction procedure for the Stock Level transaction.
+-- This is executed as an autocommitting history read transaction. The number
+-- of STOCK rows where quantity is below th threshold.  The rows are taken from 
+-- the last 20 orders on a warehouse / district combination.
+
+-- use tpcc;
+
+create procedure slevel (
+    in w_id integer,
+    in _d_id integer,
+    in threshold integer)
+{
+  declare last_o, n_items integer; 
+
+  set isolation = 'committed';
+  select D_NEXT_O_ID into last_o
+    from DISTRICT
+    where D_W_ID = w_id and D_ID = _d_id; 
+
+  select count (distinct S_I_ID) into n_items
+    from ORDER_LINE, STOCK
+    where OL_W_ID = w_id
+      and OL_D_ID = _d_id
+      and OL_O_ID < last_o
+      and OL_O_ID >= last_o - 20
+      and S_W_ID = w_id
+      and S_I_ID = OL_I_ID
+      and S_QUANTITY < threshold; 
+
+  result_names (n_items);
+  result (n_items);
+}
+;
+
+
+--
+-- Alternate slevel implementation. Theoretically 10& less
+-- random access on stock but in practice marginally slower due 
+-- to more complex query graph.
+
+create procedure slevel2 (
+    in w_id integer,
+    in _d_id integer,
+    in threshold integer)
+{
+  declare last_o, n_items integer; 
+
+  select D_NEXT_O_ID into last_o
+    from DISTRICT
+    where D_W_ID = w_id and D_ID = _d_id; 
+
+  select count (*) into n_items
+    from (select distinct OL_I_ID from ORDER_LINE
+	  where OL_W_ID = w_id
+	  and OL_D_ID = _d_id
+	  and OL_O_ID < last_o
+	  and OL_O_ID >= last_o - 20) O,
+        STOCK
+      where
+	S_W_ID = w_id
+	  and S_I_ID = OL_I_ID
+	    and S_QUANTITY < threshold; 
+  
+  result_names (n_items);
+  result (n_items);
+}
+;
+
+--
+-- c_by_name, call_c_by_name
+-- Examples on retrieving CUSTOMER by last name. 
+-- Functionality open coded in actual transaction procedures.
+create procedure c_by_name (
+    in w_id integer,
+    in d_id integer,
+    in name varchar,
+    out id integer)
+{
+  declare n, c_count integer; 
+  declare c_cur cursor for
+    select C_ID
+      from CUSTOMER
+      where C_W_ID = w_id
+       and C_D_ID = d_id
+       and C_LAST = name
+      order by C_W_ID, C_D_ID, C_LAST, C_FIRST; 
+
+  select count (*) into c_count
+    from CUSTOMER
+    where C_W_ID = w_id
+      and C_D_ID = d_id
+      and C_LAST = name; 
+
+  n := 0; 
+  open c_cur; 
+  whenever not found goto notfound; 
+  while (n <= c_count / 2)
+    {
+      fetch c_cur into id; 
+      n := n + 1; 
+    }
+  return; 
+
+notfound:
+  signal ('cnf', 'customer not found by name'); 
+  return; 
+}
+;
+
+
+create procedure call_c_by_name (
+    in w_id integer,
+    in d_id integer,
+    in c_last varchar)
+{
+  declare c_id integer; 
+
+  c_by_name (w_id, d_id, c_last, c_id); 
+}
+;
+
+
+-- [ Omission - don't generate new value of c_data if 'bad credit' case ]
+
+
+--
+-- payment - This procedure implements the Payment transaction.
+create procedure bc_c_data (
+    inout c_new varchar,
+    inout c_data varchar)
+{
+  return concatenate (c_new, subseq (c_data, length (c_new), length (c_data)));
+}
+;
+
+
+create procedure payment (
+    in _w_id integer,
+    in _c_w_id integer,
+    in h_amount float,
+    in _d_id integer,
+    in _c_d_id integer,
+    in _c_id integer,
+    in _c_last varchar)
+{
+  declare n, _w_ytd, _d_ytd, _c_cnt_payment integer; 
+  declare
+    _c_data, _c_first, _c_middle, 
+    _c_street_1,  _c_street_2, _c_city, _c_state, _c_zip,
+    _c_phone, _c_credit, _c_credit_lim,
+    _c_discount, _c_balance, _c_since, _c_data_1, _c_data_2,
+    _d_street_1, _d_street_2, _d_city, _d_state, _d_zip, _d_name,
+    _w_street_1, _w_street_2, _w_city, _w_state, _w_zip, _w_name,
+    screen_data varchar;
+
+  if (_c_id = 0)
+    {
+      declare namecnt integer; 
+      whenever not found goto no_customer; 
+
+      select count(C_ID) into namecnt 
+        from CUSTOMER
+	where C_LAST = _c_last
+	  and C_D_ID = _d_id
+	  and C_W_ID = _w_id; 
+
+      declare c_byname cursor for 
+	select C_ID
+	  from CUSTOMER
+	  where C_W_ID = _c_w_id
+	    and C_D_ID = _c_d_id
+	    and C_LAST = _c_last
+	  order by C_W_ID, C_D_ID, C_LAST, C_FIRST; 
+    
+      open c_byname (exclusive); 
+
+      n := 0; 
+      while (n <= namecnt / 2)
+        {
+	  fetch c_byname   into _c_id;
+	  n := n + 1; 
+	}
+
+      close c_byname; 
+    }
+
+  declare c_cr cursor for
+    select
+      C_FIRST, C_MIDDLE, C_LAST,
+      C_STREET_1, C_STREET_2, C_CITY, C_STATE, C_ZIP, 
+      C_PHONE, C_CREDIT, C_CREDIT_LIM,
+      C_DISCOUNT, C_BALANCE, C_SINCE, C_DATA_1, C_DATA_2, C_CNT_PAYMENT
+    from CUSTOMER
+    where C_W_ID = _c_w_id
+      and C_D_ID = _c_d_id
+      and C_ID = _c_id;
+
+  open c_cr (exclusive);
+
+  fetch c_cr into 
+    _c_first, _c_middle, _c_last,
+    _c_street_1, _c_street_2, _c_city, _c_state, _c_zip,
+    _c_phone, _c_credit, _c_credit_lim,
+    _c_discount, _c_balance, _c_since, _c_data_1, _c_data_2, _c_cnt_payment;
+  
+  _c_balance := _c_balance + h_amount; 
+
+  if (_c_credit = 'BC')
+    {
+      update CUSTOMER set
+        C_BALANCE = _c_balance,  
+	C_DATA_1 = bc_c_data (
+	  sprintf ('%5d%5d%5d%5d%5d%9f', _c_id, _c_d_id, _c_w_id, _d_id,
+	    _w_id, h_amount), _c_data_1),
+	C_CNT_PAYMENT = _c_cnt_payment + 1
+	where current of c_cr;
+
+      screen_data := subseq (_c_data_1, 1, 200);
+    }
+  else
+    {
+      update CUSTOMER set
+        C_BALANCE = _c_balance,
+	C_CNT_PAYMENT = _c_cnt_payment + 1
+	where current of c_cr;
+
+      screen_data := ' ';
+    }
+
+  declare d_cur cursor for
+    select D_STREET_1, D_STREET_2, D_CITY, D_STATE, D_ZIP, D_NAME, D_YTD
+    from DISTRICT
+    where D_W_ID = _w_id
+      and D_ID = _d_id; 
+
+  open d_cur (exclusive); 
+
+  fetch d_cur into _d_street_1, _d_street_2, _d_city, _d_state, _d_zip,
+      _d_name, _d_ytd; 
+
+  update DISTRICT set
+    D_YTD = _d_ytd + h_amount
+    where current of d_cur; 
+
+  close d_cur; 
+
+  declare w_cur cursor for 
+    select  W_STREET_1, W_STREET_2, W_CITY, W_STATE, W_ZIP, W_NAME, W_YTD
+    from WAREHOUSE
+    where W_ID = _w_id; 
+
+  open w_cur (exclusive); 
+
+  fetch	 w_cur into _w_street_1, _w_street_2, _w_city, _w_state, _w_zip,
+      _w_name, _w_ytd; 
+
+  update WAREHOUSE set W_YTD = _w_ytd + h_amount; 
+
+  declare h_data varchar; 
+  h_data := _w_name; 
+
+  insert into THISTORY (
+      H_C_D_ID, H_C_W_ID, H_C_ID, H_D_ID, H_W_ID, H_DATE, H_AMOUNT, H_DATA) 
+    values (_c_d_id, _c_w_id, _c_id, _d_id, _w_id, now (), h_amount, h_data); 
+  
+  result ( _c_id,
+           _c_last,
+           now (),
+           _w_street_1,
+           _w_street_2,
+           _w_city,
+           _w_state,
+           _w_zip,
+           _d_street_1,
+           _d_street_2,
+           _d_city,
+           _d_state,
+           _d_zip,
+           _c_first,
+           _c_middle,
+           _c_street_1,
+           _c_street_2,
+           _c_city,
+           _c_state,
+           _c_zip,
+           _c_phone,
+           _c_since,
+           _c_credit,
+           _c_credit_lim,
+           _c_discount,
+           _c_balance,
+           screen_data);
+  return;
+
+no_customer:
+  dbg_printf ('No customer %s %d.\n', _c_last, _c_id); 
+  signal ('NOCUS', 'No customer in payment.');
+}
+;
+
+
+--
+-- ol_stock - Part of the New Order transaction - Set the stock level for 
+-- an order line.  Compute the price and return it in amount.
+--
+-- Note - Open the cursor on STOCK as exclusive to avoid deadlocks.
+-- Use positioned update on STOCK for speed.
+--
+-- Fetch the s_dist_01 - 10 columns from STOCK even though they are not used.
+-- The test specification requires this. The operation is measurably faster
+-- if these are omitted.
+-- The ORDER LINE is inserted later for better lock concurrency.
+create procedure ol_stock (
+    in _w_id integer,
+    in d_id integer,
+    inout _ol_i_id integer,
+    in _ol_supply_w_id integer,
+    in qty integer,
+    out amount float,
+    inout s_dist_01 varchar, 
+    inout s_dist_02 varchar, 
+    inout s_dist_03 varchar, 
+    inout s_dist_04 varchar, 
+    inout s_dist_05 varchar, 
+    inout s_dist_06 varchar, 
+    inout s_dist_07 varchar, 
+    inout s_dist_08 varchar, 
+    inout s_dist_09 varchar, 
+    inout s_dist_10 varchar,
+    inout dist_info varchar)
+{
+  declare _s_data varchar;
+  declare _s_quantity, _s_cnt_order, _s_cnt_remote integer; 
+  declare _i_name varchar;
+
+  if (_ol_i_id = 0) return; 
+
+  whenever not found goto no_item; 
+  select I_PRICE, I_NAME into amount, _i_name
+    from ITEM
+    where I_ID = _ol_i_id; 
+
+  declare s_cur cursor for
+    select S_QUANTITY, S_DATA, S_CNT_ORDER, S_CNT_REMOTE,
+        S_DIST_01, S_DIST_02, S_DIST_03, S_DIST_04, S_DIST_05,
+	S_DIST_06, S_DIST_07, S_DIST_08, S_DIST_09, S_DIST_10
+    from STOCK
+    where S_I_ID = _ol_i_id
+      and S_W_ID = _ol_supply_w_id; 
+
+  whenever not found goto no_stock; 
+
+  open s_cur (exclusive); 
+  fetch s_cur into
+      _s_quantity, _s_data, _s_cnt_order, _s_cnt_remote,
+      s_dist_01, s_dist_02, s_dist_03, s_dist_04, s_dist_05,
+      s_dist_06, s_dist_07, s_dist_08, s_dist_09, s_dist_10; 
+
+  if (_s_quantity < qty)
+    _s_quantity := _s_quantity - qty + 91; 
+  else
+    _s_quantity := _s_quantity - qty; 
+
+  if (_w_id <> _ol_supply_w_id)
+    _s_cnt_remote := _s_cnt_remote + 1;
+
+  update STOCK set
+    S_QUANTITY = _s_quantity,
+    S_CNT_ORDER = _s_cnt_order + 1,
+    S_CNT_REMOTE = _s_cnt_remote
+    where current of s_cur; 
+  
+       if (d_id = 1) dist_info := s_dist_01;
+  else if (d_id = 2) dist_info := s_dist_02;
+  else if (d_id = 3) dist_info := s_dist_03;
+  else if (d_id = 4) dist_info := s_dist_04;
+  else if (d_id = 5) dist_info := s_dist_05;
+  else if (d_id = 6) dist_info := s_dist_06;
+  else if (d_id = 7) dist_info := s_dist_07;
+  else if (d_id = 8) dist_info := s_dist_08;
+  else if (d_id = 9) dist_info := s_dist_09;
+  else if (d_id = 10) dist_info := s_dist_10;
+
+  result (_i_name, _s_quantity, 'G', amount, amount * qty);
+
+  amount := qty * amount; 
+  
+  return; 
+no_stock:
+  signal ('NOSTK', 'No stock row found.'); 
+
+no_item:
+  signal ('NOITM', 'No item row found.'); 
+}
+;
+
+--
+-- ol_insert - Pasrt of New Order transaction. Insert an ORDER LINE.
+-- 
+-- Note the use of inout parameters, even though they are not modified here.
+-- This saves copying the values.
+create procedure ol_insert (
+    inout w_id integer,
+    inout d_id integer,
+    inout o_id integer,
+    in ol_number integer,
+    inout ol_i_id integer,
+    inout ol_qty integer,
+    inout ol_amount float,
+    inout ol_supply_w_id integer,
+    inout ol_dist_info varchar,
+    inout tax_and_discount float)
+{
+  if (ol_i_id = -1) return; 
+  ol_amount := ol_amount * tax_and_discount;
+
+  insert into ORDER_LINE (
+      OL_O_ID, OL_D_ID, OL_W_ID, OL_NUMBER, OL_I_ID, OL_SUPPLY_W_ID,
+      OL_QUANTITY, OL_AMOUNT, OL_DIST_INFO) 
+    values (
+      o_id, d_id, w_id, ol_number, ol_i_id, ol_supply_w_id,
+      ol_qty, ol_amount, ol_dist_info); 
+}
+;
+
+-- cust_info - part of New Order transaction. Return customer info.
+create procedure cust_info (
+    in w_id integer,
+    in d_id integer,
+    inout _c_id integer,
+    inout _c_last varchar,
+    out _c_discount float,
+    out _c_credit varchar)
+{
+  whenever not found goto err; 
+  select C_LAST, C_DISCOUNT, C_CREDIT INTO _c_last, _c_discount, _c_credit
+    from CUSTOMER
+    where C_W_ID = w_id
+      and C_D_ID = d_id
+      and C_ID = _c_id; 
+  return; 
+
+err:
+  signal ('NOCUS', 'No customer'); 
+}
+;
+
+-- new_order - Top level procedure of New Order transaction.
+-- Take a fixed 10 order lines as individually named parameters
+-- to stay easily portable.
+create procedure new_order (
+    in _w_id integer, in _d_id integer, in _c_id integer,
+    in o_ol_cnt integer, in o_all_local integer,
+    in i_id_1 integer, in s_w_id_1 integer, in qty_1 integer,
+    in i_id_2 integer, in s_w_id_2 integer, in qty_2 integer,
+    in i_id_3 integer, in s_w_id_3 integer, in qty_3 integer,
+    in i_id_4 integer, in s_w_id_4 integer, in qty_4 integer,
+    in i_id_5 integer, in s_w_id_5 integer, in qty_5 integer,
+    in i_id_6 integer, in s_w_id_6 integer, in qty_6 integer,
+    in i_id_7 integer, in s_w_id_7 integer, in qty_7 integer,
+    in i_id_8 integer, in s_w_id_8 integer, in qty_8 integer,
+    in i_id_9 integer, in s_w_id_9 integer, in qty_9 integer,
+    in i_id_10 integer, in s_w_id_10 integer, in qty_10 integer
+    )
+{
+  declare
+    ol_a_1, ol_a_2, ol_a_3, ol_a_4, ol_a_5,
+    ol_a_6, ol_a_7, ol_a_8, ol_a_9, ol_a_10 integer; 
+  declare _c_discount, _d_tax, _w_tax, tax_and_discount float; 
+  declare _datetime timestamp;
+  declare _c_last, _c_credit varchar; 
+  declare _o_id integer; 
+  declare
+    i_name, s_dist_01, s_dist_02, s_dist_03, s_dist_04, s_dist_05, s_dist_06,
+    s_dist_07, s_dist_08, s_dist_09, s_dist_10,
+    disti_1, disti_2, disti_3, disti_4, disti_5, disti_6, disti_7, disti_8,
+    disti_9, disti_10 varchar;
+
+  _datetime := now ();
+
+  result_names (i_name, qty_1, disti_1, ol_a_1, ol_a_2);
+
+  ol_stock (
+      _w_id, _d_id, i_id_1, s_w_id_1, qty_1, ol_a_1,
+      s_dist_01, s_dist_02, s_dist_03, s_dist_04, s_dist_05,
+      s_dist_06, s_dist_07, s_dist_08, s_dist_09, s_dist_10, disti_1); 
+
+  ol_stock (
+      _w_id, _d_id, i_id_2, s_w_id_2, qty_2, ol_a_2,
+      s_dist_01, s_dist_02, s_dist_03, s_dist_04, s_dist_05,
+      s_dist_06, s_dist_07, s_dist_08, s_dist_09, s_dist_10, disti_2); 
+
+  ol_stock (
+      _w_id, _d_id, i_id_3, s_w_id_3, qty_3, ol_a_3,
+      s_dist_01, s_dist_02, s_dist_03, s_dist_04, s_dist_05,
+      s_dist_06, s_dist_07, s_dist_08, s_dist_09, s_dist_10, disti_3); 
+
+  ol_stock (
+      _w_id, _d_id, i_id_4, s_w_id_4, qty_4, ol_a_4,
+      s_dist_01, s_dist_02, s_dist_03, s_dist_04, s_dist_05,
+      s_dist_06, s_dist_07, s_dist_08, s_dist_09, s_dist_10, disti_4); 
+
+  ol_stock (
+      _w_id, _d_id, i_id_5, s_w_id_5, qty_5, ol_a_5,
+      s_dist_01, s_dist_02, s_dist_03, s_dist_04, s_dist_05,
+      s_dist_06, s_dist_07, s_dist_08, s_dist_09, s_dist_10, disti_5); 
+
+  ol_stock (
+      _w_id, _d_id, i_id_6, s_w_id_6, qty_6, ol_a_6,
+      s_dist_01, s_dist_02, s_dist_03, s_dist_04, s_dist_05,
+      s_dist_06, s_dist_07, s_dist_08, s_dist_09, s_dist_10, disti_6); 
+
+  ol_stock (
+      _w_id, _d_id, i_id_7, s_w_id_7, qty_7, ol_a_7,
+      s_dist_01, s_dist_02, s_dist_03, s_dist_04, s_dist_05,
+      s_dist_06, s_dist_07, s_dist_08, s_dist_09, s_dist_10, disti_7); 
+
+  ol_stock (
+      _w_id, _d_id, i_id_8, s_w_id_8, qty_8, ol_a_8,
+      s_dist_01, s_dist_02, s_dist_03, s_dist_04, s_dist_05,
+      s_dist_06, s_dist_07, s_dist_08, s_dist_09, s_dist_10, disti_8); 
+
+  ol_stock (
+      _w_id, _d_id, i_id_9, s_w_id_9, qty_8, ol_a_9,
+      s_dist_01, s_dist_02, s_dist_03, s_dist_04, s_dist_05,
+      s_dist_06, s_dist_07, s_dist_08, s_dist_09, s_dist_10, disti_9); 
+
+  ol_stock (
+      _w_id, _d_id, i_id_10, s_w_id_10, qty_10, ol_a_10,
+      s_dist_01, s_dist_02, s_dist_03, s_dist_04, s_dist_05,
+      s_dist_06, s_dist_07, s_dist_08, s_dist_09, s_dist_10, disti_10); 
+
+  cust_info (_w_id, _d_id, _c_id, _c_last, _c_discount, _c_credit); 
+
+  declare  d_cur cursor for
+    select D_TAX, D_NEXT_O_ID
+      from DISTRICT
+      where D_W_ID = _w_id
+        and D_ID = _d_id; 
+
+  whenever not found goto noware; 
+  open d_cur (exclusive); 
+  fetch d_cur into _d_tax, _o_id; 
+  update DISTRICT set
+    D_NEXT_O_ID = _o_id + 1
+    where current of d_cur; 
+  close d_cur; 
+
+  insert into ORDERS (
+      O_ID, O_D_ID, O_W_ID, O_C_ID, O_ENTRY_D, O_OL_CNT, O_ALL_LOCAL)
+    values (
+      _o_id, _d_id, _w_id, _c_id, _datetime, o_ol_cnt, o_all_local); 
+
+  insert into NEW_ORDER (NO_O_ID, NO_D_ID, NO_W_ID)
+    values (_o_id, _d_id, _w_id); 
+
+  select W_TAX into _w_tax
+    from WAREHOUSE
+    where W_ID = _w_id; 
+  
+  tax_and_discount := (1 + _d_tax + _w_tax) * (1 - _c_discount); 
+
+  ol_insert (_w_id, _d_id, _o_id,
+      1, i_id_1, qty_1, ol_a_1,  s_w_id_1, disti_1, tax_and_discount); 
+
+  ol_insert (_w_id, _d_id, _o_id,
+      2, i_id_2, qty_2, ol_a_2,  s_w_id_2, disti_2, tax_and_discount); 
+
+  ol_insert (_w_id, _d_id, _o_id,
+      3, i_id_3, qty_3, ol_a_3,  s_w_id_3, disti_3, tax_and_discount); 
+
+  ol_insert (_w_id, _d_id, _o_id,
+      4, i_id_4, qty_4, ol_a_4,  s_w_id_4, disti_4, tax_and_discount); 
+
+  ol_insert (_w_id, _d_id, _o_id,
+      5, i_id_5, qty_5, ol_a_5,  s_w_id_5, disti_5, tax_and_discount); 
+
+  ol_insert (_w_id, _d_id, _o_id,
+      6, i_id_6, qty_6, ol_a_6,  s_w_id_6, disti_6, tax_and_discount); 
+
+  ol_insert (_w_id, _d_id, _o_id,
+      7, i_id_7, qty_7, ol_a_7,  s_w_id_7, disti_7, tax_and_discount); 
+
+  ol_insert (_w_id, _d_id, _o_id,
+      8, i_id_6, qty_8, ol_a_8,  s_w_id_8, disti_8, tax_and_discount); 
+
+  ol_insert (_w_id, _d_id, _o_id,
+      9, i_id_9, qty_9, ol_a_9,  s_w_id_9, disti_9, tax_and_discount); 
+
+  ol_insert (_w_id, _d_id, _o_id,
+      10, i_id_10, qty_10, ol_a_10,  s_w_id_10, disti_10, tax_and_discount); 
+
+  end_result ();
+  result (_w_tax, _d_tax, _o_id, _c_last, _c_discount, _c_credit);
+  return; 
+
+noware:
+  signal ('NOWRE', 'Warehouse or district not found.'); 
+}
+;
+
+-- delivery_1 - Top level procedure for the Delivery transaction
+-- 
+-- This is called 10 times by the client in each delivery transaction.
+-- The rules allow Delivery to be implemented as up to 10 separately committed 
+-- transactions. This is done to minimize lock duration.
+create procedure delivery_1 (
+    in w_id integer,
+    in carrier_id integer,
+    in d_id integer)
+{
+  declare no_cur cursor for 
+    select NO_O_ID
+      from NEW_ORDER
+      where NO_W_ID = w_id
+        and NO_D_ID = d_id;
+
+  declare _datetime timestamp;
+  declare _o_id, _c_id integer; 
+  declare ol_total float;
+
+  _datetime := now ();
+  open no_cur (exclusive, prefetch 1); 
+  fetch no_cur into _o_id; 
+  delete from NEW_ORDER where current of no_cur; 
+  close no_cur; 
+  
+  declare o_cur cursor for 
+    select O_C_ID
+      from ORDERS
+      where O_W_ID = w_id
+        and O_D_ID = d_id
+	and O_ID = _o_id;
+
+  open o_cur (exclusive); 
+  fetch o_cur into _c_id; 
+  update ORDERS set
+    O_CARRIER_ID = carrier_id
+    where current of o_cur; 
+  close o_cur; 
+
+  declare ol_cur cursor for 
+    select OL_AMOUNT
+      from ORDER_LINE
+      where OL_W_ID = w_id
+        and OL_D_ID = d_id
+	and OL_O_ID = _o_id; 
+
+  ol_total := 0.0; 
+  whenever not found goto lines_done; 
+  open ol_cur (exclusive); 
+  while (1)
+    {
+      declare tmp integer; 
+      fetch ol_cur into tmp; 
+      ol_total := ol_total + tmp; 
+      update ORDER_LINE set
+        OL_DELIVERY_D = _datetime
+	where current of ol_cur; 
+    }
+
+lines_done: 
+  update CUSTOMER set
+    C_BALANCE = C_BALANCE + ol_total,
+    C_CNT_DELIVERY = C_CNT_DELIVERY + 1 
+    where C_W_ID = w_id and C_D_ID = d_id and C_ID = _c_id; 
+
+  return _o_id;
+}
+;
+
+-- ostat - Top level procedure for the Order Status transaction.
+create procedure ostat (
+    in _w_id integer,
+    in _d_id integer,
+    in _c_id integer,
+    in _c_last varchar)
+{
+  declare _c_first, _c_middle, _c_balance varchar; 
+  declare
+    _o_id, _ol_i_id, _ol_supply_w_id, _ol_quantity, _o_carrier_id, n integer; 
+  declare _ol_amount float; 
+  declare _ol_delivery_d, _o_entry_d varchar; 
+
+  if (_c_id = 0)
+    {
+      declare namecnt integer; 
+
+      whenever not found goto no_customer; 
+      select count (*) into namecnt 
+	from CUSTOMER
+	where C_LAST = _c_last
+	  and C_D_ID = _d_id
+	  and C_W_ID = _w_id; 
+
+      declare c_byname cursor for 
+	select C_BALANCE, C_LAST, C_MIDDLE, C_ID
+	  from CUSTOMER
+	  where C_W_ID = _w_id
+	    and C_D_ID = _d_id
+	    and C_LAST = _c_last
+	  order by C_W_ID, C_D_ID, C_LAST, C_FIRST;
+
+      open c_byname; 
+	
+      n := 0; 
+      while (n <= namecnt / 2)
+        {
+	  fetch c_byname into _c_balance, _c_first, _c_middle, _c_id; 
+	  n := n + 1; 
+	}
+
+      close c_byname; 
+    }
+  else
+    {
+      select C_BALANCE, C_FIRST, C_MIDDLE, C_LAST
+	into _c_balance, _c_first, _c_middle, _c_last
+	from CUSTOMER
+	where C_W_ID = _w_id
+	  and C_D_ID = _d_id
+	  and C_ID = _c_id;
+    }
+
+  whenever not found goto no_order; 
+  select O_ID, O_CARRIER_ID, O_ENTRY_D 
+    into _o_id, _o_carrier_id, _o_entry_d
+    from ORDERS
+    where O_W_ID = _w_id
+      and O_D_ID = _d_id
+      and O_C_ID = _c_id
+    order by O_W_ID DESC, O_D_ID DESC, O_C_ID DESC, O_ID DESC;
+
+  declare o_line cursor for 
+    select OL_I_ID, OL_SUPPLY_W_ID, OL_QUANTITY, OL_AMOUNT, OL_DELIVERY_D
+      from ORDER_LINE
+      where OL_W_ID = _w_id
+        and OL_D_ID = _d_id
+	and OL_O_ID = _o_id; 
+
+  whenever not found goto lines_done; 
+  open o_line;
+  result_names (_ol_supply_w_id, _ol_i_id, _ol_quantity, _ol_amount,
+      _ol_delivery_d);
+
+  while (1)
+    {
+      fetch o_line into _ol_i_id, _ol_supply_w_id, _ol_quantity, _ol_amount,
+          _ol_delivery_d; 
+
+      result (_ol_supply_w_id, _ol_i_id, _ol_quantity, _ol_amount,
+          _ol_delivery_d);
+    }
+
+lines_done:
+  end_result ();
+  result_names  (_c_id, _c_last, _c_first, _c_middle, _o_entry_d,
+      _o_carrier_id, _c_balance, _o_id);
+
+  result (_c_id, _c_last, _c_first, _c_middle, _o_entry_d,
+      _o_carrier_id, _c_balance, _o_id);
+
+  return; 
+
+no_customer:
+  dbg_printf ('Nocustomer %s %d.\n', _c_last, _c_id); 
+  signal ('NOCUS', 'No customer in order status'); 
+
+no_order:
+  return 0; 
+}
+;
+
+
+create procedure order_check (in _w_id integer, in _d_id integer)
+{
+  declare last_o, ol_max, ol_ct, o_max, o_ct, nolines integer;
+  select D_NEXT_O_ID into last_o from DISTRICT where D_ID = _d_id and D_W_ID = _w_id;
+  select count (*), max (OL_O_ID) into ol_ct, ol_max from ORDER_LINE
+    where OL_W_ID = _w_id and ol_d_id = _d_id;
+  select count (*), max (O_ID) into o_ct, o_max from ORDERS
+    where O_W_ID = _w_id and O_D_ID = _d_id;
+  select count (*) into nolines from ORDERS where O_W_ID = _w_id and O_D_ID = _d_id and
+    not exists 
+      (select 1 from ORDER_LINE where OL_W_ID = _w_id and OL_D_ID = _d_id and OL_O_ID = O_ID);
+  result_names (last_o, o_max, o_ct, ol_max, ol_ct, nolines);
+  result (last_o, o_max, o_ct, ol_max, ol_ct, nolines);
+  if (o_ct <> last_o-1 or o_max <> ol_max or o_max <> last_o-1 or nolines <> 0)
+    signal ('tpinc', 'inconsistent order counts');
+}
+;
