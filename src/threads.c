@@ -243,9 +243,13 @@ ThreadedCalcStats (OList * tests, THREAD_T ** workers,
 
       if (nA)
 	{
-	  if (nOkA)
+	  if (nOkA < nA)
 	    pane_log
-	      ("\r\n\r\n%s - %s(%s) - %d TPC-A Threads ended with no errors.\r\n",
+	      ("\r\n\r\n%s - %s(%s) - %d out of %d TPC-A Threads ended with errors.\r\n",
+	      test->szName, test->szDBMS, test->szDriverName, nA -nOkA, nA);
+	  else
+	    pane_log
+	      ("\r\n\r\n%s - %s(%s) - all %d TPC-A Threads completed successfully.\r\n",
 	      test->szName, test->szDBMS, test->szDriverName, nOkA);
 
           if (nOkA == 0 && !test->szSQLState[0] && !test->szSQLError[0])
@@ -263,8 +267,8 @@ ThreadedCalcStats (OList * tests, THREAD_T ** workers,
       if (nOkC)
 	{
 	  pane_log
-	      ("\r\n\r\n%s - %s(%s) - %d TPC-C Threads ended with no errors.\r\n",
-	      test->szName, test->szDBMS, test->szDriverName, nOkC);
+	      ("\r\n\r\n%s - %s(%s) - %d/%d TPC-C Threads ended with no errors.\r\n",
+	      test->szName, test->szDBMS, test->szDriverName, nOkC, nC);
 	  test->tpc.c.run_time /= nOkC;
 	  if (test->hdbc)
 	    add_tpcc_result (test);
