@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<HTML>
+<HEAD>
+<LINK REL="stylesheet" TYPE="text/css" HREF="openlink.css">
+<TITLE>OpenLink ODBC Bench Command Line Version</TITLE>
+<META NAME="AUTHOR" CONTENT="">
+<META NAME="COPYRIGHT" CONTENT="OpenLink Software, 2002">
+<META NAME="KEYWORDS" CONTENT="Virtuoso;OpenLink;Database;UDA;Web Server">
+<META NAME="GENERATOR" CONTENT="OpenLink designed XSLT sheets and XT">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<A NAME="menus"></A>
+<DIV CLASS="chaphead">
+<H1>OpenLink ODBC Bench Command Line Version</H1>
+</DIV>
+<DIV CLASS="abstract">
+<H2 CLASS="sect1head">Abstract</H2>
+<DIV CLASS="abstracttxt">
+<P>
+How to use the OpenLink ODBC Bench Command Line Version Utility</P>
+</DIV>
+</DIV>
+
+<br>
+
+<H2 CLASS="sect1head">
+<A NAME="odbcbenchcommandline">ODBC Bench Command Line Version</A>
+</H2>
+
+<p>A command line version of ODBCBench is provided on windows and 
+Unix enabling the program to be run without the need for the GTK Libraries.  
+This can be achieved by passing commandline options to the ODBCBench 
+program when running it, the list of which are as follows:</p>
+
+<pre class="screen">
+$ ./odbc_bench_cmd -?
+OpenLink ODBC Benchmark Utility 0.99.12
+Copyright (C) 2000-2002 OpenLink Software
+Please report all bugs to <odbc-bench@openlinksw.com>
+This utility is licensed under GPL
+
+Usage :
+
+  -d -dsn   - login dsn
+  -u -uid   - user id
+  -p -pwd   - password
+  -r -runs  - number of runs (default 1)
+  -m -time  - duration of the run (mins) (default 5)
+  -t -threads    - number of threads (default 1)
+  -P -arrayparm  - size for used array of parameters (default 1)
+  -s -test       - exec | proc | prepare (default RunAll tests)
+  -n -autocommit - don't try to use transactions
+  -1 -query      - do 100 row query
+  -a -async      - asynchronous execution
+  -c -cursor_type    - cursor type = forward | static | keyset | dynamic | mixed
+  -i -txn_isolation  - transaction isolation level = uncommitted | committed | repeatable | serializable
+  -S -rowset_size    - rowset size
+  -K -keyset_size    - keyset size
+  -T -trav_count     - traversal count
+  -C -create_tables  - create the tables
+  -rcreate_table     - create the results table
+  -rdsn   - login dsn for result table
+  -ruid   - user id for result table
+  -rpwd   - password for result table
+  -rfile  - output filename for results data
+  -v      - print additional info on stdout
+  -V      - print debug info on stdout
+  -R      - doesn't do rollbacks on deadlock
+</pre>
+
+<p>Examples:</p>
+
+<p>To create the TPC-A based tables:</p>
+
+<pre class="programlisting">
+$ ./odbc_bench_cmd  -d tds_lite -u sa -p master -C
+</pre>
+
+<p>To run TPC-A based test using SQLPrepare/SQLExecute and 100 row query for 6 minutes on 2 threads:</p>
+
+<pre class="programlisting">
+$ ./odbc_bench_cmd  -d tds_lite -u sa -p master -s prepare -1 -m 6 -t 2
+</pre>
+
+<br>
+
+<DIV CLASS="vtabfoot"> - Copyright 2002, OpenLink Software - </DIV>
+</BODY>
+</HTML>

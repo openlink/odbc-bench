@@ -1,0 +1,544 @@
+.cf-vdocbody1/
+{	BACKGROUND-COLOR: #3399CC;/
+}/
+.search/
+{/
+    MARGIN-LEFT: 24px/
+}/
+BODY/
+{/
+    MARGIN-TOP: 0px;/
+    FONT-SIZE: 70%;/
+    MARGIN-LEFT: 3em;/
+    MARGIN-RIGHT: 3em;/
+    FONT-FAMILY: Verdana, 'Times New Roman', Helvetica, Utopia, Times, 'MS Serif', Serif;/
+    BACKGROUND-COLOR: #ffffff/
+}/
+.vtabhead/
+{/
+    FONT-WEIGHT: bolder;/
+    FONT-SIZE: 110%;/
+    COLOR: white;/
+    FONT-FAMILY: Verdana, Sans-Serif;/
+    BACKGROUND-COLOR: black;/
+    TEXT-ALIGN: center/
+}/
+.vtabfoot/
+{/
+    FONT-SIZE: 8pt;/
+    PADDING-BOTTOM: 10px;/
+    FONT-FAMILY: Tahoma, Verdana, Utopia, Times, Helvetica, Sans-Serif;/
+    BACKGROUND-COLOR: white;/
+    TEXT-ALIGN: center/
+}/
+.chapter/
+{/
+    CLEAR: both;/
+    FONT-SIZE: 75%;/
+    PAGE-BREAK-AFTER: right;/
+    FONT-FAMILY: Verdana, Tahoma, Sans-Serif;/
+    BACKGROUND-COLOR: white;/
+    TEXT-ALIGN: left/
+}/
+H1/
+{/
+    PADDING-RIGHT: 3em;/
+    MARGIN-TOP: 5px;/
+    FONT-SIZE: 185%;/
+    MARGIN-BOTTOM: 5px;/
+    MARGIN-LEFT: -3em/
+}/
+.chaphead/
+{/
+    PADDING-BOTTOM: 5px;/
+    MARGIN-LEFT: -3em;/
+    COLOR: #191970;/
+    LINE-HEIGHT: normal;/
+    MARGIN-RIGHT: -3em;/
+    PADDING-TOP: 5px;/
+    BORDER-BOTTOM: navy thin solid;/
+    FONT-FAMILY: Verdana, Arial, Helvetica, Lucida, Sans-Serif;/
+    BACKGROUND-COLOR: skyblue;/
+    TEXT-ALIGN: right/
+}/
+.Border/
+{/
+    BACKGROUND-COLOR: navy/
+}/
+.sect/
+{/
+    CLEAR: both;/
+    PADDING-BOTTOM: 5px;/
+    PADDING-TOP: 3px/
+}/
+P/
+{/
+    MARGIN-TOP: 2px;/
+    MARGIN-BOTTOM: 5px;/
+    TEXT-ALIGN: left/
+}/
+.sect1head/
+{/
+    MARGIN-TOP: 5px;/
+    FONT-SIZE: 165%;/
+    MARGIN-BOTTOM: 5px;/
+    PADDING-TOP: 30px/
+}/
+.sect2head/
+{/
+    MARGIN-TOP: 5px;/
+    FONT-SIZE: 125%;/
+    MARGIN-BOTTOM: 5px;/
+    PADDING-TOP: 10px/
+}/
+.sect3head/
+{/
+    MARGIN-TOP: 5px;/
+    FONT-SIZE: 115%;/
+    MARGIN-BOTTOM: 5px;/
+    PADDING-TOP: 10px/
+}/
+.sect4head/
+{/
+    MARGIN-TOP: 5px;/
+    FONT-SIZE: 100%;/
+    MARGIN-BOTTOM: 5px/
+}/
+.sect5head/
+{/
+    MARGIN-TOP: 5px;/
+    FONT-SIZE: 100%;/
+    MARGIN-BOTTOM: 5px/
+}/
+.formaltitle/
+{/
+    FONT-WEIGHT: bolder;/
+    MARGIN: 5px/
+}/
+.chaptochead/
+{/
+    FONT-WEIGHT: bolder;/
+    FONT-SIZE: 165%;/
+    PADDING-BOTTOM: 3px;/
+    FONT-FAMILY: Verdana, Sans-Serif/
+}/
+.chaptoc/
+{/
+    BACKGROUND-COLOR: white/
+}/
+.reftochead/
+{/
+    FONT-WEIGHT: bolder;/
+    FONT-SIZE: 165%;/
+    PADDING-BOTTOM: 3px;/
+    FONT-FAMILY: Verdana, Sans-Serif/
+}/
+.reftoc/
+{/
+    BACKGROUND-COLOR: white/
+}/
+PRE/
+{/
+    FONT-SIZE: 100%/
+}/
+.note/
+{/
+    PADDING-RIGHT: 2px;/
+    MARGIN-TOP: 20px;/
+    PADDING-LEFT: 2px;/
+    MARGIN-BOTTOM: 30px;/
+    PADDING-BOTTOM: 2px;/
+    PADDING-TOP: 2px;/
+    BACKGROUND-COLOR: #fafadc/
+}/
+.notetitle/
+{/
+    FONT-WEIGHT: bolder/
+}/
+.tip/
+{/
+    PADDING-RIGHT: 2px;/
+    MARGIN-TOP: 20px;/
+    PADDING-LEFT: 2px;/
+    MARGIN-BOTTOM: 30px;/
+    PADDING-BOTTOM: 2px;/
+    PADDING-TOP: 2px;/
+    BACKGROUND-COLOR: #dcfbdc/
+}/
+.tiptitle/
+{/
+    FONT-WEIGHT: bolder/
+}/
+.refentrytitle/
+{/
+    MARGIN-TOP: 20px;/
+    FONT-WEIGHT: bolder;/
+    FONT-SIZE: 140%;/
+    MARGIN-BOTTOM: 10px;/
+    PADDING-BOTTOM: 2px;/
+    COLOR: black;/
+    PADDING-TOP: 5px;/
+    FONT-FAMILY: Verdana, Sans-Serif/
+}/
+.refsect1title/
+{/
+    FONT-WEIGHT: bolder;/
+    FONT-SIZE: 115%;/
+    PADDING-BOTTOM: 5px/
+}/
+.refsect2title/
+{/
+    FONT-WEIGHT: bolder/
+}/
+.refsect1/
+{/
+    PADDING-BOTTOM: 10px/
+}/
+.refsect2/
+{/
+}/
+.refpurpose/
+{/
+    PADDING-BOTTOM: 2px;/
+    COLOR: navy;/
+    PADDING-TOP: 2px;/
+    FONT-FAMILY: Tahoma, Verdana, Sans-Serif/
+}/
+.funcsynopsis/
+{/
+    MARGIN-TOP: 10px;/
+    FONT-SIZE: 110%;/
+    MARGIN-BOTTOM: 10px;/
+    COLOR: #777777;/
+    FONT-FAMILY: Tahoma, Sans-Serif/
+}/
+.funcdef/
+{/
+    FONT-SIZE: 100%/
+}/
+.function/
+{/
+    FONT-SIZE: 100%;/
+    COLOR: red;/
+    FONT-FAMILY: Tahoma, Sans-Serif/
+}/
+.parameter/
+{/
+    FONT-SIZE: 100%;/
+    COLOR: navy;/
+    FONT-FAMILY: Tahoma, Sans-Serif/
+}/
+.paramdef/
+{/
+    FONT-SIZE: 100%;/
+    FONT-FAMILY: Tahoma, Sans-serif/
+}/
+.paramdefoptional/
+{/
+    FONT-SIZE: 100%;/
+    FONT-STYLE: italic;/
+    FONT-FAMILY: Tahoma, Sans-serif/
+}/
+.optional/
+{/
+    FONT-SIZE: 100%;/
+    COLOR: navy;/
+    FONT-FAMILY: Tahoma, Sans-serif/
+}/
+.example/
+{/
+    MARGIN-TOP: 20px;/
+    FONT-SIZE: 100%;/
+    MARGIN-BOTTOM: 20px/
+}/
+.exampletitle/
+{/
+    FONT-WEIGHT: bolder;/
+    FONT-SIZE: 100%;/
+    BACKGROUND-IMAGE: none;/
+    MARGIN-BOTTOM: 10px;/
+    COLOR: teal;/
+    BACKGROUND-REPEAT: repeat;/
+    FONT-FAMILY: Verdana, Sans-Serif/
+}/
+.varlist/
+{/
+    FONT-SIZE: 100%;/
+    MARGIN-LEFT: 1cm;/
+    MARGIN-RIGHT: 0.5cm/
+}/
+.varterm/
+{/
+    FONT-WEIGHT: bolder;/
+    FONT-SIZE: 10pt;/
+    MARGIN-LEFT: 0cm;/
+    COLOR: navy;/
+    MARGIN-RIGHT: 0cm;/
+    FONT-FAMILY: Verdana, Sans-Serif;/
+    TEXT-ALIGN: right/
+}/
+.itemizedlist/
+{/
+    FONT-SIZE: 100%/
+}/
+.toc/
+{/
+    FONT-FAMILY: Verdana, Sans-Serif/
+}/
+A.toc1/
+{/
+    FONT-WEIGHT: bolder;/
+    FONT-SIZE: 130%;/
+    COLOR: purple;/
+    FONT-FAMILY: Verdana, Sans-Serif/
+}/
+DIV.toc1/
+{/
+    PADDING-TOP: 50px/
+}/
+A.toc2/
+{/
+    FONT-SIZE: 100%;/
+    COLOR: navy;/
+    FONT-FAMILY: Verdana, Sans-Serif/
+}/
+.toc3/
+{/
+    FONT-SIZE: 100%;/
+    COLOR: teal;/
+    FONT-FAMILY: Verdana, Sans-Serif/
+}/
+.cf/
+{/
+    MARGIN: 0px;/
+    BACKGROUND-COLOR: lightsteelblue/
+}/
+.cf-tabs/
+{/
+    PADDING-RIGHT: 0px;/
+    PADDING-LEFT: 0px;/
+    FONT-SIZE: 90%;/
+    PADDING-BOTTOM: 0px;/
+    MARGIN: 0px;/
+    PADDING-TOP: 0px/
+}/
+.cf-toc/
+{/
+    CLEAR: both;/
+    MARGIN-LEFT: 0cm;/
+    FONT-FAMILY: Verdana, Tahoma, Verdana, Helv, Sans-Serif/
+}/
+.cf-toc1/
+{/
+    BORDER-RIGHT: lightsteelblue 1px solid;/
+    PADDING-RIGHT: 1px;/
+    BORDER-TOP: lightsteelblue 1px solid;/
+    PADDING-LEFT: 1px;/
+    FONT-SIZE: 100%;/
+    PADDING-BOTTOM: 1px;/
+    BORDER-LEFT: lightsteelblue 1px solid;/
+    WIDTH: 100%;/
+    COLOR: black;/
+    PADDING-TOP: 1px;/
+    BORDER-BOTTOM: lightsteelblue 1px solid;/
+    FONT-FAMILY: Verdana, Tahoma, Verdana, Helv, Sans-Serif/
+}/
+.cf-toc1:hover/
+{/
+    BORDER-RIGHT: steelblue 1px solid;/
+    BORDER-TOP: steelblue 1px solid;/
+    BORDER-LEFT: steelblue 1px solid;/
+    WIDTH: 100%;/
+    BORDER-BOTTOM: steelblue 1px solid;/
+    BACKGROUND-COLOR: lightskyblue;/
+    TEXT-DECORATION: none/
+}/
+.cf-toc1:visited/
+{/
+    COLOR: black/
+}/
+.cf-toc2/
+{/
+    BORDER-RIGHT: lightsteelblue 1px solid;/
+    PADDING-RIGHT: 1px;/
+    BORDER-TOP: lightsteelblue 1px solid;/
+    PADDING-LEFT: 1px;/
+    FONT-SIZE: 100%;/
+    PADDING-BOTTOM: 1px;/
+    BORDER-LEFT: lightsteelblue 1px solid;/
+    WIDTH: 100%;/
+    COLOR: black;/
+    PADDING-TOP: 1px;/
+    BORDER-BOTTOM: lightsteelblue 1px solid;/
+    FONT-FAMILY: Verdana, Tahoma, Verdana, Helv, Sans-Serif/
+}/
+.cf-toc2:hover/
+{/
+    BORDER-RIGHT: steelblue 1px solid;/
+    BORDER-TOP: steelblue 1px solid;/
+    BORDER-LEFT: steelblue 1px solid;/
+    WIDTH: 100%;/
+    COLOR: black;/
+    BORDER-BOTTOM: steelblue 1px solid;/
+    BACKGROUND-COLOR: lightskyblue;/
+    TEXT-DECORATION: none/
+}/
+.cf-toc2:visited/
+{/
+    COLOR: black/
+}/
+.cf-toc3/
+{/
+    BORDER-RIGHT: lightsteelblue 1px solid;/
+    PADDING-RIGHT: 1px;/
+    BORDER-TOP: lightsteelblue 1px solid;/
+    PADDING-LEFT: 1px;/
+    FONT-SIZE: 100%;/
+    PADDING-BOTTOM: 1px;/
+    BORDER-LEFT: lightsteelblue 1px solid;/
+    WIDTH: 100%;/
+    COLOR: black;/
+    PADDING-TOP: 1px;/
+    BORDER-BOTTOM: lightsteelblue 1px solid;/
+    FONT-FAMILY: Tahoma, Verdana, Helv, Sans-Serif/
+}/
+.cf-toc3:hover/
+{/
+    BORDER-RIGHT: steelblue 1px solid;/
+    BORDER-TOP: steelblue 1px solid;/
+    BORDER-LEFT: steelblue 1px solid;/
+    WIDTH: 100%;/
+    COLOR: black;/
+    BORDER-BOTTOM: steelblue 1px solid;/
+    BACKGROUND-COLOR: lightskyblue;/
+    TEXT-DECORATION: none/
+}/
+.cf-toc3:visited/
+{/
+    COLOR: black/
+}/
+.cfd-toc1/
+{/
+    FONT-SIZE: 90%;/
+    FONT-FAMILY: Verdana, Sans-Serif/
+}/
+.cfd-toc2/
+{/
+    PADDING-RIGHT: 9px;/
+    PADDING-LEFT: 10px;/
+    FONT-SIZE: 90%;/
+    COLOR: navy;/
+    FONT-FAMILY: Verdana, Sans-Serif/
+}/
+.cfd-toc3/
+{/
+    PADDING-RIGHT: 24px;/
+    FONT-SIZE: 90%;/
+    COLOR: teal;/
+    FONT-FAMILY: Verdana, Sans-Serif/
+}/
+A/
+{/
+    FONT-FAMILY: Verdana, Arial, Sans-Serif;/
+    TEXT-DECORATION: none/
+}/
+A:active/
+{/
+    TEXT-DECORATION: none/
+}/
+A:visited/
+{/
+    TEXT-DECORATION: none/
+}/
+A:hover/
+{/
+    TEXT-DECORATION: underline/
+}/
+.floatingbubble/
+{/
+    FLOAT: left;/
+    COLOR: olive;/
+    FONT-FAMILY: Verdana, Sans-Serif;/
+    BACKGROUND-COLOR: yellow/
+}/
+.screen/
+{/
+    BACKGROUND-COLOR: #f0f0f0/
+}/
+.programlisting/
+{/
+    BACKGROUND-COLOR: #f0f0f0/
+}/
+.chapsep/
+{/
+    BORDER-TOP: 1px;/
+    FONT-SIZE: 110%;/
+    COLOR: white;/
+    BORDER-BOTTOM: gray 1px solid;/
+    FONT-FAMILY: Verdana, Sans-Serif;/
+    BACKGROUND-COLOR: black/
+}/
+.figurefooter/
+{/
+    FONT-SIZE: 8pt;/
+    COLOR: navy;/
+    FONT-FAMILY: Arial, Sans-Serif;/
+    TEXT-ALIGN: right/
+}/
+.funcindexitem/
+{/
+    BORDER-RIGHT: silver 1px solid;/
+    BORDER-TOP: thin;/
+    BORDER-LEFT: thin;/
+    WIDTH: 170px;/
+    BORDER-BOTTOM: silver 1px outset;/
+    FONT-FAMILY: Verdana, Sans-Serif;/
+    HEIGHT: 30px/
+}/
+.figure/
+{/
+    MARGIN-TOP: 20px;/
+    FONT-SIZE: 8pt;/
+    MARGIN-BOTTOM: 10px;/
+    MARGIN-LEFT: 5px;/
+    COLOR: navy;/
+    FONT-FAMILY: Tahoma, Sans-Serif;/
+    TEXT-ALIGN: center/
+}/
+.important/
+{/
+    MARGIN: 10px 5px;/
+    COLOR: red/
+}/
+.chapseptxt/
+{/
+    COLOR: white/
+}/
+TABLE.data/
+{/
+    BORDER-TOP: #cccccc 1px solid;/
+    BORDER-COLLAPSE: collapse/
+}/
+TH.data/
+{/
+    BORDER-RIGHT: #cccccc 1px solid;/
+    BORDER-LEFT: #cccccc 1px solid;/
+    BORDER-BOTTOM: #cccccc 1px solid;/
+    BACKGROUND-COLOR: #eeeeee/
+}/
+TD.data/
+{/
+    BORDER-RIGHT: #cccccc 1px solid;/
+    FONT-WEIGHT: normal;/
+    BORDER-LEFT: #cccccc 1px solid;/
+    BORDER-BOTTOM: #cccccc 1px solid/
+}/
+HR/
+{/
+    WIDTH: 60%/
+}/
+CAPTION/
+{/
+    COLOR: navy;/
+    FONT-FAMILY: Tahoma, Sans-serif/
+}/

@@ -1,0 +1,227 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<HTML>
+<HEAD>
+<LINK REL="stylesheet" TYPE="text/css" HREF="openlink.css">
+<TITLE>OpenLink ODBC Bench Utility User Guide</TITLE>
+</HEAD>
+<Script Lanuage="JavaScript">
+function lastmod()
+{ var strng='<TR><TD ALIGN="RIGHT" COLSPAN="2" VALIGN="middle"><P CLASS="vtabfoot">Last Modified: '+document.lastModified+'</P></TD></TR>'
+	document.write(strng);
+}
+</Script>
+<BODY CLASS="vdocbody">
+<A NAME="contents"></A>
+<DIV CLASS="chaphead">
+<H1>OpenLink ODBC Bench Utility User Guide</H1>
+</DIV>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP>
+<DIV CLASS="toc1">
+<A CLASS="toc1" HREF="menus.html#menus">OpenLink ODBC Bench Menus</A>
+</DIV>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP>
+<DIV CLASS="toc2">
+<A CLASS="toc2" HREF="menus.html#filemenu">File Menu Options</A>
+</DIV>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#filenew">New CTL+N</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#fileopen">Open... CTL+O</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#filesave">Save CTL+S</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#filesaveas">Save As... CTL+A</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#fileclose">Close</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#filecloselog">Clear Log</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#fileexit">Exit CTL+X</A></TD>
+</TR>
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP>
+<DIV CLASS="toc2">
+<A CLASS="toc2" HREF="menus.html#editmenu">Edit Menu Options</A>
+</DIV>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#editnewbench">New Benchmark Item... CTL+Insert</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#editdeldel">Delete selected items</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#editsavesel">Save selected items as...</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#editlogindet">Login details... CTL+L</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#edittabdet">Table details... CTL+T</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#editrundet">Run details... CTL+U</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#editins">Insert file...</A></TD>
+</TR>
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP>
+<DIV CLASS="toc2">
+<A CLASS="toc2" HREF="menus.html#actionmenu">Action Menu Options</A>
+</DIV>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#actioncreate">Create tables &amp; procedures </A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#actiondrop">Drop tables &amp; procedures</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#actionrun">Run Selected</A></TD>
+</TR>
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP>
+<DIV CLASS="toc2">
+<A CLASS="toc2" HREF="menus.html#resultsmenu">Results Menu Options</A>
+</DIV>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#resultconnec">Connect...</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#resultdis">Disconnect</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#resultcreate">Create the table</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#resultdrop">Drop the table</A></TD>
+</TR>
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP>
+<DIV CLASS="toc2">
+<A CLASS="toc2" HREF="menus.html#prefermenu">Preferences menu</A>
+</DIV>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#prefdisp">Display refresh rate...</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#preflock">Lock timeout...</A></TD>
+</TR>
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP>
+<DIV CLASS="toc2">
+<A CLASS="toc2" HREF="menus.html#windowmenu">Window Menu Options</A>
+</DIV>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP>
+<DIV CLASS="toc2">
+<A CLASS="toc2" HREF="menus.html#helpmenu">Help Menu Options</A>
+</DIV>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="menus.html#helpabout">About CTL+F1</A></TD>
+</TR>
+</TABLE>
+</TD>
+</TR>
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP>
+<DIV CLASS="toc1">
+<A CLASS="toc1" HREF="usage.html#usage">Using OpenLink ODBC Bench</A>
+</DIV>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP>
+<DIV CLASS="toc2">
+<A CLASS="toc2" HREF="usage.html#useprep">Preparation</A>
+</DIV>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP>
+<DIV CLASS="toc2">
+<A CLASS="toc2" HREF="usage.html#usenew">Getting started</A>
+</DIV>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP>
+<DIV CLASS="toc2">
+<A CLASS="toc2" HREF="usage.html#useconfig">Configuring the Test</A>
+</DIV>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP>
+<DIV CLASS="toc2">
+<A CLASS="toc2" HREF="usage.html#userun">Running the Test</A>
+</DIV>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP>
+<DIV CLASS="toc2">
+<A CLASS="toc2" HREF="usage.html#useresults">Working with the Results</A>
+</DIV>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+</TABLE>
+</TD>
+</TR>
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP>
+<DIV CLASS="toc1">
+<A CLASS="toc1" HREF="commandline.html">ODBC Bench Command Line Version</A>
+</DIV>
+</TABLE>
+<br>
+<P CLASS="vtabfoot"> - Copyright 2002, OpenLink Software - </P>
+</BODY>
+</HTML>
+
