@@ -85,7 +85,7 @@ stmt_result_sets (HSTMT stmt)
       if (rc == SQL_ERROR)
 	{
 	  if (gui.warn_message)
-	    gui.warn_message ("\n    Line %d, file %s\n", __LINE__, __FILE__);
+	    gui.warn_message ("\r\n    Line %d, file %s\r\n", __LINE__, __FILE__);
 	  print_error (stmt, stmt, stmt, NULL);
 	  return 0;
 	}
@@ -96,7 +96,7 @@ stmt_result_sets (HSTMT stmt)
     {
       print_error (stmt, stmt, stmt, NULL);
       if (gui.warn_message)
-        gui.warn_message ("\n    Line %d, file %s\n", __LINE__, __FILE__);
+        gui.warn_message ("\r\n    Line %d, file %s\r\n", __LINE__, __FILE__);
     }
 
   SQLFreeStmt (stmt, SQL_CLOSE);
@@ -430,7 +430,7 @@ do_10_pack (test_t * lpCfg)
   ta_leave (&lpCfg->tpc.c.ten_pack_ta);
   duration = get_msec_count () - start;
   lpCfg->tpc.c.tpcc_sum += 600000 / duration;
-  pane_log ("-- %ld tpmC\n", 600000 / duration);
+  pane_log ("-- %ld tpmC\r\n", 600000 / duration);
   return (600000 / duration);
 }
 

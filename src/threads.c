@@ -245,7 +245,7 @@ ThreadedCalcStats (OList * tests, THREAD_T ** workers,
 	{
 	  if (nOkA)
 	    pane_log
-	      ("\n\n%s - %s(%s) - %d TPC-A Threads ended with no errors.\n",
+	      ("\r\n\r\n%s - %s(%s) - %d TPC-A Threads ended with no errors.\r\n",
 	      test->szName, test->szDBMS, test->szDriverName, nOkA);
 
           if (nOkA == 0 && !test->szSQLState[0] && !test->szSQLError[0])
@@ -263,7 +263,7 @@ ThreadedCalcStats (OList * tests, THREAD_T ** workers,
       if (nOkC)
 	{
 	  pane_log
-	      ("\n\n%s - %s(%s) - %d TPC-C Threads ended with no errors.\n",
+	      ("\r\n\r\n%s - %s(%s) - %d TPC-C Threads ended with no errors.\r\n",
 	      test->szName, test->szDBMS, test->szDriverName, nOkC);
 	  test->tpc.c.run_time /= nOkC;
 	  if (test->hdbc)
@@ -275,7 +275,7 @@ ThreadedCalcStats (OList * tests, THREAD_T ** workers,
 
       if (!(nOkA || nOkC))
 	{
-	  pane_log ("\n\n%s - %s(%s) - All Threads ended prematurely.\n",
+	  pane_log ("\r\n\r\n%s - %s(%s) - All Threads ended prematurely.\r\n",
 	      test->szName, test->szDBMS, test->szDriverName);
 	  rc = 0;
 	}
@@ -376,7 +376,7 @@ do_threads_run (int nConnCount, OList * tests, int nMinutes, char *szTitle)
 	  lpBenchInfo->SetWorkingItem (szTemp);
 	  if (data[msg.nConn][msg.nThread].szSQLError[0])
 	    {
-	      old_pane_log ("*** Error : Thread %3d in dsn %s : [%s] %s\n",
+	      old_pane_log ("*** Error : Thread %3d in dsn %s : [%s] %s\r\n",
 		  msg.nThread + 1,
 		  data[msg.nConn][msg.nThread].szLoginDSN,
 		  data[msg.nConn][msg.nThread].szSQLState,

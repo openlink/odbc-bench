@@ -418,14 +418,14 @@ make_test_from_node (xmlNodePtr cur)
 	      if (szDBMS[0])
 		{
 		  pane_log
-		      ("\n\nLast login for %s\nDBMS : %s\nDBMS Ver. : %s\nDriver : %s\nDriver Ver. : %s",
+		      ("\r\n\r\nLast login for %s\r\nDBMS : %s\r\nDBMS Ver. : %s\r\nDriver : %s\r\nDriver Ver. : %s",
 		      ret->szName, szDBMS, szDBMSVer, szDriverName,
 		      szDriverVer);
 		}
 /*	      do_login (ret);
 	      if (ret->szSQLError[0])
 		{
-		  pane_log ("Error logging in : [%s] %s\n", ret->szSQLState, ret->szSQLError);
+		  pane_log ("Error logging in : [%s] %s\r\n", ret->szSQLState, ret->szSQLError);
 		}
 	      get_dsn_data (ret);
 	      if (ret->hdbc)
@@ -458,7 +458,7 @@ make_test_from_node (xmlNodePtr cur)
 	      && !ret->fProcsSupported)
 	    {
 	      pane_log
-		  ("TPC-A will try to create procedures, but they are not supported by the data source\n");
+		  ("TPC-A will try to create procedures, but they are not supported by the data source\r\n");
 	      ret->tpc.a.fCreateProcedure = FALSE;
 	    }
 
@@ -576,7 +576,7 @@ make_test_from_node (xmlNodePtr cur)
 	  if (ret->hdbc && ret->tpc.a.fUseCommit && !ret->fCommitSupported)
 	    {
 	      pane_log
-		  ("TPC-A will try to use transactions, but they are not supported by the data source\n");
+		  ("TPC-A will try to use transactions, but they are not supported by the data source\r\n");
 	      ret->tpc.a.fUseCommit = FALSE;
 	    }
 
@@ -588,7 +588,7 @@ make_test_from_node (xmlNodePtr cur)
 	  if (ret->hdbc && ret->tpc.a.fExecAsync && !ret->fAsyncSupported)
 	    {
 	      pane_log
-		  ("TPC-A will try to be asynchronous, but this is not supported by the data source\n");
+		  ("TPC-A will try to be asynchronous, but this is not supported by the data source\r\n");
 	      ret->tpc.a.fUseCommit = FALSE;
 	    }
 
@@ -598,7 +598,7 @@ make_test_from_node (xmlNodePtr cur)
 	      && !(ret->nIsolationsSupported & ret->tpc.a.txn_isolation))
 	    {
 	      pane_log
-		  ("TPC-A will try use %s isolation, but this is not supported by the data source\n",
+		  ("TPC-A will try use %s isolation, but this is not supported by the data source\r\n",
 		  szProp);
 	      ret->tpc.a.txn_isolation = 0;
 	    }
@@ -628,7 +628,7 @@ make_test_from_node (xmlNodePtr cur)
 	      if (!(ret->nCursorsSupported & mask))
 		{
 		  pane_log
-		      ("TPC-A will try use %s cursor, but this is not supported by the data source\n",
+		      ("TPC-A will try use %s cursor, but this is not supported by the data source\r\n",
 		      szProp);
 		  ret->tpc.a.txn_isolation = 0;
 		}

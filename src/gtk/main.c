@@ -391,7 +391,7 @@ edit_login (GtkWidget * widget, gpointer data)
       ptest->is_dirty = TRUE;
       if (ptest->szSQLError[0] || rc != TRUE)
 	{
-	  pane_log ("Connect Error %s : %s\n", ptest->szSQLState,
+	  pane_log ("Connect Error %s : %s\r\n", ptest->szSQLState,
 	      ptest->szSQLError);
 	  g_list_free (tests);
 	  return;
@@ -575,7 +575,7 @@ create_tables (GtkWidget * widget, gpointer data)
   iter = tests;
 
   if (tests)
-    pane_log ("CREATING SCHEMA STARTED\n");
+    pane_log ("CREATING SCHEMA STARTED\r\n");
   if (menubar)
     gtk_widget_set_sensitive (GTK_WIDGET (menubar), FALSE);
   while (iter)
@@ -605,7 +605,7 @@ create_tables (GtkWidget * widget, gpointer data)
   if (menubar)
     gtk_widget_set_sensitive (GTK_WIDGET (menubar), TRUE);
   if (tests)
-    pane_log ("CREATING SCHEMA FINISHED\n");
+    pane_log ("CREATING SCHEMA FINISHED\r\n");
 }
 
 
@@ -617,7 +617,7 @@ drop_tables (GtkWidget * widget, gpointer data)
   iter = tests;
 
   if (tests)
-    pane_log ("CLEANUP STARTED\n");
+    pane_log ("CLEANUP STARTED\r\n");
   if (menubar)
     gtk_widget_set_sensitive (GTK_WIDGET (menubar), FALSE);
   while (iter)
@@ -646,7 +646,7 @@ drop_tables (GtkWidget * widget, gpointer data)
   if (menubar)
     gtk_widget_set_sensitive (GTK_WIDGET (menubar), TRUE);
   if (tests)
-    pane_log ("CLEANUP FINISHED\n");
+    pane_log ("CLEANUP FINISHED\r\n");
 }
 
 static void
@@ -764,7 +764,7 @@ run_selected (GtkWidget * widget, gpointer data)
 	  goto end;
 	}
 
-      pane_log ("RUN STARTED\n");
+      pane_log ("RUN STARTED\r\n");
       if (menubar)
 	gtk_widget_set_sensitive (GTK_WIDGET (menubar), FALSE);
       ptest = (test_t *) tests->data;
@@ -819,7 +819,7 @@ run_selected (GtkWidget * widget, gpointer data)
 		        add_tpcc_result (ptest);
 		      }
 		    else
-		      pane_log ("TPC-C RUN FAILED\n");
+		      pane_log ("TPC-C RUN FAILED\r\n");
 		    do_save_run_results (szFileName, tests, nMinutes);
 	            do_logout (ptest);
 		    break;
@@ -828,7 +828,7 @@ run_selected (GtkWidget * widget, gpointer data)
 	}
       if (menubar)
 	gtk_widget_set_sensitive (GTK_WIDGET (menubar), TRUE);
-      pane_log ("RUN FINISHED\n");
+      pane_log ("RUN FINISHED\r\n");
     }
 end:
   if (szFileName)

@@ -171,14 +171,14 @@ tpcc_create_db (void * widget, test_t * lpCfg)
 
   if (!lpCfg->hdbc)
     {
-      pane_log ("Not Connected\n");
+      pane_log ("Not Connected\r\n");
       return;
     }
 
   for (i = 0; i < BATCH_SIZE; i++)
     gettimestamp_2 (lpCfg->tpc.c.timestamp_array[i]);
 
-  pane_log ("\nTPCC Data Load Started...\n");
+  pane_log ("\r\nTPCC Data Load Started...\r\n");
   if (lpCfg->ShowProgress)
     lpCfg->ShowProgress (NULL, "TPCC Data Load", TRUE, 1);
 
@@ -215,7 +215,7 @@ tpcc_create_db (void * widget, test_t * lpCfg)
   IF_CANCEL_GO (done);
 
   end_time = get_msec_count ();
-  pane_log ("DATA LOADING COMPLETED SUCCESSFULLY.\n");
+  pane_log ("DATA LOADING COMPLETED SUCCESSFULLY.\r\n");
   if (start_time != -1 && end_time != -1)
     {
       lpCfg->tpc.c.run_time = (end_time - start_time) / 1000;
@@ -252,7 +252,7 @@ LoadItems (test_t * lpCfg)
 
   lpCfg->SetWorkingItem ("Loading ITEM");
   lpCfg->SetProgressText ("", 0, 0, 0, 1, 0, 0);
-  pane_log ("Loading ITEM\n");
+  pane_log ("Loading ITEM\r\n");
 
   for (i = 0; i < MAXITEMS / 10; i++)
     orig[i] = 0;
@@ -335,7 +335,7 @@ LoadWare (test_t * lpCfg)
 
   lpCfg->SetWorkingItem ("Loading WAREHOUSE");
   lpCfg->SetProgressText ("", 0, 0, 0, 1, 0, 0);
-  pane_log ("Loading WAREHOUSE\n");
+  pane_log ("Loading WAREHOUSE\r\n");
   for (w_id = 1; w_id <= lpCfg->tpc.c.count_ware; w_id++)
     {
       IF_CANCEL_RETURN (0);
@@ -450,7 +450,7 @@ Stock (test_t * lpCfg, long w_id_from, long w_id_to)
   lpCfg->SetWorkingItem (szTemp);
   lpCfg->SetProgressText ("", 0, 0, 0, 1, 0, 0);
   pane_log (szTemp);
-  pane_log ("\n");
+  pane_log ("\r\n");
 
   for (i = 0; i < MAXITEMS / 10; i++)
     orig[i] = 0;
@@ -551,7 +551,7 @@ District (test_t * lpCfg, long w_id)
 
   lpCfg->SetWorkingItem ("Loading DISTRICT");
   lpCfg->SetProgressText ("", 0, 0, 0, 1, 0, 0);
-  pane_log ("Loading DISTRICT\n");
+  pane_log ("Loading DISTRICT\r\n");
 
   d_w_id = w_id;
   d_ytd = 30000.0;
@@ -679,7 +679,7 @@ Customer (test_t * lpCfg, long d_id_1, long w_id_1)
   lpCfg->SetWorkingItem (szTemp);
   lpCfg->SetProgressText ("", 0, 0, 0, 1, 0, 0);
   pane_log (szTemp);
-  pane_log ("\n");
+  pane_log ("\r\n");
 
   for (c_id_1 = 1; c_id_1 <= CUST_PER_DIST; c_id_1++)
     {
@@ -803,7 +803,7 @@ Orders (test_t * lpCfg, long d_id, long w_id)
   lpCfg->SetWorkingItem (szTemp);
   lpCfg->SetProgressText ("", 0, 0, 0, 1, 0, 0);
   pane_log (szTemp);
-  pane_log ("\n");
+  pane_log ("\r\n");
 
   for (o_id_1 = 1; o_id_1 <= ORD_PER_DIST; o_id_1++)
     {
@@ -949,10 +949,10 @@ void
 tpcc_schema_create (void * widget, test_t * lpBench)
 {
 
-  pane_log ("TPC-C SCHEMA CREATION STARTED\n\n");
+  pane_log ("TPC-C SCHEMA CREATION STARTED\r\n\r\n");
   if (!strlen (lpBench->szLoginDSN))
     {
-      pane_log ("No login data\n");
+      pane_log ("No login data\r\n");
       return;
     }
 
@@ -991,10 +991,10 @@ tpcc_schema_create (void * widget, test_t * lpBench)
     }
   else
     {
-      pane_log ("No procedure definition script for the DBMS %s\n",
+      pane_log ("No procedure definition script for the DBMS %s\r\n",
 	  lpBench->szDBMS);
     }
-  pane_log ("TPC-C SCHEMA CREATION FINISHED\n\n");
+  pane_log ("TPC-C SCHEMA CREATION FINISHED\r\n\r\n");
 }
 
 
@@ -1014,19 +1014,19 @@ tpcc_schema_cleanup (void * widget, test_t * lpBench)
     "STOCK"
   };
   int i;
-  static char *szDropTable = "drop table %s\n";
+  static char *szDropTable = "drop table %s\r\n";
   char szSQL[100];
 
   if (!strlen (lpBench->szLoginDSN))
     {
-      pane_log ("No login data\n");
+      pane_log ("No login data\r\n");
       return;
     }
 
-  pane_log ("\n\nSCHEMA CLEANUP STARTED\n");
+  pane_log ("\r\nSCHEMA CLEANUP STARTED\r\n");
   if (!do_login (lpBench))
     {
-      pane_log ("Can't login to DSN\n");
+      pane_log ("Can't login to DSN\r\n");
       return;
     }
 
@@ -1068,11 +1068,11 @@ tpcc_schema_cleanup (void * widget, test_t * lpBench)
     }
   else
     {
-      pane_log ("No schema cleanup script for the DBMS %s\n",
+      pane_log ("No schema cleanup script for the DBMS %s\r\n",
 	  lpBench->szDBMS);
     }
   lpBench->SetProgressText (szTables[i], 0, 0, 100, 1, 0, 0);
   lpBench->StopProgress ();
   do_logout (lpBench);
-  pane_log ("\n\nSCHEMA CLEANUP FINISHED\n");
+  pane_log ("\r\nSCHEMA CLEANUP FINISHED\r\n");
 }

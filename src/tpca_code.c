@@ -1057,7 +1057,7 @@ vCreateProcedure (test_t * ptest	/* Run Configuration Parameters */
   /* Build Index on the Branch Table */
   if (ptest->tpc.a.fCreateProcedure)
     {
-      pane_log ("Dropping procedures\n");
+      pane_log ("Dropping procedures\r\n");
       SQLExecDirect (ptest->hstmt, "Drop procedure ODBC_BENCHMARK", SQL_NTS);
       pane_log ("Adding a procedure for %s\r\n",
 	  DriverMap[ptest->tpc.a.uwDrvIdx].szDbName);
@@ -1087,7 +1087,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
 
   /* Warehouse table. */
   /* */
-  pane_log ("Creating the warehouse table\n");
+  pane_log ("Creating the warehouse table\r\n");
 
   /* Remove old table definition */
   sprintf (szSQLBuffer, szDropTable, "warehouse");
@@ -1108,7 +1108,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
 
   /* district table. */
   /* */
-  pane_log ("Creating the district table\n");
+  pane_log ("Creating the district table\r\n");
 
   /* Remove old table definition */
   sprintf (szSQLBuffer, szDropTable, "district");
@@ -1132,7 +1132,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
 
   /* customer table. */
   /* */
-  pane_log ("Creating the Customer table\n");
+  pane_log ("Creating the Customer table\r\n");
 
   /* Remove old table definition */
   sprintf (szSQLBuffer, szDropTable, "customer");
@@ -1167,7 +1167,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
 
   /* History table. */
   /* */
-  pane_log ("Creating the History table\n");
+  pane_log ("Creating the History table\r\n");
 
   /* Remove old table definition */
   sprintf (szSQLBuffer, szDropTable, "THISTORY");
@@ -1189,7 +1189,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
 
   /* New_order table. */
   /* */
-  pane_log ("Creating the new_order table\n");
+  pane_log ("Creating the new_order table\r\n");
 
   /* Remove old table definition */
   sprintf (szSQLBuffer, szDropTable, "NEW_ORDER");
@@ -1206,7 +1206,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
 
   /* Orders table. */
   /* */
-  pane_log ("Creating the orders table\n");
+  pane_log ("Creating the orders table\r\n");
 
   /* Remove old table definition */
   sprintf (szSQLBuffer, szDropTable, "ORDERS");
@@ -1228,7 +1228,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
 
   /* Order_line table. */
   /* */
-  pane_log ("Creating the order_line table\n");
+  pane_log ("Creating the order_line table\r\n");
 
   /* Remove old table definition */
   sprintf (szSQLBuffer, szDropTable, "ORDER_LINE");
@@ -1252,7 +1252,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
 
   /* item table. */
   /* */
-  pane_log ("Creating the item table\n");
+  pane_log ("Creating the item table\r\n");
 
   /* Remove old table definition */
   sprintf (szSQLBuffer, szDropTable, "ITEM");
@@ -1271,7 +1271,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
 
   /* stock table. */
   /* */
-  pane_log ("Creating the stock table\n");
+  pane_log ("Creating the stock table\r\n");
 
   /* Remove old table definition */
   sprintf (szSQLBuffer, szDropTable, "STOCK");
@@ -1770,7 +1770,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   /* */
 
   /* Remove old table definition */
-  pane_log ("Dropping the local warehouse table\n");
+  pane_log ("Dropping the local warehouse table\r\n");
   sprintf (szSQLBuffer, szDropTable, "warehouse");
   rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
 
@@ -1780,13 +1780,13 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       int TypeIdx = DriverMap[DriverMapIndex].uwDTM;
       int indexType = DriverMap[DriverMapIndex].swITM;
 
-      pane_log ("Dropping the remote warehouse table in %s\n",
+      pane_log ("Dropping the remote warehouse table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[0]);
       sprintf (szSQLBuffer, szRemoteDropTable, lpBench->tpc.c.tableDSNS[0],
 	  "warehouse");
       rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
 
-      pane_log ("Creating the warehouse table in %s\n",
+      pane_log ("Creating the warehouse table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[0]);
       strcpy (szCommandBuffer, "rexecute('%s', '");
       strcat (szCommandBuffer, szCreateWarehouse);
@@ -1806,7 +1806,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       pane_log
-	  ("Creating the warehouse_prime index on warehouse table in %s\n",
+	  ("Creating the warehouse_prime index on warehouse table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[0]);
       strcpy (szCommandBuffer, "rexecute('%s', '");
       strcat (szCommandBuffer, szCreateIndex1);
@@ -1818,7 +1818,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
-      pane_log ("Attaching the warehouse table from %s\n",
+      pane_log ("Attaching the warehouse table from %s\r\n",
 	  lpBench->tpc.c.tableDSNS[0]);
       sprintf (szSQLBuffer, szAttachTable, "warehouse",
 	  lpBench->tpc.c.tableDSNS[0]);
@@ -1827,7 +1827,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
     }
   else
     {
-      pane_log ("Creating the local warehouse table\n");
+      pane_log ("Creating the local warehouse table\r\n");
       /* Create new table definition */
       sprintf (szSQLBuffer, szCreateWarehouse,
 	  DataTypeMap[uwTypeIdx].lpInt,
@@ -1856,7 +1856,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   /* */
 
   /* Remove old table definition */
-  pane_log ("Dropping the local district table\n");
+  pane_log ("Dropping the local district table\r\n");
   sprintf (szSQLBuffer, szDropTable, "district");
   rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
 
@@ -1866,13 +1866,13 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       int TypeIdx = DriverMap[DriverMapIndex].uwDTM;
       int indexType = DriverMap[DriverMapIndex].swITM;
 
-      pane_log ("Dropping the remote district table in %s\n",
+      pane_log ("Dropping the remote district table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[1]);
       sprintf (szSQLBuffer, szRemoteDropTable, lpBench->tpc.c.tableDSNS[1],
 	  "district");
       rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
 
-      pane_log ("Creating the district table in %s\n",
+      pane_log ("Creating the district table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[1]);
       strcpy (szCommandBuffer, "rexecute('%s', '");
       strcat (szCommandBuffer, szCreateDistrict);
@@ -1894,7 +1894,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       pane_log
-	  ("Creating the district_prime index on warehouse table in %s\n",
+	  ("Creating the district_prime index on warehouse table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[1]);
       strcpy (szCommandBuffer, "rexecute('%s', '");
       strcat (szCommandBuffer, szCreateIndex2);
@@ -1906,7 +1906,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
-      pane_log ("Attaching the district table from %s\n",
+      pane_log ("Attaching the district table from %s\r\n",
 	  lpBench->tpc.c.tableDSNS[1]);
       sprintf (szSQLBuffer, szAttachTable, "district",
 	  lpBench->tpc.c.tableDSNS[1]);
@@ -1916,7 +1916,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   else
     {
       /* Create new table definitions */
-      pane_log ("Creating the local district table\n");
+      pane_log ("Creating the local district table\r\n");
       sprintf (szSQLBuffer, szCreateDistrict,
 	  DataTypeMap[uwTypeIdx].lpInt,
 	  DataTypeMap[uwTypeIdx].lpInt,
@@ -1946,7 +1946,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   /* */
 
   /* Remove old table definition */
-  pane_log ("Dropping the local customer table\n");
+  pane_log ("Dropping the local customer table\r\n");
   sprintf (szSQLBuffer, szDropTable, "customer");
   rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
 
@@ -1956,13 +1956,13 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       int TypeIdx = DriverMap[DriverMapIndex].uwDTM;
       int indexType = DriverMap[DriverMapIndex].swITM;
 
-      pane_log ("Dropping the remote customer table in %s\n",
+      pane_log ("Dropping the remote customer table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[2]);
       sprintf (szSQLBuffer, szRemoteDropTable, lpBench->tpc.c.tableDSNS[2],
 	  "customer");
       rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
 
-      pane_log ("Creating the customer table in %s\n",
+      pane_log ("Creating the customer table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[2]);
       strcpy (szCommandBuffer, "rexecute('%s', '");
       strcat (szCommandBuffer, szCreateCustomer);
@@ -1994,7 +1994,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
-      pane_log ("Creating the customer_prime index on customer table in %s\n",
+      pane_log ("Creating the customer_prime index on customer table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[2]);
       strcpy (szCommandBuffer, "rexecute('%s', '");
       strcat (szCommandBuffer, szCreateIndex3);
@@ -2006,7 +2006,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
-      pane_log ("Creating the customer_ncl index on customer table in %s\n",
+      pane_log ("Creating the customer_ncl index on customer table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[2]);
       strcpy (szCommandBuffer, "rexecute('%s', '");
       strcat (szCommandBuffer, szCreateIndex5);
@@ -2019,7 +2019,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
-      pane_log ("Attaching the customer table from %s\n",
+      pane_log ("Attaching the customer table from %s\r\n",
 	  lpBench->tpc.c.tableDSNS[2]);
       sprintf (szSQLBuffer, szAttachTable, "customer",
 	  lpBench->tpc.c.tableDSNS[2]);
@@ -2029,7 +2029,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   else
     {
       /* Create new table definitions */
-      pane_log ("Creating the local customer table\n");
+      pane_log ("Creating the local customer table\r\n");
       sprintf (szSQLBuffer, szCreateCustomer,
 	  DataTypeMap[uwTypeIdx].lpInt,
 	  DataTypeMap[uwTypeIdx].lpInt,
@@ -2082,7 +2082,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   /* */
 
   /* Remove old table definition */
-  pane_log ("Dropping the local thistory table\n");
+  pane_log ("Dropping the local thistory table\r\n");
   sprintf (szSQLBuffer, szDropTable, "THISTORY");
   rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
 
@@ -2091,13 +2091,13 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       int DriverMapIndex = getDriverTypeIndex (lpBench->tpc.c.tableDBMSes[3]);
       int TypeIdx = DriverMap[DriverMapIndex].uwDTM;
 
-      pane_log ("Dropping the remote thistory table in %s\n",
+      pane_log ("Dropping the remote thistory table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[3]);
       sprintf (szSQLBuffer, szRemoteDropTable, lpBench->tpc.c.tableDSNS[3],
 	  "THISTORY");
       rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
 
-      pane_log ("Creating the thistory table in %s\n",
+      pane_log ("Creating the thistory table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[3]);
       strcpy (szCommandBuffer, "rexecute('%s', '");
       strcat (szCommandBuffer, szCreateTHistory);
@@ -2115,7 +2115,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
-      pane_log ("Attaching the thistory table from %s\n",
+      pane_log ("Attaching the thistory table from %s\r\n",
 	  lpBench->tpc.c.tableDSNS[3]);
       sprintf (szSQLBuffer, szAttachTable, "THISTORY",
 	  lpBench->tpc.c.tableDSNS[3]);
@@ -2125,7 +2125,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   else
     {
       /* Create new table definitions */
-      pane_log ("Creating the local thistory table\n");
+      pane_log ("Creating the local thistory table\r\n");
       sprintf (szSQLBuffer, szCreateTHistory,
 	  DataTypeMap[uwTypeIdx].lpInt,
 	  DataTypeMap[uwTypeIdx].lpInt,
@@ -2143,7 +2143,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   /* */
 
   /* Remove old table definition */
-  pane_log ("Dropping the local new_order table\n");
+  pane_log ("Dropping the local new_order table\r\n");
   sprintf (szSQLBuffer, szDropTable, "NEW_ORDER");
   rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
 
@@ -2153,13 +2153,13 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       int TypeIdx = DriverMap[DriverMapIndex].uwDTM;
       int indexType = DriverMap[DriverMapIndex].swITM;
 
-      pane_log ("Dropping the remote new_order table in %s\n",
+      pane_log ("Dropping the remote new_order table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[4]);
       sprintf (szSQLBuffer, szRemoteDropTable, lpBench->tpc.c.tableDSNS[4],
 	  "NEW_ORDER");
       rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
 
-      pane_log ("Creating the new_order table in %s\n",
+      pane_log ("Creating the new_order table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[4]);
       strcpy (szCommandBuffer, "rexecute('%s', '");
       strcat (szCommandBuffer, szCreateNewOrder);
@@ -2173,7 +2173,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       pane_log
-	  ("Creating the new_order_prime index on new_order table in %s\n",
+	  ("Creating the new_order_prime index on new_order table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[4]);
       strcpy (szCommandBuffer, "rexecute('%s', '");
       strcat (szCommandBuffer, szCreateIndex3);
@@ -2185,7 +2185,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
-      pane_log ("Attaching the new_order table from %s\n",
+      pane_log ("Attaching the new_order table from %s\r\n",
 	  lpBench->tpc.c.tableDSNS[4]);
       sprintf (szSQLBuffer, szAttachTable, "NEW_ORDER",
 	  lpBench->tpc.c.tableDSNS[4]);
@@ -2195,7 +2195,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   else
     {
       /* Create new table definitions */
-      pane_log ("Creating the local new_order table\n");
+      pane_log ("Creating the local new_order table\r\n");
       sprintf (szSQLBuffer, szCreateNewOrder,
 	  DataTypeMap[uwTypeIdx].lpInt,
 	  DataTypeMap[uwTypeIdx].lpInt, DataTypeMap[uwTypeIdx].lpInt);
@@ -2218,7 +2218,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   /* */
 
   /* Remove old table definition */
-  pane_log ("Dropping the local orders table\n");
+  pane_log ("Dropping the local orders table\r\n");
   sprintf (szSQLBuffer, szDropTable, "ORDERS");
   rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
 
@@ -2228,13 +2228,13 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       int TypeIdx = DriverMap[DriverMapIndex].uwDTM;
       int indexType = DriverMap[DriverMapIndex].swITM;
 
-      pane_log ("Dropping the remote orders table in %s\n",
+      pane_log ("Dropping the remote orders table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[5]);
       sprintf (szSQLBuffer, szRemoteDropTable, lpBench->tpc.c.tableDSNS[5],
 	  "ORDERS");
       rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
 
-      pane_log ("Creating the orders table in %s\n",
+      pane_log ("Creating the orders table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[5]);
       strcpy (szCommandBuffer, "rexecute('%s', '");
       strcat (szCommandBuffer, szCreateOrders);
@@ -2252,7 +2252,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
-      pane_log ("Creating the orders_prime index on orders table in %s\n",
+      pane_log ("Creating the orders_prime index on orders table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[5]);
       strcpy (szCommandBuffer, "rexecute('%s', '");
       strcat (szCommandBuffer, szCreateIndex3);
@@ -2264,7 +2264,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
-      pane_log ("Attaching the orders table from %s\n",
+      pane_log ("Attaching the orders table from %s\r\n",
 	  lpBench->tpc.c.tableDSNS[5]);
       sprintf (szSQLBuffer, szAttachTable, "ORDERS",
 	  lpBench->tpc.c.tableDSNS[5]);
@@ -2274,7 +2274,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   else
     {
       /* Create new table definitions */
-      pane_log ("Creating the local orders table\n");
+      pane_log ("Creating the local orders table\r\n");
       sprintf (szSQLBuffer, szCreateOrders,
 	  DataTypeMap[uwTypeIdx].lpInt,
 	  DataTypeMap[uwTypeIdx].lpInt,
@@ -2302,7 +2302,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   /* */
 
   /* Remove old table definition */
-  pane_log ("Dropping the local order_line table\n");
+  pane_log ("Dropping the local order_line table\r\n");
   sprintf (szSQLBuffer, szDropTable, "ORDER_LINE");
   rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
 
@@ -2312,13 +2312,13 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       int TypeIdx = DriverMap[DriverMapIndex].uwDTM;
       int indexType = DriverMap[DriverMapIndex].swITM;
 
-      pane_log ("Dropping the remote order_line table in %s\n",
+      pane_log ("Dropping the remote order_line table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[6]);
       sprintf (szSQLBuffer, szRemoteDropTable, lpBench->tpc.c.tableDSNS[6],
 	  "ORDER_LINE");
       rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
 
-      pane_log ("Creating the order_line table in %s\n",
+      pane_log ("Creating the order_line table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[6]);
       strcpy (szCommandBuffer, "rexecute('%s', '");
       strcat (szCommandBuffer, szCreateOrderLine);
@@ -2339,7 +2339,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       pane_log
-	  ("Creating the order_line_prime index on order_line table in %s\n",
+	  ("Creating the order_line_prime index on order_line table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[6]);
       strcpy (szCommandBuffer, "rexecute('%s', '");
       strcat (szCommandBuffer, szCreateIndex4);
@@ -2352,7 +2352,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
-      pane_log ("Attaching the order_line table from %s\n",
+      pane_log ("Attaching the order_line table from %s\r\n",
 	  lpBench->tpc.c.tableDSNS[6]);
       sprintf (szSQLBuffer, szAttachTable, "ORDER_LINE",
 	  lpBench->tpc.c.tableDSNS[6]);
@@ -2362,7 +2362,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   else
     {
       /* Create new table definitions */
-      pane_log ("Creating the local order_line table\n");
+      pane_log ("Creating the local order_line table\r\n");
       sprintf (szSQLBuffer, szCreateOrderLine,
 	  DataTypeMap[uwTypeIdx].lpInt,
 	  DataTypeMap[uwTypeIdx].lpInt,
@@ -2394,7 +2394,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   /* */
 
   /* Remove old table definition */
-  pane_log ("Dropping the local item table\n");
+  pane_log ("Dropping the local item table\r\n");
   sprintf (szSQLBuffer, szDropTable, "ITEM");
   rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
 
@@ -2404,13 +2404,13 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       int TypeIdx = DriverMap[DriverMapIndex].uwDTM;
       int indexType = DriverMap[DriverMapIndex].swITM;
 
-      pane_log ("Dropping the remote item table in %s\n",
+      pane_log ("Dropping the remote item table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[7]);
       sprintf (szSQLBuffer, szRemoteDropTable, lpBench->tpc.c.tableDSNS[7],
 	  "ITEM");
       rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
 
-      pane_log ("Creating the item table in %s\n",
+      pane_log ("Creating the item table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[7]);
       strcpy (szCommandBuffer, "rexecute('%s', '");
       strcat (szCommandBuffer, szCreateItem);
@@ -2425,7 +2425,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
-      pane_log ("Creating the item_prime index on item table in %s\n",
+      pane_log ("Creating the item_prime index on item table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[7]);
       strcpy (szCommandBuffer, "rexecute('%s', '");
       strcat (szCommandBuffer, szCreateIndex1);
@@ -2437,7 +2437,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
-      pane_log ("Attaching the item table from %s\n",
+      pane_log ("Attaching the item table from %s\r\n",
 	  lpBench->tpc.c.tableDSNS[7]);
       sprintf (szSQLBuffer, szAttachTable, "ITEM",
 	  lpBench->tpc.c.tableDSNS[7]);
@@ -2447,7 +2447,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   else
     {
       /* Create new table definitions */
-      pane_log ("Creating the local item table\n");
+      pane_log ("Creating the local item table\r\n");
       sprintf (szSQLBuffer, szCreateItem,
 	  DataTypeMap[uwTypeIdx].lpInt,
 	  DataTypeMap[uwTypeIdx].lpInt,
@@ -2473,7 +2473,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   /* */
 
   /* Remove old table definition */
-  pane_log ("Dropping the local stock table\n");
+  pane_log ("Dropping the local stock table\r\n");
   sprintf (szSQLBuffer, szDropTable, "STOCK");
   rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
 
@@ -2483,13 +2483,13 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       int TypeIdx = DriverMap[DriverMapIndex].uwDTM;
       int indexType = DriverMap[DriverMapIndex].swITM;
 
-      pane_log ("Dropping the remote sock table in %s\n",
+      pane_log ("Dropping the remote sock table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[8]);
       sprintf (szSQLBuffer, szRemoteDropTable, lpBench->tpc.c.tableDSNS[8],
 	  "STOCK");
       rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
 
-      pane_log ("Creating the stock table in %s\n",
+      pane_log ("Creating the stock table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[8]);
       strcpy (szCommandBuffer, "rexecute('%s', '");
       strcat (szCommandBuffer, szCreateStock);
@@ -2516,7 +2516,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
-      pane_log ("Creating the stock_prime index on stock table in %s\n",
+      pane_log ("Creating the stock_prime index on stock table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[8]);
       strcpy (szCommandBuffer, "rexecute('%s', '");
       strcat (szCommandBuffer, szCreateIndex2);
@@ -2528,7 +2528,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
-      pane_log ("Attaching the stock table from %s\n",
+      pane_log ("Attaching the stock table from %s\r\n",
 	  lpBench->tpc.c.tableDSNS[8]);
       sprintf (szSQLBuffer, szAttachTable, "STOCK",
 	  lpBench->tpc.c.tableDSNS[8]);
@@ -2538,7 +2538,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   else
     {
       /* Create new table definitions */
-      pane_log ("Creating the local stock table\n");
+      pane_log ("Creating the local stock table\r\n");
       sprintf (szSQLBuffer, szCreateStock,
 	  DataTypeMap[uwTypeIdx].lpInt,
 	  DataTypeMap[uwTypeIdx].lpInt,
@@ -2721,7 +2721,7 @@ GetMaxVals (test_t * lpBench	/* Benchmark info */
   SQLFreeStmt (hstmt, SQL_CLOSE);
   if (cbData == SQL_NULL_DATA)
     {
-      pane_log ("No data in BRANCH table");
+      pane_log ("No data in BRANCH table\r\n");
       return FALSE;
     }
 
@@ -2733,7 +2733,7 @@ GetMaxVals (test_t * lpBench	/* Benchmark info */
   SQLFreeStmt (hstmt, SQL_CLOSE);
   if (cbData == SQL_NULL_DATA)
     {
-      pane_log ("No data in TELLER table");
+      pane_log ("No data in TELLER table\r\n");
       return FALSE;
     }
 
@@ -2745,7 +2745,7 @@ GetMaxVals (test_t * lpBench	/* Benchmark info */
   SQLFreeStmt (hstmt, SQL_DROP);
   if (cbData == SQL_NULL_DATA)
     {
-      pane_log ("No data in ACCOUNT table");
+      pane_log ("No data in ACCOUNT table\r\n");
       return FALSE;
     }
   pane_log ("Max branch = %ld, Max teller = %ld, Max account = %ld\r\n",
@@ -2835,7 +2835,7 @@ fExecuteQuery (test_t * lpBench,	/* Bench info */
   if (lpBench->tpc.a.nRowsetSize > 100)
     {
       if (gui.err_message)
-        gui.err_message ("Rowset size can't be greater then 100\n");
+        gui.err_message ("Rowset size can't be greater then 100\r\n");
       exit (-1);
     }
   /* Give user some feed-back */
@@ -3867,7 +3867,7 @@ fRunTransArray (test_t * lpBench,	/* Benchmark info */
 	    {
 	      fDone = TRUE;
 	      fRtn = FALSE;
-	      pane_log ("*** Cancelled ***\n");
+	      pane_log ("*** Cancelled ***\r\n");
 	    }
 	}
       continue;
@@ -3900,9 +3900,9 @@ general_error:
     lpBench->StopProgress ();
 
   if (fDone)
-    pane_log ("\n\nBenchmark finished.\r\n");
+    pane_log ("\r\n\r\nBenchmark finished.\r\n");
   else
-    pane_log ("\n\nBenchmark is ended with an error.\r\n");
+    pane_log ("\r\n\r\nBenchmark is ended with an error.\r\n");
 
   SQLFreeStmt (lpBench->hstmt, SQL_CLOSE);
   SQLFreeStmt (lpBench->hstmt, SQL_UNBIND);
@@ -4241,7 +4241,7 @@ fRunTrans (test_t * lpBench,	/* Benchmark info */
 	    {
 	      fDone = TRUE;
 	      fRtn = FALSE;
-	      pane_log ("*** Cancelled ***\n");
+	      pane_log ("*** Cancelled ***\r\n");
 	    }
 	}
       continue;
@@ -4274,9 +4274,9 @@ general_error:
     lpBench->StopProgress ();
 
   if (fDone)
-    pane_log ("\n\nBenchmark finished.\r\n");
+    pane_log ("\r\n\r\nBenchmark finished.\r\n");
   else
-    pane_log ("\n\nBenchmark is ended with an error.\r\n");
+    pane_log ("\r\n\r\nBenchmark is ended with an error.\r\n");
 
   SQLFreeStmt (lpBench->hstmt, SQL_CLOSE);
   SQLFreeStmt (lpBench->hstmt, SQL_UNBIND);
@@ -4451,21 +4451,21 @@ CalcStats (
       lpBench->tpc.a.fAvgTPTime = (float) (dDiffSum / lTranCnt);
 
       /* And print the results */
-      pane_log ("Calculating statistics:\n");
-      pane_log ("\tSQL options used:\t\t\t\t%s\n", szOptions);
-      pane_log ("\tTransaction time:\t\t\t\t%f\n", dDiffSum);
-      pane_log ("\tEnvironmental overhead:\t\t%f\n", lpBench->tpc.a.dOverhead);
-      pane_log ("\tTotal transactions:\t\t\t\t%ld\n", lTranCnt);
-      pane_log ("\tTransactions per second:\t\t%f\n", lpBench->tpc.a.ftps);
-      pane_log ("\t%c less than 1 second:\t\t\t%f\n", '%', lpBench->tpc.a.fsub1);
-      pane_log ("\t%c 1 < n < 2 seconds:\t\t\t%f\n", '%', lpBench->tpc.a.fsub2);
-      pane_log ("\tAverage processing time:\t\t%f\n", lpBench->tpc.a.fAvgTPTime);
+      pane_log ("Calculating statistics:\r\n");
+      pane_log ("\tSQL options used:\t\t\t\t%s\r\n", szOptions);
+      pane_log ("\tTransaction time:\t\t\t\t%f\r\n", dDiffSum);
+      pane_log ("\tEnvironmental overhead:\t\t%f\r\n", lpBench->tpc.a.dOverhead);
+      pane_log ("\tTotal transactions:\t\t\t\t%ld\r\n", lTranCnt);
+      pane_log ("\tTransactions per second:\t\t%f\r\n", lpBench->tpc.a.ftps);
+      pane_log ("\t%c less than 1 second:\t\t\t%f\r\n", '%', lpBench->tpc.a.fsub1);
+      pane_log ("\t%c 1 < n < 2 seconds:\t\t\t%f\r\n", '%', lpBench->tpc.a.fsub2);
+      pane_log ("\tAverage processing time:\t\t%f\r\n", lpBench->tpc.a.fAvgTPTime);
 
       if (lpBench->tpc.a.nArrayParSize > 1 && !lpBench->fSQLBatchSupported)
         {
-          pane_log ("\t   The ODBC driver '%s' doesn't support batches for SELECT queries, \n",
+          pane_log ("\t   The ODBC driver '%s' doesn't support batches for SELECT queries, \r\n",
             lpBench->szDriverName);
-          pane_log ("\t therefore the 'ArrayOptimization' for SELECT queries was disabled\n");
+          pane_log ("\t therefore the 'ArrayOptimization' for SELECT queries was disabled\r\n");
 
           sprintf(lpBench->szWarning, "The ODBC driver doesn't support batches for SELECT queries. "
             " The 'ArrayOptimization' for SELECT queries was disabled");
@@ -4496,8 +4496,8 @@ CalcStats (
        {
          char *msg = {"These test options aren't supported by odbc driver"};
 
-         pane_log ("\t   %s \n", msg);
-         pane_log ("\tSQL options used:\t\t\t\t%s\n", szOptions);
+         pane_log ("\t   %s \r\n", msg);
+         pane_log ("\tSQL options used:\t\t\t\t%s\r\n", szOptions);
 
          do_add_results_record ("TPC-A", szOptions,
            henv, lpBench->hdbc, lpBench->hstmt,
@@ -4521,7 +4521,7 @@ CalcStats (
        }
 #if 0
      if (lpBench->tpc._.nThreads > 0 && nOk == 0)
-       pane_log ("\n\nAll Threads ended prematurely.\n");
+       pane_log ("\r\n\r\nAll Threads ended prematurely.\r\n");
 #endif
 
     }
@@ -4586,7 +4586,7 @@ fCleanup (test_t * lpRunCfg	/* Run Configuration Parameters */
 	}
     }
 
-  pane_log ("Dropping procedures\n");
+  pane_log ("Dropping procedures\r\n");
   if (lpRunCfg->tpc.a.fCreateProcedure)
     fExecute (lpRunCfg, "Drop procedure ODBC_BENCHMARK");
 

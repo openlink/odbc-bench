@@ -44,7 +44,7 @@ results_logout ()
 
   SQLFreeConnect (res_hdbc);
   res_hdbc = (HDBC) 0;
-  pane_log ("results connection closed\n");
+  pane_log ("results connection closed\r\n");
 }
 
 int
@@ -70,7 +70,7 @@ results_login (char *szDSN, char *szUID, char *szPWD)
     szBuff = 'N';
   SQLFreeStmt (res_hstmt, SQL_CLOSE);
   res_fHaveResults = (szBuff == 'Y');
-  pane_log ("results connection opened to %s\n", szDSN);
+  pane_log ("results connection opened to %s\r\n", szDSN);
 done:
   return (rc == SQL_SUCCESS || rc == SQL_SUCCESS_WITH_INFO);
 }
@@ -100,19 +100,19 @@ create_results_table ()
 
   if (!res_hstmt)
     {
-      pane_log ("No results connection\n");
+      pane_log ("No results connection\r\n");
       return;
     }
   stmt = res_hstmt;
   if (!stmt)
     {
-      pane_log ("Not Connected\n");
+      pane_log ("Not Connected\r\n");
       return;
     }
   rc = SQLExecDirect (stmt, szCreateResultsSQL, SQL_NTS);
   IF_ERR_GO (stmt, create_error, rc, NULL);
 
-  pane_log ("Results table created%s\n",
+  pane_log ("Results table created%s\r\n",
       (res_hstmt ? "" : " using the main connection"));
 create_error:
   rc = 0;
@@ -126,19 +126,19 @@ drop_results_table ()
 
   if (!res_hstmt)
     {
-      pane_log ("No results connection\n");
+      pane_log ("No results connection\r\n");
       return;
     }
   stmt = res_hstmt;
   if (!stmt)
     {
-      pane_log ("Not Connected\n");
+      pane_log ("Not Connected\r\n");
       return;
     }
   rc = SQLExecDirect (stmt, "drop table RESULTS", SQL_NTS);
   IF_ERR_GO (stmt, drop_error, rc, NULL);
 
-  pane_log ("Results table dropped successfully%s\n",
+  pane_log ("Results table dropped successfully%s\r\n",
       (res_hstmt ? "" : " using the main connection"));
 drop_error:
   rc = 0;
@@ -164,7 +164,7 @@ do_add_results_record (char *test_type, char *result_test_type,
     return;
   if (!lstmt || ldbc)
     {
-      pane_log ("Not Connected\n");
+      pane_log ("Not Connected\r\n");
       return;
     }
 
@@ -220,7 +220,7 @@ do_add_results_record (char *test_type, char *result_test_type,
   SQLTransact (env, ldbc, SQL_COMMIT);
   if (rc == SQL_SUCCESS)
     {
-      pane_log ("Results written to the results table%s\n",
+      pane_log ("Results written to the results table%s\r\n",
   	  res_hstmt ? "" : " using main connection");
     }	
   SQLFreeStmt (lstmt, SQL_CLOSE);
@@ -247,10 +247,10 @@ add_tpcc_result (test_t * lpCfg)
     }
   else if (lpCfg->tpc.c.run_time > 0 && lpCfg->tpc.c.tpcc_sum > 0)	/* run the benchmark */
     {
-      pane_log ("\nTPC-C RUN FINISHED. TOTAL : %f\n",
+      pane_log ("\r\nTPC-C RUN FINISHED. TOTAL : %f\r\n",
 	  lpCfg->tpc.c.tpcc_sum / lpCfg->tpc.c.nRounds);
-      pane_log ("\nTotal TenPacks : %d\n", lpCfg->tpc.c.nRounds);
-      pane_log ("\nTRANSACTION TIMINGS\n\n");
+      pane_log ("\r\nTotal TenPacks : %d\r\n", lpCfg->tpc.c.nRounds);
+      pane_log ("\r\nTRANSACTION TIMINGS\r\n\r\n");
       ta_print_buffer (szTemp, &lpCfg->tpc.c.new_order_ta,
 	  &lpCfg->tpc.c.ten_pack_ta);
       pane_log (szTemp);
@@ -266,7 +266,7 @@ add_tpcc_result (test_t * lpCfg)
       ta_print_buffer (szTemp, &lpCfg->tpc.c.ostat_ta,
 	  &lpCfg->tpc.c.ten_pack_ta);
       pane_log (szTemp);
-      pane_log ("\n");
+      pane_log ("\r\n");
       if (lpCfg->tpc._.nThreads)
 	sprintf (szTemp, "Run/%d threads/%ld", lpCfg->tpc._.nThreads,
 	    lpCfg->tpc.c.count_ware);

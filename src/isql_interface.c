@@ -108,12 +108,12 @@ pipe_trough_isql (HDBC hdbc, char *szFileName, int print_commands)
 
   if (!fi)
     {
-      pane_log ("Unable to open the script file %s\n", szFileName);
+      pane_log ("Unable to open the script file %s\r\n", szFileName);
       return;
     }
   if (!hdbc)
     {
-      pane_log ("Not connected\n");
+      pane_log ("Not connected\r\n");
       return;
     }
   if (SQL_SUCCESS != SQLAllocStmt (hdbc, &hstmt))

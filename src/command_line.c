@@ -622,7 +622,7 @@ do_command_line (int argc, char *argv[])
 		        add_tpcc_result (ptest);
 		      }
 		    else
-		      pane_log ("TPC-C RUN FAILED\n");
+		      pane_log ("TPC-C RUN FAILED\r\n");
 		    do_save_run_results (szRFILE, tests, nMinutes);
 #endif
             }

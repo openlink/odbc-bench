@@ -69,7 +69,7 @@ do_alloc_env ()
       szError[0] = szState[0] = 0;
       SQLError (henv, 0, 0, szState, NULL, szError, sizeof (szError), NULL);
       if (gui.err_message)
-        gui.err_message("do_alloc_env : STATE : %s - %s", szState, szError);
+        gui.err_message("do_alloc_env : STATE : %s - %s\r\n", szState, szError);
       if (gui.main_quit)
         gui.main_quit ();
       else
@@ -91,7 +91,7 @@ do_login (test_t *ptest)
   if (!henv)
     {
       if (gui.err_message)
-        gui.err_message("[Bench] do_login : Environment not allocated");
+        gui.err_message("[Bench] do_login : Environment not allocated\r\n");
       if (gui.main_quit)
         gui.main_quit ();
       else
@@ -99,7 +99,7 @@ do_login (test_t *ptest)
     }
   do_logout (ptest);
 
-  pane_log ("\n\nConnecting to %s : DSN=<%s> UID=<%s>\n",
+  pane_log ("\r\n\r\nConnecting to %s : DSN=<%s> UID=<%s>\r\n",
 	ptest->szName, szDSN, szUID);
 
   MUTEX_ENTER (env_mutex);
@@ -201,8 +201,9 @@ do_login (test_t *ptest)
 
   /* Set defaults for execution--use all features */
   /* supported */
-  pane_log ("(%s ver:%s) Connected to <%s> : DSN=<%s>\n",
-	ptest->szDriverName, ptest->szDriverVer, ptest->szName, szDSN);
+  pane_log ("Driver : %s (%s)\r\n", ptest->szDriverVer, ptest->szDriverName);
+  pane_log ("Connection to %s opened\r\n", ptest->szName);
+  pane_log ("\r\n");
 
   return TRUE;
 done:
@@ -326,7 +327,7 @@ do_logout (test_t *ptest)
       ptest->tpc.c.no_stmt = SQL_NULL_HSTMT;
       ptest->tpc.c.ol_stmt = SQL_NULL_HSTMT;
     }
-  pane_log ("Connection to %s closed\n", ptest->szName);
+  pane_log ("Connection to %s closed\r\n", ptest->szName);
 }
 
 void
@@ -345,9 +346,9 @@ print_error (HENV env, HDBC dbc, HSTMT stmt, void *_test)
 	  sizeof (szMessage), NULL);
       if (rc != SQL_SUCCESS)
 	break;
-      pane_log ("SQL Error [%s] : %s\n", szState, szMessage);
+      pane_log ("SQL Error [%s] : %s\r\n", szState, szMessage);
       if (!messages_off && gui.warn_message)
-	gui.warn_message ("SQL Error [%s] : %s", szState, szMessage);
+	gui.warn_message ("SQL Error [%s] : %s\r\n", szState, szMessage);
       if (test)
 	{
 	  strncpy (test->szSQLError, szMessage, sizeof (test->szSQLError));
