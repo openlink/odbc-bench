@@ -90,17 +90,17 @@ main (int argc, char *argv[])
   gui.err_message = err_message; 
   gui.warn_message = warn_message; 
   gui.message = message; 
-  gui.add_test_to_the_pool = NULL;//add_test_to_the_pool;
-  gui.for_all_in_pool = NULL;//for_all_in_pool;
+  gui.add_test_to_the_pool = NULL;
+  gui.for_all_in_pool = NULL;
   gui.do_MarkFinished = stdout_markfinished;
 
   gui.isCancelled = isCancelled;
-  gui.ShowProgress = NULL;//do_ShowProgress;
-  gui.SetWorkingItem = NULL;//do_SetWorkingItem;
-  gui.SetProgressText = NULL;//do_SetProgressText;
-  gui.StopProgress = NULL;//stdout_StopProgress;
-  gui.fCancel = NULL;//do_fCancel;
-  gui.vBusy = NULL;//vBusy;  
+  gui.ShowProgress = NULL;
+  gui.SetWorkingItem = NULL;
+  gui.SetProgressText = NULL;
+  gui.StopProgress = NULL;
+  gui.fCancel = NULL;
+  gui.vBusy = NULL;
 
   return do_command_line (argc, argv);
 }

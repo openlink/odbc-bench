@@ -287,7 +287,7 @@ static struct option long_options[] = {
   {"rfile", 1, 0, OP_RFILE},
   {"rcreate_tables", 0, 0, OP_RCREATE_TABLE},
   { 0, 0, 0, 0}
-// name | has_arg | *flag | val
+/* name | has_arg | *flag | val */
 };
 
 
@@ -566,14 +566,14 @@ do_command_line (int argc, char *argv[])
           else
             DoRunAll (&test, szRFILE);
 #if 0
-//	      case TPC_C:
-//		if (tpcc_run_test (NULL, ptest))
-//		  {
-//		    add_tpcc_result (ptest);
-//		  }
-//		else
-//		  pane_log ("TPC-C RUN FAILED\n");
-//		do_save_run_results (szRFILE, tests, nMinutes);
+	      case TPC_C:
+		if (tpcc_run_test (NULL, ptest))
+		  {
+		    add_tpcc_result (ptest);
+		  }
+		else
+		  pane_log ("TPC-C RUN FAILED\n");
+		do_save_run_results (szRFILE, tests, nMinutes);
 #endif
 
 	}
