@@ -108,11 +108,53 @@ AC_CHECK_FUNCS(strerror setenv usleep poll select)
 
 ##########################################################################
 ##									##
+##  Check if we want to build the GUI applications and libraries	##
+##									##
+##########################################################################
+AC_ARG_ENABLE(gui,
+[  --enable-gui            build GUI applications (default),
+  --disable-gui           build GUI applications],
+[ case "${enableval}" in
+    yes) USE_GUI=true ;;
+    no)  USE_GUI=false ;;
+    *) AC_MSG_ERROR(bad value ${enableval} for --enable-gui) ;;
+  esac
+],[USE_GUI=true]) 
+
+
+##########################################################################
+##									##
 ##  Check for GTK library functions					##
 ##									##
 ##########################################################################
+USE_GTK=false
+if test x$USE_GUI = xtrue
+then
+  AM_PATH_GTK(1.2.3, [], [], gthread )
+  if test x$no_gtk = x
+  then
+    USE_GTK=true
+  fi
+fi
 
-AM_PATH_GTK(1.2.3, [], [], gthread )
+
+##########################################################################
+##									##
+##  Now make the final checks whether we can use GUI extentions		##
+##									##
+##########################################################################
+if test x$USE_GTK = xfalse
+then
+  USE_GUI=false
+fi
+
+if test x$USE_GUI = xtrue
+then
+  AC_DEFINE(GUI, 1, [Define if we detected a GUI library we can use])
+fi
+
+AM_CONDITIONAL(GUI, [test x$USE_GUI = xtrue])
+AM_CONDITIONAL(GTK, [test x$USE_GTK = xtrue])
 
 
 ##########################################################################

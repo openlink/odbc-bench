@@ -19,6 +19,8 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
+if GTK
+
 SUBDIRS		= gtk
 
 bin_PROGRAMS	= odbc-bench-cmd odbc-bench-gtk
@@ -35,6 +37,16 @@ odbc_bench_gtk_LDADD	= \
 	@ODBC_LIBS@ \
 	@GTK_LIBS@ \
 	@XML_LIBS@
+
+else
+
+bin_PROGRAMS	= odbc-bench-cmd
+INCLUDES	= \
+	-I$(top_srcdir)/odbc-bench \
+	@ODBC_CFLAGS@ \
+	@XML_CFLAGS@
+endif
+
 
 odbc_bench_gtk_SOURCES = \
 	command_line.c \
