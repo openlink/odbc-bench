@@ -181,7 +181,7 @@ stdout_setprogresstext (char *pszProgress, int nConn, int thread_no,
 	      if (ptpca_dDiffSum[i] > txn_time)
 	        txn_time = ptpca_dDiffSum[i];
             }
-          printf (" TPS=%f\r", (double) total_txns / (double) txn_time);
+          printf (" TPS=%f\r", txn_time>0 ? ((double) total_txns / (double) txn_time) : 0.0);
           fflush (stdout);
 	}
     }
