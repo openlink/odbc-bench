@@ -28,14 +28,14 @@ AC_REVISION($Id$)
 ##########################################################################
 
 AC_INIT([OpenLink ODBC Benchmark Utility],
-        [0.99.6],
+        [0.99.7],
 	[odbc-bench@openlinksw.com],
 	[odbc-bench])
 
 AC_CONFIG_SRCDIR([src/odbcbench.h])
 AC_CONFIG_AUX_DIR(admin)
 AM_CONFIG_HEADER(src/config.h)
-AM_INIT_AUTOMAKE([odbc-bench], [0.99.6])
+AM_INIT_AUTOMAKE([odbc-bench], [0.99.7])
 AC_CANONICAL_HOST
 AM_MAINTAINER_MODE
 
