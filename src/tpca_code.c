@@ -1421,12 +1421,12 @@ vLoadBranch (test_t * ptest	/* Run Configuration Parameters */
   RETCODE rc;
   UDWORD udwBranch = 0;
   double dBalance = 1000.0;
-  SDWORD cbBalance;
-  UDWORD udwMod;
+  SDWORD cbBalance = 0;
+  UDWORD udwMod = 0;
   char szSQLBuffer[128];
   SDWORD cbFiller = 84;
-  UWORD uwBindIdx;
-  SDWORD cbBranch; 
+  UWORD uwBindIdx = 0;
+  SDWORD cbBranch = 0; 
 
   uwBindIdx = DriverMap[ptest->tpc.a.uwDrvIdx].uwBTM;
 
@@ -1520,13 +1520,15 @@ vLoadTeller (test_t * ptest	/* Run Configuration Parameters */
 {
   RETCODE rc;
   double dBalance = 100000;
-  UDWORD udwMod;
+  UDWORD udwMod = 0;
   UDWORD udwTeller = 0;
-  UDWORD udwBranch;
+  UDWORD udwBranch = 0;
   char szSQLBuffer[128];
   SDWORD cbFiller = 84;
-  UWORD uwBindIdx;
-  SDWORD cbTeller, cbBranch, cbBalance;
+  UWORD uwBindIdx = 0;
+  SDWORD cbTeller = 0;
+  SDWORD cbBranch = 0;
+  SDWORD cbBalance = 0;
 
   uwBindIdx = DriverMap[ptest->tpc.a.uwDrvIdx].uwBTM;
 
@@ -1626,15 +1628,16 @@ vLoadAccount (test_t * ptest	/* Run Configuration Parameters */
   RETCODE rc;
   char szSQLBuffer[128];
   UDWORD udwAcct = 0;
-  UDWORD udwBranch;
+  UDWORD udwBranch = 0;
   double dBalance = 1000.;
-  UDWORD udwMod;
+  UDWORD udwMod = 0;
   SDWORD cbFiller = 84;
-  UWORD uwBindIdx;
-  SDWORD cbAcct, cbBranch, cbBalance;
+  UWORD uwBindIdx = 0;
+  SDWORD cbAcct = 0;
+  SDWORD cbBranch = 0;
+  SDWORD cbBalance = 0;
 
   uwBindIdx = DriverMap[ptest->tpc.a.uwDrvIdx].uwBTM;
-
 
   pane_log ((char *) szLoadRecords, ptest->tpc.a.udwMaxAccount, szAccount);
   sprintf (szSQLBuffer, szPopulateTable, szAccount);
