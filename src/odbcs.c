@@ -99,6 +99,9 @@ do_login (test_t *ptest)
     }
   do_logout (ptest);
 
+  pane_log ("\n\nConnecting to %s : DSN=<%s> UID=<%s> PWD=<%s>\n",
+	ptest->szName, szDSN, szUID, szPWD);
+
   MUTEX_ENTER (env_mutex);
   rc = SQLAllocConnect (henv, &ptest->hdbc);
   if (rc == SQL_SUCCESS)
@@ -126,6 +129,12 @@ do_login (test_t *ptest)
 
   ptest->fBatchSupported = FALSE;
   ptest->fSQLBatchSupported = FALSE;
+
+  SQLGetInfo (ptest->hdbc,
+      SQL_DRIVER_NAME,
+      ptest->szDriverName, sizeof (ptest->szDriverName), NULL);
+  SQLGetInfo (ptest->hdbc,
+      SQL_DRIVER_VER, ptest->szDriverVer, sizeof (ptest->szDriverVer), NULL);
 
   if (IS_A (*ptest))
     {
@@ -194,8 +203,8 @@ do_login (test_t *ptest)
 
   /* Set defaults for execution--use all features */
   /* supported */
-  pane_log ("Connected to %s : DSN=<%s> UID=<%s> PWD=<%s>\n",
-	ptest->szName, szDSN, szUID, szPWD);
+  pane_log ("(%s ver:%s) Connected to <%s> : DSN=<%s>\n",
+	ptest->szDriverName, ptest->szDriverVer, ptest->szName, szDSN);
 
   return;
 done:
