@@ -77,7 +77,7 @@ do_alloc_env ()
     }
 }
 
-void
+int
 do_login (test_t *ptest)
 {
   RETCODE rc;
@@ -204,13 +204,14 @@ do_login (test_t *ptest)
   pane_log ("(%s ver:%s) Connected to <%s> : DSN=<%s>\n",
 	ptest->szDriverName, ptest->szDriverVer, ptest->szName, szDSN);
 
-  return;
+  return TRUE;
 done:
   if (ptest->hdbc)
     {
       SQLFreeConnect (ptest->hdbc);
       ptest->hdbc = 0;
     }
+  return FALSE;
 }
 
 

@@ -53,7 +53,8 @@ err_message(const char *format, ...)
 {
   va_list args;
   va_start (args, format);
-  g_error(format, args);
+  /*g_error(format, args);*/
+  vfprintf(stderr, format, args);
   va_end(args);
 }
 
@@ -62,7 +63,8 @@ warn_message(const char *format, ...)
 {
   va_list args;
   va_start (args, format);
-  g_warning(format, args);
+  /*g_warning(format, args);*/
+  vfprintf(stderr, format, args);
   va_end(args);
 }
 
@@ -71,12 +73,13 @@ message(const char *format, ...)
 {
   va_list args;
   va_start (args, format);
-  g_message(format, args);
+  /*g_message(format, args);*/
+  vfprintf(stderr, format, args);
   va_end(args);
 }
 
 
-void
+int
 do_login_gtk (GtkWidget * widget, gpointer data)
 {
   LoginBox *login_box = NULL;
@@ -89,7 +92,7 @@ do_login_gtk (GtkWidget * widget, gpointer data)
       strcpy (ptest->szLoginUID, login_box->szUID);
       strcpy (ptest->szLoginPWD, login_box->szPWD);
     }
-  do_login(ptest);
+  return do_login(ptest);
 }
 
 
@@ -354,6 +357,7 @@ edit_login (GtkWidget * widget, gpointer data)
   test_t *ptest = NULL;
   gboolean bOk = FALSE;
   GtkWidget *login;
+  int rc;
 
   if (!nTests)
     {
@@ -383,9 +387,9 @@ edit_login (GtkWidget * widget, gpointer data)
 	ptest = iter->data;
 
       ptest->tpc.a.uwDrvIdx = -1;
-      do_login_gtk (login, ptest);
+      rc = do_login_gtk (login, ptest);
       ptest->is_dirty = TRUE;
-      if (ptest->szSQLError[0])
+      if (ptest->szSQLError[0] || rc != TRUE)
 	{
 	  pane_log ("Connect Error %s : %s\n", ptest->szSQLState,
 	      ptest->szSQLError);
@@ -399,9 +403,11 @@ edit_login (GtkWidget * widget, gpointer data)
 	{
 	  test_t *ptest = (test_t *) iter->data;
           ptest->tpc.a.uwDrvIdx = -1;
-      	  do_login_gtk (login, ptest);
-	  get_dsn_data (ptest);
-	  do_logout (ptest);
+      	  if (do_login_gtk (login, ptest))
+      	    {
+	      get_dsn_data (ptest);
+	      do_logout (ptest);
+	    }
 	  ptest->is_dirty = TRUE;
 	}
       pool_update_selected ();
@@ -565,6 +571,7 @@ void
 create_tables (GtkWidget * widget, gpointer data)
 {
   GList *tests = get_selected_tests (), *iter;
+  int rc;
   iter = tests;
 
   if (tests)
@@ -575,8 +582,8 @@ create_tables (GtkWidget * widget, gpointer data)
     {
       test_t *ptest = (test_t *) iter->data;
       pool_set_selected_item (ptest);
-      do_login_gtk (NULL, ptest);
-      if (ptest->hdbc)
+      rc = do_login_gtk (NULL, ptest);
+      if (ptest->hdbc && rc)
 	{
 	  switch (ptest->TestType)
 	    {
@@ -606,6 +613,7 @@ void
 drop_tables (GtkWidget * widget, gpointer data)
 {
   GList *tests = get_selected_tests (), *iter;
+  int rc;
   iter = tests;
 
   if (tests)
@@ -616,8 +624,8 @@ drop_tables (GtkWidget * widget, gpointer data)
     {
       test_t *ptest = (test_t *) iter->data;
       pool_set_selected_item (ptest);
-      do_login_gtk (NULL, ptest);
-      if (ptest->hdbc)
+      rc = do_login_gtk (NULL, ptest);
+      if (ptest->hdbc && rc)
 	{
 	  switch (ptest->TestType)
 	    {
@@ -660,6 +668,7 @@ run_selected (GtkWidget * widget, gpointer data)
   int nTests = pool_connection_count ();
   OList *tests = get_selected_tests_list (), *iter;
   char *szFileName = NULL;
+  int rc;
 
   if (!nTests)
     return;
@@ -778,42 +787,44 @@ run_selected (GtkWidget * widget, gpointer data)
 	{
 	  memset (ptest->szSQLError, 0, sizeof (ptest->szSQLError));
 	  memset (ptest->szSQLState, 0, sizeof (ptest->szSQLState));
-	  do_login_gtk (NULL, ptest);
-	  get_dsn_data (ptest);
-	  if (ptest->TestType == TPC_A)
+	  if (do_login_gtk (NULL, ptest))
 	    {
-	      fExecuteSql (ptest, "delete from HISTORY");
-	      SQLTransact (SQL_NULL_HENV, ptest->hdbc, SQL_COMMIT);
-	    }
-	  do_logout (ptest);
+	      get_dsn_data (ptest);
+	      if (ptest->TestType == TPC_A)
+	        {
+	          fExecuteSql (ptest, "delete from HISTORY");
+	          SQLTransact (SQL_NULL_HENV, ptest->hdbc, SQL_COMMIT);
+	        }
+	      do_logout (ptest);
 
-	  ptest->tpc._.nMinutes = nMinutes;
+	      ptest->tpc._.nMinutes = nMinutes;
 
-	  switch (ptest->TestType)
-	      {
-	      case TPC_A:
-		if (bRunAll)
-		  DoRunAll (ptest, szFileName);
-		else
-		  {
-		    DoRun (ptest, NULL);
+	      switch (ptest->TestType)
+	          {
+	          case TPC_A:
+		    if (bRunAll)
+		      DoRunAll (ptest, szFileName);
+		    else
+		      {
+		        DoRun (ptest, NULL);
+		        do_save_run_results (szFileName, tests, nMinutes);
+		      }
+
+		    break;
+
+	          case TPC_C:
+  	            do_login_gtk (NULL, ptest);
+		    if (tpcc_run_test (NULL, ptest))
+		      {
+		        add_tpcc_result (ptest);
+		      }
+		    else
+		      pane_log ("TPC-C RUN FAILED\n");
 		    do_save_run_results (szFileName, tests, nMinutes);
-		  }
-
-		break;
-
-	      case TPC_C:
-  	        do_login_gtk (NULL, ptest);
-		if (tpcc_run_test (NULL, ptest))
-		  {
-		    add_tpcc_result (ptest);
-		  }
-		else
-		  pane_log ("TPC-C RUN FAILED\n");
-		do_save_run_results (szFileName, tests, nMinutes);
-	        do_logout (ptest);
-		break;
-	      }
+	            do_logout (ptest);
+		    break;
+	          }
+	    }
 	}
       if (menubar)
 	gtk_widget_set_sensitive (GTK_WIDGET (menubar), TRUE);
@@ -878,9 +889,11 @@ pipe_trough_isql_handler (GtkWidget * widget, gpointer data)
   for (iter = tests; iter; iter = g_list_next (iter))
     {
       test_t *ptest = (test_t *)iter->data;
-      do_login_gtk (NULL, ptest);
-      pipe_trough_isql (ptest->hdbc, "gogo.sql", 1);
-      do_logout (ptest);
+      if (do_login_gtk (NULL, ptest))
+        {
+          pipe_trough_isql (ptest->hdbc, "gogo.sql", 1);
+          do_logout (ptest);
+        }
     }
   g_list_free (tests);
 }

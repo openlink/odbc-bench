@@ -139,9 +139,11 @@ tpcc_create_db (void * widget, test_t * lpCfg)
 {
 
   int i;
+
   long start_time = -1, end_time = -1;
 
-  do_login (lpCfg);
+  if (!do_login (lpCfg))
+    return;
 
   lpCfg->tpc.c.bIsOracle = FALSE;
   lpCfg->tpc.c.bIsSybase = FALSE;
@@ -1022,7 +1024,11 @@ tpcc_schema_cleanup (void * widget, test_t * lpBench)
     }
 
   pane_log ("\n\nSCHEMA CLEANUP STARTED\n");
-  do_login (lpBench);
+  if (!do_login (lpBench))
+    {
+      pane_log ("Can't login to DSN\n");
+      return;
+    }
 
   if (!lpBench->hstmt)
     {

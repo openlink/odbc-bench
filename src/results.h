@@ -23,7 +23,7 @@
 #ifndef __RESULTS_H_
 #define __RESULTS_H_
 void results_logout ();
-void results_login (char *szDSN, char *szUID, char *sz_PWD);
+int results_login (char *szDSN, char *szUID, char *sz_PWD);
 void create_results_table ();
 void drop_results_table ();
 void do_add_results_record (char *test_type, char *result_test_type,

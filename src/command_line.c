@@ -57,7 +57,7 @@ static double *ptpca_dDiffSum = NULL;
 #define BARS_REFRESH_INTERVAL bench_get_long_pref (DISPLAY_REFRESH_RATE)
 
 
-#define SHORT_OPTIONS "d:u:p:r:m:t:P:s:c:i:S:K:T:n1avVRCDE"
+#define SHORT_OPTIONS "d:u:p:r:m:t:P:s:c:i:S:K:T:n1avVRCD"
 
 static void
 usage (void)
@@ -92,10 +92,10 @@ usage (void)
   "  -S -rowset_size    - rowset size\n"
   "  -K -keyset_size    - keyset size\n"
   "  -T -trav_count     - traversal count\n"
-  "  -C -create_tables  - create the tables and procedures\n"
-  "  -D -drop_tables    - drop the tables and procedures\n"
-  "  -rcreate_table     - create the results table\n"
-  "  -rdrop_table       - drop the results table\n"
+  "  -C -create_tables  - create the tables and procedures, then exit\n"
+  "  -D -drop_tables    - drop the tables and procedures, then exit\n"
+  "  -rcreate_table     - create the results table, then exit\n"
+  "  -rdrop_table       - drop the results table, then exit\n"
   "  -rdsn   - login dsn for result table\n"
   "  -ruid   - user id for result table\n"
   "  -rpwd   - password for result table\n"
@@ -104,8 +104,6 @@ usage (void)
   "             messages about the creation and closing connections)\n"
   "  -V      - print the same info on stdout as for -v and the test progress info\n"
   "  -R      - doesn't do rollbacks on deadlock\n"
-  "  -E      - doesn't execute a test, it may be used, if you want to create/drop\n" 
-  "            tables, procedures and exit after this.\n"
   "\n", stderr);
 }
 
@@ -483,10 +481,6 @@ do_command_line (int argc, char *argv[])
 	    UnLoad = 1;
 	    break;
 
-	  case 'E':
-	    bExit = 1;
-	    break;
-
 	  case OP_RDSN:
 	    strncpy (szRDSN, optarg, 49);
 	    szRDSN[49] = 0;
@@ -517,7 +511,10 @@ do_command_line (int argc, char *argv[])
 
       
       if (szRDSN[0])
-        results_login(szRDSN, szRUID, szRPWD);
+        {
+          if (!results_login(szRDSN, szRUID, szRPWD))
+            exit(-1);
+        }
 
       if (fDropResultsTable)
         drop_results_table ();
@@ -527,7 +524,8 @@ do_command_line (int argc, char *argv[])
 
       if (UnLoad)
 	{
-	  do_login (&test);
+	  if (!do_login (&test))
+	    exit(-1);
 	  get_dsn_data (&test);
 	  if (!test.hdbc)
 	    {
@@ -540,7 +538,8 @@ do_command_line (int argc, char *argv[])
 	}
       if (Load)
 	{
-	  do_login (&test);
+	  if (!do_login (&test))
+	    exit(-1);
 	  get_dsn_data (&test);
 	  if (!test.hdbc)
 	    {
@@ -552,7 +551,7 @@ do_command_line (int argc, char *argv[])
 	  do_logout (&test);
 	}
 
-      if ((Load || UnLoad || fDropResultsTable || fCreateResultsTable) && bExit)
+      if (Load || UnLoad || fDropResultsTable || fCreateResultsTable)
         return 0;
 
 /* progress impl */
@@ -563,7 +562,8 @@ do_command_line (int argc, char *argv[])
 #if defined(PTHREADS) || defined(WIN32)
       if (test.tpc._.nThreads > 1)
 	{
-	  do_login (&test);
+	  if (!do_login (&test))
+	    exit(-1);
 	  get_dsn_data (&test);
 	  if (!test.hdbc)
 	    {
@@ -594,37 +594,38 @@ do_command_line (int argc, char *argv[])
       else
 #endif
 	{
-	  do_login (&test);
-	  get_dsn_data (&test);
-	  if (!test.hdbc)
+	  if (do_login (&test))
 	    {
-	      fprintf (stderr, "%s\n", test.szSQLError);
-	      fprintf (stdout, "%s\n", test.szSQLError);
-	      return -5;
-	    }
+	      get_dsn_data (&test);
+	      if (!test.hdbc)
+	        {
+	          fprintf (stderr, "%s\n", test.szSQLError);
+	          fprintf (stdout, "%s\n", test.szSQLError);
+	          return -5;
+	        }
 
-          fExecuteSql (&test, "delete from HISTORY");
-          SQLTransact (SQL_NULL_HENV, test.hdbc, SQL_COMMIT);
-	  do_logout (&test);
+              fExecuteSql (&test, "delete from HISTORY");
+              SQLTransact (SQL_NULL_HENV, test.hdbc, SQL_COMMIT);
+	      do_logout (&test);
 
-          if (test.tpc.a.fSQLOption != -1)
-            {
-              DoRun (&test, NULL);
-              do_save_run_results (szRFILE, tests, test.tpc._.nMinutes);
-            }
-          else
-            DoRunAll (&test, szRFILE);
+              if (test.tpc.a.fSQLOption != -1)
+                {
+                  DoRun (&test, NULL);
+                  do_save_run_results (szRFILE, tests, test.tpc._.nMinutes);
+                }
+              else
+                DoRunAll (&test, szRFILE);
 #if 0
-	      case TPC_C:
-		if (tpcc_run_test (NULL, ptest))
-		  {
-		    add_tpcc_result (ptest);
-		  }
-		else
-		  pane_log ("TPC-C RUN FAILED\n");
-		do_save_run_results (szRFILE, tests, nMinutes);
+	          case TPC_C:
+		    if (tpcc_run_test (NULL, ptest))
+		      {
+		        add_tpcc_result (ptest);
+		      }
+		    else
+		      pane_log ("TPC-C RUN FAILED\n");
+		    do_save_run_results (szRFILE, tests, nMinutes);
 #endif
-
+            }
 	}
       if (szRDSN[0])
         results_logout();

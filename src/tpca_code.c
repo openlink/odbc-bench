@@ -724,7 +724,10 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 		  szFldBranch, szBranch, szFldBranch);
 	      rc = SQLExecDirect (ptest->hstmt, szSQLBuffer, SQL_NTS);
 	      if (RC_NOTSUCCESSFUL (rc))
-		pane_log ((char *) szFailedIndex, szBranch);
+	        {
+                  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, ptest->hstmt, ptest);
+		  pane_log ((char *) szFailedIndex, szBranch);
+		}
 	    }
 
 	  /* rexecute (.. attach table */
@@ -784,7 +787,10 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 		  szFldTeller, szTeller, szFldTeller);
 	      rc = SQLExecDirect (ptest->hstmt, szSQLBuffer, SQL_NTS);
 	      if (RC_NOTSUCCESSFUL (rc))
-		pane_log ((char *) szFailedIndex, szTeller);
+	        {
+                  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, ptest->hstmt, ptest);
+		  pane_log ((char *) szFailedIndex, szTeller);
+		}
 	    }
 
 	  /* attach table */
@@ -845,7 +851,10 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 		  szFldAcct, szAccount, szFldAcct);
 	      rc = SQLExecDirect (ptest->hstmt, szSQLBuffer, SQL_NTS);
 	      if (RC_NOTSUCCESSFUL (rc))
-		pane_log ((char *) szFailedIndex, szAccount);
+	        {
+                  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, ptest->hstmt, ptest);
+		  pane_log ((char *) szFailedIndex, szAccount);
+		}
 	    }
 
 	  /* attach table */
@@ -911,7 +920,10 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 		  szFldHist);
 	      rc = SQLExecDirect (ptest->lpBenchInfo->hstmt, szSQLBuffer, SQL_NTS);
 	      if (RC_NOTSUCCESSFUL (rc))
-		pane_log ((char *) szFailedIndex, szBranch);
+	        {
+                  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, ptest->hstmt, ptest);
+		  pane_log ((char *) szFailedIndex, szBranch);
+		}
 	    }
 */
 	  /* attach table */
@@ -970,8 +982,7 @@ vCreateIndices (test_t * ptest	/* Run Configuration Parameters */
       pane_log (szSQLBuffer);
       pane_log ("\r\n");
       /* Execute Index Create Statement */
-      rc = SQLExecDirect (ptest->hstmt, szSQLBuffer, SQL_NTS);
-      if (RC_NOTSUCCESSFUL (rc))
+      if (!fExecute(ptest, szSQLBuffer))
 	pane_log ((char *) szFailedIndex, szBranch);
 
     }
@@ -987,8 +998,7 @@ vCreateIndices (test_t * ptest	/* Run Configuration Parameters */
       pane_log (szSQLBuffer);
       pane_log ("\r\n");
       /* Execute Index Create Statement */
-      rc = SQLExecDirect (ptest->hstmt, szSQLBuffer, SQL_NTS);
-      if (RC_NOTSUCCESSFUL (rc))
+      if (!fExecute(ptest, szSQLBuffer))
 	pane_log ((char *) szFailedIndex, szTeller);
     }
 
@@ -1003,8 +1013,7 @@ vCreateIndices (test_t * ptest	/* Run Configuration Parameters */
       pane_log (szSQLBuffer);
       pane_log ("\r\n");
       /* Execute Index Create Statement */
-      rc = SQLExecDirect (ptest->hstmt, szSQLBuffer, SQL_NTS);
-      if (RC_NOTSUCCESSFUL (rc))
+      if (!fExecute(ptest, szSQLBuffer))
 	pane_log ((char *) szFailedIndex, szAccount);
     }
 
@@ -1022,8 +1031,7 @@ vCreateIndices (test_t * ptest	/* Run Configuration Parameters */
       pane_log (szSQLBuffer);
       pane_log ("\r\n");
        Execute Index Create Statement 
-      rc = SQLExecDirect (ptest->lpBenchInfo->hstmt, szSQLBuffer, SQL_NTS);
-      if (RC_NOTSUCCESSFUL (rc))
+      if (!fExecute(ptest, szSQLBuffer))
 	pane_log ((char *) szFailedIndex, szHistory);
     }
 */
@@ -1431,6 +1439,12 @@ vLoadBranch (test_t * ptest	/* Run Configuration Parameters */
   /* Prepare the insert statement */
   sprintf (szSQLBuffer, szInsertBranch, szBranch);
   rc = SQLPrepare (ptest->hstmt, szSQLBuffer, SQL_NTS);
+  if (rc != SQL_SUCCESS && rc != SQL_SUCCESS_WITH_INFO)
+    {
+      vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, ptest->hstmt, ptest);
+      pane_log ((char *) szInsertFailure, udwBranch);
+      goto DONE ;
+    }
 
   /* Bind each variable to its parameter marker */
   /* Branch ID */
@@ -1524,6 +1538,12 @@ vLoadTeller (test_t * ptest	/* Run Configuration Parameters */
   /* Prepare the insert statement */
   sprintf (szSQLBuffer, szInsertTeller, szTeller);
   rc = SQLPrepare (ptest->hstmt, szSQLBuffer, SQL_NTS);
+  if (rc != SQL_SUCCESS && rc != SQL_SUCCESS_WITH_INFO)
+    {
+      vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, ptest->hstmt, ptest);
+      pane_log ((char *) szInsertFailure, udwBranch);
+      goto DONE ;
+    }
 
   /* Bind each variable to its parameter marker */
   /* Teller ID */
@@ -1564,6 +1584,7 @@ vLoadTeller (test_t * ptest	/* Run Configuration Parameters */
       rc = SQLExecute (ptest->hstmt);
       if (RC_NOTSUCCESSFUL (rc))
 	{
+	  vShowErrors (0, SQL_NULL_HENV, SQL_NULL_HDBC, ptest->hstmt, ptest);
 	  pane_log ((char *) szInsertFailure, udwTeller);
 	  break;
 	}
@@ -1621,6 +1642,12 @@ vLoadAccount (test_t * ptest	/* Run Configuration Parameters */
   /* Prepare the insert statement */
   sprintf (szSQLBuffer, szInsertAccount, szAccount);
   rc = SQLPrepare (ptest->hstmt, szSQLBuffer, SQL_NTS);
+  if (rc != SQL_SUCCESS && rc != SQL_SUCCESS_WITH_INFO)
+    {
+      vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, ptest->hstmt, ptest);
+      pane_log ((char *) szInsertFailure, udwBranch);
+      goto DONE ;
+    }
 
   /* Bind variables  */
   /* Account ID */
@@ -1662,6 +1689,7 @@ vLoadAccount (test_t * ptest	/* Run Configuration Parameters */
       rc = SQLExecute (ptest->hstmt);
       if (RC_NOTSUCCESSFUL (rc))
 	{
+	  vShowErrors (0, SQL_NULL_HENV, SQL_NULL_HDBC, ptest->hstmt, ptest);
 	  pane_log ((char *) szInsertFailure, udwAcct);
 	  break;
 	}
@@ -2625,19 +2653,21 @@ DoRun (test_t * lpBench,	/* Benchmark settings */
   BOOL sts = TRUE;
 
   /* Do every requested run for the time allotted  */
-  do_login(lpBench);
-  for (nRun = 0; nRun < lpBench->tpc._.nRuns; nRun++)
+  if (do_login(lpBench))
     {
-      pane_log ("Starting benchmark run number: %d\r\n", nRun + 1);
-      if (!lpBench->is_unsupported)
-        sts = fRunTrans (lpBench, szTitle);
+      for (nRun = 0; nRun < lpBench->tpc._.nRuns; nRun++)
+        {
+          pane_log ("Starting benchmark run number: %d\r\n", nRun + 1);
+          if (!lpBench->is_unsupported)
+            sts = fRunTrans (lpBench, szTitle);
 
-      CalcStats (sts, (sts ? 1: 0), lpBench,
+          CalcStats (sts, (sts ? 1: 0), lpBench,
 	    lpBench->tpc.a.nTrnCnt,
 	    lpBench->tpc.a.nTrnCnt1Sec,
 	    lpBench->tpc.a.nTrnCnt2Sec, lpBench->tpc.a.dDiffSum);
+        }
+      do_logout(lpBench);
     }
-  do_logout(lpBench);
 
   /* User didn't break, so return success */
   return TRUE;

@@ -47,7 +47,7 @@ results_logout ()
   pane_log ("results connection closed\n");
 }
 
-void
+int
 results_login (char *szDSN, char *szUID, char *szPWD)
 {
   RETCODE rc;
@@ -72,7 +72,7 @@ results_login (char *szDSN, char *szUID, char *szPWD)
   res_fHaveResults = (szBuff == 'Y');
   pane_log ("results connection opened to %s\n", szDSN);
 done:
-  rc = 0;
+  return (rc == SQL_SUCCESS || rc == SQL_SUCCESS_WITH_INFO);
 }
 
 static char *szCreateResultsSQL =
@@ -158,10 +158,11 @@ do_add_results_record (char *test_type, char *result_test_type,
 {
   RETCODE rc;
   HSTMT lstmt = res_hstmt ? res_hstmt : stmt;
+  HDBC ldbc = res_hdbc ? res_hdbc : dbc;
 
   if (!res_fHaveResults && !driver_has_results)
     return;
-  if (!lstmt)
+  if (!lstmt || ldbc)
     {
       pane_log ("Not Connected\n");
       return;
@@ -216,7 +217,7 @@ do_add_results_record (char *test_type, char *result_test_type,
     IBINDNTS (lstmt, 13, szMessage);
 
   rc = SQLExecute (lstmt);
-  SQLTransact (env, dbc, SQL_COMMIT);
+  SQLTransact (env, ldbc, SQL_COMMIT);
   if (rc == SQL_SUCCESS)
     {
       pane_log ("Results written to the results table%s\n",

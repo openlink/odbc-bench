@@ -128,19 +128,21 @@ worker_func (void *data)
       lpBenchInfo->hdbc = 0;
       lpBenchInfo->tpc._.nThreads = 1;
 
-      do_login (lpBenchInfo);
-      result = FALSE;
-      if (lpBenchInfo->hstmt)
-	switch (lpBenchInfo->TestType)
-	  {
-	  case TPC_A:
-	    result = DoThreadsRun (lpBenchInfo);
-	    break;
-	  case TPC_C:
-	    result = tpcc_run_test (NULL, lpBenchInfo) ? TRUE : FALSE;
-	    break;
-	  }
-      do_logout (lpBenchInfo);
+      if (do_login (lpBenchInfo))
+        {
+          result = FALSE;
+          if (lpBenchInfo->hstmt)
+	    switch (lpBenchInfo->TestType)
+	      {
+	      case TPC_A:
+	        result = DoThreadsRun (lpBenchInfo);
+	        break;
+	      case TPC_C:
+	        result = tpcc_run_test (NULL, lpBenchInfo) ? TRUE : FALSE;
+	        break;
+	      }
+          do_logout (lpBenchInfo);
+	}
     }
 
   if (!signal_pipe[1] || sizeof (msg_t) != write (signal_pipe[1], &msg, sizeof (msg_t)))
@@ -160,6 +162,7 @@ ThreadedCalcStats (OList * tests, THREAD_T ** workers,
   OList *iter;
   int nConn;
   int rc = 1;
+  int rc1;
 
   for (iter = tests, nConn = 0; iter && nConn < nConnCount;
       nConn++, iter = o_list_next (iter))
@@ -236,7 +239,7 @@ ThreadedCalcStats (OList * tests, THREAD_T ** workers,
 	}
 
       if (nA || nOkC)
-	do_login (test);
+	rc1 = do_login (test);
 
       if (nA)
 	{
@@ -267,7 +270,7 @@ ThreadedCalcStats (OList * tests, THREAD_T ** workers,
 	    add_tpcc_result (test);
 	}
 
-      if (nA || nOkC)
+      if ((nA || nOkC) && rc1)
 	do_logout (test);
 
       if (!(nOkA || nOkC))
@@ -331,29 +334,31 @@ do_threads_run (int nConnCount, OList * tests, int nMinutes, char *szTitle)
     {
       test_t *test = (test_t *) iter->data;
       test->tpc._.nMinutes = nMinutes;
-      do_login (test);
-      get_dsn_data (test);
-      if (test->hdbc && IS_A (*test))
-	{
-	  fExecuteSql (test, "delete from HISTORY");
-	  SQLTransact (SQL_NULL_HENV, test->hdbc, SQL_COMMIT);
-	}
-      do_logout (test);
+      if (do_login (test))
+        {
+          get_dsn_data (test);
+          if (test->hdbc && IS_A (*test))
+	    {
+	      fExecuteSql (test, "delete from HISTORY");
+	      SQLTransact (SQL_NULL_HENV, test->hdbc, SQL_COMMIT);
+	    }
+          do_logout (test);
 
-      n_threads[conn] = test->tpc._.nThreads ? test->tpc._.nThreads : 1;
-      data[conn] = (test_t *) malloc (n_threads[conn] * sizeof (test_t));
-      workers[conn] =
-	  (THREAD_T *) malloc (n_threads[conn] * sizeof (THREAD_T));
-      nThreads += n_threads[conn];
-      memset (test->szSQLError, 0, sizeof (test->szSQLError));
-      memset (test->szSQLState, 0, sizeof (test->szSQLState));
-      for (thr = 0; thr < n_threads[conn]; thr++)
-	{
-	  memcpy (&(data[conn][thr]), test, sizeof (test_t));
-          data[conn][thr].test = test;
-	  data[conn][thr].tpc._.nThreadNo = thr;
-	  data[conn][thr].tpc._.nConn = conn;
-	  START_THREAD (workers[conn][thr], worker_func, data[conn][thr]);
+          n_threads[conn] = test->tpc._.nThreads ? test->tpc._.nThreads : 1;
+          data[conn] = (test_t *) malloc (n_threads[conn] * sizeof (test_t));
+          workers[conn] =
+	      (THREAD_T *) malloc (n_threads[conn] * sizeof (THREAD_T));
+          nThreads += n_threads[conn];
+          memset (test->szSQLError, 0, sizeof (test->szSQLError));
+          memset (test->szSQLState, 0, sizeof (test->szSQLState));
+          for (thr = 0; thr < n_threads[conn]; thr++)
+	    {
+	      memcpy (&(data[conn][thr]), test, sizeof (test_t));
+              data[conn][thr].test = test;
+	      data[conn][thr].tpc._.nThreadNo = thr;
+	      data[conn][thr].tpc._.nConn = conn;
+	      START_THREAD (workers[conn][thr], worker_func, data[conn][thr]);
+	    }
 	}
     }
 

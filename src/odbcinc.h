@@ -82,8 +82,8 @@ if (SQL_ERROR == (foo)) \
 #define SLEEP_COUNT	10000
 #define DECLARE_FOR_SQLERROR \
 int len; \
-char state[10]; \
-char message[256]
+char state[10] = {""}; \
+char message[256] = {""}
 
 #define IF_DEADLOCK_OR_ERR_GO(stmt, tag, foo, deadlocktag) \
 if (SQL_ERROR == (foo)) \
@@ -213,6 +213,6 @@ SQLBindParameter (stmt, ipar, SQL_PARAM_INPUT, ct, sqlt, prec, sc, ptr, prec, le
 #endif
 
 void do_logout (test_t * data);
-void do_login (test_t * data);
+int do_login (test_t * data);
 void do_alloc_env (void);
 void do_free_env (int isFreeMutex);
