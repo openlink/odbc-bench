@@ -400,8 +400,8 @@ do_command_line (int argc, char *argv[])
 
 	  case 't':
 	    test.tpc._.nThreads = atoi (optarg);
-	    if (test.tpc._.nThreads < 2)
-	      test.tpc._.nThreads = 2;
+	    if (test.tpc._.nThreads < 1)
+	      test.tpc._.nThreads = 1;
 	    break;
 
 	  case 'P':
