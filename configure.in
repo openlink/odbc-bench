@@ -287,7 +287,13 @@ AC_ARG_WITH(iodbc,
     AC_PATH_PROG(IODBC_CONFIG, iodbc-config, no, [$PATH_IODBC])
 
     AC_MSG_CHECKING([for iODBC support])
-    if test -x "$IODBC_CONFIG"
+    if test -f "$withval/lib/libiodbc.dylib"
+    then
+	found_odbc=yes				# Mac OS X
+	ODBC_CFLAGS="-I$withval/include"
+	ODBC_LIBS="-L$withval/lib -liodbc -liodbcinst"
+	AC_MSG_RESULT(yes)
+    elif test -x "$IODBC_CONFIG"
     then
 	found_odbc=yes
 	ODBC_CFLAGS=`$IODBC_CONFIG --cflags`
@@ -297,7 +303,7 @@ AC_ARG_WITH(iodbc,
     then
 	found_odbc=yes
 	ODBC_CFLAGS="-I$withval/include"
-	ODBC_LIBS="$withval/lib/libiodbc.a"
+	ODBC_LIBS="$withval/lib/libiodbc.a $withval/lib/libiodbcinst.a"
 	AC_MSG_RESULT(yes)
     else
 	AC_MSG_RESULT(no)
@@ -327,6 +333,10 @@ AC_ARG_WITH(odbcsdk,
 	found_odbc=yes
 	ODBC_CFLAGS="-I$withval/include"
 	ODBC_LIBS="$withval/lib/libiodbc.a"
+	if test -f "$withval/lib/libiodbcinst.a"
+	then
+	    ODBC_LIBS="$ODBC_LIBS $withval/lib/libiodbcinst.a"
+	fi
 	AC_MSG_RESULT(yes)
     else
 	AC_MSG_RESULT(no)
