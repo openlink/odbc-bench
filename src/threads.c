@@ -111,7 +111,11 @@ static unsigned int WINAPI worker_func (void *data)
 #endif
 {
   test_t *lpBenchInfo = (test_t *) data;
-  DWORD result = TRUE;
+#if defined(PTHREADS)
+  unsigned long result = TRUE;
+#elif defined(WIN32)
+  unsigned int result;
+#endif
   bench_msg_t msg;
 
   memset (&msg, '\0', sizeof(msg));
@@ -152,9 +156,9 @@ static unsigned int WINAPI worker_func (void *data)
     abort ();
 
 #if defined(PTHREADS)
-  return ((void *) (long) result);
+  return ((void *) result);
 #elif defined(WIN32)
-  return ((unsigned int) result);
+  return (result);
 #endif
 }
 
@@ -172,7 +176,11 @@ ThreadedCalcStats (OList * tests, THREAD_T ** workers,
     {
       int nOkA = 0, nOkC = 0;
       int nA = 0, nC = 0;
-      DWORD result;
+#if defined(PTHREADS)
+      unsigned long result;
+#elif defined(WIN32)
+      unsigned int result;
+#endif
       BOOL runStatus = TRUE;
       int i;
       test_t *test = (test_t *) iter->data;
