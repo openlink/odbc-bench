@@ -30,4 +30,4 @@ autoheader
 automake -a -c 
 autoconf
 
-./configure --enable-maintainer-mode --enable-pthreads
+./configure --enable-maintainer-mode --enable-pthreads $*
