@@ -227,7 +227,7 @@ begin
   end if;
 
 end new_order_proc;
-;
+/
 
 create or replace procedure delivery  ( w_id_ in integer, o_carrier_id_ in integer )
 as
@@ -328,7 +328,7 @@ begin
   commit;
 
 end delivery;
-;
+/
 
 
 create or replace procedure payment (
@@ -560,7 +560,7 @@ begin
   commit;
 
 end payment;
-;
+/
 
 
 create or replace procedure ostat (
@@ -659,7 +659,7 @@ begin
 
   commit;
 end ostat;
-;
+/
 
 create or replace procedure slevel (
     w_id  in integer,
@@ -695,4 +695,4 @@ begin
 
   commit;
 end slevel;
-;
+/
