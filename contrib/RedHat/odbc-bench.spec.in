@@ -24,6 +24,13 @@
 #
 
 # ----------------------------------------------------------------------
+# MACROS AND DEFINES
+# ----------------------------------------------------------------------
+
+#  Disable generation of debug package
+%define debug_package %{nil}
+
+# ----------------------------------------------------------------------
 # BASE PACKAGE
 # ----------------------------------------------------------------------
 Summary: a TPC-A and TPC-C like benchmark program for databases
@@ -58,7 +65,10 @@ application necessarily comparable to the vendor's published results.
 make
 
 %install
-#rm -rf $RPM_BUILD_ROOT
+#
+#  Carefully clean the build tree 
+#
+[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 
 #
 #  Make sure we can find the necessary libraries
@@ -73,7 +83,10 @@ make install prefix=$RPM_BUILD_ROOT/opt/OpenLink
 
 
 %clean
-#rm -rf $RPM_BUILD_ROOT
+#
+#  Carefully clean the build tree 
+#
+[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 
 %files 
 %attr(0755, root, root) /opt/OpenLink/bin/odbc-bench-*

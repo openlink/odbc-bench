@@ -37,10 +37,16 @@ if MAINTAINER_MODE
 #
 #  Create Linux RPM's
 #
+
+RPMFLAGS=--define="_topdir `pwd`/distrib"
+
 linux-rpm:
+	$(mkinstalldirs) distrib/SOURCES distrib/SRPMS distrib/SPECS
+	$(mkinstalldirs) distrib/BUILD distrib/RPMS/i386
 	$(MAKE) dist-gzip
-	cp odbc-bench-$(VERSION).tar.gz /usr/src/redhat/SOURCES
-	rpm -ba contrib/RedHat/odbc-bench.spec
+	cp $(PACKAGE)-$(VERSION).tar.gz distrib/SOURCES
+	rpmbuild $(RPMFLAGS) -ba contrib/RedHat/odbc-bench.spec
+	rpmbuild $(RPMFLAGS) --clean --rmsource contrib/RedHat/odbc-bench.spec
 
 #
 #  Create a tar file containing the binaries and support files
