@@ -20,7 +20,7 @@
 #
 
 AUTOMAKE_OPTIONS	= gnu dist-zip 1.4-p5
-SUBDIRS			= src scripts
+SUBDIRS			= lib src scripts
 
 
 # ----------------------------------------------------------------------

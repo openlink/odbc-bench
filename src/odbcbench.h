@@ -25,62 +25,51 @@
 #include "config.h"
 #endif
 
+typedef struct test_s	test_t;
+
 #include "odbcinc.h"
+#include "olist.h"
 
 #define NUMITEMS(p1) (sizeof(p1)/sizeof(p1[0]))
 #define IDX_PLAINSQL 1011
 #define	IDX_PARAMS   1012
 #define	IDX_SPROCS   1013
 
+#define XFREE(X)   if (X) free(X);
+
+
 /*
- * Reasonable defaults
+ *  Boolean support
+ */
+#ifndef TRUE
+#define TRUE	1
+#endif
+
+#ifndef FALSE
+#define FALSE	0
+#endif
+
+
+/*
+ *  Reasonable defaults
  */
 #ifndef HAVE_CONFIG_H
 #define PACKAGE			"odbc-bench"
 #define PACKAGE_BUGREPORT	"odbc-bench@openlinksw.com"
 #define PACKAGE_NAME 		"OpenLink ODBC Benchmark Utility"
-#define PACKAGE_STRING 		"OpenLink ODBC Benchmark Utility 0.99.2"
+#define PACKAGE_STRING 		"OpenLink ODBC Benchmark Utility 0.99.7"
 #define PACKAGE_TARNAME 	"odbc-bench"
-#define PACKAGE_VERSION 	"0.99.2"
-#define VERSION			"0.99.2"
+#define PACKAGE_VERSION 	"0.99.7"
+#define VERSION			"0.99.7"
 #endif
 
-/* status log handling routines - status.c */
-void clear_status_handler (GtkWidget * widget, gpointer data);	/* clears the status text */
-void do_pane_log (const char *format, ...);	/* adds a text line(s) to the status log */
 extern void (*pane_log) (const char *format, ...);
-void vBusy (void);
-void create_status_widget (void);
 
 #ifdef _DEBUG
-#define assert(exp)	((exp) ? (void)0 : g_error("'%s', File %s, line %d", #exp, __FILE__, __LINE__))
+#define assert(exp)	((exp)&& gui.err_message ? (void)0 : gui.err_message("'%s', File %s, line %d", #exp, __FILE__, __LINE__))
 #else
 #define assert(exp)
 #endif
-
-typedef enum
-{ DLG_OK, DLG_CANCEL, DLG_YES, DLG_NO }
-answer_code;
-/* dialog box functions - dialog.c */
-GtkWidget *message_box_new (GtkWidget * Parent, const gchar * Text,
-    const gchar * Title);	/* shows a dialog box with the specified attributes */
-answer_code ok_cancel_dialog (const gchar * Text, const gchar * Title);
-answer_code yes_no_cancel_dialog (const gchar * Text, const gchar * Title);
-void login_dialog (GtkWidget * Parent, gpointer data);	/* show a login combo with a dsn_list as specified */
-char *fill_file_name (char *szFileName, char *caption, int add_xmls);
-
-/* progress implementations - dialog.c */
-void do_ShowProgress (GtkWidget * parent, gchar * title,
-    gboolean bForceSingle, float nMax);
-void do_SetWorkingItem (char *pszWorking);
-void do_SetProgressText (char *pszProgress, int nConn, int thread_no,
-    float value, int nTrnPerCall);
-void do_StopProgress (void);
-int do_fCancel (void);
-void do_ShowCancel (int fShow);
-void do_RestartProgress (void);
-void do_MarkFinished (int nConn, int nThread);
-BOOL isCancelled(void);
 
 #if 0
 void pipe_trough_isql (char *szFileName);
@@ -88,7 +77,32 @@ void pipe_trough_isql (char *szFileName);
 void pipe_trough_isql (HSTMT stmt, char *szFileName, int print_commands);
 #endif
 
+typedef struct GUI_s
+{
+  void (*main_quit)(void);
+
+  void (*err_message)(const char *, ...);
+  void (*warn_message)(const char *, ...);
+  void (*message)(const char *, ...);
+
+  int  (*add_test_to_the_pool) (test_t * ptest);
+  void (*for_all_in_pool) (void);
+  void (*do_MarkFinished) (int nConn, int thread_no);
+
+  BOOL (*isCancelled)(void);
+
+  void (*ShowProgress) (void * parent_win, char * title, BOOL bForceSingle, float nMax);
+  void (*SetWorkingItem) (char *pszWorking);
+  void (*SetProgressText) (char *pszProgress, int n_conn, int thread_no,
+      float nValue, int nTrnPerCall, long secs_remain, double tpca_dDiffSum);
+  void (*StopProgress) (void);
+  int (*fCancel) (void);
+  void (*vBusy) (void);  /* Change to Hourglass/Normal Cursor */
+  
+} GUI_t;
+
 extern HENV henv;
+extern GUI_t gui;
 
 /* odbc callbacks - odbcs.c */
 typedef enum
@@ -110,13 +124,13 @@ test_common_t;
 #include "tpca.h"
 #include "tpcc.h"
 
-typedef struct test_s
+struct test_s
 {
   char szName[128];
   testtype TestType;
   int is_dirty;
 
-  GtkWidget *hwndOut;		/* Output window for logging info */
+  void *hwndOut;		/* Output window for logging info */
 
   /* ODBC handles */
   HDBC hdbc;			/* Connection handle */
@@ -148,11 +162,10 @@ typedef struct test_s
   long default_txn_isolation;	/* txn_isolation_mode */
 
   /* log functions */
-  void (*ShowProgress) (GtkWidget * parent, gchar * title,
-      gboolean bForceSingle, float nMax);
+  void (*ShowProgress) (void * parent_win, char * title, BOOL bForceSingle, float nMax);
   void (*SetWorkingItem) (char *pszWorking);
   void (*SetProgressText) (char *pszProgress, int n_conn, int thread_no,
-      float nValue, int nTrnPerCall);
+      float nValue, int nTrnPerCall, long secs_remain, double tpca_dDiffSum);
   void (*StopProgress) (void);
   int (*fCancel) (void);
 
@@ -166,9 +179,9 @@ typedef struct test_s
   tpc;
 
   char szTemp[512];
-  gboolean bTablePropsShown, bRunPropsShown;
-}
-test_t;
+  BOOL bTablePropsShown, bRunPropsShown;
+  test_t * test;
+};
 
 #define IS_A(test) ((test).TestType == TPC_A)
 #define IS_C(test) ((test).TestType == TPC_C)
@@ -187,9 +200,6 @@ OdbcBenchPref;
 long bench_get_long_pref (OdbcBenchPref pref);
 int bench_set_long_pref (OdbcBenchPref pref, long value);
 char *bench_get_string_pref (OdbcBenchPref pref);
-void set_display_refresh_rate (GtkWidget * widget, gpointer data);
-void set_lock_timeout (GtkWidget * widget, gpointer data);
-void do_flip (GtkWidget * widget, gboolean * data);
 
 int _strnicmp (const char *s1, const char *s2, size_t n);
 char *_stristr (const char *str, const char *find);
@@ -201,9 +211,8 @@ BOOL fSQLBindCol (HSTMT hstmt, UWORD icol, SWORD fCType, PTR rgbValue,
     SDWORD cbValueMax, SDWORD FAR * pcbValue);
 BOOL fSQLParamOptions (HSTMT hstmt, UDWORD crow, UDWORD *pirow);
 
-#if defined(WIN32)
-#define sleep_msecs(x) Sleep(x)
-#else
-#include <sys/poll.h>
-#define sleep_msecs(x) poll (NULL, 0, x)
-#endif
+
+void sleep_msecs(int msec);
+int do_save_selected (char *szFileName, OList * tests);
+void do_save_run_results (char *filename, OList * selected, int nMinutes);
+void init_test (test_t * test);

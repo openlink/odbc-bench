@@ -20,7 +20,6 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include <gtk/gtk.h>
 
 #ifdef WIN32
 #include <windows.h>
@@ -136,13 +135,13 @@ gettimestamp_2 (char *ts)
 
 
 void
-tpcc_create_db (GtkWidget * widget, test_t * lpCfg)
+tpcc_create_db (void * widget, test_t * lpCfg)
 {
 
   int i;
   long start_time = -1, end_time = -1;
 
-  do_login (NULL, lpCfg);
+  do_login (lpCfg);
 
   lpCfg->tpc.c.bIsOracle = FALSE;
   lpCfg->tpc.c.bIsSybase = FALSE;
@@ -178,7 +177,8 @@ tpcc_create_db (GtkWidget * widget, test_t * lpCfg)
     gettimestamp_2 (lpCfg->tpc.c.timestamp_array[i]);
 
   pane_log ("\nTPCC Data Load Started...\n");
-  lpCfg->ShowProgress (NULL, "TPCC Data Load", TRUE, 1);
+  if (lpCfg->ShowProgress)
+    lpCfg->ShowProgress (NULL, "TPCC Data Load", TRUE, 1);
 
   IF_CANCEL_GO (done);
 
@@ -217,11 +217,11 @@ tpcc_create_db (GtkWidget * widget, test_t * lpCfg)
   if (start_time != -1 && end_time != -1)
     {
       lpCfg->tpc.c.run_time = (end_time - start_time) / 1000;
-      add_tpcc_result (widget, lpCfg);
+      add_tpcc_result (lpCfg);
     }
 done:
   tpcc_close_stmts (widget, lpCfg);
-  do_logout (NULL, lpCfg);
+  do_logout (lpCfg);
   lpCfg->StopProgress ();
 }
 
@@ -249,7 +249,7 @@ LoadItems (test_t * lpCfg)
   IBINDNTS (lpCfg->tpc.c.item_stmt, 4, i_data);
 
   lpCfg->SetWorkingItem ("Loading ITEM");
-  lpCfg->SetProgressText ("", 0, 0, 0, 1);
+  lpCfg->SetProgressText ("", 0, 0, 0, 1, 0, 0);
   pane_log ("Loading ITEM\n");
 
   for (i = 0; i < MAXITEMS / 10; i++)
@@ -272,9 +272,8 @@ LoadItems (test_t * lpCfg)
       /* Generate Item Data */
       i_id[fill] = i_id_1;
       MakeAlphaString (&lpCfg->tpc.c.rnd_seed, 14, 24, i_name[fill]);
-      i_price[fill] =
-	  ((float) RandomNumber (&lpCfg->tpc.c.rnd_seed, 100L,
-  10000L)) / 100.0;
+      i_price[fill] =  ((float) RandomNumber (&lpCfg->tpc.c.rnd_seed, 100L,
+	10000L)) / 100.0;
       idatasiz =
 	  MakeAlphaString (&lpCfg->tpc.c.rnd_seed, 26, 50, i_data[fill]);
       if (orig[i_id_1])
@@ -295,7 +294,7 @@ LoadItems (test_t * lpCfg)
       if (!(i_id_1 % 100))
 	{
 	  sprintf (szTemp, "%ld items loaded", i_id_1);
-	  lpCfg->SetProgressText (szTemp, 0, 0, ((float) i_id_1) / MAXITEMS, 1);
+	  lpCfg->SetProgressText (szTemp, 0, 0, ((float) i_id_1) / MAXITEMS, 1, 0, 0);
 	}
     }
 
@@ -333,7 +332,7 @@ LoadWare (test_t * lpCfg)
   IBINDF (lpCfg->tpc.c.ware_stmt, 9, w_ytd);
 
   lpCfg->SetWorkingItem ("Loading WAREHOUSE");
-  lpCfg->SetProgressText ("", 0, 0, 0, 1);
+  lpCfg->SetProgressText ("", 0, 0, 0, 1, 0, 0);
   pane_log ("Loading WAREHOUSE\n");
   for (w_id = 1; w_id <= lpCfg->tpc.c.count_ware; w_id++)
     {
@@ -447,7 +446,7 @@ Stock (test_t * lpCfg, long w_id_from, long w_id_to)
 
   sprintf (szTemp, "Loading STOCK for Wid=%ld-%ld", w_id_from, w_id_to);
   lpCfg->SetWorkingItem (szTemp);
-  lpCfg->SetProgressText ("", 0, 0, 0, 1);
+  lpCfg->SetProgressText ("", 0, 0, 0, 1, 0, 0);
   pane_log (szTemp);
   pane_log ("\n");
 
@@ -470,7 +469,7 @@ Stock (test_t * lpCfg, long w_id_from, long w_id_to)
 	  IF_CANCEL_RETURN (0);
 	  sprintf (szTemp, "%ld Stock Items done", s_i_id_1);
 	  lpCfg->SetProgressText (szTemp, 0, 0,
-	      ((float) s_i_id_1) / (MAXITEMS), 1);
+	      ((float) s_i_id_1) / (MAXITEMS), 1, 0, 0);
 	}
       for (w_id = w_id_from; w_id <= w_id_to; w_id++)
 	{
@@ -549,7 +548,7 @@ District (test_t * lpCfg, long w_id)
   IBINDL (lpCfg->tpc.c.dist_stmt, 11, d_next_o_id);
 
   lpCfg->SetWorkingItem ("Loading DISTRICT");
-  lpCfg->SetProgressText ("", 0, 0, 0, 1);
+  lpCfg->SetProgressText ("", 0, 0, 0, 1, 0, 0);
   pane_log ("Loading DISTRICT\n");
 
   d_w_id = w_id;
@@ -676,7 +675,7 @@ Customer (test_t * lpCfg, long d_id_1, long w_id_1)
 
   sprintf (szTemp, "Loading CUSTOMER for DID=%ld, WID=%ld", d_id_1, w_id_1);
   lpCfg->SetWorkingItem (szTemp);
-  lpCfg->SetProgressText ("", 0, 0, 0, 1);
+  lpCfg->SetProgressText ("", 0, 0, 0, 1, 0, 0);
   pane_log (szTemp);
   pane_log ("\n");
 
@@ -722,7 +721,7 @@ Customer (test_t * lpCfg, long d_id_1, long w_id_1)
 	{
 	  sprintf (szTemp, "%ld customers done", c_id_1);
 	  lpCfg->SetProgressText (szTemp, 0, 0,
-	      ((float) c_id_1) / CUST_PER_DIST, 1);
+	      ((float) c_id_1) / CUST_PER_DIST, 1, 0, 0);
 	}
     }
   FLUSH_BATCH (henv, lpCfg->hdbc, lpCfg->tpc.c.cs_stmt, fill, lpCfg);
@@ -800,7 +799,7 @@ Orders (test_t * lpCfg, long d_id, long w_id)
 
   sprintf (szTemp, "Loading ORDERS for D=%ld, W= %ld", d_id, w_id);
   lpCfg->SetWorkingItem (szTemp);
-  lpCfg->SetProgressText ("", 0, 0, 0, 1);
+  lpCfg->SetProgressText ("", 0, 0, 0, 1, 0, 0);
   pane_log (szTemp);
   pane_log ("\n");
 
@@ -851,7 +850,7 @@ Orders (test_t * lpCfg, long d_id, long w_id)
 	{
 	  sprintf (szTemp, "%ld orders done", o_id_1);
 	  lpCfg->SetProgressText (szTemp, 0, 0,
-	      ((float) o_id_1) / ORD_PER_DIST, 1);
+	      ((float) o_id_1) / ORD_PER_DIST, 1, 0, 0);
 	}
     }
 
@@ -907,7 +906,7 @@ Lastname (int num, char *name)
 
 
 void
-tpcc_init_globals (GtkWidget * widget, test_t * lpCfg)
+tpcc_init_globals (void * widget, test_t * lpCfg)
 {
   int i;
   for (i = 0; i < BATCH_SIZE; i++)
@@ -924,7 +923,7 @@ tpcc_init_globals (GtkWidget * widget, test_t * lpCfg)
       }
 
 void
-tpcc_close_stmts (GtkWidget * widget, test_t * lpCfg)
+tpcc_close_stmts (void * widget, test_t * lpCfg)
 {
   CLOSE_STMT (misc_stmt);
   CLOSE_STMT (new_order_stmt);
@@ -945,7 +944,7 @@ tpcc_close_stmts (GtkWidget * widget, test_t * lpCfg)
 
 
 void
-tpcc_schema_create (GtkWidget * widget, test_t * lpBench)
+tpcc_schema_create (void * widget, test_t * lpBench)
 {
 
   pane_log ("TPC-C SCHEMA CREATION STARTED\n\n");
@@ -998,7 +997,7 @@ tpcc_schema_create (GtkWidget * widget, test_t * lpBench)
 
 
 void
-tpcc_schema_cleanup (GtkWidget * widget, test_t * lpBench)
+tpcc_schema_cleanup (void * widget, test_t * lpBench)
 {
 
   static char *szTables[] = {
@@ -1023,7 +1022,7 @@ tpcc_schema_cleanup (GtkWidget * widget, test_t * lpBench)
     }
 
   pane_log ("\n\nSCHEMA CLEANUP STARTED\n");
-  do_login (NULL, lpBench);
+  do_login (lpBench);
 
   if (!lpBench->hstmt)
     {
@@ -1034,11 +1033,12 @@ tpcc_schema_cleanup (GtkWidget * widget, test_t * lpBench)
 	  return;
 	}
     }
-  lpBench->ShowProgress (widget, "Dropping the TPC-C tables", TRUE,
+  if (lpBench->ShowProgress)
+    lpBench->ShowProgress (widget, "Dropping the TPC-C tables", TRUE,
       sizeof (szTables) / sizeof (char *));
   for (i = 0; i < sizeof (szTables) / sizeof (char *); i++)
     {
-      lpBench->SetProgressText (szTables[i], 0, 0, i, 1);
+      lpBench->SetProgressText (szTables[i], 0, 0, i, 1, 0, 0);
       sprintf (szSQL, szDropTable, szTables[i]);
       pane_log (szSQL);
       if (SQL_SUCCESS != SQLExecDirect (lpBench->hstmt, szSQL, SQL_NTS))
@@ -1065,8 +1065,8 @@ tpcc_schema_cleanup (GtkWidget * widget, test_t * lpBench)
       pane_log ("No schema cleanup script for the DBMS %s\n",
 	  lpBench->szDBMS);
     }
-  lpBench->SetProgressText (szTables[i], 0, 0, 100, 1);
+  lpBench->SetProgressText (szTables[i], 0, 0, 100, 1, 0, 0);
   lpBench->StopProgress ();
-  do_logout (NULL, lpBench);
+  do_logout (lpBench);
   pane_log ("\n\nSCHEMA CLEANUP FINISHED\n");
 }

@@ -21,6 +21,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -31,11 +32,27 @@
 
 GtkWidget *status;
 void
-create_status_widget ()
+create_status_widget (GtkWidget *win)
 {
+  GtkAccelGroup *accel_group;
+
   status = gtk_text_new (NULL, NULL);
   gtk_text_set_editable (GTK_TEXT (status), FALSE);
   gtk_text_set_word_wrap (GTK_TEXT (status), TRUE);
+
+  accel_group = gtk_accel_group_new ();
+
+  gtk_widget_add_accelerator (status, "copy_clipboard", accel_group,
+                              GDK_C, GDK_CONTROL_MASK,
+                              GTK_ACCEL_VISIBLE);
+  gtk_widget_add_accelerator (status, "cut_clipboard", accel_group,
+                              GDK_X, GDK_CONTROL_MASK,
+                              GTK_ACCEL_VISIBLE);
+  gtk_widget_add_accelerator (status, "paste_clipboard", accel_group,
+                              GDK_P, GDK_CONTROL_MASK,
+                              GTK_ACCEL_VISIBLE);
+  gtk_window_add_accel_group (GTK_WINDOW (win), accel_group);
+
   gtk_widget_show (status);
 }
 
@@ -92,7 +109,6 @@ static float spec_time_secs = -1;
 static float **pTrnTimes = NULL;
 static testtype *test_types = NULL;
 static float **fOldValues = NULL;
-int nProgressIncrement = 0;
 static long curr_time_msec = 0L;
 
 
@@ -336,7 +352,7 @@ do_SetWorkingItem (char *pszWorking)
 
 void
 do_SetProgressText (char *pszProgress, int nConn, int thread_no,
-    float percent, int nTrnPerCall)
+    float percent, int nTrnPerCall, long secs_remain, double tpca_dDiffSum)
 {
   long time_now = get_msec_count ();
   if (time_now - curr_time_msec > BARS_REFRESH_INTERVAL)

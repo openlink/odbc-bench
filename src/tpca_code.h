@@ -37,8 +37,6 @@ void vLoadTeller (test_t * lpRunCfg);
 void vLoadAccount (test_t * lpRunCfg);
 void vLoadStoreOptions (test_t * lpRunCfg, int fLoad);
 void vDisplayLoad (test_t * lpBenchInfo);
-void vSetGetTableDiapane_log (GtkWidget * hDlg, test_t * lpRunCfg, int fLoad,
-    int fSave);
 int fExecute (test_t * lpRunCfg, char *lpSQLString);
 void vCreateVirtuosoTPCCTables (test_t * lpBench);
 

@@ -20,14 +20,12 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include <gtk/gtk.h>
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "odbcbench.h"
-#include "ServerDSN.h"
 #include "results.h"
 #include "tpca_code.h"
 #ifndef WIN32
@@ -298,7 +296,8 @@ DRIVERMAP DriverMap[] = {
   {"TEXT", 1, 2, -1, FALSE, -1},
   {"BTRIEVE", 7, 2, 0, FALSE, -1},
   {"ANSI", 8, 0, 0, FALSE, -1},
-  {"Sybase", 5, 0, 0, FALSE, 1},
+  {"Sybase4", 5, 0, 0, FALSE, 1},
+  {"Sybase", 5, 0, 0, FALSE, 6},
   {"Intersolv dBASE", 9, 2, 0, FALSE, -1},
   {"Informix", 10, 0, 0, FALSE, 4},
   {"Ingres", 10, 0, 0, FALSE, 3},
@@ -340,9 +339,9 @@ static INDEXTYPEMAP IndexTypeMap[] = {
   {"unique clustered"}
 };
 
-static char *procedures[] = {
+static char *procedures[][2] = {
   /* 0: Virtuoso */
-  "create procedure ODBC_BENCHMARK(\n"
+  {"create procedure ODBC_BENCHMARK(\n"
       "	IN vhistid   integer,\n"
       "	IN  acct     integer,\n"
       "	IN  vteller  integer,\n"
@@ -366,9 +365,11 @@ static char *procedures[] = {
       "	values\n"
       "		(vhistid, acct, vteller, vbranch, delta, now(), vfiller);\n"
       "}\n",
+      NULL
+  },
 
   /* 1: SQLServer */
-  "CREATE PROCEDURE ODBC_BENCHMARK\n"
+  {"CREATE PROCEDURE ODBC_BENCHMARK\n"
       "        @histid  int, \n"
       "        @acct    int, \n"
       "        @teller  int, \n"
@@ -395,9 +396,11 @@ static char *procedures[] = {
       "VALUES\n"
       "	(@histid, @acct, @teller, @branch, @delta, getdate(), @filler)\n"
       "COMMIT TRANSACTION\n",
+      NULL
+  },
 
   /* 2: Oracle */
-  "create or replace procedure ODBC_BENCHMARK(\n"
+  {"create or replace procedure ODBC_BENCHMARK(\n"
       "	vhistid IN  number,\n"
       "	acct    IN  number,\n"
       "	vteller IN  number,\n"
@@ -415,9 +418,11 @@ static char *procedures[] = {
       "values\n"
       "	(vhistid, acct, vteller, vbranch, delta, SYSDATE, vfiller);\n"
       "COMMIT WORK;\n" "END  ODBC_BENCHMARK;\n",
+      NULL
+  },
 
   /* 3: Ingres II */
-  "CREATE PROCEDURE ODBC_BENCHMARK (\n"
+  {"CREATE PROCEDURE ODBC_BENCHMARK (\n"
   "   histid  integer, \n"
   "   acct    integer, \n"
   "   telid   integer, \n"
@@ -436,9 +441,11 @@ static char *procedures[] = {
   "   VALUES\n"
   "   (:histid, :acct, :telid, :branch, :delta, date('now'), :filler);\n"
   " END\n",
+      NULL
+  },
 
   /* 4: Informix */
-  "create procedure odbc_benchmark (\n"
+  {"create procedure odbc_benchmark (\n"
   " vhistid  integer,\n"
   " acct     integer,\n"
   " vteller  integer,\n"
@@ -454,9 +461,11 @@ static char *procedures[] = {
   "    values\n"
   "      (vhistid, acct, vteller, vbranch, delta, current, vfiller);\n"
   "end procedure;\n",
+      NULL
+  },
 
   /* 5: Progress 9.1 SQL92 */
-  "create procedure ODBC_BENCHMARK (IN vhistid integer, IN acct  integer, "
+  {"create procedure ODBC_BENCHMARK (IN vhistid integer, IN acct  integer, "
   "  IN vteller integer, IN vbranch integer, IN delta  float, " 
   "  INOUT balance float, IN vfiller varchar(23))\n"
   "BEGIN\n"
@@ -499,7 +508,40 @@ static char *procedures[] = {
   "  Update_Teller.execute();\n"
   "  Update_Branch.execute();\n"
   "  Insert_History.execute();\n"
-  "END"
+  "END",
+  NULL
+  },
+
+  /* 6: Sybase 10 */
+  {"CREATE PROCEDURE ODBC_BENCHMARK\n"
+      "        @histid  int, \n"
+      "        @acct    int, \n"
+      "        @teller  int, \n"
+      "        @branch  int, \n"
+      "        @delta   float,\n"
+      "        @balance float output,\n"
+      "        @filler  char(22)\n"
+      "AS\n"
+      "BEGIN TRANSACTION\n"
+      "UPDATE    ACCOUNT\n"
+      "    SET   BALANCE = BALANCE + @delta\n"
+      "    WHERE ACCOUNT = @acct\n"
+      "SELECT    @balance = BALANCE\n"
+      "    FROM  ACCOUNT \n"
+      "    WHERE ACCOUNT = @acct\n"
+      "UPDATE    TELLER\n"
+      "    SET   BALANCE = BALANCE + @delta\n"
+      "    WHERE TELLER  = @teller\n"
+      "UPDATE    BRANCH\n"
+      "    SET   BALANCE = BALANCE + @delta\n"
+      "    WHERE BRANCH  = @branch\n"
+      "INSERT HISTORY\n"
+      "	(HISTID, ACCOUNT, TELLER, BRANCH, AMOUNT, TIMEOFTXN, FILLER)\n"
+      "VALUES\n"
+      "	(@histid, @acct, @teller, @branch, @delta, getdate(), @filler)\n"
+      "COMMIT TRANSACTION\n",
+      "exec sp_procxmode ODBC_BENCHMARK, 'anymode'"
+  },
 };
 
 int
@@ -513,174 +555,6 @@ char *
 getDriverDBMSName (int i)
 {
   return DriverMap[i].szDbName;
-}
-
-#define free_dsns_list(list, type, prefix) \
-{ \
-  type *iter = list; \
-  while (iter) \
-    { \
-      g_free (iter->data); \
-      iter = prefix##_next (iter); \
-    } \
-  list = NULL; \
-}
-
-long
-fill_dsns_list (test_t * lpBench, dsn_info_t * dsn_info)
-{
-  char szDSNName[50], szDBMS[50];
-  DWORD len1 = SQL_NTS, len2 = SQL_NTS;
-  char *szNewDSN, *szNewDBMS;
-  long ret = 0;
-
-  free_dsns_list (dsn_info->dsns, GList, g_list);
-  free_dsns_list (dsn_info->names, GList, g_list);
-
-  if (_stristr (lpBench->szDBMS, "Virtuoso"))
-    {
-      ret = 1;
-      if (SQL_SUCCESS !=
-	  SQLPrepare (lpBench->hstmt,
-"select DS_DSN, get_keyword (17, deserialize (DS_CONN_STR), 'ANSI') from DB.DBA.SYS_DATA_SOURCE",
-SQL_NTS))
-	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
-	  goto error;
-	}
-
-      if (SQL_SUCCESS !=
-	  SQLBindCol (lpBench->hstmt,
-1, SQL_C_CHAR, szDSNName, sizeof (szDSNName), &len1))
-	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
-	  goto error;
-	}
-      if (SQL_SUCCESS !=
-	  SQLBindCol (lpBench->hstmt,
-2, SQL_C_CHAR, szDBMS, sizeof (szDBMS), &len2))
-	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
-	  goto error;
-	}
-
-      if (SQL_SUCCESS != SQLExecute (lpBench->hstmt))
-	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
-	  goto error;
-	}
-
-      while (SQL_SUCCESS == SQLFetch (lpBench->hstmt))
-	{
-	  int nPos;
-	  szNewDSN = g_malloc (len1 + 1);
-	  szNewDBMS = g_malloc (len2 + 1);
-	  memcpy (szNewDSN, szDSNName, len1);
-	  szNewDSN[len1] = 0;
-	  dsn_info->dsns =
-	      g_list_insert_sorted (dsn_info->dsns, szNewDSN,
-	      (GCompareFunc) strcmp);
-	  nPos = g_list_index (dsn_info->dsns, szNewDSN);
-	  memcpy (szNewDBMS, szDBMS, len2);
-	  szNewDBMS[len2] = 0;
-	  dsn_info->names = g_list_insert (dsn_info->names, szNewDBMS, nPos);
-	}
-    }
-error:
-  return ret;
-}
-
-static char *dsn_proc =
-    "create procedure odbcbench_sql_data_sources(in n integer) { \n"
-    "  declare v1,v2,n1 integer; \n"
-    "  declare n1 integer; \n"
-    "  declare dsn_name, dsn_desc varchar; \n"
-    "  \n"
-    "  v1 := sql_data_sources(); \n"
-    "  result_names(dsn_name, dsn_desc); \n"
-    "  n1 := 0; \n"
-    "  while (n1 < length(v1))  \n"
-    "    { \n"
-    "      v2 := aref(v1, n1); \n"
-    "      dsn_name := aref(v2, 0); \n"
-    "      dsn_desc := aref(v2, 1); \n"
-    "      result(dsn_name, dsn_desc); \n"
-    "      n1 := n1 + 1; \n" "  } \n" "}";
-
-long
-fill_avail_dsns_list (test_t * lpBench, dsn_info_t * dsn_info)
-{
-  char szDSNName[50], szDBMS[50];
-  DWORD len1 = SQL_NTS, len2 = SQL_NTS;
-  char *szNewDSN, *szNewDBMS;
-  long ret = 0, proc_defined = 0;
-
-  free_dsns_list (dsn_info->dsns, GList, g_list);
-  free_dsns_list (dsn_info->names, GList, g_list);
-
-  if (_stristr (lpBench->szDBMS, "Virtuoso"))
-    {
-      ret = 1;
-
-      if (SQL_SUCCESS != SQLExecDirect (lpBench->hstmt, dsn_proc, SQL_NTS))
-	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
-	  goto error;
-	}
-
-      proc_defined = 1;
-
-      if (SQL_SUCCESS !=
-	  SQLPrepare (lpBench->hstmt,
-"odbcbench_sql_data_sources (0)", SQL_NTS))
-	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
-	  goto error;
-	}
-
-      if (SQL_SUCCESS !=
-	  SQLBindCol (lpBench->hstmt,
-1, SQL_C_CHAR, szDSNName, sizeof (szDSNName), &len1))
-	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
-	  goto error;
-	}
-      if (SQL_SUCCESS !=
-	  SQLBindCol (lpBench->hstmt,
-2, SQL_C_CHAR, szDBMS, sizeof (szDBMS), &len2))
-	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
-	  goto error;
-	}
-
-      if (SQL_SUCCESS != SQLExecute (lpBench->hstmt))
-	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
-	  goto error;
-	}
-
-      while (SQL_SUCCESS == SQLFetch (lpBench->hstmt))
-	{
-	  int nPos;
-	  szNewDSN = g_malloc (len1 + 1);
-	  szNewDBMS = g_malloc (len2 + 1);
-	  memcpy (szNewDSN, szDSNName, len1);
-	  szNewDSN[len1] = 0;
-	  dsn_info->dsns =
-	      g_list_insert_sorted (dsn_info->dsns, szNewDSN,
-	      (GCompareFunc) strcmp);
-	  nPos = g_list_index (dsn_info->dsns, szNewDSN);
-	  memcpy (szNewDBMS, szDBMS, len2);
-	  szNewDBMS[len2] = 0;
-	  dsn_info->names = g_list_insert (dsn_info->names, szNewDBMS, nPos);
-	}
-    error:
-      if (proc_defined)
-	SQLExecDirect (lpBench->hstmt,
-	    "drop procedure odbcbench_sql_data_sources", SQL_NTS);
-
-    }
-  return ret;
 }
 
 
@@ -708,7 +582,8 @@ fBuildBench (test_t * ptest	/* Run Configuration Parameters */
     }
 
   /* Create table Definitions */
-  vBusy ();			/* Change to Hourglass Cursor */
+  if (gui.vBusy)
+    gui.vBusy ();			/* Change to Hourglass Cursor */
   vCreateTables (ptest);
 
   if (-1 != DriverMap[ptest->tpc.a.uwDrvIdx].swITM
@@ -717,7 +592,8 @@ fBuildBench (test_t * ptest	/* Run Configuration Parameters */
   if (-1 != DriverMap[ptest->tpc.a.uwDrvIdx].swProcIndex
       && ptest->tpc.a.fCreateProcedure)
     vCreateProcedure (ptest);
-  vBusy ();			/* Change to Normal Cursor */
+  if (gui.vBusy)
+    gui.vBusy ();			/* Change to Normal Cursor */
 
   /* Insert Records into Tables */
   if (ptest->tpc.a.fLoadBranch)
@@ -1175,8 +1051,13 @@ vCreateProcedure (test_t * ptest	/* Run Configuration Parameters */
       pane_log ("Adding a procedure for %s\r\n",
 	  DriverMap[ptest->tpc.a.uwDrvIdx].szDbName);
       /* Execute Index Create Statement */
-      rc = SQLExecDirect (ptest->hstmt, procedures[uwIdx], SQL_NTS);
+      rc = SQLExecDirect (ptest->hstmt, procedures[uwIdx][0], SQL_NTS);
       IF_ERR (ptest->hstmt, rc, ptest);
+      if (procedures[uwIdx][1])
+        {
+          rc = SQLExecDirect (ptest->hstmt, procedures[uwIdx][1], SQL_NTS);
+          IF_ERR (ptest->hstmt, rc, ptest);
+        }
     }
 
   pane_log ("\r\n\r\n");
@@ -1534,7 +1415,7 @@ vLoadBranch (test_t * ptest	/* Run Configuration Parameters */
   char szSQLBuffer[128];
   SDWORD cbFiller = 84;
   UWORD uwBindIdx;
-  SDWORD cbBranch, dbBalance;
+  SDWORD cbBranch; 
 
   uwBindIdx = DriverMap[ptest->tpc.a.uwDrvIdx].uwBTM;
 
@@ -1572,7 +1453,7 @@ vLoadBranch (test_t * ptest	/* Run Configuration Parameters */
   sprintf (szSQLBuffer, szRowsInserted, (UDWORD) 0,
       (UDWORD) ptest->tpc.a.udwMaxBranch);
   if (ptest->SetProgressText)
-    ptest->SetProgressText (szSQLBuffer, 0, 0, 0, 1);
+    ptest->SetProgressText (szSQLBuffer, 0, 0, 0, 1, 0, 0);
   udwMod = (UDWORD) (ptest->tpc.a.udwMaxBranch / 50);
   udwMod = udwMod ? udwMod : 1;
 
@@ -1594,7 +1475,7 @@ vLoadBranch (test_t * ptest	/* Run Configuration Parameters */
 	  sprintf (szSQLBuffer, szRowsInserted, udwBranch,
 	      ptest->tpc.a.udwMaxBranch);
 	  if (ptest->SetProgressText)
-	    ptest->SetProgressText (szSQLBuffer, 0, 0, udwBranch, 1);
+	    ptest->SetProgressText (szSQLBuffer, 0, 0, udwBranch, 1, 0, 0);
 	  if (ptest->fCancel && ptest->fCancel ())
 	    goto DONE;
 	}
@@ -1666,7 +1547,7 @@ vLoadTeller (test_t * ptest	/* Run Configuration Parameters */
   sprintf (szSQLBuffer, szRowsInserted, (UDWORD) 0,
       (UDWORD) ptest->tpc.a.udwMaxTeller);
   if (ptest->SetProgressText)
-    ptest->SetProgressText (szSQLBuffer, 0, 0, 0, 1);
+    ptest->SetProgressText (szSQLBuffer, 0, 0, 0, 1, 0, 0);
   udwMod = (UDWORD) (ptest->tpc.a.udwMaxTeller / 50);
   udwMod = udwMod ? udwMod : 1;
 
@@ -1690,7 +1571,7 @@ vLoadTeller (test_t * ptest	/* Run Configuration Parameters */
 	  sprintf (szSQLBuffer, szRowsInserted, udwTeller,
 	      ptest->tpc.a.udwMaxTeller);
 	  if (ptest->SetProgressText)
-	    ptest->SetProgressText (szSQLBuffer, 0, 0, ((float) udwTeller), 1);
+	    ptest->SetProgressText (szSQLBuffer, 0, 0, ((float) udwTeller), 1, 0, 0);
 	  if (ptest->fCancel && ptest->fCancel ())
 	    goto DONE;
 	}
@@ -1763,7 +1644,7 @@ vLoadAccount (test_t * ptest	/* Run Configuration Parameters */
   sprintf (szSQLBuffer, szRowsInserted, (UDWORD) 0,
       (UDWORD) ptest->tpc.a.udwMaxAccount);
   if (ptest->SetProgressText)
-    ptest->SetProgressText (szSQLBuffer, 0, 0, 0, 1);
+    ptest->SetProgressText (szSQLBuffer, 0, 0, 0, 1, 0, 0);
   udwMod = (UDWORD) (ptest->tpc.a.udwMaxAccount / 50);
   udwMod = udwMod ? udwMod : 1;
 
@@ -1788,7 +1669,7 @@ vLoadAccount (test_t * ptest	/* Run Configuration Parameters */
 	  sprintf (szSQLBuffer, szRowsInserted, udwAcct,
 	      ptest->tpc.a.udwMaxAccount);
 	  if (ptest->SetProgressText)
-	    ptest->SetProgressText (szSQLBuffer, 0, 0, ((float) udwAcct), 1);
+	    ptest->SetProgressText (szSQLBuffer, 0, 0, ((float) udwAcct), 1, 0, 0);
 	  if (ptest->fCancel && ptest->fCancel ())
 	    goto DONE;
 	}
@@ -2705,8 +2586,6 @@ if (SQL_ERROR == (foo)) \
   goto tag; \
 }
 
-#define XFREE(X)  if (X) free(X);
-
 #define MAX_MIN_SIZE		2
 
 BOOL
@@ -2914,7 +2793,8 @@ fExecuteQuery (test_t * lpBench,	/* Bench info */
 
   if (lpBench->tpc.a.nRowsetSize > 100)
     {
-      g_error ("Rowset size can't be greater then 100\n");
+      if (gui.err_message)
+        gui.err_message ("Rowset size can't be greater then 100\n");
       exit (-1);
     }
   /* Give user some feed-back */
@@ -3622,7 +3502,7 @@ fRunTransArray (test_t * lpBench,	/* Benchmark info */
 
   SDWORD *pnTellerNum = NULL;		/* Teller number */
 
-  double *pdBalance = NULL; // = 0;	/* Balance for transaction */
+  double *pdBalance = NULL; 		/* Balance for transaction */
 
   double *pdDelta = NULL;		/* Delta, randomly set */
 
@@ -3658,6 +3538,9 @@ fRunTransArray (test_t * lpBench,	/* Benchmark info */
   int nArrayParSize;
   UDWORD  nParamsProcessed;
 
+  hstmtUpdAcct = hstmtSelBal = hstmtUpdTeller = hstmtUpdBranch = 
+    hstmtInsHist = SQL_NULL_HSTMT;
+
   if (IDX_PARAMS != lpBench->tpc.a.fSQLOption)
     goto general_error;
 
@@ -3667,7 +3550,7 @@ fRunTransArray (test_t * lpBench,	/* Benchmark info */
     return FALSE;
 
   nArrayParSize = lpBench->tpc.a.nArrayParSize;
-
+  
   if (nArrayParSize == 0)
     nArrayParSize = 1;
 
@@ -3885,7 +3768,6 @@ fRunTransArray (test_t * lpBench,	/* Benchmark info */
 	while (SQL_STILL_EXECUTING == rc);
 	IF_DEADLOCK_OR_ERR_GO_WITH_ROLLBACK (hstmtUpdBranch, general_error,
 	    rc, deadlock_main);
-
 	/* Insert into history table */
 	do
 	  {
@@ -3933,11 +3815,13 @@ fRunTransArray (test_t * lpBench,	/* Benchmark info */
       if (0 == (nCallCnt % bench_get_long_pref (A_REFRESH_RATE)))
 	{
 	  char szBuff[50];
+	  long secs_remain = (long int)(dTimeToRun - dDiff);
 	  sprintf (szBuff, "%10ld txns, %10ld secs remaining",
-	      lpBench->tpc.a.nTrnCnt, (long int) (dTimeToRun - dDiff));
+	      lpBench->tpc.a.nTrnCnt, secs_remain);
 	  if (lpBench->SetProgressText)
 	    lpBench->SetProgressText (szBuff, lpBench->tpc._.nConn,
-		lpBench->tpc._.nThreadNo, dDiff, nArrayParSize);
+		lpBench->tpc._.nThreadNo, dDiff, nArrayParSize, secs_remain, 
+		lpBench->tpc.a.dDiffSum);
 	  if (lpBench->fCancel && lpBench->fCancel ())
 	    {
 	      fDone = TRUE;
@@ -3968,25 +3852,34 @@ fRunTransArray (test_t * lpBench,	/* Benchmark info */
     fRtn = TRUE;
 
 
+
+general_error:
   /* We're done, so dismiss the dialog */
   if (lpBench->StopProgress)
     lpBench->StopProgress ();
-  pane_log ("Benchmark finished.\r\n");
+
+  if (fDone)
+    pane_log ("\n\nBenchmark finished.\r\n");
+  else
+    pane_log ("\n\nBenchmark is ended with an error.\r\n");
 
   SQLFreeStmt (lpBench->hstmt, SQL_CLOSE);
   SQLFreeStmt (lpBench->hstmt, SQL_UNBIND);
   SQLFreeStmt (lpBench->hstmt, SQL_RESET_PARAMS);
   if (IDX_PARAMS == lpBench->tpc.a.fSQLOption)
     {
-      SQLFreeStmt (hstmtUpdAcct, SQL_DROP);
-      SQLFreeStmt (hstmtSelBal, SQL_DROP);
-      SQLFreeStmt (hstmtUpdTeller, SQL_DROP);
-      SQLFreeStmt (hstmtUpdBranch, SQL_DROP);
-      SQLFreeStmt (hstmtInsHist, SQL_DROP);
+      if (hstmtUpdAcct != SQL_NULL_HSTMT)
+        SQLFreeStmt (hstmtUpdAcct, SQL_DROP);
+      if (hstmtSelBal != SQL_NULL_HSTMT)
+        SQLFreeStmt (hstmtSelBal, SQL_DROP);
+      if (hstmtUpdTeller != SQL_NULL_HSTMT)
+        SQLFreeStmt (hstmtUpdTeller, SQL_DROP);
+      if (hstmtUpdBranch != SQL_NULL_HSTMT)
+        SQLFreeStmt (hstmtUpdBranch, SQL_DROP);
+      if (hstmtInsHist != SQL_NULL_HSTMT)
+        SQLFreeStmt (hstmtInsHist, SQL_DROP);
     }
-
-  /* If we where not cancelled due to an error */
-general_error:
+  
   XFREE(pnAcctNum);
   XFREE(pnBranchNum);
   XFREE(pnTellerNum);
@@ -4055,7 +3948,7 @@ fRunTrans (test_t * lpBench,	/* Benchmark info */
 
 
   /* hstmts for bound parameters for Prepare/Execute method */
-  HSTMT hstmtUpdAcct;		/* Update account table */
+  HSTMT hstmtUpdAcct;	/* Update account table */
 
   HSTMT hstmtSelBal;		/* Select new balance from account */
 
@@ -4072,6 +3965,9 @@ fRunTrans (test_t * lpBench,	/* Benchmark info */
   SDWORD cbBal;
 
   int ret_code;
+
+  hstmtUpdAcct = hstmtSelBal = hstmtUpdTeller = hstmtUpdBranch = 
+    hstmtInsHist = SQL_NULL_HSTMT;
 
   if (IDX_PARAMS == lpBench->tpc.a.fSQLOption 
       && lpBench->tpc.a.nArrayParSize > 0
@@ -4105,8 +4001,7 @@ fRunTrans (test_t * lpBench,	/* Benchmark info */
   rc = SQLSetConnectOption (lpBench->hdbc, SQL_AUTOCOMMIT,
       (lpBench->tpc.a.fUseCommit) ? SQL_AUTOCOMMIT_OFF : SQL_AUTOCOMMIT_ON);
   rc = SQLSetConnectOption (lpBench->hdbc, SQL_ASYNC_ENABLE,
-      (lpBench->tpc.
-a.fExecAsync) ? SQL_ASYNC_ENABLE_ON : SQL_ASYNC_ENABLE_OFF);
+     (lpBench->tpc.a.fExecAsync) ? SQL_ASYNC_ENABLE_ON : SQL_ASYNC_ENABLE_OFF);
 
   /* Create a unique workstation id by using our instance handle */
 #ifndef WIN32
@@ -4252,6 +4147,7 @@ a.fExecAsync) ? SQL_ASYNC_ENABLE_ON : SQL_ASYNC_ENABLE_OFF);
       /* build SQL string with all values */
       else
 	{
+	  fRtn = TRUE;
 	  if (lpBench->SetWorkingItem)
 	    lpBench->SetWorkingItem ("Executing SQL text with no parameters");
 
@@ -4294,11 +4190,13 @@ a.fExecAsync) ? SQL_ASYNC_ENABLE_ON : SQL_ASYNC_ENABLE_OFF);
 	  (lpBench->tpc.a.nTrnCnt % bench_get_long_pref (A_REFRESH_RATE)))
 	{
 	  char szBuff[50];
+	  long secs_remain = (long int)(dTimeToRun - dDiff);
 	  sprintf (szBuff, "%10ld txns, %10ld secs remaining",
-	      lpBench->tpc.a.nTrnCnt, (long int) (dTimeToRun - dDiff));
+	      lpBench->tpc.a.nTrnCnt, secs_remain);
 	  if (lpBench->SetProgressText)
 	    lpBench->SetProgressText (szBuff, lpBench->tpc._.nConn,
-		lpBench->tpc._.nThreadNo, dDiff, 1);
+		lpBench->tpc._.nThreadNo, dDiff, 1, secs_remain,
+		lpBench->tpc.a.dDiffSum);
 	  if (lpBench->fCancel && lpBench->fCancel ())
 	    {
 	      fDone = TRUE;
@@ -4329,25 +4227,34 @@ a.fExecAsync) ? SQL_ASYNC_ENABLE_ON : SQL_ASYNC_ENABLE_OFF);
     fRtn = TRUE;
 
 
+  /* If we where not cancelled due to an error */
+general_error:
   /* We're done, so dismiss the dialog */
   if (lpBench->StopProgress)
     lpBench->StopProgress ();
-  pane_log ("Benchmark finished.\r\n");
+
+  if (fDone)
+    pane_log ("\n\nBenchmark finished.\r\n");
+  else
+    pane_log ("\n\nBenchmark is ended with an error.\r\n");
 
   SQLFreeStmt (lpBench->hstmt, SQL_CLOSE);
   SQLFreeStmt (lpBench->hstmt, SQL_UNBIND);
   SQLFreeStmt (lpBench->hstmt, SQL_RESET_PARAMS);
   if (IDX_PARAMS == lpBench->tpc.a.fSQLOption)
     {
-      SQLFreeStmt (hstmtUpdAcct, SQL_DROP);
-      SQLFreeStmt (hstmtSelBal, SQL_DROP);
-      SQLFreeStmt (hstmtUpdTeller, SQL_DROP);
-      SQLFreeStmt (hstmtUpdBranch, SQL_DROP);
-      SQLFreeStmt (hstmtInsHist, SQL_DROP);
+      if (hstmtUpdAcct != SQL_NULL_HSTMT)
+        SQLFreeStmt (hstmtUpdAcct, SQL_DROP);
+      if (hstmtSelBal != SQL_NULL_HSTMT)
+        SQLFreeStmt (hstmtSelBal, SQL_DROP);
+      if (hstmtUpdTeller != SQL_NULL_HSTMT)
+        SQLFreeStmt (hstmtUpdTeller, SQL_DROP);
+      if (hstmtUpdBranch != SQL_NULL_HSTMT)
+        SQLFreeStmt (hstmtUpdBranch, SQL_DROP);
+      if (hstmtInsHist != SQL_NULL_HSTMT)
+        SQLFreeStmt (hstmtInsHist, SQL_DROP);
     }
 
-  /* If we where not cancelled due to an error */
-general_error:
   if (!fDone)
     fRtn = FALSE;
 
@@ -4461,8 +4368,8 @@ CalcStats (test_t * lpBench,	/* Main stat information */
   if (lpBench->tpc.a.fDoQuery)
     {
       strcat (szOptions, "Query/");
-      if (lpBench->tpc.a.nCursorType > 0 && lpBench->nCursorsSupported > 0 &&
-	  lpBench->tpc.a.fSQLOption != IDX_SPROCS)
+      if (lpBench->tpc.a.nCursorType > 0 && lpBench->nCursorsSupported > 0)
+/*	  lpBench->tpc.a.fSQLOption != IDX_SPROCS)*/
 	{
 	  sprintf (szBuf, "%s crsr (rowset %d)/",
 	      cursor_type_name (lpBench->tpc.a.nCursorType, "Unknown"),
@@ -4471,7 +4378,7 @@ CalcStats (test_t * lpBench,	/* Main stat information */
 
 	  if (lpBench->tpc.a.nTraversalCount > 1)
 	    {
-	      sprintf (szBuf, "%d Traversals",
+	      sprintf (szBuf, "%d Traversals/",
 		  lpBench->tpc.a.nTraversalCount);
 	      strcat (szOptions, szBuf);
 	    }
@@ -4591,4 +4498,32 @@ fCleanup (test_t * lpRunCfg	/* Run Configuration Parameters */
     fExecute (lpRunCfg, "Drop procedure ODBC_BENCHMARK");
 
   return TRUE;
+}
+
+
+/* 
+ *  Sleep for a number of milli-seconds
+ */
+#if defined (HAVE_SYS_POLL_H)
+#include <sys/poll.h>
+#endif
+
+void 
+sleep_msecs (int msecs)
+{
+#if defined(WIN32)
+  Sleep (msecs);
+#elif defined (HAVE_USLEEP)
+  usleep (msecs * 1000L);
+#elif defined (HAVE_POLL)
+  poll (NULL, 0, msecs);
+#elif defined (HAVE_SELECT)
+  struct timeval timeout;
+
+  timeout.tv_usec = (msecs * 1000L) % 1000000L;
+  timeout.tv_secs = msecs / 1000L;
+  select (0, NULL, NULL, NULL, &timeout);
+#else
+#  error Please implement sleep_msecs on this platform
+#endif
 }

@@ -1,7 +1,7 @@
 #
 #  Makefile.am
 # 
-#  GTK-bench - a TPCA and TPCC benchmark program for databases 
+#  odbc-bench - a TPCA and TPCC benchmark program for databases 
 #  Copyright (C) 2000-2002 OpenLink Software <odbc-bench@openlinksw.com>
 #
 #  This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,39 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-dist_pkgdata_DATA = \
-	odbc-bench.dtd \
-	create.mssql create.ora create.syb create.virt \
-	drop.mssql drop.ora drop.syb drop.virt
+noinst_LTLIBRARIES		= libodbcbench-gtk.la
+
+INCLUDES	= \
+	@ODBC_CFLAGS@ \
+	@GTK_CFLAGS@ \
+	@XML_CFLAGS@
+
+libodbcbench_gtk_la_LDFLAGS	= -static
+libodbcbench_gtk_la_SOURCES	= \
+	ArrayParams.c \
+	dialog.c \
+	LoginBox.c \
+	main.c \
+	results_gtk.c \
+	ServerDSN.c \
+	status.c \
+	testpool.c \
+	ThreadOptions.c \
+	TPCARunProps.c \
+	TPCATableProps.c \
+	TPCCTableProps.c \
+	util.c
+
+
+noinst_HEADERS	= \
+	ArrayParams.h \
+	LoginBox.h \
+	ServerDSN.h \
+	TPCARunProps.h \
+	TPCATableProps.h \
+	TPCCTableProps.h \
+	ThreadOptions.h \
+	odbcbench_gtk.h \
+	results_gtk.h \
+	testpool.h \
+	util.h

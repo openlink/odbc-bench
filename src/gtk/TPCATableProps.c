@@ -114,7 +114,7 @@ make_sub_controls (TPCATableProps * tableloader)
   GList *list = NULL;
   int i, ofs;
 
-  do_login (NULL, tableloader->ptest);
+  do_login(tableloader->ptest);
   tableloader->pDSN = (ServerDSN *) ServerDSN_new (tableloader->ptest);
   if (tableloader->ptest->tpc.a.uwDrvIdx == -1)
     {

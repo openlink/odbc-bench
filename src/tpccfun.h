@@ -26,17 +26,17 @@ long random_i_id (long *rnd_seed);
 long random_c_id (long *rnd_seed);
 void Lastname (int num, char *name);
 
-void add_tpcc_result (GtkWidget * widget, test_t * lpCfg);
+void add_tpcc_result (test_t * lpCfg);
 void scrap_log (test_t * lpBench, HSTMT stmt);
 void reset_times (test_t * lpCfg);
 
-void tpcc_init_globals (GtkWidget * widget, test_t * lpCfg);
-void tpcc_create_db (GtkWidget * widget, test_t * lpCfg);
-void tpcc_close_stmts (GtkWidget * widget, test_t * lpCfg);
-int tpcc_run_test (GtkWidget * widget, test_t * lpCfg);
-void tpcc_schema_create (GtkWidget * widget, test_t * lpBench);
-void tpcc_schema_cleanup (GtkWidget * widget, test_t * lpBench);
-void tpca_run_one (GtkWidget * widget, gpointer data);
+void tpcc_init_globals (void * widget, test_t * lpCfg);
+void tpcc_create_db (void * widget, test_t * lpCfg);
+void tpcc_close_stmts (void * widget, test_t * lpCfg);
+int tpcc_run_test (void * widget, test_t * lpCfg);
+void tpcc_schema_create (void * widget, test_t * lpBench);
+void tpcc_schema_cleanup (void * widget, test_t * lpBench);
+void tpca_run_one (void * widget, void * data);
 
 
 void print_times_str (test_t * lpCfg, char *szBuffer);

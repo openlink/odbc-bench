@@ -1,5 +1,8 @@
 /* src/config.h.in.  Generated from configure.in by autoheader.  */
 
+/* Define if we detected a GUI library we can use */
+#undef GUI
+
 /* Define if you have the -ldld library */
 #undef HAVE_DLD
 
@@ -27,6 +30,12 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
+/* Define to 1 if you have the `poll' function. */
+#undef HAVE_POLL
+
+/* Define to 1 if you have the `select' function. */
+#undef HAVE_SELECT
+
 /* Define to 1 if you have the `setenv' function. */
 #undef HAVE_SETENV
 
@@ -48,6 +57,9 @@
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
+/* Define to 1 if you have the <sys/poll.h> header file. */
+#undef HAVE_SYS_POLL_H
+
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #undef HAVE_SYS_STAT_H
 
@@ -56,6 +68,9 @@
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
+
+/* Define to 1 if you have the `usleep' function. */
+#undef HAVE_USLEEP
 
 /* Define to 1 if you have the `_dlopen' function. */
 #undef HAVE__DLOPEN

@@ -1,7 +1,7 @@
 #
 #  Makefile.am
-# 
-#  GTK-bench - a TPCA and TPCC benchmark program for databases 
+#
+#  odbc-bench - a TPCA and TPCC benchmark program for databases
 #  Copyright (C) 2000-2002 OpenLink Software <odbc-bench@openlinksw.com>
 #
 #  This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,18 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-dist_pkgdata_DATA = \
-	odbc-bench.dtd \
-	create.mssql create.ora create.syb create.virt \
-	drop.mssql drop.ora drop.syb drop.virt
+#
+#  Support library
+#
+noinst_LIBRARIES = libutils.a
+
+libutils_a_SOURCES = \
+	getopt.c \
+	getopt1.c \
+	getopt.h
+
+#
+#  Extra file for Windows build
+#
+EXTRA_DIST	= \
+	mycrt.c

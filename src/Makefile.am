@@ -1,7 +1,7 @@
 #
 #  Makefile.am
-# 
-#  odbc-bench - a TPCA and TPCC benchmark program for databases 
+#
+#  odbc-bench - a TPCA and TPCC benchmark program for databases
 #  Copyright (C) 2000-2002 OpenLink Software <odbc-bench@openlinksw.com>
 #
 #  This program is free software; you can redistribute it and/or modify
@@ -19,36 +19,66 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-bin_PROGRAMS	= odbc-bench
+if GTK
+
+SUBDIRS		= gtk
+
+bin_PROGRAMS	= odbc-bench-cmd odbc-bench-gtk
 
 INCLUDES	= \
-	-I$(top_srcdir)/odbc-bench \
+	-I$(top_srcdir)/lib \
 	@ODBC_CFLAGS@ \
 	@GTK_CFLAGS@ \
 	@XML_CFLAGS@
 
-odbc_bench_LDADD	= \
+else
+
+bin_PROGRAMS	= odbc-bench-cmd
+
+INCLUDES	= \
+	-I$(top_srcdir)/lib \
+	@ODBC_CFLAGS@ \
+	@XML_CFLAGS@
+endif
+
+
+odbc_bench_gtk_LDADD	= \
+	../lib/libutils.a \
+	gtk/libodbcbench-gtk.la \
 	@ODBC_LIBS@ \
 	@GTK_LIBS@ \
-	@XML_LIBS@
+	@XML_LIBS@ \
+	@LIBADD_DL@
 
-odbc_bench_SOURCES = \
-	ArrayParams.c \
-	LoginBox.c \
-	ServerDSN.c \
-	TPCARunProps.c \
-	TPCATableProps.c \
-	TPCCTableProps.c \
-	ThreadOptions.c \
+odbc_bench_gtk_SOURCES = \
 	command_line.c \
-	dialog.c \
 	isql_interface.c \
-	main.c \
 	odbcs.c \
+	olist.c \
 	prefs.c \
 	results.c \
-	status.c \
-	testpool.c \
+	tests.c \
+	threads.c \
+	time.c \
+	tpca_code.c \
+	tpcc.c \
+	tpcctrx.c
+
+
+odbc_bench_cmd_LDADD	= \
+	../lib/libutils.a \
+	@ODBC_LIBS@ \
+	@XML_LIBS@ \
+	@LIBADD_DL@
+
+odbc_bench_cmd_SOURCES = \
+	command_line.c \
+	isql_interface.c \
+	main_cmd.c \
+	odbcs.c \
+	olist.c \
+	prefs.c \
+	results.c \
 	tests.c \
 	threads.c \
 	time.c \
@@ -58,20 +88,13 @@ odbc_bench_SOURCES = \
 
 
 noinst_HEADERS	= \
-	ArrayParams.h \
-	LoginBox.h \
-	ServerDSN.h \
-	TPCARunProps.h \
-	TPCATableProps.h \
-	TPCCTableProps.h \
-	ThreadOptions.h \
 	odbcbench.h \
 	odbcinc.h \
 	results.h \
-	testpool.h \
 	thr.h \
 	timeacct.h \
 	tpca.h \
 	tpca_code.h \
 	tpcc.h \
-	tpccfun.h
+	tpccfun.h \
+	olist.h

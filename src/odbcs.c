@@ -23,10 +23,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include <gtk/gtk.h>
-
 #include "odbcbench.h"
-#include "LoginBox.h"
 #include "thr.h"
 
 SDWORD sql_nts = SQL_NTS, long_len;
@@ -37,11 +34,12 @@ int quiet = 0;
 HENV henv = SQL_NULL_HENV;
 
 static MUTEX_T env_mutex;
+MUTEX_T log_mutex;
 
 void
-do_free_env (GtkWidget * widget, gpointer data)
+do_free_env (int isFreeMutex)
 {
-  if (widget)
+  if (isFreeMutex)
     {
       MUTEX_FREE (log_mutex);
       MUTEX_FREE (env_mutex);
@@ -55,12 +53,12 @@ do_free_env (GtkWidget * widget, gpointer data)
 }
 
 void
-do_alloc_env (GtkWidget * widget, gpointer data)
+do_alloc_env ()
 {
   RETCODE rc;
   char szError[256], szState[10];
 
-  do_free_env (NULL, NULL);
+  do_free_env (0);
 
   MUTEX_INIT (log_mutex);
   MUTEX_INIT (env_mutex);
@@ -70,41 +68,36 @@ do_alloc_env (GtkWidget * widget, gpointer data)
     {
       szError[0] = szState[0] = 0;
       SQLError (henv, 0, 0, szState, NULL, szError, sizeof (szError), NULL);
-      g_error ("do_alloc_env : STATE : %s - %s", szState, szError);
-      gtk_main_quit ();
+      if (gui.err_message)
+        gui.err_message("do_alloc_env : STATE : %s - %s", szState, szError);
+      if (gui.main_quit)
+        gui.main_quit ();
+      else
+        exit(-1);
     }
 }
 
 void
-do_login (GtkWidget * widget, gpointer data)
+do_login (test_t *ptest)
 {
-  LoginBox *login_box = NULL;
   RETCODE rc;
-  char szBuff[256];
-  test_t *ptest = (test_t *) data;
   char *szDSN, *szUID, *szPWD;
   HSTMT hstmt;
 
-  if (widget)
-    {
-      login_box = LOGINBOX (widget);
-      strcpy (ptest->szLoginDSN, (szDSN = login_box->szDSN));
-      strcpy (ptest->szLoginUID, (szUID = login_box->szUID));
-      strcpy (ptest->szLoginPWD, (szPWD = login_box->szPWD));
-    }
-  else
-    {
-      szDSN = ptest->szLoginDSN;
-      szUID = ptest->szLoginUID;
-      szPWD = ptest->szLoginPWD;
-    }
+  szDSN = ptest->szLoginDSN;
+  szUID = ptest->szLoginUID;
+  szPWD = ptest->szLoginPWD;
 
   if (!henv)
     {
-      g_error ("[Bench] do_login : Environment not allocated");
-      gtk_main_quit ();
+      if (gui.err_message)
+        gui.err_message("[Bench] do_login : Environment not allocated");
+      if (gui.main_quit)
+        gui.main_quit ();
+      else
+        exit(-1);
     }
-  do_logout (widget, ptest);
+  do_logout (ptest);
 
   MUTEX_ENTER (env_mutex);
   rc = SQLAllocConnect (henv, &ptest->hdbc);
@@ -183,10 +176,12 @@ do_login (GtkWidget * widget, gpointer data)
 
 
   /* Set title of application with DSN for user */
+/**
   if (login_box)
     {
       sprintf (szBuff, "%s - %s", PACKAGE_STRING, ptest->szDSN);
     }
+**/
 
   /* Determine whether asynchronous processing is supported */
   /* by setting the value to its default, which has no */
@@ -199,17 +194,8 @@ do_login (GtkWidget * widget, gpointer data)
 
   /* Set defaults for execution--use all features */
   /* supported */
-/*  ptest->fClearHistory = FALSE;
-  ptest->fExecAsync = ptest->fAsyncSupported;
-  ptest->fUseCommit = ptest->fCommitSupported;
-  ptest->fSQLOption =
-      ptest->fProcsSupported ? IDX_SPROCS : IDX_PLAINSQL;
-  ptest->fDoQuery = FALSE;
-*/
-  if (login_box)
-    do_pane_log ("Connected to %s : DSN=<%s> UID=<%s> PWD=<%s>\n",
+  pane_log ("Connected to %s : DSN=<%s> UID=<%s> PWD=<%s>\n",
 	ptest->szName, szDSN, szUID, szPWD);
-/*  g_message ("[Bench] do_login : connected to : DSN=<%s> UID=<%s> PWD=<%s>", szDSN, szUID, szPWD); */
 
   return;
 done:
@@ -297,10 +283,8 @@ get_dsn_data (test_t * ptest)
 }
 
 void
-do_logout (GtkWidget * widget, gpointer data)
+do_logout (test_t *ptest)
 {
-  test_t *ptest = (test_t *) data;
-
   if (!ptest->hstmt)
     return;
 
@@ -334,29 +318,7 @@ do_logout (GtkWidget * widget, gpointer data)
       ptest->tpc.c.no_stmt = SQL_NULL_HSTMT;
       ptest->tpc.c.ol_stmt = SQL_NULL_HSTMT;
     }
-  if (widget)
-    do_pane_log ("Connection to %s closed\n", ptest->szName);
-}
-
-GList *
-get_dsn_list (void)
-{
-  char *szDSN = (char *) g_malloc (256);
-  GList *list = NULL;
-  SWORD nDSN;
-
-  if (SQL_SUCCESS == SQLDataSources (henv, SQL_FETCH_FIRST, (UCHAR *) szDSN,
-	  255, &nDSN, NULL, 0, NULL))
-    do
-      {
-	if (nDSN > 0 && nDSN < 255)
-	  szDSN[nDSN] = 0;
-	list = g_list_insert_sorted (list, szDSN, (GCompareFunc) strcmp);
-	szDSN = (char *) g_malloc (256);
-      }
-    while (SQL_SUCCESS == SQLDataSources (henv, SQL_FETCH_NEXT,
-	    (UCHAR *) szDSN, 255, &nDSN, NULL, 0, NULL));
-  return (list);
+  pane_log ("Connection to %s closed\n", ptest->szName);
 }
 
 void
@@ -376,8 +338,8 @@ print_error (HENV env, HDBC dbc, HSTMT stmt, void *_test)
       if (rc != SQL_SUCCESS)
 	break;
       pane_log ("SQL Error [%s] : %s\n", szState, szMessage);
-      if (!messages_off)
-	g_warning ("SQL Error [%s] : %s", szState, szMessage);
+      if (!messages_off && gui.warn_message)
+	gui.warn_message ("SQL Error [%s] : %s", szState, szMessage);
       if (test)
 	{
 	  strncpy (test->szSQLError, szMessage, sizeof (test->szSQLError));

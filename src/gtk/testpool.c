@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include "odbcbench.h"
+#include "odbcbench_gtk.h"
 #include "testpool.h"
 
 typedef struct test_file_s
@@ -117,7 +118,7 @@ create_test_pool ()
   curr = new;
   if (dlg)
     {
-      create_status_widget ();
+      create_status_widget (dlg);
       curr->status = status;
       gtk_container_add (GTK_CONTAINER (status_box), curr->status);
 
@@ -136,51 +137,6 @@ create_test_pool ()
 
   setTheFileName (NULL);
   return curr->conn_pool;
-}
-
-
-void
-init_test (test_t * ptest)
-{
-  ptest->ShowProgress = do_ShowProgress;
-  ptest->SetWorkingItem = do_SetWorkingItem;
-  ptest->SetProgressText = do_SetProgressText;
-  ptest->StopProgress = do_StopProgress;
-  ptest->fCancel = do_fCancel;
-  ptest->tpc._.nMinutes = 5;
-  ptest->tpc._.nRuns = 1;
-  switch (ptest->TestType)
-    {
-    case TPC_A:
-      {
-	tpca_t *a = &ptest->tpc.a;
-	a->uwDrvIdx = -1;
-	a->fClearHistory = TRUE;
-	a->fSQLOption = IDX_PLAINSQL;
-	a->udwMaxBranch = 10;
-	a->udwMaxTeller = 100;
-	a->udwMaxAccount = 1000;
-
-	a->fCreateBranch = TRUE;
-	a->fCreateTeller = TRUE;
-	a->fCreateAccount = TRUE;
-	a->fCreateHistory = TRUE;
-	a->fLoadBranch = TRUE;
-	a->fLoadTeller = TRUE;
-	a->fLoadAccount = TRUE;
-	a->fCreateIndex = TRUE;
-	a->fCreateProcedure = TRUE;
-      }
-      break;
-    case TPC_C:
-      {
-	tpcc_t *c = &ptest->tpc.c;
-	c->count_ware = 1;
-	c->local_w_id = 1;
-	c->nRounds = 1;
-      }
-      break;
-    }
 }
 
 
@@ -285,6 +241,24 @@ get_selected_tests (void)
 	g_list_append (selected,
 	gtk_clist_get_row_data (GTK_CLIST (curr->conn_pool),
      GPOINTER_TO_INT (selection->data)));
+  return selected;
+}
+
+
+OList *
+get_selected_tests_list (void)
+{
+  OList *selected = NULL;
+  GList *selection;
+
+  if (!curr)
+    return selected;
+
+  for (selection = GTK_CLIST (curr->conn_pool)->selection; selection;
+       selection = g_list_next (selection))
+    selected = o_list_append(selected, 
+       gtk_clist_get_row_data (GTK_CLIST (curr->conn_pool),
+       GPOINTER_TO_INT (selection->data)));
   return selected;
 }
 
