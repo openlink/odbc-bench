@@ -179,8 +179,6 @@ do_login (test_t *ptest)
 	  if (!RC_SUCCESSFUL (rc))
 	    ptest->tpc.a.txn_isolation = 0;
 	}
-      else
-	ptest->tpc.a.txn_isolation = 0;
     }
 
 

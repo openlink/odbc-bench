@@ -757,7 +757,7 @@ run_selected (GtkWidget * widget, gpointer data)
 #if defined(PTHREADS) || defined(WIN32)
 	  if (!bRunAll)
 	    {
-+	      do_threads_run (nTests, tests, nMinutes, "Running test");
+	      do_threads_run (nTests, tests, nMinutes, "Running test");
 	      do_save_run_results (szFileName, tests, nMinutes);
 	    }
 	  else
@@ -773,13 +773,18 @@ run_selected (GtkWidget * widget, gpointer data)
 	  memset (ptest->szSQLState, 0, sizeof (ptest->szSQLState));
 	  do_login_gtk (NULL, ptest);
 	  get_dsn_data (ptest);
+	  if (ptest->TestType == TPC_A)
+	    {
+	      fExecuteSql (ptest, "delete from HISTORY");
+	      SQLTransact (SQL_NULL_HENV, ptest->hdbc, SQL_COMMIT);
+	    }
+	  do_logout (ptest);
+
 	  ptest->tpc._.nMinutes = nMinutes;
 	  if (ptest->hdbc)
 	    switch (ptest->TestType)
 	      {
 	      case TPC_A:
-		fExecuteSql (ptest, "delete from HISTORY");
-		SQLTransact (SQL_NULL_HENV, ptest->hdbc, SQL_COMMIT);
 		if (bRunAll)
 		  DoRunAll (ptest, szFileName);
 		else
@@ -791,6 +796,7 @@ run_selected (GtkWidget * widget, gpointer data)
 		break;
 
 	      case TPC_C:
+  	        do_login_gtk (NULL, ptest);
 		if (tpcc_run_test (NULL, ptest))
 		  {
 		    add_tpcc_result (ptest);
@@ -798,9 +804,9 @@ run_selected (GtkWidget * widget, gpointer data)
 		else
 		  pane_log ("TPC-C RUN FAILED\n");
 		do_save_run_results (szFileName, tests, nMinutes);
+	        do_logout (ptest);
 		break;
 	      }
-	  do_logout (ptest);
 	}
       if (menubar)
 	gtk_widget_set_sensitive (GTK_WIDGET (menubar), TRUE);

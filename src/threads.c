@@ -245,6 +245,12 @@ ThreadedCalcStats (OList * tests, THREAD_T ** workers,
 	      ("\n\n%s - %s(%s) - %d TPC-A Threads ended with no errors.\n",
 	      test->szName, test->szDBMS, test->szDriverName, nOkA);
 
+          if (nOkA == 0 && !test->szSQLState[0] && !test->szSQLError[0])
+            {
+              strcpy(test->szSQLState, "ERROR");
+              strcpy(test->szSQLError, "All Threads ended prematurely.");
+            }
+
 	  if (test->hdbc)
 	    CalcStats (runStatus, nOkA, test, test->tpc.a.nTrnCnt, 
 	        test->tpc.a.nTrnCnt1Sec,

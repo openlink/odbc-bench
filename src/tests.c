@@ -1180,6 +1180,7 @@ do_threads_run_all (int nTests, OList * tests_orig, int nMinutes,
 	      test->szWarning[0] = 
 	      test->szSQLError[0] = 
 	      test->szSQLState[0] = 0);
+      xmlSaveFile (filename, doc);
     }
 
 
@@ -1192,7 +1193,6 @@ end:
 
   FOR_ALL_TESTS (XFREE (test));
   o_list_free (tests);
-  xmlSaveFile (filename, doc);
   xmlFreeDoc (doc);
   return TRUE;
 }
@@ -1315,6 +1315,8 @@ DoRunAll (test_t * test_orig, char *filename)
                           test = malloc (sizeof (test_t));
                           memcpy (test, test_orig, sizeof (test_t));
 
+                          test->hstmt = 0;
+                          test->hdbc = 0;
                           test->tpc.a.fExecAsync = fAsync;
                           test->tpc.a.fUseCommit = fTrans;
                           test->tpc.a.fDoQuery = fQuery;
@@ -1375,6 +1377,7 @@ DoRunAll (test_t * test_orig, char *filename)
         goto end;
 
       make_result_node (test, ns, root);
+      xmlSaveFile (filename, doc);
       test->szWarning [0] = '\0';
       test->szSQLError[0] = '\0';
       test->szSQLState[0] = '\0';
@@ -1387,7 +1390,6 @@ end:
 
   o_list_free(list_tests);
 
-  xmlSaveFile (filename, doc);
   xmlFreeDoc (doc);
 }
 #endif

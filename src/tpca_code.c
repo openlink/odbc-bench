@@ -2623,6 +2623,7 @@ DoRun (test_t * lpBench,	/* Benchmark settings */
   BOOL sts = TRUE;
 
   /* Do every requested run for the time allotted  */
+  do_login(lpBench);
   for (nRun = 0; nRun < lpBench->tpc._.nRuns; nRun++)
     {
       pane_log ("Starting benchmark run number: %d\r\n", nRun + 1);
@@ -2634,6 +2635,7 @@ DoRun (test_t * lpBench,	/* Benchmark settings */
 	    lpBench->tpc.a.nTrnCnt1Sec,
 	    lpBench->tpc.a.nTrnCnt2Sec, lpBench->tpc.a.dDiffSum);
     }
+  do_logout(lpBench);
 
   /* User didn't break, so return success */
   return TRUE;
@@ -4479,9 +4481,10 @@ CalcStats (
            }
 
        }
-
+#if 0
      if (lpBench->tpc._.nThreads > 0 && nOk == 0)
        pane_log ("\n\nAll Threads ended prematurely.\n");
+#endif
 
     }
 

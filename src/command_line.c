@@ -86,6 +86,7 @@ usage (void)
   "  -K -keyset_size    - keyset size\n"
   "  -T -trav_count     - traversal count\n"
   "  -C -create_tables  - create the tables\n"
+  "  -rcreate_table     - create the results table\n"
   "  -rdsn   - login dsn for result table\n"
   "  -ruid   - user id for result table\n"
   "  -rpwd   - password for result table\n"
@@ -257,7 +258,8 @@ typedef enum {
   OP_RDSN = 127,
   OP_RUID,
   OP_RPWD,
-  OP_RFILE
+  OP_RFILE,
+  OP_RCREATE_TABLE
 }
 opt_type;
 
@@ -283,6 +285,7 @@ static struct option long_options[] = {
   {"ruid", 1, 0, OP_RUID},
   {"rpwd", 1, 0, OP_RPWD},
   {"rfile", 1, 0, OP_RFILE},
+  {"rcreate_tables", 0, 0, OP_RCREATE_TABLE},
   { 0, 0, 0, 0}
 // name | has_arg | *flag | val
 };
@@ -293,6 +296,7 @@ do_command_line (int argc, char *argv[])
 {
   int curr_opt;
   int Load = 0;
+  int fCreateResultsTable = 0;
   int opt_index;
   char szRDSN[50] = {""};
   char szRUID[50] = {""};
@@ -473,6 +477,9 @@ do_command_line (int argc, char *argv[])
 	    strncpy (szRFILE, optarg, 127);
 	    szRFILE[127] = 0;
 	    break;
+	  case OP_RCREATE_TABLE:
+	    fCreateResultsTable = 1;
+	    break;
 
 	  default:
 	    usage ();
@@ -500,6 +507,9 @@ do_command_line (int argc, char *argv[])
 
       if (szRDSN[0])
         results_login(szRDSN, szRUID, szRPWD);
+
+      if (fCreateResultsTable)
+        create_results_table ();
 
 #if defined(PTHREADS) || defined(WIN32)
       if (test.tpc._.nThreads > 1)
@@ -543,18 +553,18 @@ do_command_line (int argc, char *argv[])
 	      fprintf (stdout, "%s\n", test.szSQLError);
 	      return -5;
 	    }
-	  else
-	    {
-              fExecuteSql (&test, "delete from HISTORY");
-	      SQLTransact (SQL_NULL_HENV, test.hdbc, SQL_COMMIT);
 
-	      if (test.tpc.a.fSQLOption != -1)
-	        {
-	          DoRun (&test, NULL);
-	          do_save_run_results (szRFILE, tests, test.tpc._.nMinutes);
-	        }
-	      else
-	         DoRunAll (&test, szRFILE);
+          fExecuteSql (&test, "delete from HISTORY");
+          SQLTransact (SQL_NULL_HENV, test.hdbc, SQL_COMMIT);
+	  do_logout (&test);
+
+          if (test.tpc.a.fSQLOption != -1)
+            {
+              DoRun (&test, NULL);
+              do_save_run_results (szRFILE, tests, test.tpc._.nMinutes);
+            }
+          else
+            DoRunAll (&test, szRFILE);
 #if 0
 //	      case TPC_C:
 //		if (tpcc_run_test (NULL, ptest))
@@ -566,8 +576,6 @@ do_command_line (int argc, char *argv[])
 //		do_save_run_results (szRFILE, tests, nMinutes);
 #endif
 
-	    }
-	  do_logout (&test);
 	}
       if (szRDSN[0])
         results_logout();
