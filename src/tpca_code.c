@@ -4499,3 +4499,31 @@ fCleanup (test_t * lpRunCfg	/* Run Configuration Parameters */
 
   return TRUE;
 }
+
+
+/* 
+ *  Sleep for a number of milli-seconds
+ */
+#if defined (HAVE_SYS_POLL_H)
+#include <sys/poll.h>
+#endif
+
+void 
+sleep_msecs (int msecs)
+{
+#if defined(WIN32)
+  Sleep (msecs);
+#elif defined (HAVE_USLEEP)
+  usleep (msecs * 1000L);
+#elif defined (HAVE_POLL)
+  poll (NULL, 0, msecs);
+#elif defined (HAVE_SELECT)
+  struct timeval timeout;
+
+  timeout.tv_usec = (msecs * 1000L) % 1000000L;
+  timeout.tv_secs = msecs / 1000L;
+  select (0, NULL, NULL, NULL, &timeout);
+#else
+#  error Please implement sleep_msecs on this platform
+#endif
+}

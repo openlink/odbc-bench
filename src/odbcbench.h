@@ -198,25 +198,8 @@ BOOL fSQLBindCol (HSTMT hstmt, UWORD icol, SWORD fCType, PTR rgbValue,
     SDWORD cbValueMax, SDWORD FAR * pcbValue);
 BOOL fSQLParamOptions (HSTMT hstmt, UDWORD crow, UDWORD *pirow);
 
-#if defined(WIN32)
-#define sleep_msecs(x) Sleep(x)
-#else
-#include <sys/poll.h>
-#define sleep_msecs(x) poll (NULL, 0, x)
-#endif
 
+void sleep_msecs(int msec);
 int do_save_selected (char *szFileName, OList * tests);
 void do_save_run_results (char *filename, OList * selected, int nMinutes);
 void init_test (test_t * test);
-
-
-/*********************
-#ifndef	FALSE
-#define	FALSE	(0)
-#endif
-
-#ifndef	TRUE
-#define	TRUE	(!FALSE)
-#endif
-
-**********************/
