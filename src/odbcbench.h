@@ -57,10 +57,10 @@ typedef struct test_s	test_t;
 #define PACKAGE			"odbc-bench"
 #define PACKAGE_BUGREPORT	"odbc-bench@openlinksw.com"
 #define PACKAGE_NAME 		"OpenLink ODBC Benchmark Utility"
-#define PACKAGE_STRING 		"OpenLink ODBC Benchmark Utility 0.99.5"
+#define PACKAGE_STRING 		"OpenLink ODBC Benchmark Utility 0.99.6"
 #define PACKAGE_TARNAME 	"odbc-bench"
-#define PACKAGE_VERSION 	"0.99.5"
-#define VERSION			"0.99.5"
+#define PACKAGE_VERSION 	"0.99.6"
+#define VERSION			"0.99.6"
 #endif
 
 extern void (*pane_log) (const char *format, ...);
