@@ -1,9 +1,9 @@
 /*
  *  testpool.c
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -34,8 +34,7 @@ typedef struct test_file_s
   GtkWidget *conn_pool;
   gboolean global_is_dirty;
   GtkWidget *radio_menu_item, *label, *status;
-}
-test_file_t;
+} test_file_t;
 
 static GList *files = NULL;
 static test_file_t *curr;
@@ -51,8 +50,9 @@ static gchar *column_names[] = {
   "DBMS"
 };
 
-
 static GtkWidget *hidden = NULL;
+
+
 static void
 set_active_item (GtkWidget * menuitem, gpointer data)
 {
@@ -172,11 +172,13 @@ add_test_to_the_pool (test_t * ptest)
   return 1;
 }
 
+
 static int
 num_sort (gpointer a, gpointer b)
 {
   return GPOINTER_TO_INT (b) - GPOINTER_TO_INT (a);
 }
+
 
 void
 remove_selected_tests (void)
@@ -202,7 +204,8 @@ remove_selected_tests (void)
     {
       int nRow = GPOINTER_TO_INT (iter->data);
       test_t *ptest =
-	  (test_t *) gtk_clist_get_row_data (GTK_CLIST (curr->conn_pool), nRow);
+	  (test_t *) gtk_clist_get_row_data (GTK_CLIST (curr->conn_pool),
+	  nRow);
       gtk_clist_remove (GTK_CLIST (curr->conn_pool), nRow);
       g_free (ptest);
       iter = g_list_next (iter);
@@ -240,7 +243,7 @@ get_selected_tests (void)
     selected =
 	g_list_append (selected,
 	gtk_clist_get_row_data (GTK_CLIST (curr->conn_pool),
-     GPOINTER_TO_INT (selection->data)));
+	    GPOINTER_TO_INT (selection->data)));
   return selected;
 }
 
@@ -255,10 +258,10 @@ get_selected_tests_list (void)
     return selected;
 
   for (selection = GTK_CLIST (curr->conn_pool)->selection; selection;
-       selection = g_list_next (selection))
-    selected = o_list_append(selected, 
-       gtk_clist_get_row_data (GTK_CLIST (curr->conn_pool),
-       GPOINTER_TO_INT (selection->data)));
+      selection = g_list_next (selection))
+    selected = o_list_append (selected,
+	gtk_clist_get_row_data (GTK_CLIST (curr->conn_pool),
+	    GPOINTER_TO_INT (selection->data)));
   return selected;
 }
 
@@ -319,7 +322,9 @@ pool_update_selected (void)
       selection = g_list_next (selection), i++)
     {
       nRow = GPOINTER_TO_INT (selection->data);
-      ptest = (test_t *) gtk_clist_get_row_data (GTK_CLIST (curr->conn_pool), nRow);
+      ptest =
+	  (test_t *) gtk_clist_get_row_data (GTK_CLIST (curr->conn_pool),
+	  nRow);
 
       gtk_clist_set_text (GTK_CLIST (curr->conn_pool), nRow, 0,
 	  ptest->TestType == TPC_A ? "TPC-A" : "TPC-C");
@@ -336,6 +341,7 @@ pool_update_selected (void)
     }
   gtk_clist_columns_autosize (GTK_CLIST (curr->conn_pool));
 }
+
 
 /* file pool interface */
 void
@@ -383,7 +389,7 @@ setTheFileName (char *filename)
 	szLastSlash = "Untitled";
 
       if (curr)
-	sprintf (szBuffer, "%.250s - %s", szLastSlash, PACKAGE_NAME );
+	sprintf (szBuffer, "%.250s - %s", szLastSlash, PACKAGE_NAME);
       else
 	sprintf (szBuffer, "%s", PACKAGE_NAME);
       gtk_window_set_title (GTK_WINDOW (dlg), szBuffer);
@@ -400,6 +406,7 @@ getCurrentFileName (void)
     return NULL;
 }
 
+
 gboolean
 getIsFileDirty (void)
 {
@@ -408,6 +415,7 @@ getIsFileDirty (void)
   else
     return FALSE;
 }
+
 
 void
 setIsFileDirty (gboolean isit)
@@ -484,6 +492,7 @@ close_file_pool (void)
 
   setTheFileName (filename);
 }
+
 
 int
 getFilesCount (void)

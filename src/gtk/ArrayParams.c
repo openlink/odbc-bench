@@ -1,9 +1,9 @@
 /*
  *  ArrayParams.c
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -35,6 +35,7 @@
 static void ArrayParams_class_init (ArrayParamsClass * aclass);
 static void ArrayParams_init (ArrayParams * tableloader);
 
+
 int
 ArrayParams_get_type (void)
 {
@@ -58,6 +59,7 @@ ArrayParams_get_type (void)
   return tld_type;
 }
 
+
 static void
 ArrayParams_class_init (ArrayParamsClass * aclass)
 {
@@ -67,8 +69,8 @@ ArrayParams_class_init (ArrayParamsClass * aclass)
 GtkWidget *
 ArrayParams_new (void)
 {
-  ArrayParams *newdlg =
-      ARRAY_PARAMS (gtk_type_new (ArrayParams_get_type ()));
+  ArrayParams *newdlg = ARRAY_PARAMS (gtk_type_new (ArrayParams_get_type ()));
+
   return (GTK_WIDGET (newdlg));
 }
 
@@ -77,13 +79,16 @@ void
 ArrayParams_load_config (ArrayParams * newdlg, tpca_t * test)
 {
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (newdlg->use_ArrayParams),
-       test->nArrayParSize > 0); 
-  gtk_adjustment_set_value (GTK_ADJUSTMENT (GTK_SPIN_BUTTON(newdlg->no_params)->adjustment),
+      test->nArrayParSize > 0);
+  gtk_adjustment_set_value (GTK_ADJUSTMENT (GTK_SPIN_BUTTON (newdlg->
+	      no_params)->adjustment),
       test->nArrayParSize < 10 ? 10 : test->nArrayParSize);
+
   if (!test->nArrayParSize)
     disable_widget (newdlg->no_params);
   else
     enable_widget (newdlg->no_params);
+
   newdlg->test = test;
 }
 
@@ -95,14 +100,15 @@ ArrayParams_save_config (ArrayParams * dlg)
   dlg->test->nArrayParSize =
       !GTK_TOGGLE_BUTTON (dlg->use_ArrayParams)->active ?
       0 :
-      (int) GTK_ADJUSTMENT (GTK_SPIN_BUTTON (dlg->no_params)->adjustment)->value;
+      (int) GTK_ADJUSTMENT (GTK_SPIN_BUTTON (dlg->no_params)->adjustment)->
+      value;
 }
 
 
 static void
 emit_signal_handler (GtkWidget * widget, gpointer data)
 {
-  ArrayParams * dlg = ARRAY_PARAMS(data);
+  ArrayParams *dlg = ARRAY_PARAMS (data);
 
   if (GTK_TOGGLE_BUTTON (dlg->use_ArrayParams)->active)
     enable_widget (dlg->no_params);
@@ -126,7 +132,8 @@ ArrayParams_init (ArrayParams * dlg)
   gtk_widget_show (helper);
   gtk_container_add (GTK_CONTAINER (Frame), helper);
 
-  dlg->use_ArrayParams = gtk_check_button_new_with_label ("Use Array Parameters");
+  dlg->use_ArrayParams =
+      gtk_check_button_new_with_label ("Use Array Parameters");
   gtk_widget_show (dlg->use_ArrayParams);
   gtk_box_pack_start (GTK_BOX (helper), dlg->use_ArrayParams, TRUE, TRUE, 0);
 

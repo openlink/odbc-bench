@@ -1,9 +1,9 @@
 /*
  *  LoginBox.c
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -50,6 +50,7 @@ LoginBox_get_type (void)
 
   return e_type;
 }
+
 
 enum
 {
@@ -202,6 +203,7 @@ LoginBox_dsn (LoginBox * box, gchar * new_dsn)
     gtk_entry_set_text (GTK_ENTRY (GTK_COMBO (box->dsn)->entry), new_dsn);
   else
     gtk_entry_set_text (GTK_ENTRY (GTK_COMBO (box->dsn)->entry), "");
+
   return box->szDSN;
 }
 
@@ -217,6 +219,7 @@ LoginBox_uid (LoginBox * box, gchar * new_uid)
     gtk_entry_set_text (GTK_ENTRY (box->uid), new_uid);
   else
     gtk_entry_set_text (GTK_ENTRY (box->uid), "");
+
   return box->szUID;
 }
 
@@ -232,5 +235,6 @@ LoginBox_pwd (LoginBox * box, gchar * new_pwd)
     gtk_entry_set_text (GTK_ENTRY (box->pwd), new_pwd);
   else
     gtk_entry_set_text (GTK_ENTRY (box->pwd), "");
+
   return box->szPWD;
 }

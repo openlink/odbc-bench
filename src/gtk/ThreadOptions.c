@@ -1,9 +1,9 @@
 /*
  *  ThreadOptions.c
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,7 @@
 static void ThreadOptions_class_init (ThreadOptionsClass * tclass);
 static void ThreadOptions_init (ThreadOptions * tableloader);
 
+
 int
 ThreadOptions_get_type (void)
 {
@@ -56,6 +57,7 @@ ThreadOptions_get_type (void)
 
   return tld_type;
 }
+
 
 static void
 ThreadOptions_class_init (ThreadOptionsClass * tclass)
@@ -102,7 +104,8 @@ ThreadOptions_save_config (ThreadOptions * dlg)
   dlg->test->nThreads =
       GTK_TOGGLE_BUTTON (dlg->single_threaded)->active ?
       0 :
-      (int) GTK_ADJUSTMENT (GTK_SPIN_BUTTON (dlg->no_threads)->adjustment)->value;
+      (int) GTK_ADJUSTMENT (GTK_SPIN_BUTTON (dlg->no_threads)->adjustment)->
+      value;
 #else
   dlg->test->nThreads = 0;
 #endif

@@ -1,9 +1,9 @@
 /*
  *  TPCARunProps.c
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -51,6 +51,7 @@ static char *cursor_type_names[] = {
 static void TPCARunProps_class_init (TPCARunPropsClass * tclass);
 static void TPCARunProps_init (TPCARunProps * tableloader);
 
+
 int
 TPCARunProps_get_type (void)
 {
@@ -73,6 +74,7 @@ TPCARunProps_get_type (void)
 
   return tld_type;
 }
+
 
 static void
 TPCARunProps_class_init (TPCARunPropsClass * tclass)
@@ -136,15 +138,19 @@ load_config (TPCARunProps * dlg)
     case SQL_CURSOR_FORWARD_ONLY:
       index = 0;
       break;
+
     case SQL_CURSOR_STATIC:
       index = 1;
       break;
+
     case SQL_CURSOR_KEYSET_DRIVEN:
       index = 2;
       break;
+
     case SQL_CURSOR_DYNAMIC:
       index = 3;
       break;
+
     case SQL_CURSOR_MIXED:
       index = 4;
       break;
@@ -172,15 +178,19 @@ load_config (TPCARunProps * dlg)
     case SQL_TXN_DRIVER_DEFAULT:
       index = 0;
       break;
+
     case SQL_TXN_READ_UNCOMMITTED:
       index = 1;
       break;
+
     case SQL_TXN_READ_COMMITTED:
       index = 2;
       break;
+
     case SQL_TXN_REPEATABLE_READ:
       index = 3;
       break;
+
     case SQL_TXN_SERIALIZABLE:
       index = 4;
       break;
@@ -242,15 +252,19 @@ TPCARunProps_save_config (TPCARunProps * dlg)
 	    case 0:
 	      dlg->lpBench->tpc.a.txn_isolation = SQL_TXN_DRIVER_DEFAULT;
 	      break;
+
 	    case 1:
 	      dlg->lpBench->tpc.a.txn_isolation = SQL_TXN_READ_UNCOMMITTED;
 	      break;
+
 	    case 2:
 	      dlg->lpBench->tpc.a.txn_isolation = SQL_TXN_READ_COMMITTED;
 	      break;
+
 	    case 3:
 	      dlg->lpBench->tpc.a.txn_isolation = SQL_TXN_REPEATABLE_READ;
 	      break;
+
 	    case 4:
 	      dlg->lpBench->tpc.a.txn_isolation = SQL_TXN_SERIALIZABLE;
 	      break;
@@ -258,6 +272,7 @@ TPCARunProps_save_config (TPCARunProps * dlg)
 	  break;
 	}
     }
+
   for (index = 0; index < sizeof (dlg->cursor_modes) / sizeof (GtkWidget *);
       index++)
     {
@@ -268,15 +283,19 @@ TPCARunProps_save_config (TPCARunProps * dlg)
 	    case 0:
 	      dlg->lpBench->tpc.a.nCursorType = SQL_CURSOR_FORWARD_ONLY;
 	      break;
+
 	    case 1:
 	      dlg->lpBench->tpc.a.nCursorType = SQL_CURSOR_STATIC;
 	      break;
+
 	    case 2:
 	      dlg->lpBench->tpc.a.nCursorType = SQL_CURSOR_KEYSET_DRIVEN;
 	      break;
+
 	    case 3:
 	      dlg->lpBench->tpc.a.nCursorType = SQL_CURSOR_DYNAMIC;
 	      break;
+
 	    case 4:
 	      dlg->lpBench->tpc.a.nCursorType = SQL_CURSOR_MIXED;
 	      break;
@@ -286,7 +305,8 @@ TPCARunProps_save_config (TPCARunProps * dlg)
     }
 
   dlg->lpBench->tpc.a.nRowsetSize =
-      (short) GTK_ADJUSTMENT (GTK_SPIN_BUTTON (dlg->rowset_size)->adjustment)->value;
+      (short) GTK_ADJUSTMENT (GTK_SPIN_BUTTON (dlg->rowset_size)->
+      adjustment)->value;
   dlg->lpBench->tpc.a.nTraversalCount =
       (short) GTK_ADJUSTMENT (GTK_SPIN_BUTTON (dlg->traversal_count)->
       adjustment)->value;
@@ -343,7 +363,8 @@ TPCARunProps_init (TPCARunProps * dlg)
   gtk_box_pack_start (GTK_BOX (left_column), dlg->thread_opts, TRUE, TRUE, 0);
 
   dlg->array_params = ArrayParams_new ();
-  gtk_box_pack_start (GTK_BOX (left_column), dlg->array_params, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (left_column), dlg->array_params, TRUE, TRUE,
+      0);
 
   Frame = gtk_frame_new ("SQL Options");
   gtk_widget_show (Frame);
@@ -417,7 +438,7 @@ TPCARunProps_init (TPCARunProps * dlg)
 	  TRUE, 0);
       radio =
 	  gtk_radio_button_group (GTK_RADIO_BUTTON (dlg->isolation_levels
-	  [i]));
+	      [i]));
     }
 
   Frame = gtk_frame_new ("Scrollable Cursors");
@@ -491,29 +512,4 @@ TPCARunProps_init (TPCARunProps * dlg)
     }
   for (i = 0; i < sizeof (dlg->isolation_levels) / sizeof (GtkWidget *); i++)
     enable_widget (dlg->isolation_levels[i]);
-
-  /* action_area 
-     helper = gtk_button_new_with_label ("OK");
-     GTK_WIDGET_SET_FLAGS(helper, GTK_CAN_DEFAULT);
-     gtk_window_set_default(GTK_WINDOW(dlg), helper);
-     gtk_signal_connect (GTK_OBJECT (helper), "clicked", GTK_SIGNAL_FUNC (emit_signal_handler), GTK_OBJECT (dlg));
-     gtk_signal_connect_object (GTK_OBJECT (helper), "clicked", GTK_SIGNAL_FUNC (gtk_widget_hide), GTK_OBJECT (dlg));
-     gtk_signal_connect (GTK_OBJECT (helper), "clicked", GTK_SIGNAL_FUNC (run_one), GTK_OBJECT (dlg));
-     gtk_signal_connect_object (GTK_OBJECT (helper), "clicked", GTK_SIGNAL_FUNC (gtk_widget_destroy), GTK_OBJECT (dlg));
-     gtk_widget_show (helper);
-     gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->action_area), helper, TRUE, TRUE, 0);
-
-     helper = gtk_button_new_with_label ("Cancel");
-     gtk_signal_connect_object (GTK_OBJECT (helper), "clicked", GTK_SIGNAL_FUNC (gtk_widget_destroy), GTK_OBJECT (dlg));
-     gtk_widget_show (helper);
-     gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->action_area), helper, TRUE, TRUE, 0);
-
-     helper = gtk_button_new_with_label ("Run All");
-     gtk_signal_connect (GTK_OBJECT (helper), "clicked", GTK_SIGNAL_FUNC (emit_signal_handler), GTK_OBJECT (dlg));
-     gtk_signal_connect_object (GTK_OBJECT (helper), "clicked", GTK_SIGNAL_FUNC (gtk_widget_hide), GTK_OBJECT (dlg));
-     gtk_signal_connect (GTK_OBJECT (helper), "clicked", GTK_SIGNAL_FUNC (do_run_all), GTK_OBJECT(dlg));
-     gtk_signal_connect_object (GTK_OBJECT (helper), "clicked", GTK_SIGNAL_FUNC (gtk_widget_destroy), GTK_OBJECT (dlg));
-     gtk_widget_show (helper);
-     gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->action_area), helper, TRUE, TRUE, 0);
-   */
 }

@@ -1,9 +1,9 @@
 /*
  *  dialog.c
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,7 @@
 
 #include "odbcbench.h"
 #include "odbcbench_gtk.h"
+
 
 GtkWidget *
 message_box_new (GtkWidget * Parent, const gchar * Text, const gchar * Title)
@@ -105,24 +106,20 @@ ok_cancel_dialog (const gchar * Text, const gchar * Title)
   return bOk ? DLG_OK : DLG_CANCEL;
 }
 
-/*
-static void
-set_to_ok (GtkWidget *widget, answer_code *data)
-{
-  *data = DLG_OK;
-}
-*/
+
 static void
 set_to_yes (GtkWidget * widget, answer_code * data)
 {
   *data = DLG_YES;
 }
 
+
 static void
 set_to_no (GtkWidget * widget, answer_code * data)
 {
   *data = DLG_NO;
 }
+
 
 answer_code
 yes_no_cancel_dialog (const gchar * Text, const gchar * Title)

@@ -30,21 +30,21 @@ void do_pane_log (const char *format, ...);	/* adds a text line(s) to the status
 /* status log handling routines - status.c */
 void clear_status_handler (GtkWidget * widget, gpointer data);	/* clears the status text */
 void vBusy (void);
-void create_status_widget (GtkWidget *win);
+void create_status_widget (GtkWidget * win);
 
 typedef enum
 { DLG_OK, DLG_CANCEL, DLG_YES, DLG_NO }
 answer_code;
 /* dialog box functions - dialog.c */
-GtkWidget *message_box_new (GtkWidget * Parent, const gchar * Text,
-    const gchar * Title);	/* shows a dialog box with the specified attributes */
+GtkWidget *message_box_new (GtkWidget * Parent, const gchar * Text, const gchar * Title);	/* shows a dialog box with the specified attributes */
 answer_code ok_cancel_dialog (const gchar * Text, const gchar * Title);
 answer_code yes_no_cancel_dialog (const gchar * Text, const gchar * Title);
 void login_dialog (GtkWidget * Parent, gpointer data);	/* show a login combo with a dsn_list as specified */
 char *fill_file_name (char *szFileName, char *caption, int add_xmls);
 
 /* progress implementations - dialog.c */
-void do_ShowProgress (void * parent, char * title, BOOL bForceSingle, float nMax);
+void do_ShowProgress (void *parent, char *title, BOOL bForceSingle,
+    float nMax);
 void do_SetWorkingItem (char *pszWorking);
 void do_SetProgressText (char *pszProgress, int nConn, int thread_no,
     float percent, int nTrnPerCall, long secs_remain, double tpca_dDiffSum);
@@ -53,7 +53,7 @@ int do_fCancel (void);
 void do_ShowCancel (int fShow);
 void do_RestartProgress (void);
 void do_MarkFinished (int nConn, int nThread);
-BOOL isCancelled(void);
+BOOL isCancelled (void);
 
 void set_display_refresh_rate (GtkWidget * widget, gpointer data);
 void set_lock_timeout (GtkWidget * widget, gpointer data);

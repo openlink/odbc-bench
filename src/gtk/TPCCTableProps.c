@@ -1,9 +1,9 @@
 /*
  *  TPCCTableProps.c
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,7 @@
 static void TPCCTableProps_class_init (TPCCTablePropsClass * tclass);
 static void TPCCTableProps_init (TPCCTableProps * tableloader);
 
+
 int
 TPCCTableProps_get_type (void)
 {
@@ -56,6 +57,7 @@ TPCCTableProps_get_type (void)
 
   return tld_type;
 }
+
 
 static void
 TPCCTableProps_class_init (TPCCTablePropsClass * tclass)
@@ -115,21 +117,22 @@ TPCCTableProps_save_config (TPCCTableProps * newdlg)
       GList *found;
       char *szValue =
 	  gtk_entry_get_text (GTK_ENTRY (GTK_COMBO (newdlg->
-      combos[i])->entry));
+		  combos[i])->entry));
 
       strncpy (newdlg->lpBench->tpc.c.tableDSNS[i], szValue, 50);
       if (!strcmp (szValue, "<local>"))
 	newdlg->lpBench->tpc.c.tableDSNS[i][0] = 0;
-      else
-	  if (NULL !=
+      else if (NULL !=
 	  (found =
- g_list_find_custom (dsn->dsn_info.dsns, szValue, (GCompareFunc) strcmp)))
+	      g_list_find_custom (dsn->dsn_info.dsns, szValue,
+		  (GCompareFunc) strcmp)))
 	strncpy (newdlg->lpBench->tpc.c.tableDBMSes[i],
 	    (char *) g_list_nth_data (dsn->dsn_info.names,
-g_list_position (dsn->dsn_info.dsns, found)), 50);
+		g_list_position (dsn->dsn_info.dsns, found)), 50);
     }
   newdlg->lpBench->tpc.c.count_ware =
-      (int) gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (newdlg->n_ware));
+      (int) gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (newdlg->
+	  n_ware));
 }
 
 

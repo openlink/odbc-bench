@@ -1,9 +1,9 @@
 /*
  *  util.c
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,7 @@
 #include "odbcbench.h"
 #include "LoginBox.h"
 #include "thr.h"
+
 
 GList *
 get_dsn_list (void)
@@ -74,7 +75,7 @@ set_display_refresh_rate (GtkWidget * widget, gpointer data)
   label = gtk_label_new ("Refresh interval for the progress bars (msec)");
   gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->vbox), label, TRUE, TRUE, 5);
 
-  sprintf (szTemp, "%ld", bench_get_long_pref(DISPLAY_REFRESH_RATE));
+  sprintf (szTemp, "%ld", bench_get_long_pref (DISPLAY_REFRESH_RATE));
   entry = gtk_entry_new_with_max_length (10);
   gtk_entry_set_text (GTK_ENTRY (entry), szTemp);
   gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->vbox), entry, TRUE, TRUE, 5);
@@ -101,10 +102,11 @@ set_display_refresh_rate (GtkWidget * widget, gpointer data)
   gtk_main ();
 
   if (bOk)
-    bench_set_long_pref(DISPLAY_REFRESH_RATE, 
-     atoi (gtk_entry_get_text (GTK_ENTRY (entry))));
+    bench_set_long_pref (DISPLAY_REFRESH_RATE,
+	atoi (gtk_entry_get_text (GTK_ENTRY (entry))));
   gtk_widget_destroy (dlg);
 }
+
 
 void
 set_lock_timeout (GtkWidget * widget, gpointer data)
@@ -121,7 +123,7 @@ set_lock_timeout (GtkWidget * widget, gpointer data)
   label = gtk_label_new ("Lock Timeout per thread (msecs)");
   gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->vbox), label, TRUE, TRUE, 5);
 
-  sprintf (szTemp, "%ld", bench_get_long_pref(LOCK_TIMEOUT));
+  sprintf (szTemp, "%ld", bench_get_long_pref (LOCK_TIMEOUT));
   entry = gtk_entry_new_with_max_length (10);
   gtk_entry_set_text (GTK_ENTRY (entry), szTemp);
   gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->vbox), entry, TRUE, TRUE, 5);
@@ -144,7 +146,7 @@ set_lock_timeout (GtkWidget * widget, gpointer data)
   gtk_main ();
 
   if (bOk)
-    bench_set_long_pref(LOCK_TIMEOUT, 
-     atoi (gtk_entry_get_text (GTK_ENTRY (entry))));
+    bench_set_long_pref (LOCK_TIMEOUT,
+	atoi (gtk_entry_get_text (GTK_ENTRY (entry))));
   gtk_widget_destroy (dlg);
 }

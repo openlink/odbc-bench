@@ -1,9 +1,9 @@
 /*
  *  results.c
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -28,20 +28,23 @@
 #include "util.h"
 #include "results.h"
 
+
 void
 do_results_logout (GtkWidget * widget, gpointer data)
 {
-  results_logout();
+  results_logout ();
 }
+
 
 static void
 results_login_gtk (GtkWidget * widget, gpointer data)
 {
   LoginBox *box = LOGINBOX (widget);
 
-  results_logout();
-  results_login(box->szDSN, box->szUID, box->szPWD);
+  results_logout ();
+  results_login (box->szDSN, box->szUID, box->szPWD);
 }
+
 
 void
 do_results_login (GtkWidget * widget, gpointer data)
@@ -54,16 +57,16 @@ do_results_login (GtkWidget * widget, gpointer data)
   gtk_widget_show (box);
 }
 
+
 void
 do_create_results_table (GtkWidget * widget, gpointer data)
 {
-  create_results_table();
+  create_results_table ();
 }
+
 
 void
 do_drop_results_table (GtkWidget * widget, gpointer data)
 {
-  drop_results_table();
+  drop_results_table ();
 }
-
-

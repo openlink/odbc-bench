@@ -444,7 +444,8 @@ ServerDSN_init (ServerDSN * dlg)
 
   LoginFrame = gtk_frame_new ("Login Data");
   gtk_container_set_border_width (GTK_CONTAINER (LoginFrame), 5);
-  gtk_table_attach_defaults (GTK_TABLE (master_table), LoginFrame, 0, 1, 6, 8);
+  gtk_table_attach_defaults (GTK_TABLE (master_table), LoginFrame, 0, 1, 6,
+      8);
 
   helper = gtk_hbox_new (FALSE, 2);
   gtk_container_set_border_width (GTK_CONTAINER (helper), 2);

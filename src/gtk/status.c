@@ -1,9 +1,9 @@
 /*
  *  status.c
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -32,8 +32,9 @@
 #define BARS_REFRESH_INTERVAL bench_get_long_pref (DISPLAY_REFRESH_RATE)
 
 GtkWidget *status;
+
 void
-create_status_widget (GtkWidget *win)
+create_status_widget (GtkWidget * win)
 {
   GtkAccelGroup *accel_group;
 
@@ -44,14 +45,11 @@ create_status_widget (GtkWidget *win)
   accel_group = gtk_accel_group_new ();
 
   gtk_widget_add_accelerator (status, "copy_clipboard", accel_group,
-                              GDK_C, GDK_CONTROL_MASK,
-                              GTK_ACCEL_VISIBLE);
+      GDK_C, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
   gtk_widget_add_accelerator (status, "cut_clipboard", accel_group,
-                              GDK_X, GDK_CONTROL_MASK,
-                              GTK_ACCEL_VISIBLE);
+      GDK_X, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
   gtk_widget_add_accelerator (status, "paste_clipboard", accel_group,
-                              GDK_P, GDK_CONTROL_MASK,
-                              GTK_ACCEL_VISIBLE);
+      GDK_P, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
   gtk_window_add_accel_group (GTK_WINDOW (win), accel_group);
 
   gtk_widget_show (status);
@@ -68,7 +66,9 @@ clear_status_handler (GtkWidget * widget, gpointer data)
   gtk_text_backward_delete (GTK_TEXT (status), end);
 }
 
+
 extern MUTEX_T log_mutex;
+
 
 void
 do_pane_log (const char *format, ...)
@@ -94,12 +94,15 @@ do_pane_log (const char *format, ...)
   MUTEX_LEAVE (log_mutex);
 }
 
+
 void (*pane_log) (const char *format, ...) = do_pane_log;
+
 
 void
 vBusy (void)
 {
 }
+
 
 /* progress impl */
 static BOOL gfCancel;
@@ -169,8 +172,7 @@ found:
 
 
 void
-do_ShowProgress (void * parent, char * title, BOOL bForceSingle,
-    float fMax)
+do_ShowProgress (void *parent, char *title, BOOL bForceSingle, float fMax)
 {
   GtkWidget *Frame, *helper, *thread_hbox = NULL, *thread_tps;
   int i;
@@ -342,6 +344,7 @@ do_ShowProgress (void * parent, char * title, BOOL bForceSingle,
   gtk_widget_show (progress);
 }
 
+
 void
 do_SetWorkingItem (char *pszWorking)
 {
@@ -349,6 +352,7 @@ do_SetWorkingItem (char *pszWorking)
      if (time_now - curr_time_msec > BARS_REFRESH_INTERVAL) */
   gtk_label_set_text (GTK_LABEL (working_item), pszWorking);
 }
+
 
 void
 do_SetProgressText (char *pszProgress, int nConn, int thread_no,
@@ -365,7 +369,7 @@ do_SetProgressText (char *pszProgress, int nConn, int thread_no,
 	{
 	  if (test_types[nConn] == TPC_A)
 	    pTrnTimes[nConn][thread_no] +=
-	      (bench_get_long_pref (A_REFRESH_RATE) * nTrnPerCall);
+		(bench_get_long_pref (A_REFRESH_RATE) * nTrnPerCall);
 	  else
 	    pTrnTimes[nConn][thread_no] += 1;
 	  if (time_now - curr_time_msec > BARS_REFRESH_INTERVAL)
@@ -383,7 +387,8 @@ do_SetProgressText (char *pszProgress, int nConn, int thread_no,
 
 	  pTrnTimes[nConn][thread_no] = percent;
 	  fOldValues[nConn][thread_no] +=
-	      test_types[nConn] == TPC_A ? nProgressIncrement * nTrnPerCall: 1;
+	      test_types[nConn] ==
+	      TPC_A ? nProgressIncrement * nTrnPerCall : 1;
 	  if (time_now - curr_time_msec > BARS_REFRESH_INTERVAL)
 	    {
 	      gtk_progress_set_value (pToSet, fOldValues[nConn][thread_no]);
@@ -509,6 +514,7 @@ do_StopProgress (void)
   n_connections = 0;
 }
 
+
 int
 do_fCancel (void)
 {
@@ -521,6 +527,7 @@ do_fCancel (void)
   return gfCancel;
 }
 
+
 void
 do_ShowCancel (int fShow)
 {
@@ -530,14 +537,16 @@ do_ShowCancel (int fShow)
     gtk_widget_hide (button);
 }
 
+
 void
 do_RestartProgress (void)
 {
   gfCancel = FALSE;
 }
 
+
 BOOL
-isCancelled(void)
+isCancelled (void)
 {
   return gfCancel;
 }

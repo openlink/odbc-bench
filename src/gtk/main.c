@@ -1,9 +1,9 @@
 /*
  *  main.c
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -48,34 +48,36 @@ GtkWidget *dlg = NULL, *scrolled, *windows, *status_box, *global_status;
 extern GtkWidget *status;
 static GtkWidget *menubar;
 
-static void 
-err_message(const char *format, ...)
+static void
+err_message (const char *format, ...)
 {
   va_list args;
   va_start (args, format);
-  /*g_error(format, args);*/
-  vfprintf(stderr, format, args);
-  va_end(args);
+  /*g_error(format, args); */
+  vfprintf (stderr, format, args);
+  va_end (args);
 }
 
-static void 
-warn_message(const char *format, ...)
+
+static void
+warn_message (const char *format, ...)
 {
   va_list args;
   va_start (args, format);
-  /*g_warning(format, args);*/
-  vfprintf(stderr, format, args);
-  va_end(args);
+  /*g_warning(format, args); */
+  vfprintf (stderr, format, args);
+  va_end (args);
 }
 
-static void 
-message(const char *format, ...)
+
+static void
+message (const char *format, ...)
 {
   va_list args;
   va_start (args, format);
-  /*g_message(format, args);*/
-  vfprintf(stderr, format, args);
-  va_end(args);
+  /*g_message(format, args); */
+  vfprintf (stderr, format, args);
+  va_end (args);
 }
 
 
@@ -92,7 +94,7 @@ do_login_gtk (GtkWidget * widget, gpointer data)
       strcpy (ptest->szLoginUID, login_box->szUID);
       strcpy (ptest->szLoginPWD, login_box->szPWD);
     }
-  return do_login(ptest);
+  return do_login (ptest);
 }
 
 
@@ -137,7 +139,7 @@ do_close_selected_tests (char *filename, answer_code * rc)
       remove_selected_tests ();
       setIsFileDirty (TRUE);
     }
-  o_list_free(tests);
+  o_list_free (tests);
   return retfile;
 }
 
@@ -149,15 +151,15 @@ help_about_handler (GtkWidget * widget, gpointer data)
 
   sprintf (szTemp,
       "%s v.%s\n"
-      "(C) 2000-2003 OpenLink Software\n"
+      "(C) 2000-2004 OpenLink Software\n"
       "Please report all bugs to <%s>\n\n"
       "This utility is released under the GNU General Public License (GPL)\n\n"
       "Disclaimer: The benchmarks in this application are loosely based\n"
       "on the TPC-A and TPC-C standard benchmarks, but this application\n"
       "does not claim to be a full or precise implementation, nor are\n"
       "the results obtained by this application necessarily comparable\n"
-      "to the vendor's published results.\n"
-  , PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_BUGREPORT);
+      "to the vendor's published results.\n", PACKAGE_NAME, PACKAGE_VERSION,
+      PACKAGE_BUGREPORT);
   sprintf (szTitle, "About %s", PACKAGE);
 
   message_box_new (widget, szTemp, szTitle);
@@ -402,9 +404,9 @@ edit_login (GtkWidget * widget, gpointer data)
       while (NULL != (iter = g_list_next (iter)))
 	{
 	  test_t *ptest = (test_t *) iter->data;
-          ptest->tpc.a.uwDrvIdx = -1;
-      	  if (do_login_gtk (login, ptest))
-      	    {
+	  ptest->tpc.a.uwDrvIdx = -1;
+	  if (do_login_gtk (login, ptest))
+	    {
 	      get_dsn_data (ptest);
 	      do_logout (ptest);
 	    }
@@ -587,14 +589,14 @@ create_tables (GtkWidget * widget, gpointer data)
 	{
 	  switch (ptest->TestType)
 	    {
-	      case TPC_A:
-		  fBuildBench (ptest);
-		  break;
+	    case TPC_A:
+	      fBuildBench (ptest);
+	      break;
 
-	      case TPC_C:
-		  tpcc_schema_create (NULL, ptest);
-		  tpcc_create_db (NULL, ptest);
-		  break;
+	    case TPC_C:
+	      tpcc_schema_create (NULL, ptest);
+	      tpcc_create_db (NULL, ptest);
+	      break;
 	    }
 	  do_logout (ptest);
 	}
@@ -629,13 +631,13 @@ drop_tables (GtkWidget * widget, gpointer data)
 	{
 	  switch (ptest->TestType)
 	    {
-	      case TPC_A:
-		  fCleanup (ptest);
-		  break;
+	    case TPC_A:
+	      fCleanup (ptest);
+	      break;
 
-	      case TPC_C:
-		  tpcc_schema_cleanup (NULL, ptest);
-		  break;
+	    case TPC_C:
+	      tpcc_schema_cleanup (NULL, ptest);
+	      break;
 	    }
 	  do_logout (ptest);
 	}
@@ -649,6 +651,7 @@ drop_tables (GtkWidget * widget, gpointer data)
     pane_log ("CLEANUP FINISHED\r\n");
 }
 
+
 static void
 set_file_name (GtkWidget * widget)
 {
@@ -659,6 +662,7 @@ set_file_name (GtkWidget * widget)
       g_free (filename);
     }
 }
+
 
 void
 run_selected (GtkWidget * widget, gpointer data)
@@ -745,7 +749,7 @@ run_selected (GtkWidget * widget, gpointer data)
   gtk_widget_show_all (dlg);
   gtk_main ();
 
-  do_RestartProgress();
+  do_RestartProgress ();
 
   if (bOk)
     {
@@ -790,39 +794,39 @@ run_selected (GtkWidget * widget, gpointer data)
 	    {
 	      get_dsn_data (ptest);
 	      if (ptest->TestType == TPC_A)
-	        {
-	          fExecuteSql (ptest, (SQLCHAR *) "delete from HISTORY");
-	          SQLTransact (SQL_NULL_HENV, ptest->hdbc, SQL_COMMIT);
-	        }
+		{
+		  fExecuteSql (ptest, (SQLCHAR *) "delete from HISTORY");
+		  SQLTransact (SQL_NULL_HENV, ptest->hdbc, SQL_COMMIT);
+		}
 	      do_logout (ptest);
 
 	      ptest->tpc._.nMinutes = nMinutes;
 
 	      switch (ptest->TestType)
-	          {
-	          case TPC_A:
-		    if (bRunAll)
-		      DoRunAll (ptest, szFileName);
-		    else
-		      {
-		        DoRun (ptest, NULL);
-		        do_save_run_results (szFileName, tests, nMinutes);
-		      }
+		{
+		case TPC_A:
+		  if (bRunAll)
+		    DoRunAll (ptest, szFileName);
+		  else
+		    {
+		      DoRun (ptest, NULL);
+		      do_save_run_results (szFileName, tests, nMinutes);
+		    }
 
-		    break;
+		  break;
 
-	          case TPC_C:
-  	            do_login_gtk (NULL, ptest);
-		    if (tpcc_run_test (NULL, ptest))
-		      {
-		        add_tpcc_result (ptest);
-		      }
-		    else
-		      pane_log ("TPC-C RUN FAILED\r\n");
-		    do_save_run_results (szFileName, tests, nMinutes);
-	            do_logout (ptest);
-		    break;
-	          }
+		case TPC_C:
+		  do_login_gtk (NULL, ptest);
+		  if (tpcc_run_test (NULL, ptest))
+		    {
+		      add_tpcc_result (ptest);
+		    }
+		  else
+		    pane_log ("TPC-C RUN FAILED\r\n");
+		  do_save_run_results (szFileName, tests, nMinutes);
+		  do_logout (ptest);
+		  break;
+		}
 	    }
 	}
       if (menubar)
@@ -835,14 +839,6 @@ end:
   o_list_free (tests);
 }
 
-/*
-void
-run_all (GtkWidget * widget, gpointer data)
-{
-  for_all_in_pool ();
-  run_selected (widget, data);
-}
-*/
 
 void
 destroy_handler (GtkWidget * widget, gpointer data)
@@ -863,15 +859,16 @@ destroy_handler (GtkWidget * widget, gpointer data)
   gtk_main_quit ();
 }
 
+
 void
 close_test (GtkWidget * widget, gpointer data)
 {
-  GList *tests = get_selected_tests(), *iter;
+  GList *tests = get_selected_tests (), *iter;
   char *file;
   setIsFileDirty (FALSE);
   for (iter = tests; iter; iter = g_list_next (iter))
     {
-      test_t *ptest = (test_t *)iter->data;
+      test_t *ptest = (test_t *) iter->data;
       ptest->is_dirty = FALSE;
     }
   file = do_close_selected_tests (NULL, NULL);
@@ -880,73 +877,98 @@ close_test (GtkWidget * widget, gpointer data)
   g_list_free (tests);
 }
 
+
 #ifdef PIPE_DEBUG
 static void
 pipe_trough_isql_handler (GtkWidget * widget, gpointer data)
 {
-  GList *tests = get_selected_tests(), *iter;
+  GList *tests = get_selected_tests (), *iter;
   for (iter = tests; iter; iter = g_list_next (iter))
     {
-      test_t *ptest = (test_t *)iter->data;
+      test_t *ptest = (test_t *) iter->data;
       if (do_login_gtk (NULL, ptest))
-        {
-          pipe_trough_isql (ptest->hdbc, "gogo.sql", 1);
-          do_logout (ptest);
-        }
+	{
+	  pipe_trough_isql (ptest->hdbc, "gogo.sql", 1);
+	  do_logout (ptest);
+	}
     }
   g_list_free (tests);
 }
 #endif
 
+
 static GtkItemFactoryEntry menu_items[] = {
   {"/_File", NULL, NULL, 0, "<Branch>"},
-  {"/File/New", "<control>N", (GtkItemFactoryCallback) make_new_setup, 0, NULL},
-  {"/File/_Open...", "<control>O", (GtkItemFactoryCallback) load_setup, 0, NULL},
+  {"/File/New", "<control>N", (GtkItemFactoryCallback) make_new_setup, 0,
+      NULL},
+  {"/File/_Open...", "<control>O", (GtkItemFactoryCallback) load_setup, 0,
+      NULL},
   {"/File/_Save", "<control>S", (GtkItemFactoryCallback) save_setup, 0, NULL},
-  {"/File/Save _As...", "<control>A", (GtkItemFactoryCallback) save_setup_as, 0, NULL},
+  {"/File/Save _As...", "<control>A", (GtkItemFactoryCallback) save_setup_as,
+      0, NULL},
   {"/File/_Close", NULL, (GtkItemFactoryCallback) close_setup, 0, NULL},
   {"/File/sep1", NULL, NULL, 0, "<Separator>"},
-  {"/File/_Clear log", NULL, (GtkItemFactoryCallback) clear_status_handler, 0, NULL},
+  {"/File/_Clear log", NULL, (GtkItemFactoryCallback) clear_status_handler, 0,
+      NULL},
 #ifdef PIPE_DEBUG
-  {"/File/pipe trough isql", NULL, (GtkItemFactoryCallback) pipe_trough_isql_handler, 0, NULL},
-#endif  
+  {"/File/pipe trough isql", NULL,
+      (GtkItemFactoryCallback) pipe_trough_isql_handler, 0, NULL},
+#endif
   {"/File/sep2", NULL, NULL, 0, "<Separator>"},
-  {"/File/E_xit", "<control>X", (GtkItemFactoryCallback) destroy_handler, 0, NULL},
+  {"/File/E_xit", "<control>X", (GtkItemFactoryCallback) destroy_handler, 0,
+      NULL},
 
   {"/_Edit", NULL, NULL, 0, "<Branch>"},
-  {"/Edit/New Benchmark Item...", "<control>Insert", (GtkItemFactoryCallback) make_new_test, 0, NULL},
-  {"/Edit/Delete selected items", NULL, (GtkItemFactoryCallback) close_test, 0, NULL},
-  {"/Edit/Save selected items as...", NULL, (GtkItemFactoryCallback) save_test_as, 0, NULL},
+  {"/Edit/New Benchmark Item...", "<control>Insert",
+      (GtkItemFactoryCallback) make_new_test, 0, NULL},
+  {"/Edit/Delete selected items", NULL, (GtkItemFactoryCallback) close_test,
+      0, NULL},
+  {"/Edit/Save selected items as...", NULL,
+      (GtkItemFactoryCallback) save_test_as, 0, NULL},
   {"/Edit/sep1", NULL, NULL, 0, "<Separator>"},
-  {"/Edit/_Login details...", "<control>L", (GtkItemFactoryCallback) edit_login, 0, NULL},
-  {"/Edit/_Table details...", "<control>T", (GtkItemFactoryCallback) edit_tables, 0, NULL},
-  {"/Edit/R_un details...", "<control>U", (GtkItemFactoryCallback) edit_run, 0, NULL},
+  {"/Edit/_Login details...", "<control>L",
+      (GtkItemFactoryCallback) edit_login, 0, NULL},
+  {"/Edit/_Table details...", "<control>T",
+      (GtkItemFactoryCallback) edit_tables, 0, NULL},
+  {"/Edit/R_un details...", "<control>U", (GtkItemFactoryCallback) edit_run,
+      0, NULL},
   {"/Edit/sep2", NULL, NULL, 0, "<Separator>"},
-  {"/Edit/_Insert file...", "<control>I", (GtkItemFactoryCallback) insert_file, 0, NULL},
+  {"/Edit/_Insert file...", "<control>I",
+      (GtkItemFactoryCallback) insert_file, 0, NULL},
 
   {"/_Action", NULL, NULL, 0, "<Branch>"},
-  {"/Action/_Create tables&procedures", NULL, (GtkItemFactoryCallback) create_tables, 0, NULL},
-  {"/Action/_Drop tables&procedures", NULL, (GtkItemFactoryCallback) drop_tables, 0, NULL},
+  {"/Action/_Create tables&procedures", NULL,
+      (GtkItemFactoryCallback) create_tables, 0, NULL},
+  {"/Action/_Drop tables&procedures", NULL,
+      (GtkItemFactoryCallback) drop_tables, 0, NULL},
   {"/Action/sep1", NULL, NULL, 0, "<Separator>"},
-  {"/Action/Run _Selected", "<control>R", (GtkItemFactoryCallback) run_selected, 0, NULL},
+  {"/Action/Run _Selected", "<control>R",
+      (GtkItemFactoryCallback) run_selected, 0, NULL},
 
   {"/_Results", NULL, NULL, 0, "<Branch>"},
-  {"/Results/_Connect...", NULL, (GtkItemFactoryCallback) do_results_login, 0, NULL},
-  {"/Results/_Disconnect", NULL, (GtkItemFactoryCallback) do_results_logout, 0, NULL},
+  {"/Results/_Connect...", NULL, (GtkItemFactoryCallback) do_results_login, 0,
+      NULL},
+  {"/Results/_Disconnect", NULL, (GtkItemFactoryCallback) do_results_logout,
+      0, NULL},
   {"/Results/sep1", NULL, NULL, 0, "<Separator>"},
-  {"/Results/C_reate the table", NULL, (GtkItemFactoryCallback) do_create_results_table, 0, NULL},
-  {"/Results/Dr_op the table", NULL, (GtkItemFactoryCallback) do_drop_results_table, 0, NULL},
+  {"/Results/C_reate the table", NULL,
+      (GtkItemFactoryCallback) do_create_results_table, 0, NULL},
+  {"/Results/Dr_op the table", NULL,
+      (GtkItemFactoryCallback) do_drop_results_table, 0, NULL},
 
   {"/_Preferences", NULL, NULL, 0, "<Branch>"},
 
-  {"/Preferences/Display refresh rate...", NULL, (GtkItemFactoryCallback) set_display_refresh_rate,
+  {"/Preferences/Display refresh rate...", NULL,
+	(GtkItemFactoryCallback) set_display_refresh_rate,
       0, NULL},
-  {"/Preferences/Lock timeout...", NULL, (GtkItemFactoryCallback) set_lock_timeout, 0, NULL},
+  {"/Preferences/Lock timeout...", NULL,
+      (GtkItemFactoryCallback) set_lock_timeout, 0, NULL},
 
   {"/_Window", NULL, NULL, 0, "<Branch>"},
 
   {"/_Help", NULL, NULL, 0, "<LastBranch>"},
-  {"/Help/_About", "<control>F1", (GtkItemFactoryCallback) help_about_handler, 0, NULL},
+  {"/Help/_About", "<control>F1", (GtkItemFactoryCallback) help_about_handler,
+      0, NULL},
 };
 
 
@@ -976,20 +998,19 @@ get_main_menu (GtkWidget * window, GtkWidget ** menubar)
     }
 }
 
+
 extern int do_command_line (int argc, char *argv[]);
 #ifndef WIN32
-
 int
 main (int argc, char *argv[])
 #else
-
 extern char **command_line_to_argv (char *pszSysCmdLine, int *_argc);
+
 int WINAPI
 WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
     int nCmdShow)
 #endif
 {
-
   GtkWidget *table;
 #ifdef WIN32
   int argc;
@@ -998,11 +1019,11 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
 #endif
   do_alloc_env ();
 
-  memset(&gui, 0, sizeof(gui));
+  memset (&gui, 0, sizeof (gui));
   gui.main_quit = gtk_main_quit;
-  gui.err_message = err_message; 
-  gui.warn_message = warn_message; 
-  gui.message = message; 
+  gui.err_message = err_message;
+  gui.warn_message = warn_message;
+  gui.message = message;
   gui.add_test_to_the_pool = add_test_to_the_pool;
   gui.for_all_in_pool = for_all_in_pool;
   gui.do_MarkFinished = do_MarkFinished;
@@ -1013,7 +1034,7 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
   gui.SetProgressText = do_SetProgressText;
   gui.StopProgress = do_StopProgress;
   gui.fCancel = do_fCancel;
-  gui.vBusy = vBusy;  
+  gui.vBusy = vBusy;
 
   if (argc > 2)
     return do_command_line (argc, argv);
@@ -1061,14 +1082,6 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
       setTheFileName (fill_file_name (argv[1], NULL, TRUE));
       setIsFileDirty (FALSE);
     }
-#if 0
-  if (lpCmdLine[0])
-    {
-      do_load_test (lpCmdLine);
-      setTheFileName (lpCmdLine);
-      setIsFileDirty (FALSE);
-    }
-#endif
   else
     {
       setTheFileName (NULL);

@@ -1,9 +1,9 @@
 /*
  *  TPCATableProps.c
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,7 @@
 static void TPCATableProps_class_init (TPCATablePropsClass * tclass);
 static void TPCATableProps_init (TPCATableProps * tableloader);
 
+
 int
 TPCATableProps_get_type (void)
 {
@@ -57,10 +58,12 @@ TPCATableProps_get_type (void)
   return tld_type;
 }
 
+
 static void
 TPCATableProps_class_init (TPCATablePropsClass * tclass)
 {
 }
+
 
 void
 enable_widget_as (GtkWidget * check, gpointer widget)
@@ -104,6 +107,7 @@ set_dsn_combos (GtkWidget * check, gpointer widget)
     }
 }
 
+
 static void
 make_sub_controls (TPCATableProps * tableloader)
 {
@@ -114,7 +118,7 @@ make_sub_controls (TPCATableProps * tableloader)
   GList *list = NULL;
   int i, ofs;
 
-  do_login(tableloader->ptest);
+  do_login (tableloader->ptest);
   tableloader->pDSN = (ServerDSN *) ServerDSN_new (tableloader->ptest);
   if (tableloader->ptest->tpc.a.uwDrvIdx == -1)
     {
@@ -330,10 +334,12 @@ make_sub_controls (TPCATableProps * tableloader)
   gtk_widget_show_all (main_hbox);
 }
 
+
 static void
 TPCATableProps_init (TPCATableProps * tableloader)
 {
 }
+
 
 static void
 load_config (TPCATableProps * pDlg)
@@ -382,6 +388,7 @@ load_config (TPCATableProps * pDlg)
       pDlg->ptest->tpc.a.szHistoryDSN[0] ? pDlg->ptest->tpc.
       a.szHistoryDSN : "");
 }
+
 
 void
 TPCATableProps_save_config (TPCATableProps * pDlg)
@@ -443,24 +450,22 @@ TPCATableProps_save_config (TPCATableProps * pDlg)
 
       if (!strcmp (pDlg->ptest->tpc.a.szBranchDSN, "<local>"))
 	pDlg->ptest->tpc.a.szBranchDSN[0] = 0;
-      else
-	  if (NULL != (found = g_list_find_custom (pDlg->pDSN->dsn_info.dsns,
-		 pDlg->ptest->tpc.a.szBranchDSN, (GCompareFunc) strcmp)))
+      else if (NULL != (found = g_list_find_custom (pDlg->pDSN->dsn_info.dsns,
+		  pDlg->ptest->tpc.a.szBranchDSN, (GCompareFunc) strcmp)))
 	strncpy (pDlg->ptest->tpc.a.szBranchDBMS,
 	    (char *) g_list_nth_data (pDlg->pDSN->dsn_info.names,
-g_list_position (pDlg->pDSN->dsn_info.dsns, found)), 50);
+		g_list_position (pDlg->pDSN->dsn_info.dsns, found)), 50);
 
       strcpy (pDlg->ptest->tpc.a.szTellerDSN,
 	  gtk_entry_get_text (GTK_ENTRY (GTK_COMBO (pDlg->
 		      teller_dsn)->entry)));
       if (!strcmp (pDlg->ptest->tpc.a.szTellerDSN, "<local>"))
 	pDlg->ptest->tpc.a.szTellerDSN[0] = 0;
-      else
-	  if (NULL != (found = g_list_find_custom (pDlg->pDSN->dsn_info.dsns,
-		 pDlg->ptest->tpc.a.szTellerDSN, (GCompareFunc) strcmp)))
+      else if (NULL != (found = g_list_find_custom (pDlg->pDSN->dsn_info.dsns,
+		  pDlg->ptest->tpc.a.szTellerDSN, (GCompareFunc) strcmp)))
 	strncpy (pDlg->ptest->tpc.a.szTellerDBMS,
 	    (char *) g_list_nth_data (pDlg->pDSN->dsn_info.names,
-g_list_position (pDlg->pDSN->dsn_info.dsns, found)), 50);
+		g_list_position (pDlg->pDSN->dsn_info.dsns, found)), 50);
 
       strcpy (pDlg->ptest->tpc.a.szAccountDSN,
 	  gtk_entry_get_text (GTK_ENTRY (GTK_COMBO (pDlg->
@@ -468,12 +473,11 @@ g_list_position (pDlg->pDSN->dsn_info.dsns, found)), 50);
 
       if (!strcmp (pDlg->ptest->tpc.a.szAccountDSN, "<local>"))
 	pDlg->ptest->tpc.a.szAccountDSN[0] = 0;
-      else
-	  if (NULL != (found = g_list_find_custom (pDlg->pDSN->dsn_info.dsns,
-		 pDlg->ptest->tpc.a.szAccountDSN, (GCompareFunc) strcmp)))
+      else if (NULL != (found = g_list_find_custom (pDlg->pDSN->dsn_info.dsns,
+		  pDlg->ptest->tpc.a.szAccountDSN, (GCompareFunc) strcmp)))
 	strncpy (pDlg->ptest->tpc.a.szAccountDBMS,
 	    (char *) g_list_nth_data (pDlg->pDSN->dsn_info.names,
-g_list_position (pDlg->pDSN->dsn_info.dsns, found)), 50);
+		g_list_position (pDlg->pDSN->dsn_info.dsns, found)), 50);
 
       strcpy (pDlg->ptest->tpc.a.szHistoryDSN,
 	  gtk_entry_get_text (GTK_ENTRY (GTK_COMBO (pDlg->
@@ -481,14 +485,14 @@ g_list_position (pDlg->pDSN->dsn_info.dsns, found)), 50);
 
       if (!strcmp (pDlg->ptest->tpc.a.szHistoryDSN, "<local>"))
 	pDlg->ptest->tpc.a.szHistoryDSN[0] = 0;
-      else
-	  if (NULL != (found = g_list_find_custom (pDlg->pDSN->dsn_info.dsns,
-		 pDlg->ptest->tpc.a.szHistoryDSN, (GCompareFunc) strcmp)))
+      else if (NULL != (found = g_list_find_custom (pDlg->pDSN->dsn_info.dsns,
+		  pDlg->ptest->tpc.a.szHistoryDSN, (GCompareFunc) strcmp)))
 	strncpy (pDlg->ptest->tpc.a.szHistoryDBMS,
 	    (char *) g_list_nth_data (pDlg->pDSN->dsn_info.names,
-g_list_position (pDlg->pDSN->dsn_info.dsns, found)), 50);
+		g_list_position (pDlg->pDSN->dsn_info.dsns, found)), 50);
     }
 }
+
 
 GtkWidget *
 TPCATableProps_new (test_t * ptest)
