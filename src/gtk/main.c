@@ -48,6 +48,34 @@ GtkWidget *dlg = NULL, *scrolled, *windows, *status_box, *global_status;
 extern GtkWidget *status;
 static GtkWidget *menubar;
 
+static void 
+err_message(const char *format, ...)
+{
+  va_list args;
+  va_start (args, format);
+  g_error(format, args);
+  va_end(args);
+}
+
+static void 
+warn_message(const char *format, ...)
+{
+  va_list args;
+  va_start (args, format);
+  g_warning(format, args);
+  va_end(args);
+}
+
+static void 
+message(const char *format, ...)
+{
+  va_list args;
+  va_start (args, format);
+  g_message(format, args);
+  va_end(args);
+}
+
+
 void
 do_login_gtk (GtkWidget * widget, gpointer data)
 {
@@ -947,9 +975,9 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
 
   memset(&gui, 0, sizeof(gui));
   gui.main_quit = gtk_main_quit;
-  gui.err_message = g_error;
-  gui.warn_message = g_warning;
-  gui.message = g_message;
+  gui.err_message = err_message; 
+  gui.warn_message = warn_message; 
+  gui.message = message; 
   gui.add_test_to_the_pool = add_test_to_the_pool;
   gui.for_all_in_pool = for_all_in_pool;
   gui.do_MarkFinished = do_MarkFinished;
