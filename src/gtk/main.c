@@ -757,7 +757,7 @@ run_selected (GtkWidget * widget, gpointer data)
 #if defined(PTHREADS) || defined(WIN32)
 	  if (!bRunAll)
 	    {
-	      do_threads_run (nTests, tests, nMinutes, "");
++	      do_threads_run (nTests, tests, nMinutes, "Running test");
 	      do_save_run_results (szFileName, tests, nMinutes);
 	    }
 	  else
