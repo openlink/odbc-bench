@@ -283,7 +283,8 @@ AC_ARG_WITH(iodbc,
 	withval=/usr/local
     fi
 
-    AC_PATH_PROG(IODBC_CONFIG, iodbc-config, no, [$PATH:$withval/bin])
+    PATH_IODBC="$withval/bin:$PATH"
+    AC_PATH_PROG(IODBC_CONFIG, iodbc-config, no, [$PATH_IODBC])
 
     AC_MSG_CHECKING([for iODBC support])
     if test -x "$IODBC_CONFIG"
