@@ -65,4 +65,10 @@ snapshot:
 release:
 	$(MAKE) distcheck
 
+#
+#  Generate ChangeLog
+#
+changelog:
+	cvs2cl --branches --no-wrap --utc --hide-filenames --prune
+
 endif
