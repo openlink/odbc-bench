@@ -127,7 +127,9 @@ test_common_t;
 struct test_s
 {
   char szName[128];
+  char szTitle[128];
   testtype TestType;
+  BOOL is_unsupported;
   int is_dirty;
 
   void *hwndOut;		/* Output window for logging info */
@@ -137,12 +139,13 @@ struct test_s
   HSTMT hstmt;			/* Statement handle */
 
   /* login data */
-  char szLoginDSN[50];
-  char szLoginUID[50];
-  char szLoginPWD[50];
+  char szLoginDSN[128];
+  char szLoginUID[256];
+  char szLoginPWD[256];
 
   char szSQLState[10];
   char szSQLError[256];
+  char szWarning[256];
 
   /* Other info */
   char szDSN[SQL_MAX_DSN_LENGTH];
