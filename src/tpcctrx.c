@@ -517,8 +517,9 @@ tpcc_run_test (void * widget, test_t * lpCfg)
   reset_times (lpCfg);
   lpCfg->tpc.c.nRounds = 0;
 
-  lpCfg->ShowProgress (NULL, "Running TPCC", FALSE,
-      lpCfg->tpc._.nMinutes * 60);
+  if (lpCfg->ShowProgress)
+    lpCfg->ShowProgress (NULL, "Running TPCC", FALSE,
+        lpCfg->tpc._.nMinutes * 60);
   lpCfg->SetWorkingItem ("Running TPCC");
   time (&start_time);
   while (1)
@@ -531,7 +532,8 @@ tpcc_run_test (void * widget, test_t * lpCfg)
 	  lpCfg->tpc.c.nRounds,
 	  (long int) (lpCfg->tpc._.nMinutes * 60 - dDiff));
       lpCfg->SetProgressText (szTemp, lpCfg->tpc._.nConn,
-	  lpCfg->tpc._.nThreadNo, curr_time - start_time, 1);
+	  lpCfg->tpc._.nThreadNo, curr_time - start_time, 1, 
+	  (long int) (lpCfg->tpc._.nMinutes * 60 - dDiff), 0);
       if (lpCfg->fCancel ())
 	break;
       if (!do_10_pack (lpCfg))

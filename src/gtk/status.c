@@ -109,7 +109,6 @@ static float spec_time_secs = -1;
 static float **pTrnTimes = NULL;
 static testtype *test_types = NULL;
 static float **fOldValues = NULL;
-int nProgressIncrement = 0;
 static long curr_time_msec = 0L;
 
 
@@ -353,7 +352,7 @@ do_SetWorkingItem (char *pszWorking)
 
 void
 do_SetProgressText (char *pszProgress, int nConn, int thread_no,
-    float percent, int nTrnPerCall)
+    float percent, int nTrnPerCall, long secs_remain, double tpca_dDiffSum)
 {
   long time_now = get_msec_count ();
   if (time_now - curr_time_msec > BARS_REFRESH_INTERVAL)

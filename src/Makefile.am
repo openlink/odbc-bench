@@ -21,7 +21,7 @@
 
 SUBDIRS		= gtk
 
-bin_PROGRAMS	= odbc-bench
+bin_PROGRAMS	= odbc-bench-cmd odbc-bench-gtk
 
 INCLUDES	= \
 	-I$(top_srcdir)/odbc-bench \
@@ -30,15 +30,36 @@ INCLUDES	= \
 	@GTK_CFLAGS@ \
 	@XML_CFLAGS@
 
-odbc_bench_LDADD	= \
+odbc_bench_gtk_LDADD	= \
 	gtk/libodbcbench-gtk.la \
 	@ODBC_LIBS@ \
 	@GTK_LIBS@ \
 	@XML_LIBS@
 
-odbc_bench_SOURCES = \
+odbc_bench_gtk_SOURCES = \
 	command_line.c \
 	isql_interface.c \
+	odbcs.c \
+	olist.c \
+	prefs.c \
+	results.c \
+	tests.c \
+	threads.c \
+	time.c \
+	tpca_code.c \
+	tpcc.c \
+	tpcctrx.c
+
+
+odbc_bench_cmd_LDADD	= \
+        -ldl \
+	@ODBC_LIBS@ \
+	@XML_LIBS@
+
+odbc_bench_cmd_SOURCES = \
+	command_line.c \
+	isql_interface.c \
+	main_cmd.c \
 	odbcs.c \
 	olist.c \
 	prefs.c \

@@ -34,6 +34,7 @@ int quiet = 0;
 HENV henv = SQL_NULL_HENV;
 
 static MUTEX_T env_mutex;
+MUTEX_T log_mutex;
 
 void
 do_free_env (int isFreeMutex)

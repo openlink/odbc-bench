@@ -1404,7 +1404,7 @@ vLoadBranch (test_t * ptest	/* Run Configuration Parameters */
   sprintf (szSQLBuffer, szRowsInserted, (UDWORD) 0,
       (UDWORD) ptest->tpc.a.udwMaxBranch);
   if (ptest->SetProgressText)
-    ptest->SetProgressText (szSQLBuffer, 0, 0, 0, 1);
+    ptest->SetProgressText (szSQLBuffer, 0, 0, 0, 1, 0, 0);
   udwMod = (UDWORD) (ptest->tpc.a.udwMaxBranch / 50);
   udwMod = udwMod ? udwMod : 1;
 
@@ -1426,7 +1426,7 @@ vLoadBranch (test_t * ptest	/* Run Configuration Parameters */
 	  sprintf (szSQLBuffer, szRowsInserted, udwBranch,
 	      ptest->tpc.a.udwMaxBranch);
 	  if (ptest->SetProgressText)
-	    ptest->SetProgressText (szSQLBuffer, 0, 0, udwBranch, 1);
+	    ptest->SetProgressText (szSQLBuffer, 0, 0, udwBranch, 1, 0, 0);
 	  if (ptest->fCancel && ptest->fCancel ())
 	    goto DONE;
 	}
@@ -1498,7 +1498,7 @@ vLoadTeller (test_t * ptest	/* Run Configuration Parameters */
   sprintf (szSQLBuffer, szRowsInserted, (UDWORD) 0,
       (UDWORD) ptest->tpc.a.udwMaxTeller);
   if (ptest->SetProgressText)
-    ptest->SetProgressText (szSQLBuffer, 0, 0, 0, 1);
+    ptest->SetProgressText (szSQLBuffer, 0, 0, 0, 1, 0, 0);
   udwMod = (UDWORD) (ptest->tpc.a.udwMaxTeller / 50);
   udwMod = udwMod ? udwMod : 1;
 
@@ -1522,7 +1522,7 @@ vLoadTeller (test_t * ptest	/* Run Configuration Parameters */
 	  sprintf (szSQLBuffer, szRowsInserted, udwTeller,
 	      ptest->tpc.a.udwMaxTeller);
 	  if (ptest->SetProgressText)
-	    ptest->SetProgressText (szSQLBuffer, 0, 0, ((float) udwTeller), 1);
+	    ptest->SetProgressText (szSQLBuffer, 0, 0, ((float) udwTeller), 1, 0, 0);
 	  if (ptest->fCancel && ptest->fCancel ())
 	    goto DONE;
 	}
@@ -1595,7 +1595,7 @@ vLoadAccount (test_t * ptest	/* Run Configuration Parameters */
   sprintf (szSQLBuffer, szRowsInserted, (UDWORD) 0,
       (UDWORD) ptest->tpc.a.udwMaxAccount);
   if (ptest->SetProgressText)
-    ptest->SetProgressText (szSQLBuffer, 0, 0, 0, 1);
+    ptest->SetProgressText (szSQLBuffer, 0, 0, 0, 1, 0, 0);
   udwMod = (UDWORD) (ptest->tpc.a.udwMaxAccount / 50);
   udwMod = udwMod ? udwMod : 1;
 
@@ -1620,7 +1620,7 @@ vLoadAccount (test_t * ptest	/* Run Configuration Parameters */
 	  sprintf (szSQLBuffer, szRowsInserted, udwAcct,
 	      ptest->tpc.a.udwMaxAccount);
 	  if (ptest->SetProgressText)
-	    ptest->SetProgressText (szSQLBuffer, 0, 0, ((float) udwAcct), 1);
+	    ptest->SetProgressText (szSQLBuffer, 0, 0, ((float) udwAcct), 1, 0, 0);
 	  if (ptest->fCancel && ptest->fCancel ())
 	    goto DONE;
 	}
@@ -3763,11 +3763,13 @@ fRunTransArray (test_t * lpBench,	/* Benchmark info */
       if (0 == (nCallCnt % bench_get_long_pref (A_REFRESH_RATE)))
 	{
 	  char szBuff[50];
+	  long secs_remain = (long int)(dTimeToRun - dDiff);
 	  sprintf (szBuff, "%10ld txns, %10ld secs remaining",
-	      lpBench->tpc.a.nTrnCnt, (long int) (dTimeToRun - dDiff));
+	      lpBench->tpc.a.nTrnCnt, secs_remain);
 	  if (lpBench->SetProgressText)
 	    lpBench->SetProgressText (szBuff, lpBench->tpc._.nConn,
-		lpBench->tpc._.nThreadNo, dDiff, nArrayParSize);
+		lpBench->tpc._.nThreadNo, dDiff, nArrayParSize, secs_remain, 
+		lpBench->tpc.a.dDiffSum);
 	  if (lpBench->fCancel && lpBench->fCancel ())
 	    {
 	      fDone = TRUE;
@@ -3801,7 +3803,7 @@ fRunTransArray (test_t * lpBench,	/* Benchmark info */
   /* We're done, so dismiss the dialog */
   if (lpBench->StopProgress)
     lpBench->StopProgress ();
-  pane_log ("Benchmark finished.\r\n");
+  pane_log ("\n\nBenchmark finished.\r\n");
 
   SQLFreeStmt (lpBench->hstmt, SQL_CLOSE);
   SQLFreeStmt (lpBench->hstmt, SQL_UNBIND);
@@ -4124,11 +4126,13 @@ fRunTrans (test_t * lpBench,	/* Benchmark info */
 	  (lpBench->tpc.a.nTrnCnt % bench_get_long_pref (A_REFRESH_RATE)))
 	{
 	  char szBuff[50];
+	  long secs_remain = (long int)(dTimeToRun - dDiff);
 	  sprintf (szBuff, "%10ld txns, %10ld secs remaining",
-	      lpBench->tpc.a.nTrnCnt, (long int) (dTimeToRun - dDiff));
+	      lpBench->tpc.a.nTrnCnt, secs_remain);
 	  if (lpBench->SetProgressText)
 	    lpBench->SetProgressText (szBuff, lpBench->tpc._.nConn,
-		lpBench->tpc._.nThreadNo, dDiff, 1);
+		lpBench->tpc._.nThreadNo, dDiff, 1, secs_remain,
+		lpBench->tpc.a.dDiffSum);
 	  if (lpBench->fCancel && lpBench->fCancel ())
 	    {
 	      fDone = TRUE;
@@ -4162,7 +4166,7 @@ fRunTrans (test_t * lpBench,	/* Benchmark info */
   /* We're done, so dismiss the dialog */
   if (lpBench->StopProgress)
     lpBench->StopProgress ();
-  pane_log ("Benchmark finished.\r\n");
+  pane_log ("\n\nBenchmark finished.\r\n");
 
   SQLFreeStmt (lpBench->hstmt, SQL_CLOSE);
   SQLFreeStmt (lpBench->hstmt, SQL_UNBIND);

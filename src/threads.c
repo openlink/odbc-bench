@@ -38,6 +38,7 @@
 
 static volatile BOOL do_cancel = FALSE;
 static int signal_pipe[2];
+int nProgressIncrement = 0;
 
 typedef struct msg_s
 {
@@ -46,13 +47,15 @@ typedef struct msg_s
   int nThread;
   float percent;
   int nTrnPerCall;
+  long secs_remain;
+  double tpca_dDiffSum;
 }
 msg_t;
 
 
 static void
 threaded_SendProgress (char *pszProgress, int conn_no, int thread_no,
-    float percent, int nTrnPerCall)
+    float percent, int nTrnPerCall, long secs_remain, double tpca_dDiffSum)
 {
   msg_t msg;
   msg.Type = 'R';
@@ -60,6 +63,8 @@ threaded_SendProgress (char *pszProgress, int conn_no, int thread_no,
   msg.nThread = thread_no;
   msg.percent = percent;
   msg.nTrnPerCall = nTrnPerCall;
+  msg.secs_remain = secs_remain;
+  msg.tpca_dDiffSum = tpca_dDiffSum;
   if (!signal_pipe[1] || sizeof (msg_t) != write (signal_pipe[1], &msg, sizeof (msg_t)))
     abort ();
 }
@@ -338,7 +343,8 @@ do_threads_run (int nConnCount, OList * tests, int nMinutes, char *szTitle)
       switch (msg.Type)
 	{
 	case 'F':
-	  gui.do_MarkFinished (msg.nConn, msg.nThread);
+	  if (gui.do_MarkFinished)
+	    gui.do_MarkFinished (msg.nConn, msg.nThread);
 	  sprintf (szTemp, "%s %3d threads running", szTitle, --nThreadsWork);
 	  lpBenchInfo->SetWorkingItem (szTemp);
 	  if (data[msg.nConn][msg.nThread].szSQLError[0])
@@ -354,11 +360,11 @@ do_threads_run (int nConnCount, OList * tests, int nMinutes, char *szTitle)
 	case 'R':
 	  time (&now_time);
 	  time_remaining = nMinutes * 60 - (now_time - start_time);
-	  sprintf (szTemp, "%10ld secs remaining",
-	      (time_remaining > 0 ? time_remaining : 0));
+	  time_remaining = (time_remaining > 0 ? time_remaining : 0);
+	  sprintf (szTemp, "%10ld secs remaining", time_remaining);
 	  nRuns += 1;
 	  lpBenchInfo->SetProgressText (szTemp, msg.nConn, msg.nThread,
-	      msg.percent, msg.nTrnPerCall);
+	      msg.percent, msg.nTrnPerCall, time_remaining, msg.tpca_dDiffSum);
 	  break;
 	}
     }

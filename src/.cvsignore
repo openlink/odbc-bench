@@ -7,4 +7,6 @@ Makefile
 config.h
 stamp-*
 odbc-bench
+odbc-bench-cmd
+odbc-bench-gtk
 *.xml

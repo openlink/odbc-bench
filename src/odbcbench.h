@@ -44,16 +44,16 @@ typedef struct test_s	test_t;
 #define PACKAGE			"odbc-bench"
 #define PACKAGE_BUGREPORT	"odbc-bench@openlinksw.com"
 #define PACKAGE_NAME 		"OpenLink ODBC Benchmark Utility"
-#define PACKAGE_STRING 		"OpenLink ODBC Benchmark Utility 0.99.3"
+#define PACKAGE_STRING 		"OpenLink ODBC Benchmark Utility 0.99.4"
 #define PACKAGE_TARNAME 	"odbc-bench"
-#define PACKAGE_VERSION 	"0.99.3"
-#define VERSION			"0.99.3"
+#define PACKAGE_VERSION 	"0.99.4"
+#define VERSION			"0.99.4"
 #endif
 
 extern void (*pane_log) (const char *format, ...);
 
 #ifdef _DEBUG
-#define assert(exp)	((exp) ? (void)0 : g_error("'%s', File %s, line %d", #exp, __FILE__, __LINE__))
+#define assert(exp)	((exp)&& gui.err_message ? (void)0 : gui.err_message("'%s', File %s, line %d", #exp, __FILE__, __LINE__))
 #else
 #define assert(exp)
 #endif
@@ -81,7 +81,7 @@ typedef struct GUI_s
   void (*ShowProgress) (void * parent_win, char * title, BOOL bForceSingle, float nMax);
   void (*SetWorkingItem) (char *pszWorking);
   void (*SetProgressText) (char *pszProgress, int n_conn, int thread_no,
-      float nValue, int nTrnPerCall);
+      float nValue, int nTrnPerCall, long secs_remain, double tpca_dDiffSum);
   void (*StopProgress) (void);
   int (*fCancel) (void);
   void (*vBusy) (void);  /* Change to Hourglass/Normal Cursor */
@@ -152,7 +152,7 @@ struct test_s
   void (*ShowProgress) (void * parent_win, char * title, BOOL bForceSingle, float nMax);
   void (*SetWorkingItem) (char *pszWorking);
   void (*SetProgressText) (char *pszProgress, int n_conn, int thread_no,
-      float nValue, int nTrnPerCall);
+      float nValue, int nTrnPerCall, long secs_remain, double tpca_dDiffSum);
   void (*StopProgress) (void);
   int (*fCancel) (void);
 
