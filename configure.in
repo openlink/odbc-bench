@@ -220,9 +220,18 @@ AC_SUBST(LIBADD_DL)
 ##									##
 ##########################################################################
 
-AC_ARG_WITH(pthreads,
-[  --with-pthreads         build pthread implementation if possible],
-[
+AC_ARG_ENABLE(gui,
+[  --enable-pthreads       build threaded applications (default),
+  --disable-pthreads      build non-threaded applications],
+[ case "${enableval}" in
+    yes) USE_PTHREADS=true ;;
+    no)  USE_PTHREADS=false ;;
+    *) AC_MSG_ERROR(bad value ${enableval} for --enable-pthreads) ;;
+  esac
+],[USE_PTHREADS=true]) 
+
+if test x$USE_PTHREADS = xtrue
+then
     CFLAGS="$CFLAGS -DWITH_PTHREADS -D_REENTRANT"
     AC_CHECK_LIB(pthreads, pthread_create,
     [
@@ -237,8 +246,7 @@ AC_ARG_WITH(pthreads,
     [
 	AC_CHECK_LIB(pthread, pthread_create, [LIBS="$LIBS -lpthread"])
     ])
-])
-
+fi
 
 ##########################################################################
 ##									##
