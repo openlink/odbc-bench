@@ -95,3 +95,10 @@ noinst_HEADERS	= \
 	tpcc.h \
 	tpccfun.h \
 	olist.h
+
+EXTRA_DIST	= \
+	win32/getopt.c \
+	win32/getopt.h \
+	win32/getopt1.c \
+	win32/mycrt.c 
+
