@@ -114,7 +114,9 @@ stdout_pane_log (const char *format, ...)
   va_list args;
 
   va_start (args, format);
+  MUTEX_ENTER (log_mutex);
   vprintf (format, args);
+  MUTEX_LEAVE (log_mutex);
   va_end (args);
 }
 
@@ -131,6 +133,7 @@ stdout_showprogress (void * parent_win, char * title, int nThreads,
   fOldValues = (float *) calloc (n_threads, sizeof (float));
   ptpca_dDiffSum = (double *) calloc (n_threads, sizeof (double));
 
+  MUTEX_ENTER (log_mutex);
   printf ("\n%s\n", title);
   printf ("\nREMAIN");
   for (i = 1; i <= n_threads; i++)
@@ -140,6 +143,7 @@ stdout_showprogress (void * parent_win, char * title, int nThreads,
     printf ("=========");
   printf ("\n");
   fflush (stdout);
+  MUTEX_LEAVE (log_mutex);
 }
 
 static void
@@ -147,10 +151,13 @@ stdout_setprogresstext0 (char *pszProgress, int n_conn, int thread_no,
     float nValue, int nTrnPerCall, long secs_remain, double tpca_dDiffSum)
 {
   static BOOL bLEFT = TRUE;
+
+  MUTEX_ENTER (log_mutex);
   fputc (bLEFT ? '(' : ')', stderr);
   bLEFT = bLEFT ? FALSE : TRUE;
   fflush (stderr);
   fputc ('\b', stderr);
+  MUTEX_LEAVE (log_mutex);
 }
 
 
@@ -185,6 +192,8 @@ stdout_setprogresstext (char *pszProgress, int nConn, int thread_no,
         {
           long total_txns = 0;
           double txn_time = 0;
+
+          MUTEX_ENTER (log_mutex);
           printf("%6ld", secs_remain);
           for (i = 0; i < n_threads; i++)
             {
@@ -195,6 +204,7 @@ stdout_setprogresstext (char *pszProgress, int nConn, int thread_no,
             }
           printf (" TPS=%f\r", txn_time>0 ? ((double) total_txns / (double) txn_time) : 0.0);
           fflush (stdout);
+          MUTEX_LEAVE (log_mutex);
 	}
     }
   if (time_now - curr_time_msec > BARS_REFRESH_INTERVAL)

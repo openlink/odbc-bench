@@ -67,7 +67,7 @@ clear_status_handler (GtkWidget * widget, gpointer data)
   gtk_text_backward_delete (GTK_TEXT (status), end);
 }
 
-MUTEX_T log_mutex;
+extern MUTEX_T log_mutex;
 
 void
 do_pane_log (const char *format, ...)

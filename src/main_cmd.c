@@ -34,12 +34,16 @@
 
 GUI_t gui;
 
+extern MUTEX_T log_mutex;
+
 static void 
 err_message(const char *format, ...)
 {
   va_list args;
   va_start (args, format);
+  MUTEX_ENTER (log_mutex);
   vfprintf(stderr, format, args);
+  MUTEX_LEAVE (log_mutex);
   va_end(args);
 }
 
@@ -48,7 +52,9 @@ warn_message(const char *format, ...)
 {
   va_list args;
   va_start (args, format);
+  MUTEX_ENTER (log_mutex);
   vprintf(format, args);
+  MUTEX_LEAVE (log_mutex);
   va_end(args);
 }
 
@@ -57,7 +63,9 @@ message(const char *format, ...)
 {
   va_list args;
   va_start (args, format);
+  MUTEX_ENTER (log_mutex);
   vprintf(format, args);
+  MUTEX_LEAVE (log_mutex);
   va_end(args);
 }
 
