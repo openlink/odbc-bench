@@ -1,3 +1,20 @@
-odbc-bench - a TPCA and TPCC benchmark program for databases
-Copyright (C) 2000-2002 by OpenLink Software <odbc-bench@openlinksw.com>
+odbc-bench - a TPC-A and TPC-C like benchmark program for databases
+Copyright (C) 2000-2003 by OpenLink Software <odbc-bench@openlinksw.com>
 All Rights Reserved.
+
+
+LICENSE
+=======
+
+This software is released under the GNU General Public License 
+(see COPYING).
+
+
+DISCLAIMER
+==========
+
+The benchmarks in this application are loosely based on the TPC-A and
+TPC-C standard benchmarks, but this application does not claim to be a
+full or precise implementation, nor are the results obtained by this
+application necessarily comparable to the vendor's published results.
+

@@ -3,8 +3,8 @@
  * 
  *  $Id$
  *
- *  odbc-bench - a TPCA and TPCC benchmark program for databases 
- *  Copyright (C) 2000-2002 OpenLink Software <odbc-bench@openlinksw.com>
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -63,9 +63,16 @@ static void
 usage (void)
 {
   fprintf (stderr, "%s\n", PACKAGE_STRING);
-  fprintf (stderr, "Copyright (C) 2000-2002 OpenLink Software\n");
-  fprintf (stderr, "Please report all bugs to <%s>\n", PACKAGE_BUGREPORT);
-  fprintf (stderr, "This utility is licensed under GPL\n");
+  fprintf (stderr, "Copyright (C) 2000-2003 OpenLink Software\n");
+  fprintf (stderr, "Please report all bugs to <%s>\n\n", PACKAGE_BUGREPORT);
+  fprintf (stderr, "This utility is released under the GNU General Public License (GPL)\n\n");
+  fprintf (stderr, 
+	"Disclaimer: The benchmarks in this application are loosely based\n"
+	"on the TPC-A and TPC-C standard benchmarks, but this application\n"
+	"does not claim to be a full or precise implementation, nor are\n"
+	"the results obtained by this application necessarily comparable\n"
+	"to the vendor's published results.\n\n");
+
   fputs ("\nUsage :\n\n"
   "  -d -dsn   - login dsn\n"
   "  -u -uid   - user id\n"

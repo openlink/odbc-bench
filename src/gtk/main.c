@@ -3,8 +3,8 @@
  * 
  *  $Id$
  *
- *  odbc-bench - a TPCA and TPCC benchmark program for databases 
- *  Copyright (C) 2000-2002 OpenLink Software <odbc-bench@openlinksw.com>
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -142,13 +142,19 @@ do_close_selected_tests (char *filename, answer_code * rc)
 void
 help_about_handler (GtkWidget * widget, gpointer data)
 {
-  char szTemp[1024], szTitle[1024];
+  char szTemp[2048], szTitle[1024];
 
-  sprintf (szTemp, "%s v.%s\n\n"
-      "(C) 2000-2002 OpenLink Software\n\n"
-      "Please report all bugs to\n%s\n\n"
-      "This utility is licensed under GPL", 
-	PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_BUGREPORT);
+  sprintf (szTemp,
+      "%s v.%s\n"
+      "(C) 2000-2003 OpenLink Software\n"
+      "Please report all bugs to <%s>\n\n"
+      "This utility is released under the GNU General Public License (GPL)\n\n"
+      "Disclaimer: The benchmarks in this application are loosely based\n"
+      "on the TPC-A and TPC-C standard benchmarks, but this application\n"
+      "does not claim to be a full or precise implementation, nor are\n"
+      "the results obtained by this application necessarily comparable\n"
+      "to the vendor's published results.\n"
+  , PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_BUGREPORT);
   sprintf (szTitle, "About %s", PACKAGE);
 
   message_box_new (widget, szTemp, szTitle);
@@ -188,14 +194,13 @@ make_new_test (GtkWidget * widget, gpointer data)
       box = gtk_vbox_new (TRUE, 0);
       gtk_container_add (GTK_CONTAINER (frame), box);
 
-      is_a = gtk_radio_button_new_with_label (NULL, "TPC-A");
+      is_a = gtk_radio_button_new_with_label (NULL, "TPC-A like benchmark");
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (is_a), TRUE);
       gtk_box_pack_start (GTK_BOX (box), is_a, TRUE, TRUE, 0);
 
       group = gtk_radio_button_group (GTK_RADIO_BUTTON (is_a));
-      is_c = gtk_radio_button_new_with_label (group, "TPC-C");
+      is_c = gtk_radio_button_new_with_label (group, "TPC-C like benchmark");
       gtk_box_pack_start (GTK_BOX (box), is_c, TRUE, TRUE, 0);
-
 
       button = gtk_button_new_with_label ("OK");
       GTK_WIDGET_SET_FLAGS (button, GTK_CAN_DEFAULT);

@@ -3,8 +3,8 @@
  * 
  *  $Id$
  *
- *  odbc-bench - a TPCA and TPCC benchmark program for databases 
- *  Copyright (C) 2000-2002 OpenLink Software <odbc-bench@openlinksw.com>
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by

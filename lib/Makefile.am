@@ -1,7 +1,7 @@
 #
 #  Makefile.am
 #
-#  odbc-bench - a TPCA and TPCC benchmark program for databases
+#  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
 #  Copyright (C) 2000-2002 OpenLink Software <odbc-bench@openlinksw.com>
 #
 #  This program is free software; you can redistribute it and/or modify
