@@ -419,12 +419,14 @@ do_command_line (int argc, char *argv[])
 	      }
 	    break;
 
-	  case 'n':
+	  case 'x':
 	    test.tpc.a.fUseCommit = TRUE;
 	    break;
+
 	  case '1':
 	    test.tpc.a.fDoQuery = TRUE;
 	    break;
+
 	  case 'a':
 	    test.tpc.a.fExecAsync = TRUE;
 	    break;
@@ -432,11 +434,13 @@ do_command_line (int argc, char *argv[])
 	  case 'R':
 	    do_rollback_on_deadlock = 0;
 	    break;
+
 	  case 'V':
 	    messages_off = 0;
 	    test.SetProgressText = stdout_setprogresstext;
 	    test.ShowProgress = stdout_showprogress;
             test.StopProgress = stdout_stopprogress;
+
 	  case 'v':
 	    verbose = 1;
 	    pane_log = stdout_pane_log;
@@ -508,21 +512,26 @@ do_command_line (int argc, char *argv[])
 	    strncpy (szRDSN, optarg, 49);
 	    szRDSN[49] = 0;
 	    break;
+
 	  case OP_RUID:
 	    strncpy (szRUID, optarg, 49);
 	    szRUID[49] = 0;
 	    break;
+
 	  case OP_RPWD:
 	    strncpy (szRPWD, optarg, 49);
 	    szRPWD[49] = 0;
 	    break;
+
 	  case OP_RFILE:
 	    strncpy (szRFILE, optarg, 127);
 	    szRFILE[127] = 0;
 	    break;
+
 	  case OP_RCREATE_TABLE:
 	    fCreateResultsTable = 1;
 	    break;
+
 	  case OP_RDROP_TABLE:
 	    fDropResultsTable = 1;
 	    break;
