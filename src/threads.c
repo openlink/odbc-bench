@@ -58,6 +58,7 @@ threaded_SendProgress (char *pszProgress, int conn_no, int thread_no,
     float percent, int nTrnPerCall, long secs_remain, double tpca_dDiffSum)
 {
   bench_msg_t msg;
+  memset (&msg, '\0', sizeof (msg));
   msg.Type = 'R';
   msg.nConn = conn_no;
   msg.nThread = thread_no;
@@ -112,6 +113,7 @@ worker_func (void *data)
   DWORD result = TRUE;
   bench_msg_t msg;
 
+  memset (&msg, '\0', sizeof(msg));
   msg.Type = 'F';
   msg.nConn = lpBenchInfo->tpc._.nConn;
   msg.nThread = lpBenchInfo->tpc._.nThreadNo;
