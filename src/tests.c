@@ -1,9 +1,9 @@
 /*
  *  tests.c
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -36,6 +36,7 @@
 #include "tpca_code.h"
 #include "thr.h"
 
+
 void
 init_test (test_t * ptest)
 {
@@ -46,6 +47,7 @@ init_test (test_t * ptest)
   ptest->fCancel = gui.fCancel;
   ptest->tpc._.nMinutes = 5;
   ptest->tpc._.nRuns = 1;
+
   switch (ptest->TestType)
     {
     case TPC_A:
@@ -69,6 +71,7 @@ init_test (test_t * ptest)
 	a->fCreateProcedure = TRUE;
       }
       break;
+
     case TPC_C:
       {
 	tpcc_t *c = &ptest->tpc.c;
@@ -88,10 +91,13 @@ test_type_name (long fSQLOption, char *def)
     {
     case IDX_PLAINSQL:
       return "execute";
+
     case IDX_PARAMS:
       return "prepare";
+
     case IDX_SPROCS:
       return "procedures";
+
     default:
       return def;
     }
@@ -111,11 +117,13 @@ test_type_from_name (char *opt)
     return 0;
 }
 
+
 #define _xmlNewProp(ent, nam, val) \
 { \
   prop = xmlNewProp(ent, (xmlChar *) nam, (xmlChar *) val); \
   prop->doc = (ent)->doc;\
 }
+
 
 xmlNodePtr
 make_test_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
@@ -163,6 +171,7 @@ make_test_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
       _xmlNewProp (table, "load", szProp);
       sprintf (szProp, "%ld", test->tpc.a.udwMaxBranch);
       _xmlNewProp (table, "count", szProp);
+
       if (test->tpc.a.szBranchDSN[0])
 	{
 	  dsn = xmlNewChild (table, ns, (xmlChar *) "dsn", NULL);
@@ -179,6 +188,7 @@ make_test_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
       _xmlNewProp (table, "load", szProp);
       sprintf (szProp, "%ld", test->tpc.a.udwMaxTeller);
       _xmlNewProp (table, "count", szProp);
+
       if (test->tpc.a.szTellerDSN[0])
 	{
 	  dsn = xmlNewChild (table, ns, (xmlChar *) "dsn", NULL);
@@ -195,6 +205,7 @@ make_test_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
       _xmlNewProp (table, "load", szProp);
       sprintf (szProp, "%ld", test->tpc.a.udwMaxAccount);
       _xmlNewProp (table, "count", szProp);
+
       if (test->tpc.a.szAccountDSN[0])
 	{
 	  dsn = xmlNewChild (table, ns, (xmlChar *) "dsn", NULL);
@@ -209,6 +220,7 @@ make_test_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
       _xmlNewProp (table, "create", szProp);
       _xmlNewProp (table, "load", "0");
       _xmlNewProp (table, "count", "0");
+
       if (test->tpc.a.szHistoryDSN[0])
 	{
 	  dsn = xmlNewChild (table, ns, (xmlChar *) "dsn", NULL);
@@ -281,6 +293,7 @@ make_test_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
       }
       break;
     }
+
   return tst;
 }
 
@@ -295,7 +308,8 @@ do_save_selected (char *filename, OList * tests)
   OList *iter = tests;
 
   doc = xmlNewDoc ((xmlChar *) "1.0");
-  xmlCreateIntSubset (doc, (xmlChar *) "tests", NULL, (xmlChar *) "odbc-bench.dtd");
+  xmlCreateIntSubset (doc, (xmlChar *) "tests", NULL,
+      (xmlChar *) "odbc-bench.dtd");
   ns = NULL;
 
   root = xmlNewDocNode (doc, ns, (xmlChar *) "tests", NULL);
@@ -322,8 +336,10 @@ do_save_selected (char *filename, OList * tests)
 	  iter = o_list_next (iter);
 	}
     }
+
   return ret;
 }
+
 
 #define XML_GET_PROP(elem, nam, def) \
 if (!(szProp = (char *) xmlGetProp (elem, (xmlChar *) nam))) \
@@ -344,9 +360,11 @@ tpcc_table_index_from_name (char *szTable)
     "STOCK"
   };
   int i;
+
   for (i = 0; i < 9; i++)
     if (!strcmp (szNames[i], szTable))
       return i;
+
   return -1;
 }
 
@@ -431,25 +449,26 @@ make_test_from_node (xmlNodePtr cur)
 	      if (ret->hdbc)
 		{
 		  if (strcmp (szDBMS, ret->szDBMS))
-		    pane_log ("Stored (%s) and obtained (%s) DBMS names differ\n",  
+		    pane_log ("Stored (%s) and obtained (%s) DBMS names differ\n",
 			szDBMS, ret->szDBMS);
 
 		  if (strcmp (szDBMSVer, ret->szDBMSVer))
-		    pane_log ("Stored (%s) and obtained (%s) DBMS versions differ\n",  
+		    pane_log ("Stored (%s) and obtained (%s) DBMS versions differ\n",
 			szDBMSVer, ret->szDBMSVer);
 
 		  if (strcmp (szDriverName, ret->szDriverName))
-		    pane_log ("Stored (%s) and obtained (%s) Driver names differ\n",  
+		    pane_log ("Stored (%s) and obtained (%s) Driver names differ\n",
 			szDriverName, ret->szDriverName);
 
 		  if (strcmp (szDriverVer, ret->szDriverVer))
-		    pane_log ("Stored (%s) and obtained (%s) Driver versions differ\n",  
+		    pane_log ("Stored (%s) and obtained (%s) Driver versions differ\n",
 			szDriverVer, ret->szDriverVer);
 		}
 */
 	    }
 	}
-      else if (!strcmp ("aschema", (char *) cur->name) && ret->TestType == TPC_A)
+      else if (!strcmp ("aschema", (char *) cur->name)
+	  && ret->TestType == TPC_A)
 	{
 	  xmlNodePtr tables;
 	  XML_GET_PROP (cur, "procedures", "");
@@ -646,7 +665,8 @@ make_test_from_node (xmlNodePtr cur)
 	  XML_GET_PROP (cur, "type", "");
 	  ret->tpc.a.fSQLOption = test_type_from_name (szProp);
 	}
-      else if (!strcmp ("cschema", (char *) cur->name) && ret->TestType == TPC_C)
+      else if (!strcmp ("cschema", (char *) cur->name)
+	  && ret->TestType == TPC_C)
 	{
 	  xmlNodePtr table, dsn;
 	  int inx;
@@ -766,6 +786,7 @@ timer_account_node (timer_account_t * ta, timer_account_t * pack, xmlNsPtr ns,
   return timer;
 }
 
+
 static xmlNodePtr
 make_result_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
 {
@@ -775,12 +796,14 @@ make_result_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
   xmlAttrPtr prop;
   result =
       xmlNewChild (parent, ns,
-      test->TestType == TPC_C ? (xmlChar *) "cresult" : (xmlChar *) "aresult", NULL);
+      test->TestType == TPC_C ? (xmlChar *) "cresult" : (xmlChar *) "aresult",
+      NULL);
 
   if (test->is_unsupported)
     {
       _xmlNewProp (result, (xmlChar *) "state", (xmlChar *) "UNSUPPORTED");
-      _xmlNewProp (result, (xmlChar *) "message", (xmlChar *) "These test options are unsupported by odbc driver");
+      _xmlNewProp (result, (xmlChar *) "message",
+	  (xmlChar *) "These test options are unsupported by odbc driver");
     }
   else if (test->szSQLState[0])
     {
@@ -803,19 +826,24 @@ make_result_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
     {
     case TPC_A:
       sprintf (szProp, "%f", test->tpc.a.dDiffSum);
-      xmlNewChild (result, ns, (xmlChar *) "TransactionTime", (xmlChar *) szProp);
+      xmlNewChild (result, ns, (xmlChar *) "TransactionTime",
+	  (xmlChar *) szProp);
 
       sprintf (szProp, "%ld", test->tpc.a.nTrnCnt);
-      xmlNewChild (result, ns, (xmlChar *) "Transactions", (xmlChar *) szProp);
+      xmlNewChild (result, ns, (xmlChar *) "Transactions",
+	  (xmlChar *) szProp);
 
       sprintf (szProp, "%ld", test->tpc.a.nTrnCnt1Sec);
-      xmlNewChild (result, ns, (xmlChar *) "Transactions1Sec", (xmlChar *) szProp);
+      xmlNewChild (result, ns, (xmlChar *) "Transactions1Sec",
+	  (xmlChar *) szProp);
 
       sprintf (szProp, "%ld", test->tpc.a.nTrnCnt2Sec);
-      xmlNewChild (result, ns, (xmlChar *) "Transactions2Sec", (xmlChar *) szProp);
+      xmlNewChild (result, ns, (xmlChar *) "Transactions2Sec",
+	  (xmlChar *) szProp);
 
       sprintf (szProp, "%f", test->tpc.a.ftps);
-      xmlNewChild (result, ns, (xmlChar *) "TransactionsPerSec", (xmlChar *) szProp);
+      xmlNewChild (result, ns, (xmlChar *) "TransactionsPerSec",
+	  (xmlChar *) szProp);
 
       sprintf (szProp, "%f", test->tpc.a.fsub1);
       xmlNewChild (result, ns, (xmlChar *) "Sub1SecPct", (xmlChar *) szProp);
@@ -843,25 +871,21 @@ make_result_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
       xmlNewChild (result, ns, (xmlChar *) "run_time", (xmlChar *) szProp);
 
       res = xmlNewChild (result, ns, (xmlChar *) "timers", NULL);
-      tmr =
-	  timer_account_node (&test->tpc.c.new_order_ta,
+      tmr = timer_account_node (&test->tpc.c.new_order_ta,
 	  &test->tpc.c.ten_pack_ta, ns, res);
-      tmr =
-	  timer_account_node (&test->tpc.c.payment_ta,
+      tmr = timer_account_node (&test->tpc.c.payment_ta,
 	  &test->tpc.c.ten_pack_ta, ns, res);
-      tmr =
-	  timer_account_node (&test->tpc.c.delivery_ta,
+      tmr = timer_account_node (&test->tpc.c.delivery_ta,
 	  &test->tpc.c.ten_pack_ta, ns, res);
-      tmr =
-	  timer_account_node (&test->tpc.c.slevel_ta,
+      tmr = timer_account_node (&test->tpc.c.slevel_ta,
 	  &test->tpc.c.ten_pack_ta, ns, res);
-      tmr =
-	  timer_account_node (&test->tpc.c.ostat_ta, &test->tpc.c.ten_pack_ta,
+      tmr = timer_account_node (&test->tpc.c.ostat_ta, &test->tpc.c.ten_pack_ta,
 	  ns, res);
       break;
     }
   return result;
 }
+
 
 void
 do_save_run_results (char *filename, OList * selected, int nMinutes)
@@ -878,7 +902,8 @@ do_save_run_results (char *filename, OList * selected, int nMinutes)
   time (&tim);
   _tm = gmtime (&tim);
   doc = xmlNewDoc ((xmlChar *) "1.0");
-  xmlCreateIntSubset (doc, (xmlChar *) "run", NULL, (xmlChar *) "odbc-bench.dtd");
+  xmlCreateIntSubset (doc, (xmlChar *) "run", NULL,
+      (xmlChar *) "odbc-bench.dtd");
   ns = NULL;
 
   root = xmlNewDocNode (doc, ns, (xmlChar *) "run", NULL);
@@ -900,6 +925,7 @@ do_save_run_results (char *filename, OList * selected, int nMinutes)
   xmlSaveFormatFile (filename, doc, 1);
   xmlFreeDoc (doc);
 }
+
 
 #if defined (PTHREADS) || defined(WIN32)
 #define CONTINUE_IF_NOT_SUPPORTED(cond) \
@@ -928,7 +954,7 @@ while (iter) \
     break; \
   } \
   iter = o_list_next (iter); \
-} 
+}
 
 
 #define FOR_ALL_TESTS(action) \
@@ -939,6 +965,7 @@ while (iter) \
   action; \
   iter = o_list_next (iter); \
 }
+
 
 static char *iso_names[] = {
   "/Deflt",
@@ -961,6 +988,7 @@ static short grgiOption[] = {
   IDX_PARAMS,
   IDX_SPROCS
 };
+
 static long isolations[] = {
   SQL_TXN_DRIVER_DEFAULT,
   SQL_TXN_READ_UNCOMMITTED,
@@ -968,6 +996,7 @@ static long isolations[] = {
   SQL_TXN_REPEATABLE_READ,
   SQL_TXN_SERIALIZABLE
 };
+
 static long cursors[] = {
   SQL_CURSOR_FORWARD_ONLY,
   SQL_CURSOR_STATIC,
@@ -975,6 +1004,7 @@ static long cursors[] = {
   SQL_CURSOR_DYNAMIC,
   SQL_CURSOR_MIXED
 };
+
 static long cursor_masks[] = {
   SQL_SO_FORWARD_ONLY,
   SQL_SO_STATIC,
@@ -1025,7 +1055,8 @@ do_threads_run_all (int nTests, OList * tests_orig, int nMinutes,
   time (&tim);
   _tm = gmtime (&tim);
   doc = xmlNewDoc ((xmlChar *) "1.0");
-  xmlCreateIntSubset (doc, (xmlChar *) "run", NULL, (xmlChar *) "odbc-bench.dtd");
+  xmlCreateIntSubset (doc, (xmlChar *) "run", NULL,
+      (xmlChar *) "odbc-bench.dtd");
   ns = NULL;
 
   root = xmlNewDocNode (doc, ns, (xmlChar *) "run", NULL);
@@ -1041,21 +1072,24 @@ do_threads_run_all (int nTests, OList * tests_orig, int nMinutes,
   for (fAsync = FALSE; fAsync <= TRUE; fAsync++)
     {
       /* If async is not supported, then skip this try */
-      MARK_IF_NOT_SUPPORTED ((!test->fAsyncSupported && fAsync), bAsync_unsupported);
+      MARK_IF_NOT_SUPPORTED ((!test->fAsyncSupported
+	      && fAsync), bAsync_unsupported);
 
       for (fTrans = FALSE; fTrans <= TRUE; fTrans++)
 	{
 	  /* If transactions are not supported, then skip them */
-	  MARK_IF_NOT_SUPPORTED ((!test->fCommitSupported && fTrans), bTrans_unsupported);
+	  MARK_IF_NOT_SUPPORTED ((!test->fCommitSupported
+		  && fTrans), bTrans_unsupported);
 
 	  /* Vary the use of the 100 row query */
 	  for (fQuery = FALSE; fQuery <= TRUE; fQuery++)
 	    {
 	      for (nIsolation = 0; nIsolation < 5; nIsolation++)
 		{
-                  bIsol_unsupported = FALSE;
+		  bIsol_unsupported = FALSE;
 
-		  if ((!fQuery && nIsolation > 0) || (fQuery && nIsolation == 0))
+		  if ((!fQuery && nIsolation > 0) || (fQuery
+			  && nIsolation == 0))
 		    continue;
 
 		  if (fQuery)
@@ -1066,7 +1100,7 @@ do_threads_run_all (int nTests, OList * tests_orig, int nMinutes,
 
 		  for (nCursor = 0; nCursor < 5; nCursor++)
 		    {
-                      bCurs_unsupported = FALSE;
+		      bCurs_unsupported = FALSE;
 
 		      if (!fQuery && nCursor > 0)
 			continue;
@@ -1074,55 +1108,60 @@ do_threads_run_all (int nTests, OList * tests_orig, int nMinutes,
 		      if (fQuery)
 			{
 			  MARK_IF_NOT_SUPPORTED (!(test->nCursorsSupported
-				  & cursor_masks[nCursor]), bCurs_unsupported);
+				  & cursor_masks[nCursor]),
+			      bCurs_unsupported);
 			}
 
 		      /* Loop around the SQL options */
 		      for (nOption = 0; nOption < NUMITEMS (grgiOption);
 			  nOption++)
 			{
-                          test_t *tst = NULL;
+			  test_t *tst = NULL;
 
-			  MARK_IF_NOT_SUPPORTED ((grgiOption[nOption] == IDX_SPROCS 
-			        && !test->fProcsSupported), bTest_unsupported);
+			  MARK_IF_NOT_SUPPORTED ((grgiOption[nOption] ==
+				  IDX_SPROCS
+				  && !test->fProcsSupported),
+			      bTest_unsupported);
 
-			  MARK_IF_NOT_SUPPORTED ((test->tpc.a.nArrayParSize > 1 
-			        && !test->fBatchSupported), bArr_unsupported);
+			  MARK_IF_NOT_SUPPORTED ((test->tpc.a.nArrayParSize >
+				  1
+				  && !test->fBatchSupported),
+			      bArr_unsupported);
 
-                          tst = (test_t *) calloc (1, sizeof (test_t));
+			  tst = (test_t *) calloc (1, sizeof (test_t));
 
-                          tst->tpc.a.fExecAsync = fAsync;
-                          tst->tpc.a.fUseCommit = fTrans;
-                          tst->tpc.a.fDoQuery = fQuery;
-                          tst->tpc.a.txn_isolation = isolations[nIsolation];
-                          tst->tpc.a.nCursorType = cursors[nCursor];
-                          tst->tpc.a.fSQLOption = grgiOption[nOption];
-                          if (bAsync_unsupported || bTrans_unsupported ||
-                              bIsol_unsupported || bCurs_unsupported ||
-                              bTest_unsupported || bArr_unsupported)
-                            tst->is_unsupported = TRUE;
-                          else
-                            run_size++;
-                          if (fQuery && nCursor > 0)
-                            {
+			  tst->tpc.a.fExecAsync = fAsync;
+			  tst->tpc.a.fUseCommit = fTrans;
+			  tst->tpc.a.fDoQuery = fQuery;
+			  tst->tpc.a.txn_isolation = isolations[nIsolation];
+			  tst->tpc.a.nCursorType = cursors[nCursor];
+			  tst->tpc.a.fSQLOption = grgiOption[nOption];
+			  if (bAsync_unsupported || bTrans_unsupported ||
+			      bIsol_unsupported || bCurs_unsupported ||
+			      bTest_unsupported || bArr_unsupported)
+			    tst->is_unsupported = TRUE;
+			  else
+			    run_size++;
+			  if (fQuery && nCursor > 0)
+			    {
 			      tst->tpc.a.nRowsetSize = 30;
 			      tst->tpc.a.nKeysetSize = 30;
 			      tst->tpc.a.nTraversalCount = 3;
 			      if (nCursor == 4)
-			        tst->tpc.a.nKeysetSize = 60;
-                            }
+				tst->tpc.a.nKeysetSize = 60;
+			    }
 
-			  
+
 			  /* All options are set, so do the run */
 			  sprintf (tst->szTitle, "%s%s%s%s%s%s",
-			    grgiOptionNames[nOption],
-			    (fAsync ? "/Async" : ""),
-			    (fQuery ? "/Query" : ""),
-			    (fTrans ? "/Trans" : ""),
-			    (fQuery ? iso_names[nIsolation] : ""),
-			    (fQuery ? crsr_names[nCursor] : ""));
+			      grgiOptionNames[nOption],
+			      (fAsync ? "/Async" : ""),
+			      (fQuery ? "/Query" : ""),
+			      (fTrans ? "/Trans" : ""),
+			      (fQuery ? iso_names[nIsolation] : ""),
+			      (fQuery ? crsr_names[nCursor] : ""));
 
-			  list_tests = o_list_append(list_tests, tst);
+			  list_tests = o_list_append (list_tests, tst);
 			  list_size++;
 
 			}
@@ -1143,53 +1182,49 @@ do_threads_run_all (int nTests, OList * tests_orig, int nMinutes,
     }
 
   i = 0;
-  for (cur_test = list_tests; cur_test; cur_test = o_list_next(cur_test), i++)
+  for (cur_test = list_tests; cur_test;
+      cur_test = o_list_next (cur_test), i++)
     {
       BOOL sts;
       test_t *tst = (test_t *) cur_test->data;
-      sprintf(szTemp,"Estimate time: %ld min. | Test: %d of %d | %s", 
-        (long)(nMinutes * run_size), i + 1, list_size,
-        tst->szTitle);
+      sprintf (szTemp, "Estimate time: %ld min. | Test: %d of %d | %s",
+	  (long) (nMinutes * run_size), i + 1, list_size, tst->szTitle);
 
       if (!tst->is_unsupported)
-        run_size--;
+	run_size--;
 
-      FOR_ALL_TESTS (
-          test->tpc.a.fExecAsync = tst->tpc.a.fExecAsync;
-          test->tpc.a.fUseCommit = tst->tpc.a.fUseCommit;
-          test->tpc.a.fDoQuery   = tst->tpc.a.fDoQuery;
-          test->tpc.a.txn_isolation = tst->tpc.a.txn_isolation;
-          test->tpc.a.nCursorType = tst->tpc.a.nCursorType;
-          test->tpc.a.fSQLOption = tst->tpc.a.fSQLOption;
-          test->tpc.a.nRowsetSize = tst->tpc.a.nRowsetSize;
-          test->tpc.a.nKeysetSize = tst->tpc.a.nKeysetSize;
-          test->tpc.a.nTraversalCount = tst->tpc.a.nTraversalCount;
-          test->is_unsupported = tst->is_unsupported);
+      FOR_ALL_TESTS (test->tpc.a.fExecAsync = tst->tpc.a.fExecAsync;
+	  test->tpc.a.fUseCommit = tst->tpc.a.fUseCommit;
+	  test->tpc.a.fDoQuery = tst->tpc.a.fDoQuery;
+	  test->tpc.a.txn_isolation = tst->tpc.a.txn_isolation;
+	  test->tpc.a.nCursorType = tst->tpc.a.nCursorType;
+	  test->tpc.a.fSQLOption = tst->tpc.a.fSQLOption;
+	  test->tpc.a.nRowsetSize = tst->tpc.a.nRowsetSize;
+	  test->tpc.a.nKeysetSize = tst->tpc.a.nKeysetSize;
+	  test->tpc.a.nTraversalCount = tst->tpc.a.nTraversalCount;
+	  test->is_unsupported = tst->is_unsupported);
 
 #if 0
-      printf("%s |%d:%d:%d=%d\n", szTemp, tst->tpc.a.nRowsetSize,tst->tpc.a.nKeysetSize,tst->tpc.a.nTraversalCount,tst->is_unsupported);
+      printf ("%s |%d:%d:%d=%d\n", szTemp, tst->tpc.a.nRowsetSize,
+	  tst->tpc.a.nKeysetSize, tst->tpc.a.nTraversalCount,
+	  tst->is_unsupported);
 #endif
 
       sts = do_threads_run (nTests, tests, nMinutes, szTemp);
 
-      if (gui.isCancelled())
-        goto end;
+      if (gui.isCancelled ())
+	goto end;
 
-      FOR_ALL_TESTS (
-	      make_result_node (test, ns, root); 
-	      test->szWarning[0] = 
-	      test->szSQLError[0] = 
-	      test->szSQLState[0] = 0);
+      FOR_ALL_TESTS (make_result_node (test, ns, root);
+	  test->szWarning[0] = test->szSQLError[0] = test->szSQLState[0] = 0);
       xmlSaveFormatFile (filename, doc, 1);
     }
 
-
-
 end:
-  for (cur_test = list_tests; cur_test; cur_test = o_list_next(cur_test))
-    XFREE(cur_test->data);
+  for (cur_test = list_tests; cur_test; cur_test = o_list_next (cur_test))
+    XFREE (cur_test->data);
 
-  o_list_free(list_tests);
+  o_list_free (list_tests);
 
   FOR_ALL_TESTS (XFREE (test));
   o_list_free (tests);
@@ -1231,7 +1266,8 @@ DoRunAll (test_t * test_orig, char *filename)
   time (&tim);
   _tm = gmtime (&tim);
   doc = xmlNewDoc ((xmlChar *) "1.0");
-  xmlCreateIntSubset (doc, (xmlChar *) "run", NULL, (xmlChar *) "odbc-bench.dtd");
+  xmlCreateIntSubset (doc, (xmlChar *) "run", NULL,
+      (xmlChar *) "odbc-bench.dtd");
   ns = NULL;
 
   root = xmlNewDocNode (doc, ns, (xmlChar *) "run", NULL);
@@ -1246,21 +1282,21 @@ DoRunAll (test_t * test_orig, char *filename)
 
   for (fAsync = FALSE; fAsync <= TRUE; fAsync++)
     {
-     
+
       /* If async is not supported, then skip this try */
       if ((!test_orig->fAsyncSupported && fAsync))
-        bAsync_unsupported = TRUE;
+	bAsync_unsupported = TRUE;
       else
-        bAsync_unsupported = FALSE;
+	bAsync_unsupported = FALSE;
 
 
       for (fTrans = FALSE; fTrans <= TRUE; fTrans++)
 	{
 	  /* If transactions are not supported, then skip them */
 	  if ((!test_orig->fCommitSupported && fTrans))
-            bTrans_unsupported = TRUE;
-          else
-            bTrans_unsupported = FALSE;
+	    bTrans_unsupported = TRUE;
+	  else
+	    bTrans_unsupported = FALSE;
 
 
 	  /* Vary the use of the 100 row query */
@@ -1269,21 +1305,22 @@ DoRunAll (test_t * test_orig, char *filename)
 
 	      for (nIsolation = 0; nIsolation < 5; nIsolation++)
 		{
-                  bIsol_unsupported = FALSE;
+		  bIsol_unsupported = FALSE;
 
-		  if ((!fQuery && nIsolation > 0) || (fQuery && nIsolation == 0))
+		  if ((!fQuery && nIsolation > 0) || (fQuery
+			  && nIsolation == 0))
 		    continue;
 
 		  if (fQuery)
 		    {
 		      if (!(test_orig->nIsolationsSupported &
 			      isolations[nIsolation]))
-                        bIsol_unsupported = TRUE;
+			bIsol_unsupported = TRUE;
 		    }
 
 		  for (nCursor = 0; nCursor < 5; nCursor++)
 		    {
-                      bCurs_unsupported = FALSE;
+		      bCurs_unsupported = FALSE;
 
 		      if (!fQuery && nCursor > 0)
 			continue;
@@ -1292,7 +1329,7 @@ DoRunAll (test_t * test_orig, char *filename)
 			{
 			  if (!(test_orig->nCursorsSupported &
 				  cursor_masks[nCursor]))
-                            bCurs_unsupported = TRUE;
+			    bCurs_unsupported = TRUE;
 			}
 
 		      /* Loop around the SQL options */
@@ -1302,53 +1339,53 @@ DoRunAll (test_t * test_orig, char *filename)
 			  /* If sprocs are not supported, then we have to skip */
 			  if ((grgiOption[nOption] == IDX_SPROCS
 				  && !test_orig->fProcsSupported))
-                            bTest_unsupported = TRUE;
-                          else
-                            bTest_unsupported = FALSE;
+			    bTest_unsupported = TRUE;
+			  else
+			    bTest_unsupported = FALSE;
 
-                         if (test_orig->tpc.a.nArrayParSize > 1 && 
-                              !test->fBatchSupported)
-                            bArr_unsupported = TRUE;
-                          else
-                            bArr_unsupported = FALSE;
+			  if (test_orig->tpc.a.nArrayParSize > 1 &&
+			      !test->fBatchSupported)
+			    bArr_unsupported = TRUE;
+			  else
+			    bArr_unsupported = FALSE;
 
-                          test = (test_t *) malloc (sizeof (test_t));
-                          memcpy (test, test_orig, sizeof (test_t));
+			  test = (test_t *) malloc (sizeof (test_t));
+			  memcpy (test, test_orig, sizeof (test_t));
 
-                          test->hstmt = 0;
-                          test->hdbc = 0;
-                          test->tpc.a.fExecAsync = fAsync;
-                          test->tpc.a.fUseCommit = fTrans;
-                          test->tpc.a.fDoQuery = fQuery;
-                          test->tpc.a.txn_isolation = isolations[nIsolation];
-                          test->tpc.a.nCursorType = cursors[nCursor];
-                          test->tpc.a.fSQLOption = grgiOption[nOption];
-                          if (bAsync_unsupported || bTrans_unsupported ||
-                              bIsol_unsupported || bCurs_unsupported ||
-                              bTest_unsupported || bArr_unsupported)
-                            test->is_unsupported = TRUE;
-                          else
-                            run_size++;
-			  
-                          if (fQuery && nCursor > 0)
-                            {
+			  test->hstmt = 0;
+			  test->hdbc = 0;
+			  test->tpc.a.fExecAsync = fAsync;
+			  test->tpc.a.fUseCommit = fTrans;
+			  test->tpc.a.fDoQuery = fQuery;
+			  test->tpc.a.txn_isolation = isolations[nIsolation];
+			  test->tpc.a.nCursorType = cursors[nCursor];
+			  test->tpc.a.fSQLOption = grgiOption[nOption];
+			  if (bAsync_unsupported || bTrans_unsupported ||
+			      bIsol_unsupported || bCurs_unsupported ||
+			      bTest_unsupported || bArr_unsupported)
+			    test->is_unsupported = TRUE;
+			  else
+			    run_size++;
+
+			  if (fQuery && nCursor > 0)
+			    {
 			      test->tpc.a.nRowsetSize = 30;
 			      test->tpc.a.nKeysetSize = 30;
 			      test->tpc.a.nTraversalCount = 3;
 			      if (nCursor == 4)
-			        test->tpc.a.nKeysetSize = 60;
-                            }
+				test->tpc.a.nKeysetSize = 60;
+			    }
 
 			  /* All options are set, so do the run */
 			  sprintf (test->szTitle, "%s%s%s%s%s%s",
-			    grgiOptionNames[nOption],
-			    (fAsync ? "/Async" : ""),
-			    (fQuery ? "/Query" : ""),
-			    (fTrans ? "/Trans" : ""),
-			    (fQuery ? iso_names[nIsolation] : ""),
-			    (fQuery ? crsr_names[nCursor] : ""));
+			      grgiOptionNames[nOption],
+			      (fAsync ? "/Async" : ""),
+			      (fQuery ? "/Query" : ""),
+			      (fTrans ? "/Trans" : ""),
+			      (fQuery ? iso_names[nIsolation] : ""),
+			      (fQuery ? crsr_names[nCursor] : ""));
 
-			  list_tests = o_list_append(list_tests, test);
+			  list_tests = o_list_append (list_tests, test);
 			  list_size++;
 
 			}
@@ -1360,35 +1397,35 @@ DoRunAll (test_t * test_orig, char *filename)
 
 
   i = 0;
-  for (cur_test = list_tests; cur_test; cur_test = o_list_next(cur_test), i++)
+  for (cur_test = list_tests; cur_test;
+      cur_test = o_list_next (cur_test), i++)
     {
       BOOL sts;
       test = (test_t *) cur_test->data;
-      sprintf(szTemp,"Estimate time: %ld min. | Test: %d of %d | %s", 
-        (long)(test->tpc._.nMinutes * run_size), i + 1, list_size,
-        test->szTitle);
+      sprintf (szTemp, "Estimate time: %ld min. | Test: %d of %d | %s",
+	  (long) (test->tpc._.nMinutes * run_size), i + 1, list_size,
+	  test->szTitle);
 
       if (!test->is_unsupported)
-        run_size--;
+	run_size--;
 
       sts = DoRun (test, szTemp);
 
-      if (gui.isCancelled())
-        goto end;
+      if (gui.isCancelled ())
+	goto end;
 
       make_result_node (test, ns, root);
       xmlSaveFormatFile (filename, doc, 1);
-      test->szWarning [0] = '\0';
+      test->szWarning[0] = '\0';
       test->szSQLError[0] = '\0';
       test->szSQLState[0] = '\0';
     }
 
-
 end:
-  for (cur_test = list_tests; cur_test; cur_test = o_list_next(cur_test))
-    XFREE(cur_test->data);
+  for (cur_test = list_tests; cur_test; cur_test = o_list_next (cur_test))
+    XFREE (cur_test->data);
 
-  o_list_free(list_tests);
+  o_list_free (list_tests);
 
   xmlFreeDoc (doc);
 }

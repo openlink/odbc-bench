@@ -1,9 +1,9 @@
 /*
  *  main_cmd.c
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -36,48 +36,54 @@ GUI_t gui;
 
 extern MUTEX_T log_mutex;
 
-static void 
-err_message(const char *format, ...)
+
+static void
+err_message (const char *format, ...)
 {
   va_list args;
   va_start (args, format);
   MUTEX_ENTER (log_mutex);
-  vfprintf(stderr, format, args);
+  vfprintf (stderr, format, args);
   MUTEX_LEAVE (log_mutex);
-  va_end(args);
+  va_end (args);
 }
 
-static void 
-warn_message(const char *format, ...)
+
+static void
+warn_message (const char *format, ...)
 {
   va_list args;
   va_start (args, format);
   MUTEX_ENTER (log_mutex);
-  vprintf(format, args);
+  vprintf (format, args);
   MUTEX_LEAVE (log_mutex);
-  va_end(args);
+  va_end (args);
 }
 
-static void 
-message(const char *format, ...)
+
+static void
+message (const char *format, ...)
 {
   va_list args;
   va_start (args, format);
   MUTEX_ENTER (log_mutex);
-  vprintf(format, args);
+  vprintf (format, args);
   MUTEX_LEAVE (log_mutex);
-  va_end(args);
+  va_end (args);
 }
+
 
 static void
 do_pane_log (const char *format, ...)
 {
 }
 
+
 void (*pane_log) (const char *format, ...) = do_pane_log;
 
+
 BOOL
-isCancelled(void)
+isCancelled (void)
 {
   return FALSE;
 }
@@ -93,11 +99,11 @@ main (int argc, char *argv[])
 
   do_alloc_env ();
 
-  memset(&gui, 0, sizeof(gui));
+  memset (&gui, 0, sizeof (gui));
   gui.main_quit = NULL;
-  gui.err_message = err_message; 
-  gui.warn_message = warn_message; 
-  gui.message = message; 
+  gui.err_message = err_message;
+  gui.warn_message = warn_message;
+  gui.message = message;
   gui.add_test_to_the_pool = NULL;
   gui.for_all_in_pool = NULL;
   gui.do_MarkFinished = stdout_markfinished;

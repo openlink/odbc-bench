@@ -1,9 +1,9 @@
 /*
  *  timeacct.h
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -46,8 +46,6 @@ timer_account_t;
 
 
 void ta_print_out (FILE * out, timer_account_t * ta);
-
-
 void ta_init (timer_account_t * ta, char *n);
 void ta_enter (timer_account_t * ta);
 void ta_leave (timer_account_t * ta);
@@ -70,7 +68,6 @@ void gettimeofday (struct timeval *tv, struct timezone *tz);
   ((unsigned long)l & 0x00ff0000 ) >> 8 |  \
   ((unsigned long)l & 0x0000ff00 ) << 8 |  \
   ((unsigned long)l) << 24 )
-
 
 #define TV_TO_STRING(tv) \
   (tv) -> tv_sec = REV_LONG ((tv) -> tv_sec), (tv) -> tv_usec = REV_LONG ((tv) -> tv_usec)

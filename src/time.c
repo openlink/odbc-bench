@@ -1,9 +1,9 @@
 /*
  *  time.c
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -93,6 +93,7 @@ ta_add_sample (timer_account_t * ta, long this_time)
     }
 }
 
+
 void
 ta_print_buffer (char *szOut, timer_account_t * ta, timer_account_t * pack)
 {
@@ -112,6 +113,7 @@ ta_print_buffer (char *szOut, timer_account_t * ta, timer_account_t * pack)
     }
 }
 
+
 void
 ta_merge (timer_account_t * to, timer_account_t * from)
 {
@@ -120,8 +122,9 @@ ta_merge (timer_account_t * to, timer_account_t * from)
   to->ta_min = from->ta_min < to->ta_min ? from->ta_min : to->ta_min;
   to->ta_max = from->ta_max > to->ta_max ? from->ta_max : to->ta_max;
 }
-#if defined (WIN32)
 
+
+#if defined (WIN32)
 void
 gettimeofday (struct timeval *tv, struct timezone *tz)
 {
@@ -135,9 +138,7 @@ gettimeofday (struct timeval *tv, struct timezone *tz)
      keep returning a rising series */
   last_tv = *tv;
 }
-
 #else
-
 long
 get_msec_count ()
 {
@@ -145,7 +146,6 @@ get_msec_count ()
   gettimeofday (&time, NULL);
   return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }
-
 #endif
 
 

@@ -1,9 +1,9 @@
 /*
  *  thr.h
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -74,6 +74,7 @@ typedef HANDLE THREAD_T;
 	ReleaseMutex(mutex)
 
 #endif
+
 #if defined (PTHREADS) || defined(WIN32)
 int do_threads_run (int nConnCount, OList * tests, int nMinutes,
     char *szTitle);

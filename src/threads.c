@@ -1,9 +1,9 @@
 /*
  *  threads.c
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -50,8 +50,7 @@ typedef struct bench_msg_s
   int nTrnPerCall;
   long secs_remain;
   double tpca_dDiffSum;
-}
-bench_msg_t;
+} bench_msg_t;
 
 
 static void
@@ -67,7 +66,10 @@ threaded_SendProgress (char *pszProgress, int conn_no, int thread_no,
   msg.nTrnPerCall = nTrnPerCall;
   msg.secs_remain = secs_remain;
   msg.tpca_dDiffSum = tpca_dDiffSum;
-  if (!signal_pipe[1] || sizeof (bench_msg_t) != write (signal_pipe[1], &msg, sizeof (bench_msg_t)))
+
+  if (!signal_pipe[1]
+      || sizeof (bench_msg_t) != write (signal_pipe[1], &msg,
+	  sizeof (bench_msg_t)))
     abort ();
 }
 
@@ -92,7 +94,7 @@ dummy_pane_log (const char *szFormat, ...)
 
 
 static void
-dummy_ShowProgress (void * widget, char * text, BOOL bForceSingle, float fMax)
+dummy_ShowProgress (void *widget, char *text, BOOL bForceSingle, float fMax)
 {
 }
 
@@ -118,7 +120,7 @@ static unsigned int WINAPI worker_func (void *data)
 #endif
   bench_msg_t msg;
 
-  memset (&msg, '\0', sizeof(msg));
+  memset (&msg, '\0', sizeof (msg));
   msg.Type = 'F';
   msg.nConn = lpBenchInfo->tpc._.nConn;
   msg.nThread = lpBenchInfo->tpc._.nThreadNo;
@@ -136,23 +138,26 @@ static unsigned int WINAPI worker_func (void *data)
       lpBenchInfo->tpc._.nThreads = 1;
 
       if (do_login (lpBenchInfo))
-        {
-          result = FALSE;
-          if (lpBenchInfo->hstmt)
+	{
+	  result = FALSE;
+	  if (lpBenchInfo->hstmt)
 	    switch (lpBenchInfo->TestType)
 	      {
 	      case TPC_A:
-	        result = DoThreadsRun (lpBenchInfo);
-	        break;
+		result = DoThreadsRun (lpBenchInfo);
+		break;
+
 	      case TPC_C:
-	        result = tpcc_run_test (NULL, lpBenchInfo) ? TRUE : FALSE;
-	        break;
+		result = tpcc_run_test (NULL, lpBenchInfo) ? TRUE : FALSE;
+		break;
 	      }
-          do_logout (lpBenchInfo);
+	  do_logout (lpBenchInfo);
 	}
     }
 
-  if (!signal_pipe[1] || sizeof (bench_msg_t) != write (signal_pipe[1], &msg, sizeof (bench_msg_t)))
+  if (!signal_pipe[1]
+      || sizeof (bench_msg_t) != write (signal_pipe[1], &msg,
+	  sizeof (bench_msg_t)))
     abort ();
 
 #if defined(PTHREADS)
@@ -162,8 +167,9 @@ static unsigned int WINAPI worker_func (void *data)
 #endif
 }
 
+
 static int
-ThreadedCalcStats (OList * tests, THREAD_T ** workers, 
+ThreadedCalcStats (OList * tests, THREAD_T ** workers,
     test_t ** data, int nConnCount, int *nThreads)
 {
   OList *iter;
@@ -199,7 +205,6 @@ ThreadedCalcStats (OList * tests, THREAD_T ** workers,
 	  reset_times (test);
 	}
 
-
       for (i = 0; i < nThreads[nConn]; i++)
 	{
 	  GET_EXIT_STATUS (workers[nConn][i], &result);
@@ -212,21 +217,21 @@ ThreadedCalcStats (OList * tests, THREAD_T ** workers,
 	    case TPC_A:
 	      nA++;
 	      if (!test->is_unsupported && result)
-	        {
-	          nOkA++;
-	          test->tpc.a.nTrnCnt += data[nConn][i].tpc.a.nTrnCnt;
-	          test->tpc.a.nTrnCnt1Sec += data[nConn][i].tpc.a.nTrnCnt1Sec;
-	          test->tpc.a.nTrnCnt2Sec += data[nConn][i].tpc.a.nTrnCnt2Sec;
-	          if (data[nConn][i].tpc.a.dDiffSum > test->tpc.a.dDiffSum)
-	            test->tpc.a.dDiffSum = data[nConn][i].tpc.a.dDiffSum;
-	        }
+		{
+		  nOkA++;
+		  test->tpc.a.nTrnCnt += data[nConn][i].tpc.a.nTrnCnt;
+		  test->tpc.a.nTrnCnt1Sec += data[nConn][i].tpc.a.nTrnCnt1Sec;
+		  test->tpc.a.nTrnCnt2Sec += data[nConn][i].tpc.a.nTrnCnt2Sec;
+		  if (data[nConn][i].tpc.a.dDiffSum > test->tpc.a.dDiffSum)
+		    test->tpc.a.dDiffSum = data[nConn][i].tpc.a.dDiffSum;
+		}
 	      break;
 
 	    case TPC_C:
 	      nC++;
-  	      if (result)
-	        {
-	          nOkC++;
+	      if (result)
+		{
+		  nOkC++;
 		  test->tpc.c.tpcc_sum += data[nConn][i].tpc.c.tpcc_sum;
 		  test->tpc.c.run_time += data[nConn][i].tpc.c.run_time;
 		  test->tpc.c.nRounds += data[nConn][i].tpc.c.nRounds;
@@ -256,22 +261,24 @@ ThreadedCalcStats (OList * tests, THREAD_T ** workers,
 	{
 	  if (nOkA < nA)
 	    pane_log
-	      ("\r\n\r\n%s - %s(%s) - %d out of %d TPC-A Threads ended with errors.\r\n",
-	      test->szName, test->szDBMS, test->szDriverName, nA -nOkA, nA);
+		("\r\n\r\n%s - %s(%s) - %d out of %d TPC-A Threads ended with errors.\r\n",
+		test->szName, test->szDBMS, test->szDriverName, nA - nOkA,
+		nA);
 	  else
 	    pane_log
-	      ("\r\n\r\n%s - %s(%s) - all %d TPC-A Threads completed successfully.\r\n",
-	      test->szName, test->szDBMS, test->szDriverName, nOkA);
+		("\r\n\r\n%s - %s(%s) - all %d TPC-A Threads completed successfully.\r\n",
+		test->szName, test->szDBMS, test->szDriverName, nOkA);
 
-          if (nOkA == 0 && !test->szSQLState[0] && !test->szSQLError[0])
-            {
-              strcpy((char *) test->szSQLState, "ERROR");
-              strcpy((char *) test->szSQLError, "All Threads ended prematurely.");
-            }
+	  if (nOkA == 0 && !test->szSQLState[0] && !test->szSQLError[0])
+	    {
+	      strcpy ((char *) test->szSQLState, "ERROR");
+	      strcpy ((char *) test->szSQLError,
+		  "All Threads ended prematurely.");
+	    }
 
 	  if (test->hdbc)
-	    CalcStats (runStatus, nOkA, test, test->tpc.a.nTrnCnt, 
-	        test->tpc.a.nTrnCnt1Sec,
+	    CalcStats (runStatus, nOkA, test, test->tpc.a.nTrnCnt,
+		test->tpc.a.nTrnCnt1Sec,
 		test->tpc.a.nTrnCnt2Sec, test->tpc.a.dDiffSum);
 	}
 
@@ -290,7 +297,8 @@ ThreadedCalcStats (OList * tests, THREAD_T ** workers,
 
       if (!(nOkA || nOkC))
 	{
-	  pane_log ("\r\n\r\n%s - %s(%s) - All Threads ended prematurely.\r\n",
+	  pane_log
+	      ("\r\n\r\n%s - %s(%s) - All Threads ended prematurely.\r\n",
 	      test->szName, test->szDBMS, test->szDriverName);
 	  rc = 0;
 	}
@@ -350,26 +358,26 @@ do_threads_run (int nConnCount, OList * tests, int nMinutes, char *szTitle)
       test_t *test = (test_t *) iter->data;
       test->tpc._.nMinutes = nMinutes;
       if (do_login (test))
-        {
-          get_dsn_data (test);
-          if (test->hdbc && IS_A (*test))
+	{
+	  get_dsn_data (test);
+	  if (test->hdbc && IS_A (*test))
 	    {
 	      fExecuteSql (test, (SQLCHAR *) "delete from HISTORY");
 	      SQLTransact (SQL_NULL_HENV, test->hdbc, SQL_COMMIT);
 	    }
-          do_logout (test);
+	  do_logout (test);
 
-          n_threads[conn] = test->tpc._.nThreads ? test->tpc._.nThreads : 1;
-          data[conn] = (test_t *) malloc (n_threads[conn] * sizeof (test_t));
-          workers[conn] =
+	  n_threads[conn] = test->tpc._.nThreads ? test->tpc._.nThreads : 1;
+	  data[conn] = (test_t *) malloc (n_threads[conn] * sizeof (test_t));
+	  workers[conn] =
 	      (THREAD_T *) malloc (n_threads[conn] * sizeof (THREAD_T));
-          nThreads += n_threads[conn];
-          memset (test->szSQLError, 0, sizeof (test->szSQLError));
-          memset (test->szSQLState, 0, sizeof (test->szSQLState));
-          for (thr = 0; thr < n_threads[conn]; thr++)
+	  nThreads += n_threads[conn];
+	  memset (test->szSQLError, 0, sizeof (test->szSQLError));
+	  memset (test->szSQLState, 0, sizeof (test->szSQLState));
+	  for (thr = 0; thr < n_threads[conn]; thr++)
 	    {
 	      memcpy (&(data[conn][thr]), test, sizeof (test_t));
-              data[conn][thr].test = test;
+	      data[conn][thr].test = test;
 	      data[conn][thr].tpc._.nThreadNo = thr;
 	      data[conn][thr].tpc._.nConn = conn;
 	      START_THREAD (workers[conn][thr], worker_func, data[conn][thr]);
@@ -396,11 +404,14 @@ do_threads_run (int nConnCount, OList * tests, int nMinutes, char *szTitle)
 		  data[msg.nConn][msg.nThread].szLoginDSN,
 		  data[msg.nConn][msg.nThread].szSQLState,
 		  data[msg.nConn][msg.nThread].szSQLError);
-	      strcpy((char *)data[msg.nConn][msg.nThread].test->szSQLState, (char *)data[msg.nConn][msg.nThread].szSQLState);
-	      strcpy((char *)data[msg.nConn][msg.nThread].test->szSQLError, (char *)data[msg.nConn][msg.nThread].szSQLError);
-              wasError = TRUE;
+	      strcpy ((char *) data[msg.nConn][msg.nThread].test->szSQLState,
+		  (char *) data[msg.nConn][msg.nThread].szSQLState);
+	      strcpy ((char *) data[msg.nConn][msg.nThread].test->szSQLError,
+		  (char *) data[msg.nConn][msg.nThread].szSQLError);
+	      wasError = TRUE;
 	    }
 	  break;
+
 	case 'R':
 	  time (&now_time);
 	  time_remaining = nMinutes * 60 - (now_time - start_time);
@@ -408,10 +419,12 @@ do_threads_run (int nConnCount, OList * tests, int nMinutes, char *szTitle)
 	  sprintf (szTemp, "%10ld secs remaining", time_remaining);
 	  nRuns += 1;
 	  lpBenchInfo->SetProgressText (szTemp, msg.nConn, msg.nThread,
-	      msg.percent, msg.nTrnPerCall, time_remaining, msg.tpca_dDiffSum);
+	      msg.percent, msg.nTrnPerCall, time_remaining,
+	      msg.tpca_dDiffSum);
 	  break;
 	}
     }
+
   fclose (fi);
   close (signal_pipe[1]);
   close (signal_pipe[0]);

@@ -1,9 +1,9 @@
 /*
  *  odbcinc.h
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,8 @@ extern int messages_off;
 extern int quiet;
 void print_error (SQLHENV e1, SQLHDBC e2, SQLHSTMT e3, void *test);
 
-#define vShowErrors(dlg, henv, hdbc, hstmt, _test_) print_error(henv, hdbc, hstmt, _test_)
+#define vShowErrors(dlg, henv, hdbc, hstmt, _test_) \
+	print_error(henv, hdbc, hstmt, _test_)
 
 #define ERRORS_OFF messages_off = 1
 #define ERRORS_ON messages_off = 0
@@ -40,6 +41,7 @@ void print_error (SQLHENV e1, SQLHDBC e2, SQLHSTMT e3, void *test);
 
 #define RC_SUCCESSFUL(rc) (!((rc)>>1))
 #define RC_NOTSUCCESSFUL(rc) ((rc)>>1)
+
 
 #define IS_ERR(stmt, foo, _test_) \
 if (SQL_ERROR == foo) \
@@ -69,8 +71,7 @@ SQLCHAR message[256] = {""}
 #define IF_DEADLOCK_OR_ERR_GO(stmt, tag, foo, deadlocktag) \
 if (SQL_ERROR == (foo)) \
 { \
-	RETCODE _rc = SQLError (SQL_NULL_HENV, SQL_NULL_HDBC, stmt, (SQLCHAR *) state, NULL, \
-		(SQLCHAR *) message, sizeof (message), &len); \
+	RETCODE _rc = SQLError (SQL_NULL_HENV, SQL_NULL_HDBC, stmt, (SQLCHAR *) state, NULL, (SQLCHAR *) message, sizeof (message), &len); \
 	if (_rc == SQL_SUCCESS && 0 == strncmp((char *) state, "40001", 5)) \
 	  { \
 	    goto deadlocktag; \
@@ -90,8 +91,7 @@ pane_log ("SQL Error [%s] : %s\n", _stat, _msg)
 #define IF_DEADLOCK_OR_ERR_GO_WITH_ROLLBACK(stmt, tag, foo, deadlocktag) \
 if (SQL_ERROR == (foo)) \
 { \
-	RETCODE _rc = SQLError (stmt, stmt, stmt, (SQLCHAR *) state, NULL, \
-		(SQLCHAR *) message, sizeof (message), &len); \
+	RETCODE _rc = SQLError (stmt, stmt, stmt, (SQLCHAR *) state, NULL, (SQLCHAR *) message, sizeof (message), &len); \
 	if (_rc == SQL_SUCCESS && 0 == strncmp((char *) state, "40001", 5)) \
 	  { \
             if (do_rollback_on_deadlock && \

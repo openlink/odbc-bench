@@ -1,9 +1,9 @@
 /*
  *  odbcbench.h
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -79,35 +79,33 @@ void pipe_trough_isql (SQLHSTMT stmt, char *szFileName, int print_commands);
 
 typedef struct GUI_s
 {
-  void (*main_quit)(void);
+  void (*main_quit) (void);
 
-  void (*err_message)(const char *, ...);
-  void (*warn_message)(const char *, ...);
-  void (*message)(const char *, ...);
+  void (*err_message) (const char *, ...);
+  void (*warn_message) (const char *, ...);
+  void (*message) (const char *, ...);
 
-  int  (*add_test_to_the_pool) (test_t * ptest);
+  int (*add_test_to_the_pool) (test_t * ptest);
   void (*for_all_in_pool) (void);
   void (*do_MarkFinished) (int nConn, int thread_no);
 
-  BOOL (*isCancelled)(void);
+  BOOL (*isCancelled) (void);
 
-  void (*ShowProgress) (void * parent_win, char * title, BOOL bForceSingle, float nMax);
+  void (*ShowProgress) (void *parent_win, char *title, BOOL bForceSingle,
+      float nMax);
   void (*SetWorkingItem) (char *pszWorking);
   void (*SetProgressText) (char *pszProgress, int n_conn, int thread_no,
       float nValue, int nTrnPerCall, long secs_remain, double tpca_dDiffSum);
   void (*StopProgress) (void);
   int (*fCancel) (void);
-  void (*vBusy) (void);  /* Change to Hourglass/Normal Cursor */
-  
+  void (*vBusy) (void);		/* Change to Hourglass/Normal Cursor */
 } GUI_t;
 
 extern SQLHENV henv;
 extern GUI_t gui;
 
 /* odbc callbacks - odbcs.c */
-typedef enum
-{ TPC_A, TPC_C }
-testtype;
+typedef enum { TPC_A, TPC_C } testtype;
 
 typedef struct test_common_s
 {
@@ -117,8 +115,8 @@ typedef struct test_common_s
 
   int nMinutes;			/* Minutes to execute the test */
   int nRuns;			/* How many runs to do */
-}
-test_common_t;
+} test_common_t;
+
 
 #include "timeacct.h"
 #include "tpca.h"
@@ -166,7 +164,8 @@ struct test_s
   SQLUINTEGER default_txn_isolation;	/* txn_isolation_mode */
 
   /* log functions */
-  void (*ShowProgress) (void * parent_win, char * title, BOOL bForceSingle, float nMax);
+  void (*ShowProgress) (void *parent_win, char *title, BOOL bForceSingle,
+      float nMax);
   void (*SetWorkingItem) (char *pszWorking);
   void (*SetProgressText) (char *pszProgress, int n_conn, int thread_no,
       float nValue, int nTrnPerCall, long secs_remain, double tpca_dDiffSum);
@@ -184,13 +183,15 @@ struct test_s
 
   char szTemp[512];
   BOOL bTablePropsShown, bRunPropsShown;
-  test_t * test;
+  test_t *test;
 };
+
 
 #define IS_A(test) ((test).TestType == TPC_A)
 #define IS_C(test) ((test).TestType == TPC_C)
 
 void get_dsn_data (test_t * ptest);
+
 /* from prefs.c */
 typedef enum
 {
@@ -198,8 +199,7 @@ typedef enum
   C_REFRESH_RATE,
   LOCK_TIMEOUT,
   DISPLAY_REFRESH_RATE
-}
-OdbcBenchPref;
+} OdbcBenchPref;
 
 long bench_get_long_pref (OdbcBenchPref pref);
 int bench_set_long_pref (OdbcBenchPref pref, long value);
@@ -216,7 +216,7 @@ BOOL fSQLBindCol (SQLHSTMT hstmt, SQLUSMALLINT icol, SQLSMALLINT fCType,
 BOOL fSQLParamOptions (SQLHSTMT hstmt, SQLULEN crow, SQLULEN * pirow);
 
 
-void sleep_msecs(long msec);
+void sleep_msecs (long msec);
 int do_save_selected (char *szFileName, OList * tests);
 void do_save_run_results (char *filename, OList * selected, int nMinutes);
 void init_test (test_t * test);

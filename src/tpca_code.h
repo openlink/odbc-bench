@@ -1,9 +1,9 @@
 /*
  *  tpca_code.h
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -37,7 +37,7 @@ void vLoadTeller (test_t * lpRunCfg);
 void vLoadAccount (test_t * lpRunCfg);
 void vLoadStoreOptions (test_t * lpRunCfg, int fLoad);
 void vDisplayLoad (test_t * lpBenchInfo);
-int fExecute (test_t * lpRunCfg, SQLCHAR *lpSQLString);
+int fExecute (test_t * lpRunCfg, SQLCHAR * lpSQLString);
 void vCreateVirtuosoTPCCTables (test_t * lpBench);
 
 void vCreateTPCCTables (char *szDBMS, SQLHSTMT hstmt);
@@ -54,11 +54,11 @@ int getDriverMapSize (void);
 char *getDriverDBMSName (int i);
 
   /* execution */
-int fExecuteSql (test_t * lpBench, SQLCHAR *pszSql);
+int fExecuteSql (test_t * lpBench, SQLCHAR * pszSql);
 BOOL DoRun (test_t * lpBench, char *szTitle);
 BOOL DoThreadsRun (test_t * lpBench);
 BOOL fRunTrans (test_t * lpBench, char *szTitle);
-void CalcStats (BOOL runStatus, int nOk, test_t * lpBench, long lTranCnt, 
+void CalcStats (BOOL runStatus, int nOk, test_t * lpBench, long lTranCnt,
     long lSubSecTranCnt, long lBetween, double dDiffSum);
 
 char *txn_isolation_name (long txn_isolation, char *def);

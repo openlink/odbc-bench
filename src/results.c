@@ -1,9 +1,9 @@
 /*
  *  results.c
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -30,6 +30,7 @@ static int res_fHaveResults = 0;
 
 static SQLLEN null_val = SQL_NULL_DATA;
 
+
 void
 results_logout ()
 {
@@ -47,6 +48,7 @@ results_logout ()
   pane_log ("results connection closed\r\n");
 }
 
+
 int
 results_login (char *szDSN, char *szUID, char *szPWD)
 {
@@ -57,7 +59,9 @@ results_login (char *szDSN, char *szUID, char *szPWD)
 
   rc = SQLAllocConnect (henv, &res_hdbc);
   IF_CERR_GO (res_hdbc, done, rc, NULL);
-  rc = SQLConnect (res_hdbc, (SQLCHAR *) szDSN, SQL_NTS, (SQLCHAR *) szUID, SQL_NTS, (SQLCHAR *) szPWD, SQL_NTS);
+
+  rc = SQLConnect (res_hdbc, (SQLCHAR *) szDSN, SQL_NTS, (SQLCHAR *) szUID,
+      SQL_NTS, (SQLCHAR *) szPWD, SQL_NTS);
   IF_CERR_GO (res_hdbc, done, rc, NULL);
 
   rc = SQLAllocStmt (res_hdbc, &res_hstmt);
@@ -65,15 +69,19 @@ results_login (char *szDSN, char *szUID, char *szPWD)
 
   szBuff = 'Y';
   rc = SQLTables (res_hstmt, NULL, 0, NULL, 0,
-    (SQLCHAR *) "RESULTS", SQL_NTS, (SQLCHAR *) "TABLE", SQL_NTS);
+      (SQLCHAR *) "RESULTS", SQL_NTS, (SQLCHAR *) "TABLE", SQL_NTS);
   if (SQL_SUCCESS != rc || SQL_SUCCESS != SQLFetch (res_hstmt))
     szBuff = 'N';
+
   SQLFreeStmt (res_hstmt, SQL_CLOSE);
   res_fHaveResults = (szBuff == 'Y');
+
   pane_log ("results connection opened to %s\r\n", szDSN);
+
 done:
   return (rc == SQL_SUCCESS || rc == SQL_SUCCESS_WITH_INFO);
 }
+
 
 static SQLCHAR szCreateResultsSQL[] =
     "create table RESULTS ("
@@ -89,8 +97,9 @@ static SQLCHAR szCreateResultsSQL[] =
     "		BTYPE		varchar(10),"
     "		DRVRNAME	varchar(128),"
     "		DRVRVER		varchar(128),"
-    "		STATE		varchar(16)," 
+    "		STATE		varchar(16),"
     "		MSG		varchar(255)" ")";
+
 
 void
 create_results_table ()
@@ -114,9 +123,11 @@ create_results_table ()
 
   pane_log ("Results table created%s\r\n",
       (res_hstmt ? "" : " using the main connection"));
+
 create_error:
   rc = 0;
 }
+
 
 void
 drop_results_table ()
@@ -130,23 +141,28 @@ drop_results_table ()
       return;
     }
   stmt = res_hstmt;
+
   if (!stmt)
     {
       pane_log ("Not Connected\r\n");
       return;
     }
+
   rc = SQLExecDirect (stmt, (SQLCHAR *) "drop table RESULTS", SQL_NTS);
   IF_ERR_GO (stmt, drop_error, rc, NULL);
 
   pane_log ("Results table dropped successfully%s\r\n",
       (res_hstmt ? "" : " using the main connection"));
+
 drop_error:
   rc = 0;
 }
 
+
 static SQLCHAR szInsertResultsSQL[] =
     "insert into RESULTS (BTYPE, URL, OPTIONS, TPS, TOTTIME, NTRANS, SUB1S, SUB2S, TRNTIME, DRVRNAME, DRVRVER, STATE, MSG) "
     "	values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
 
 void
 do_add_results_record (char *test_type, char *result_test_type,
@@ -177,31 +193,39 @@ do_add_results_record (char *test_type, char *result_test_type,
   IBINDNTS (lstmt, 1, test_type);
   IBINDNTS (lstmt, 2, szDSN);
   IBINDNTS (lstmt, 3, result_test_type);
+
   if (ftps == -1)
     IBINDF_NULL (lstmt, 4);
   else
     IBINDF (lstmt, 4, ftps);
+
   IBINDD (lstmt, 5, dDiffSum);
+
   if (nTrnCnt == -1)
     IBINDL_NULL (lstmt, 6);
   else
     IBINDL (lstmt, 6, nTrnCnt);
+
   if (fsub1 == -1)
     IBINDF_NULL (lstmt, 7);
   else
     IBINDF (lstmt, 7, fsub1);
+
   if (fsub2 == -1)
     IBINDF_NULL (lstmt, 8);
   else
     IBINDF (lstmt, 8, fsub2);
+
   if (fAvgTPTime == -1)
     IBINDF_NULL (lstmt, 9);
   else
     IBINDF (lstmt, 9, fAvgTPTime);
+
   if (!szDriverName)
     IBINDNTS_NULL (lstmt, 10);
   else
     IBINDNTS (lstmt, 10, szDriverName);
+
   if (!szDriverVer)
     IBINDNTS_NULL (lstmt, 11);
   else
@@ -211,6 +235,7 @@ do_add_results_record (char *test_type, char *result_test_type,
     IBINDNTS (lstmt, 12, (SQLCHAR *) "OK");
   else
     IBINDNTS (lstmt, 12, szState);
+
   if (!szMessage)
     IBINDNTS (lstmt, 13, (SQLCHAR *) "");
   else
@@ -221,8 +246,8 @@ do_add_results_record (char *test_type, char *result_test_type,
   if (rc == SQL_SUCCESS)
     {
       pane_log ("Results written to the results table%s\r\n",
-  	  res_hstmt ? "" : " using main connection");
-    }	
+	  res_hstmt ? "" : " using main connection");
+    }
   SQLFreeStmt (lstmt, SQL_CLOSE);
 }
 
@@ -240,9 +265,9 @@ add_tpcc_result (test_t * lpCfg)
       do_add_results_record ("TPC-C", szTemp,
 	  henv, lpCfg->hdbc, lpCfg->hstmt,
 	  lpCfg->szDSN,
-	  lpCfg->tpc.c.count_ware, 
+	  lpCfg->tpc.c.count_ware,
 	  lpCfg->tpc.c.run_time, -1, -1, -1, -1,
-	  lpCfg->szDriverName, lpCfg->szDriverVer, lpCfg->fHaveResults, 
+	  lpCfg->szDriverName, lpCfg->szDriverVer, lpCfg->fHaveResults,
 	  "OK", "");
     }
   else if (lpCfg->tpc.c.run_time > 0 && lpCfg->tpc.c.tpcc_sum > 0)	/* run the benchmark */

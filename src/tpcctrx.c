@@ -1,9 +1,9 @@
 /*
  *  tpcctrx.c
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -67,6 +67,7 @@ static const char new_order_text_ora[] = "{call new_order_proc(?, ?, ?, ?, ?,   
 #define NEW_ORDER_TEXT \
 	((lpCfg->tpc.c.bIsVirtuoso) ? (new_order_text_kubl) : ((lpCfg->tpc.c.bIsOracle) ? (new_order_text_ora) : (new_order_text_mssql)))
 
+
 static int
 stmt_result_sets (SQLHSTMT stmt)
 {
@@ -82,25 +83,29 @@ stmt_result_sets (SQLHSTMT stmt)
 	  rc = rc;
 	}
       while (rc != SQL_NO_DATA_FOUND && rc != SQL_ERROR);
+
       if (rc == SQL_ERROR)
 	{
 	  if (gui.warn_message)
-	    gui.warn_message ("\r\n    Line %d, file %s\r\n", __LINE__, __FILE__);
+	    gui.warn_message ("\r\n    Line %d, file %s\r\n", __LINE__,
+		__FILE__);
 	  print_error (stmt, stmt, stmt, NULL);
 	  return 0;
 	}
       rc = SQLMoreResults (stmt);
     }
   while (rc != SQL_NO_DATA_FOUND && rc != SQL_ERROR);
+
   if (rc == SQL_ERROR)
     {
       print_error (stmt, stmt, stmt, NULL);
       if (gui.warn_message)
-        gui.warn_message ("\r\n    Line %d, file %s\r\n", __LINE__, __FILE__);
+	gui.warn_message ("\r\n    Line %d, file %s\r\n", __LINE__, __FILE__);
     }
 
   SQLFreeStmt (stmt, SQL_CLOSE);
   return 0;
+
 deadlock_rs:
   SQLFreeStmt (stmt, SQL_CLOSE);
   return 1;
@@ -116,12 +121,12 @@ make_supply_w_id (test_t * lpCfg)
       long n, n_tries = 0;
       do
 	{
-	  n =
-	      RandomNumber (&lpCfg->tpc.c.rnd_seed, 1,
+	  n = RandomNumber (&lpCfg->tpc.c.rnd_seed, 1,
 	      lpCfg->tpc.c.count_ware);
 	  n_tries++;
 	}
       while (n == lpCfg->tpc.c.local_w_id && n_tries < 10);
+
       return lpCfg->tpc.c.local_w_id;
     }
   else
@@ -145,7 +150,6 @@ new_order (test_t * lpCfg)
   long all_local = 1;
   DECLARE_FOR_SQLERROR;
 
-
 deadlock_no:
   w_id = lpCfg->tpc.c.local_w_id;
   d_id = RandomNumber (&lpCfg->tpc.c.rnd_seed, 1, DIST_PER_WARE);
@@ -165,7 +169,8 @@ deadlock_no:
 
   if (!lpCfg->tpc.c.new_order_stmt)
     {
-      INIT_STMT (lpCfg->hdbc, lpCfg->tpc.c.new_order_stmt, NEW_ORDER_TEXT, lpCfg);
+      INIT_STMT (lpCfg->hdbc, lpCfg->tpc.c.new_order_stmt, NEW_ORDER_TEXT,
+	  lpCfg);
       IBINDL (lpCfg->tpc.c.new_order_stmt, 1, w_id);
       IBINDL (lpCfg->tpc.c.new_order_stmt, 2, d_id);
       IBINDL (lpCfg->tpc.c.new_order_stmt, 3, c_id);
@@ -206,6 +211,7 @@ static const char payment_text_ora[] = "{call payment(?, ?, ?, ?, ?, ?, ?)}";
 
 #define PAYMENT_TEXT \
 	((lpCfg->tpc.c.bIsVirtuoso) ? (payment_text_kubl) : ((lpCfg->tpc.c.bIsOracle) ? (payment_text_ora) : (payment_text_mssql)))
+
 
 static int
 payment (test_t * lpCfg)
@@ -260,6 +266,7 @@ static const char delivery_text_ora[] = "{call delivery(?, ?)}";
 #define DELIVERY_TEXT \
 	((lpCfg->tpc.c.bIsVirtuoso) ? (delivery_text_kubl) : ((lpCfg->tpc.c.bIsOracle) ? (delivery_text_ora) : (delivery_text_mssql)))
 
+
 static int
 delivery_1 (test_t * lpCfg, long w_id, long d_id)
 {
@@ -270,7 +277,8 @@ delivery_1 (test_t * lpCfg, long w_id, long d_id)
 deadlock_del1:
   if (!lpCfg->tpc.c.delivery_stmt)
     {
-      INIT_STMT (lpCfg->hdbc, lpCfg->tpc.c.delivery_stmt, DELIVERY_TEXT, lpCfg);
+      INIT_STMT (lpCfg->hdbc, lpCfg->tpc.c.delivery_stmt, DELIVERY_TEXT,
+	  lpCfg);
     }
 
   IBINDL (lpCfg->tpc.c.delivery_stmt, 1, w_id);
@@ -295,8 +303,10 @@ static const char slevel_text_kubl[] = "slevel (?, ?, ?)";
 static const char slevel_text_mssql[] = "exec slevel ?, ?, ?";
 static const char slevel_text_ora[] = "{call slevel(?, ?, ?)}";
 
+
 #define SLEVEL_TEXT \
 	((lpCfg->tpc.c.bIsVirtuoso) ? (slevel_text_kubl) : ((lpCfg->tpc.c.bIsOracle) ? (slevel_text_ora) : (slevel_text_mssql)))
+
 
 static int
 slevel (test_t * lpCfg)
@@ -345,6 +355,7 @@ static const char ostat_text_ora[] = "{call ostat(?, ?, ?, ?)}";
 
 #define OSTAT_TEXT \
 	((lpCfg->tpc.c.bIsVirtuoso) ? (ostat_text_kubl) : ((lpCfg->tpc.c.bIsOracle) ? (ostat_text_ora) : (ostat_text_mssql)))
+
 
 static int
 ostat (test_t * lpCfg)
@@ -457,7 +468,8 @@ get_warehouse_count (test_t * lpCfg)
 
   IF_ERR_GO (lpCfg->tpc.c.misc_stmt, err,
       SQLExecute (lpCfg->tpc.c.misc_stmt), lpCfg);
-  IF_ERR_GO (lpCfg->tpc.c.misc_stmt, err, SQLFetch (lpCfg->tpc.c.misc_stmt), lpCfg);
+  IF_ERR_GO (lpCfg->tpc.c.misc_stmt, err, SQLFetch (lpCfg->tpc.c.misc_stmt),
+      lpCfg);
 
   lpCfg->tpc.c.local_w_id =
       RandomNumber (&lpCfg->tpc.c.rnd_seed, 0,
@@ -476,8 +488,9 @@ err:
   return 0;
 }
 
+
 int
-tpcc_run_test (void * widget, test_t * lpCfg)
+tpcc_run_test (void *widget, test_t * lpCfg)
 {
   char szTemp[128];
   time_t start_time, curr_time;
@@ -519,7 +532,7 @@ tpcc_run_test (void * widget, test_t * lpCfg)
 
   if (lpCfg->ShowProgress)
     lpCfg->ShowProgress (NULL, "Running TPCC", FALSE,
-        lpCfg->tpc._.nMinutes * 60);
+	lpCfg->tpc._.nMinutes * 60);
   lpCfg->SetWorkingItem ("Running TPCC");
   time (&start_time);
   while (1)
@@ -532,7 +545,7 @@ tpcc_run_test (void * widget, test_t * lpCfg)
 	  lpCfg->tpc.c.nRounds,
 	  (long int) (lpCfg->tpc._.nMinutes * 60 - dDiff));
       lpCfg->SetProgressText (szTemp, lpCfg->tpc._.nConn,
-	  lpCfg->tpc._.nThreadNo, curr_time - start_time, 1, 
+	  lpCfg->tpc._.nThreadNo, curr_time - start_time, 1,
 	  (long int) (lpCfg->tpc._.nMinutes * 60 - dDiff), 0);
       if (lpCfg->fCancel ())
 	break;
@@ -540,7 +553,9 @@ tpcc_run_test (void * widget, test_t * lpCfg)
 	break;
       lpCfg->tpc.c.nRounds += 1;
     }
+
   lpCfg->StopProgress ();
   lpCfg->tpc.c.run_time = lpCfg->tpc.c.ten_pack_ta.ta_total / 1000;
+
   return 1;
 }

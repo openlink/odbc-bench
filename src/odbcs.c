@@ -1,9 +1,9 @@
 /*
  *  odbcs.c
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -35,6 +35,7 @@ SQLHENV henv = SQL_NULL_HENV;
 static MUTEX_T env_mutex;
 MUTEX_T log_mutex;
 
+
 void
 do_free_env (int isFreeMutex)
 {
@@ -51,6 +52,7 @@ do_free_env (int isFreeMutex)
   henv = SQL_NULL_HENV;
 }
 
+
 void
 do_alloc_env ()
 {
@@ -66,18 +68,21 @@ do_alloc_env ()
   if (rc == SQL_ERROR)
     {
       szError[0] = szState[0] = 0;
-      SQLError (henv, SQL_NULL_HDBC, SQL_NULL_HSTMT, szState, NULL, szError, sizeof (szError), NULL);
+      SQLError (henv, SQL_NULL_HDBC, SQL_NULL_HSTMT, szState, NULL, szError,
+	  sizeof (szError), NULL);
       if (gui.err_message)
-        gui.err_message("do_alloc_env : STATE : %s - %s\r\n", szState, szError);
+	gui.err_message ("do_alloc_env : STATE : %s - %s\r\n", szState,
+	    szError);
       if (gui.main_quit)
-        gui.main_quit ();
+	gui.main_quit ();
       else
-        exit(-1);
+	exit (-1);
     }
 }
 
+
 int
-do_login (test_t *ptest)
+do_login (test_t * ptest)
 {
   RETCODE rc;
   char *szDSN, *szUID, *szPWD;
@@ -90,22 +95,21 @@ do_login (test_t *ptest)
   if (!henv)
     {
       if (gui.err_message)
-        gui.err_message("[Bench] do_login : Environment not allocated\r\n");
+	gui.err_message ("[Bench] do_login : Environment not allocated\r\n");
       if (gui.main_quit)
-        gui.main_quit ();
+	gui.main_quit ();
       else
-        exit(-1);
+	exit (-1);
     }
   do_logout (ptest);
 
   pane_log ("\r\n\r\nConnecting to %s : DSN=<%s> UID=<%s>\r\n",
-	ptest->szName, szDSN, szUID);
+      ptest->szName, szDSN, szUID);
 
   rc = SQLAllocConnect (henv, &ptest->hdbc);
   if (rc == SQL_SUCCESS)
-    rc =
-	SQLConnect (ptest->hdbc, (SQLCHAR *) szDSN, SQL_NTS, (SQLCHAR *) szUID, SQL_NTS, (SQLCHAR *) szPWD,
-	SQL_NTS);
+    rc = SQLConnect (ptest->hdbc, (SQLCHAR *) szDSN, SQL_NTS,
+	(SQLCHAR *) szUID, SQL_NTS, (SQLCHAR *) szPWD, SQL_NTS);
 
   ptest->szSQLError[0] = 0;
   ptest->szSQLState[0] = 0;
@@ -136,38 +140,38 @@ do_login (test_t *ptest)
   if (IS_A (*ptest))
     {
       SQLULEN irow;
-      
+
       rc = SQLAllocStmt (ptest->hdbc, &hstmt);
       if (rc == SQL_ERROR)
-        {
-          SQLError (henv, ptest->hdbc, SQL_NULL_HSTMT, ptest->szSQLState, NULL,
-	      ptest->szSQLError, sizeof (ptest->szSQLError), NULL);
-          goto done;
-        }
+	{
+	  SQLError (henv, ptest->hdbc, SQL_NULL_HSTMT, ptest->szSQLState,
+	      NULL, ptest->szSQLError, sizeof (ptest->szSQLError), NULL);
+	  goto done;
+	}
 
-      rc = SQLParamOptions(hstmt, 10, &irow);
+      rc = SQLParamOptions (hstmt, 10, &irow);
       ptest->fBatchSupported = RC_SUCCESSFUL (rc);
       SQLFreeStmt (hstmt, SQL_DROP);
 
       if (ptest->fBatchSupported)
-        {
-          char szBuff[10];
-          rc = SQLGetInfo (ptest->hdbc,
-                 SQL_DRIVER_ODBC_VER, szBuff, sizeof (szBuff), NULL);
-          if (RC_SUCCESSFUL (rc))
-            {
-              SQLUINTEGER param;
+	{
+	  char szBuff[10];
+	  rc = SQLGetInfo (ptest->hdbc,
+	      SQL_DRIVER_ODBC_VER, szBuff, sizeof (szBuff), NULL);
+	  if (RC_SUCCESSFUL (rc))
+	    {
+	      SQLUINTEGER param;
 
-              szBuff[2] = 0;
-              if (atoi(szBuff) >= 3) /* ODBC 3.x */
-                {
-                  rc = SQLGetInfo (ptest->hdbc, SQL_PARAM_ARRAY_SELECTS,
-                         &param, sizeof (param), NULL);
-                  if (RC_SUCCESSFUL (rc) && param == SQL_PAS_BATCH )
-                     ptest->fSQLBatchSupported = 1;
-                }
-            }
-        }
+	      szBuff[2] = 0;
+	      if (atoi (szBuff) >= 3)	/* ODBC 3.x */
+		{
+		  rc = SQLGetInfo (ptest->hdbc, SQL_PARAM_ARRAY_SELECTS,
+		      &param, sizeof (param), NULL);
+		  if (RC_SUCCESSFUL (rc) && param == SQL_PAS_BATCH)
+		    ptest->fSQLBatchSupported = 1;
+		}
+	    }
+	}
 
       if (ptest->nIsolationsSupported > 0 && ptest->tpc.a.txn_isolation > 0)
 	{
@@ -203,12 +207,14 @@ do_login (test_t *ptest)
   pane_log ("\r\n");
 
   return TRUE;
+
 done:
   if (ptest->hdbc)
     {
       SQLFreeConnect (ptest->hdbc);
       ptest->hdbc = 0;
     }
+
   return FALSE;
 }
 
@@ -288,8 +294,9 @@ get_dsn_data (test_t * ptest)
       sizeof (ptest->default_txn_isolation), NULL);
 }
 
+
 void
-do_logout (test_t *ptest)
+do_logout (test_t * ptest)
 {
   if (!ptest->hstmt)
     return;
@@ -325,10 +332,11 @@ do_logout (test_t *ptest)
   pane_log ("Connection to %s closed\r\n", ptest->szName);
 }
 
+
 void
 print_error (SQLHENV env, SQLHDBC dbc, SQLHSTMT stmt, void *_test)
 {
-  test_t *test = (test_t *)_test;
+  test_t *test = (test_t *) _test;
   SQLCHAR szMessage[256], szState[10];
   RETCODE rc;
 
@@ -336,8 +344,7 @@ print_error (SQLHENV env, SQLHDBC dbc, SQLHSTMT stmt, void *_test)
 
   while (1)
     {
-      rc =
-	  SQLError (env, dbc, stmt, szState, NULL, szMessage,
+      rc = SQLError (env, dbc, stmt, szState, NULL, szMessage,
 	  sizeof (szMessage), NULL);
       if (rc != SQL_SUCCESS)
 	break;
@@ -346,20 +353,21 @@ print_error (SQLHENV env, SQLHDBC dbc, SQLHSTMT stmt, void *_test)
 	gui.warn_message ("SQL Error [%s] : %s\r\n", szState, szMessage);
       if (test)
 	{
-	  strncpy ((char *) test->szSQLError, (char *) szMessage, sizeof (test->szSQLError));
-	  strncpy ((char *) test->szSQLState, (char *) szState, sizeof (test->szSQLState));
+	  strncpy ((char *) test->szSQLError, (char *) szMessage,
+	      sizeof (test->szSQLError));
+	  strncpy ((char *) test->szSQLState, (char *) szState,
+	      sizeof (test->szSQLState));
 	}
     }
 }
+
 
 /*-------------------------------------------------------------------------*/
 /* fSQLParamOption 							   */
 /* Returns:  TRUE if function was successful, FALSE if there was an error  */
 /*-------------------------------------------------------------------------*/
 BOOL
-fSQLParamOptions (SQLHSTMT hstmt,
-SQLULEN crow,
-SQLULEN *pirow)
+fSQLParamOptions (SQLHSTMT hstmt, SQLULEN crow, SQLULEN * pirow)
 {
   RETCODE rc;
 
@@ -370,9 +378,10 @@ SQLULEN *pirow)
   return (RC_SUCCESSFUL (rc));
 }
 
+
 /*-------------------------------------------------------------------------*/
-/* fSQLBindParameter - Binds a parameter for input or output                       */
-/*                                                                                                                                                 */
+/* fSQLBindParameter - Binds a parameter for input or output               */
+/*                                                                         */
 /* Returns:  TRUE if function was successful, FALSE if there was an error  */
 /*-------------------------------------------------------------------------*/
 BOOL
@@ -411,6 +420,7 @@ fSQLBindParameter (
   return (RC_SUCCESSFUL (rc));
 }
 
+
 /***************************************************************************
  fSQLGetData - Invoke SQLGetData, check return info, show errors if required
 
@@ -435,6 +445,7 @@ fSQLGetData (
   return (RC_SUCCESSFUL (rc));
 }
 
+
 /***************************************************************************
  fSQLExecDirect - Executes a statement with error checking.
 
@@ -458,6 +469,7 @@ deadlock_execdir:
 error_execdir:
   return (RC_SUCCESSFUL (rc));
 }
+
 
 /***************************************************************************
  fSQLBindCol - Invoke SQLBindCol, check return info, show errors if required
@@ -505,6 +517,7 @@ _strnicmp (const char *s1, const char *s2, size_t n)
     return (*s2) ? -1 : 0;
   return 0;
 }
+
 
 char *
 _stristr (const char *str, const char *find)

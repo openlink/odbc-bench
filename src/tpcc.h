@@ -1,9 +1,9 @@
 /*
  *  tpcc.h
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -85,8 +85,8 @@ typedef struct olsstruct
   long ol_qty[OL_MAX];
   long ol_supply_w_id[OL_MAX];
   char ol_data[OL_MAX][24];
-}
-olines_t;
+} olines_t;
+
 
 typedef struct tpcc_s
 {
@@ -98,7 +98,6 @@ typedef struct tpcc_s
 
   int option_debug;		/* 1 if generating debug output    */
   int bIsVirtuoso;
-
 
   char timestamp_array[BATCH_SIZE][20];
   long sql_timelen_array[BATCH_SIZE];
@@ -123,5 +122,4 @@ typedef struct tpcc_s
   int bIsSybase;
 
   char tableDSNS[9][50], tableDBMSes[9][50];
-}
-tpcc_t;
+} tpcc_t;

@@ -1,9 +1,9 @@
 /*
  *  tpca.h
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -85,7 +85,6 @@ typedef struct tpca_s
   char szTellerDBMS[50];
   char szAccountDBMS[50];
   char szHistoryDBMS[50];
-}
-tpca_t;
+} tpca_t;
 
 #endif

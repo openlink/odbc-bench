@@ -1,9 +1,9 @@
 /*
  *  isql_interface.c
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -37,6 +37,7 @@
 #endif
 #endif
 
+
 static FILE *
 open_file (char *szFileName, char *szMode)
 {
@@ -44,11 +45,11 @@ open_file (char *szFileName, char *szMode)
   char *szNewName = NULL, *szHelper;
   FILE *fi = NULL;
 
-  if (NULL != (fi = fopen (szFileName, szMode))) /* straight */
+  if (NULL != (fi = fopen (szFileName, szMode)))	/* straight */
     return fi;
 
   if (NULL != (szHelper = getenv ("GTKBENCH")))
-    { /* from the environment */
+    {				/* from the environment */
       szNewName = (char *) malloc (nFileName + strlen (szHelper) + 2);
       sprintf (szNewName, "%s/%s", szHelper, szFileName);
       fi = fopen (szNewName, szMode);
@@ -57,16 +58,18 @@ open_file (char *szFileName, char *szMode)
 	return fi;
     }
 #if 0
-  { /* registry */
+  {				/* registry */
     HKEY GtkKey;
     DWORD Type, datasize = 0;
-    if (ERROR_SUCCESS == RegOpenKey (HKEY_LOCAL_MACHINE, "SOFTWARE/OpenLink Software/GTKBench", &GtkKey))
+    if (ERROR_SUCCESS == RegOpenKey (HKEY_LOCAL_MACHINE,
+	    "SOFTWARE/OpenLink Software/GTKBench", &GtkKey))
       {
-	if (ERROR_SUCCESS == RegQueryValueEx (GtkKey, "ScriptDir", NULL, &Type, NULL, &datasize) &&
-	    Type == REG_SZ)
+	if (ERROR_SUCCESS == RegQueryValueEx (GtkKey, "ScriptDir", NULL,
+		&Type, NULL, &datasize) && Type == REG_SZ)
 	  {
 	    szNewName = g_malloc0 (nFileName + datasize + 2);
-	    if (ERROR_SUCCESS == RegQueryValueEx (GtkKey, "ScriptDir", NULL, NULL, szNewName, NULL))
+	    if (ERROR_SUCCESS == RegQueryValueEx (GtkKey, "ScriptDir", NULL,
+		    NULL, szNewName, NULL))
 	      {
 		strcat (szNewName, "\\");
 		strcat (szNewName, szFileName);
@@ -88,7 +91,7 @@ open_file (char *szFileName, char *szMode)
     return fi;
   }
 #endif
-  szNewName = (char *) malloc(nFileName + strlen (GTKBENCH_DEF_DIR) + 2);
+  szNewName = (char *) malloc (nFileName + strlen (GTKBENCH_DEF_DIR) + 2);
   sprintf (szNewName, "%s/%s", GTKBENCH_DEF_DIR, szFileName);
   fi = fopen (szNewName, szMode);
   XFREE (szNewName);
@@ -128,7 +131,8 @@ pipe_trough_isql (SQLHDBC hdbc, char *szFileName, int print_commands)
 	{
 	  if (cmd_length)
 	    {
-	      char *szCommand = (char *) malloc (cmd_length + 1), *szPtr = szCommand;
+	      char *szCommand = (char *) malloc (cmd_length + 1), *szPtr =
+		  szCommand;
 	      OSList *iter = gs;
 	      memset (szCommand, 0, cmd_length + 1);
 	      while (iter)
@@ -168,7 +172,7 @@ pipe_trough_isql (SQLHDBC hdbc, char *szFileName, int print_commands)
 	    continue;		/* on comment */
 	  szLineToPush = (char *) malloc (line_len + 1);
 	  memcpy (szLineToPush, szLine, line_len + 1);
-	  gs = o_slist_append(gs, szLineToPush);
+	  gs = o_slist_append (gs, szLineToPush);
 	  cmd_length += line_len;
 	}
     }

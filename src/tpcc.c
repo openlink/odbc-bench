@@ -1,9 +1,9 @@
 /*
  *  tpcc.c
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,7 @@
 #include "tpccfun.h"
 #include "tpca_code.h"
 
+
 static int LoadItems (test_t * lpCfg);
 static int LoadWare (test_t * lpCfg);
 static int LoadCust (test_t * lpCfg);
@@ -45,6 +46,7 @@ static int Orders (test_t * lpCfg, long d_id, long w_id);
 static void MakeAddress (long *rnd_seed, char *str1, char *str2, char *city,
     char *state, char *zip);
 
+
 #define IF_CANCEL_RETURN(rc) \
 	  if (lpCfg->fCancel()) \
 		  return rc;
@@ -52,6 +54,7 @@ static void MakeAddress (long *rnd_seed, char *str1, char *str2, char *city,
 #define IF_CANCEL_GO(tag) \
 	  if (lpCfg->fCancel()) \
 		  goto tag;
+
 long
 RandomNumber (long *rnd_seed, long x, long y)
 {
@@ -63,8 +66,7 @@ static long
 NURand (long *rnd_seed, int a, int x, int y)
 {
   return ((((RandomNumber (rnd_seed, 0, a) |
-		  RandomNumber (rnd_seed, x, y)) + 1234567L)
-	  % (y - x + 1)) + x);
+	     RandomNumber (rnd_seed, x, y)) + 1234567L) % (y - x + 1)) + x);
 }
 
 
@@ -73,9 +75,11 @@ MakeAlphaString (long *rnd_seed, int sz1, int sz2, char *str)
 {
   long sz = RandomNumber (rnd_seed, sz1, sz2);
   int inx;
+
   for (inx = 0; inx < sz; inx++)
     str[inx] = 'a' + (inx % 24);
   str[sz - 1] = 0;
+
   return sz - 1;
 }
 
@@ -84,8 +88,10 @@ static void
 MakeNumberString (int sz, int sz2, char *str)
 {
   int inx;
+
   for (inx = 0; inx < sz; inx++)
     str[inx] = '0' + (inx % 10);
+
   str[sz - 1] = 0;
 }
 
@@ -116,7 +122,8 @@ scrap_log (test_t * lpCfg, SQLHSTMT stmt)
     }
   else if (_stristr (lpCfg->szDBMS, "Virtuoso"))
     {
-      IS_ERR (stmt, SQLExecDirect (stmt, (SQLCHAR *) "checkpoint", SQL_NTS), lpCfg);
+      IS_ERR (stmt, SQLExecDirect (stmt, (SQLCHAR *) "checkpoint", SQL_NTS),
+	  lpCfg);
     }
   else if (_stristr (lpCfg->szDBMS, "Oracle"))
     {
@@ -125,21 +132,21 @@ scrap_log (test_t * lpCfg, SQLHSTMT stmt)
     }
 }
 
+
 static void
 gettimestamp_2 (char *ts)
 {
   struct timeval tv;
+
   gettimestamp (&tv);
   memcpy (ts, &tv, sizeof (tv));
 }
 
 
 void
-tpcc_create_db (void * widget, test_t * lpCfg)
+tpcc_create_db (void *widget, test_t * lpCfg)
 {
-
   int i;
-
   long start_time = -1, end_time = -1;
 
   if (!do_login (lpCfg))
@@ -221,11 +228,13 @@ tpcc_create_db (void * widget, test_t * lpCfg)
       lpCfg->tpc.c.run_time = (end_time - start_time) / 1000;
       add_tpcc_result (lpCfg);
     }
+
 done:
   tpcc_close_stmts (widget, lpCfg);
   do_logout (lpCfg);
   lpCfg->StopProgress ();
 }
+
 
 static int
 LoadItems (test_t * lpCfg)
@@ -238,13 +247,13 @@ LoadItems (test_t * lpCfg)
   static float i_price[BATCH_SIZE];
   static char i_data[BATCH_SIZE][50];
   char szTemp[128];
-
   int idatasiz;
   static short orig[MAXITEMS];
   long pos;
 
   LOCAL_STMT (lpCfg->hdbc, lpCfg->tpc.c.item_stmt,
-      "insert into ITEM (I_ID, I_NAME, I_PRICE, I_DATA) values (?, ?, ?, ?)", lpCfg);
+      "insert into ITEM (I_ID, I_NAME, I_PRICE, I_DATA) values (?, ?, ?, ?)",
+      lpCfg);
   IBINDL (lpCfg->tpc.c.item_stmt, 1, i_id);
   IBINDNTS (lpCfg->tpc.c.item_stmt, 2, i_name);
   IBINDF (lpCfg->tpc.c.item_stmt, 3, i_price);
@@ -274,8 +283,8 @@ LoadItems (test_t * lpCfg)
       /* Generate Item Data */
       i_id[fill] = i_id_1;
       MakeAlphaString (&lpCfg->tpc.c.rnd_seed, 14, 24, i_name[fill]);
-      i_price[fill] =  ((float) RandomNumber (&lpCfg->tpc.c.rnd_seed, 100L,
-	10000L)) / 100.0;
+      i_price[fill] = ((float) RandomNumber (&lpCfg->tpc.c.rnd_seed, 100L,
+	      10000L)) / 100.0;
       idatasiz =
 	  MakeAlphaString (&lpCfg->tpc.c.rnd_seed, 26, 50, i_data[fill]);
       if (orig[i_id_1])
@@ -296,7 +305,8 @@ LoadItems (test_t * lpCfg)
       if (!(i_id_1 % 100))
 	{
 	  sprintf (szTemp, "%ld items loaded", i_id_1);
-	  lpCfg->SetProgressText (szTemp, 0, 0, ((float) i_id_1) / MAXITEMS, 1, 0, 0);
+	  lpCfg->SetProgressText (szTemp, 0, 0, ((float) i_id_1) / MAXITEMS,
+	      1, 0, 0);
 	}
     }
 
@@ -371,6 +381,7 @@ LoadCust (test_t * lpCfg)
     for (d_id = 1L; d_id <= DIST_PER_WARE; d_id++)
       if (!Customer (lpCfg, d_id, w_id))
 	return (0);
+
   SQLTransact (SQL_NULL_HENV, lpCfg->hdbc, SQL_COMMIT);
 
   return 1;
@@ -510,7 +521,8 @@ Stock (test_t * lpCfg, long w_id_from, long w_id_to)
 	      fill, lpCfg);
 	}
     }
-  FLUSH_BATCH (SQL_NULL_HENV, lpCfg->hdbc, lpCfg->tpc.c.stock_stmt, fill, lpCfg);
+  FLUSH_BATCH (SQL_NULL_HENV, lpCfg->hdbc, lpCfg->tpc.c.stock_stmt, fill,
+      lpCfg);
 
   return 1;
 }
@@ -535,7 +547,8 @@ District (test_t * lpCfg, long w_id)
       "insert into DISTRICT"
       " (D_ID, D_W_ID, D_NAME, "
       "D_STREET_1, D_STREET_2, D_CITY, D_STATE, D_ZIP,"
-      "D_TAX, D_YTD, D_NEXT_O_ID)" "values (?,?,?,?,?,  ?,?,?,?,?,  ?)", lpCfg);
+      "D_TAX, D_YTD, D_NEXT_O_ID)" "values (?,?,?,?,?,  ?,?,?,?,?,  ?)",
+      lpCfg);
 
   IBINDL (lpCfg->tpc.c.dist_stmt, 1, d_id);
   IBINDL (lpCfg->tpc.c.dist_stmt, 2, d_w_id);
@@ -784,7 +797,8 @@ Orders (test_t * lpCfg, long d_id, long w_id)
       "insert into "
       " ORDER_LINE (OL_O_ID, OL_D_ID, OL_W_ID, OL_NUMBER,"
       "OL_I_ID, OL_SUPPLY_W_ID, OL_QUANTITY, OL_AMOUNT,"
-      "OL_DIST_INFO, OL_DELIVERY_D)" "values (?,?,?,?,?,  ?,?,?,?,  NULL)", lpCfg);
+      "OL_DIST_INFO, OL_DELIVERY_D)" "values (?,?,?,?,?,  ?,?,?,?,  NULL)",
+      lpCfg);
 
   IBINDL (lpCfg->tpc.c.ol_stmt, 1, ol_o_id);
   IBINDL (lpCfg->tpc.c.ol_stmt, 2, ol_o_d_id);
@@ -797,7 +811,8 @@ Orders (test_t * lpCfg, long d_id, long w_id)
   IBINDNTS_ARRAY (lpCfg->tpc.c.ol_stmt, 9, ol_dist_info);
 
   LOCAL_STMT (lpCfg->hdbc, lpCfg->tpc.c.no_stmt,
-      "insert into NEW_ORDER (NO_O_ID, NO_D_ID, NO_W_ID) values (?,?,?)", lpCfg);
+      "insert into NEW_ORDER (NO_O_ID, NO_D_ID, NO_W_ID) values (?,?,?)",
+      lpCfg);
 
   sprintf (szTemp, "Loading ORDERS for D=%ld, W= %ld", d_id, w_id);
   lpCfg->SetWorkingItem (szTemp);
@@ -844,7 +859,8 @@ Orders (test_t * lpCfg, long d_id, long w_id)
 	  MakeAlphaString (&lpCfg->tpc.c.rnd_seed, 24, 24,
 	      ol_dist_info[ol_fill]);
 
-	  CHECK_BATCH (henv, lpCfg->hdbc, lpCfg->tpc.c.ol_stmt, ol_fill, lpCfg);
+	  CHECK_BATCH (henv, lpCfg->hdbc, lpCfg->tpc.c.ol_stmt, ol_fill,
+	      lpCfg);
 	}
       CHECK_BATCH (henv, lpCfg->hdbc, lpCfg->tpc.c.o_stmt, fill, lpCfg);
 
@@ -908,7 +924,7 @@ Lastname (long num, char *name)
 
 
 void
-tpcc_init_globals (void * widget, test_t * lpCfg)
+tpcc_init_globals (void *widget, test_t * lpCfg)
 {
   int i;
   for (i = 0; i < BATCH_SIZE; i++)
@@ -925,7 +941,7 @@ tpcc_init_globals (void * widget, test_t * lpCfg)
       }
 
 void
-tpcc_close_stmts (void * widget, test_t * lpCfg)
+tpcc_close_stmts (void *widget, test_t * lpCfg)
 {
   CLOSE_STMT (misc_stmt);
   CLOSE_STMT (new_order_stmt);
@@ -946,9 +962,8 @@ tpcc_close_stmts (void * widget, test_t * lpCfg)
 
 
 void
-tpcc_schema_create (void * widget, test_t * lpBench)
+tpcc_schema_create (void *widget, test_t * lpBench)
 {
-
   pane_log ("TPC-C SCHEMA CREATION STARTED\r\n\r\n");
   if (!strlen (lpBench->szLoginDSN))
     {
@@ -999,9 +1014,8 @@ tpcc_schema_create (void * widget, test_t * lpBench)
 
 
 void
-tpcc_schema_cleanup (void * widget, test_t * lpBench)
+tpcc_schema_cleanup (void *widget, test_t * lpBench)
 {
-
   static char *szTables[] = {
     "WAREHOUSE",
     "DISTRICT",
@@ -1041,14 +1055,16 @@ tpcc_schema_cleanup (void * widget, test_t * lpBench)
     }
   if (lpBench->ShowProgress)
     lpBench->ShowProgress (widget, "Dropping the TPC-C tables", TRUE,
-      sizeof (szTables) / sizeof (char *));
+	sizeof (szTables) / sizeof (char *));
   for (i = 0; i < sizeof (szTables) / sizeof (char *); i++)
     {
       lpBench->SetProgressText (szTables[i], 0, 0, i, 1, 0, 0);
       sprintf (szSQL, szDropTable, szTables[i]);
       pane_log (szSQL);
-      if (SQL_SUCCESS != SQLExecDirect (lpBench->hstmt, (SQLCHAR *) szSQL, SQL_NTS))
-	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
+      if (SQL_SUCCESS != SQLExecDirect (lpBench->hstmt, (SQLCHAR *) szSQL,
+	      SQL_NTS))
+	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt,
+	    lpBench);
     }
   if (_stristr (lpBench->szDBMS, "Virtuoso"))
     {

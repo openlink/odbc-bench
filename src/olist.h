@@ -1,9 +1,9 @@
 /*
  *  olist.h
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -39,22 +39,20 @@ struct _OSList
   OSList *next;
 };
 
-/* Doubly linked lists
- */
-OList* o_list_alloc	  (void);
-void   o_list_free	  (OList     *list);
-OList* o_list_append	  (OList     *list,
-			   void *   data);
-OList* o_list_last	  (OList     *list);
+/* Doubly linked lists */
+OList *o_list_alloc (void);
+void o_list_free (OList * list);
+OList *o_list_append (OList * list, void *data);
+OList *o_list_last (OList * list);
+
 #define o_list_next(list) ((list) ? (((OList *)list)->next) : NULL)
 
-/* Singly linked lists
- */
-OSList* o_slist_alloc	    (void);
-void	o_slist_free	    (OSList   *list);
-OSList* o_slist_append	    (OSList   *list,
-			     void *  data);
-OSList* o_slist_last	    (OSList   *list);
+/* Singly linked lists */
+OSList *o_slist_alloc (void);
+void o_slist_free (OSList * list);
+OSList *o_slist_append (OSList * list, void *data);
+OSList *o_slist_last (OSList * list);
+
 #define o_slist_next(list) ((list) ? (((OSList *)list)->next) : NULL)
 
 #endif /* __OLIST_H__ */

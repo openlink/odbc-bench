@@ -1,9 +1,9 @@
 /*
  *  tpccfun.h
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -30,13 +30,13 @@ void add_tpcc_result (test_t * lpCfg);
 void scrap_log (test_t * lpBench, HSTMT stmt);
 void reset_times (test_t * lpCfg);
 
-void tpcc_init_globals (void * widget, test_t * lpCfg);
-void tpcc_create_db (void * widget, test_t * lpCfg);
-void tpcc_close_stmts (void * widget, test_t * lpCfg);
-int tpcc_run_test (void * widget, test_t * lpCfg);
-void tpcc_schema_create (void * widget, test_t * lpBench);
-void tpcc_schema_cleanup (void * widget, test_t * lpBench);
-void tpca_run_one (void * widget, void * data);
+void tpcc_init_globals (void *widget, test_t * lpCfg);
+void tpcc_create_db (void *widget, test_t * lpCfg);
+void tpcc_close_stmts (void *widget, test_t * lpCfg);
+int tpcc_run_test (void *widget, test_t * lpCfg);
+void tpcc_schema_create (void *widget, test_t * lpBench);
+void tpcc_schema_cleanup (void *widget, test_t * lpBench);
+void tpca_run_one (void *widget, void *data);
 
 
 void print_times_str (test_t * lpCfg, char *szBuffer);
