@@ -156,10 +156,10 @@ do_login (test_t *ptest)
                  SQL_DRIVER_ODBC_VER, szBuff, sizeof (szBuff), NULL);
           if (RC_SUCCESSFUL (rc))
             {
-              SQLINTEGER param;
+              SQLUINTEGER param;
 
               szBuff[2] = 0;
-              if (atoi(szBuff) >= 3)
+              if (atoi(szBuff) >= 3) /* ODBC 3.x */
                 {
                   rc = SQLGetInfo (ptest->hdbc, SQL_PARAM_ARRAY_SELECTS,
                          &param, sizeof (param), NULL);
@@ -216,8 +216,8 @@ done:
 void
 get_dsn_data (test_t * ptest)
 {
-  long ulDTFunc;
-  SQLSMALLINT sTxnCapable;
+  SQLUINTEGER ulDTFunc;
+  SQLUSMALLINT sTxnCapable;
   char szBuff[256];
   RETCODE rc;
 

@@ -160,9 +160,10 @@ struct test_s
   int fProcsSupported;		/* TRUE if sprocs are supported */
   int fBatchSupported;
   int fSQLBatchSupported;
-  unsigned long nCursorsSupported;	/* the bitmask of supported cursor types */
-  unsigned long nIsolationsSupported;	/* the bitmask of supported isolation levels */
-  long default_txn_isolation;	/* txn_isolation_mode */
+
+  SQLUINTEGER nCursorsSupported;	/* the bitmask of supported cursor types */
+  SQLUINTEGER nIsolationsSupported;	/* the bitmask of supported isolation levels */
+  SQLUINTEGER default_txn_isolation;	/* txn_isolation_mode */
 
   /* log functions */
   void (*ShowProgress) (void * parent_win, char * title, BOOL bForceSingle, float nMax);
