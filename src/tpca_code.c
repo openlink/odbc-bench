@@ -1419,7 +1419,7 @@ vLoadBranch (test_t * ptest	/* Run Configuration Parameters */
     )
 {
   RETCODE rc;
-  UDWORD udwBranch;
+  UDWORD udwBranch = 0;
   double dBalance = 1000.0;
   SDWORD cbBalance;
   UDWORD udwMod;
@@ -1497,8 +1497,9 @@ vLoadBranch (test_t * ptest	/* Run Configuration Parameters */
 	    goto DONE;
 	}
     }
+
 DONE:
-  pane_log ((char *) szCopied, --udwBranch);
+  pane_log ((char *) szCopied, udwBranch ? --udwBranch : 0);
 
   /* Clean up Statement Handle */
   rc = SQLFreeStmt (ptest->hstmt, SQL_CLOSE);
@@ -1520,7 +1521,8 @@ vLoadTeller (test_t * ptest	/* Run Configuration Parameters */
   RETCODE rc;
   double dBalance = 100000;
   UDWORD udwMod;
-  UDWORD udwTeller, udwBranch;
+  UDWORD udwTeller = 0;
+  UDWORD udwBranch;
   char szSQLBuffer[128];
   SDWORD cbFiller = 84;
   UWORD uwBindIdx;
@@ -1541,7 +1543,7 @@ vLoadTeller (test_t * ptest	/* Run Configuration Parameters */
   if (rc != SQL_SUCCESS && rc != SQL_SUCCESS_WITH_INFO)
     {
       vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, ptest->hstmt, ptest);
-      pane_log ((char *) szInsertFailure, udwBranch);
+      pane_log ((char *) szInsertFailure, udwTeller);
       goto DONE ;
     }
 
@@ -1600,8 +1602,9 @@ vLoadTeller (test_t * ptest	/* Run Configuration Parameters */
 	    goto DONE;
 	}
     }
+
 DONE:
-  pane_log ((char *) szCopied, --udwTeller);
+  pane_log ((char *) szCopied, udwTeller ? --udwTeller : 0);
 
   /* Clean up Statement Handle */
   rc = SQLFreeStmt (ptest->hstmt, SQL_CLOSE);
@@ -1622,7 +1625,7 @@ vLoadAccount (test_t * ptest	/* Run Configuration Parameters */
 {
   RETCODE rc;
   char szSQLBuffer[128];
-  UDWORD udwAcct;
+  UDWORD udwAcct = 0;
   UDWORD udwBranch;
   double dBalance = 1000.;
   UDWORD udwMod;
@@ -1645,7 +1648,7 @@ vLoadAccount (test_t * ptest	/* Run Configuration Parameters */
   if (rc != SQL_SUCCESS && rc != SQL_SUCCESS_WITH_INFO)
     {
       vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, ptest->hstmt, ptest);
-      pane_log ((char *) szInsertFailure, udwBranch);
+      pane_log ((char *) szInsertFailure, udwAcct);
       goto DONE ;
     }
 
@@ -1708,7 +1711,7 @@ vLoadAccount (test_t * ptest	/* Run Configuration Parameters */
     }
 
 DONE:
-  pane_log ((char *) szCopied, --udwAcct);
+  pane_log ((char *) szCopied, udwAcct ? --udwAcct : 0);
 
   /* Clean up Statement Handle */
   rc = SQLFreeStmt (ptest->hstmt, SQL_CLOSE);
