@@ -54,35 +54,37 @@ linux-rpm:
 #  Create a tar file containing the binaries and support files
 #
 binary-tar:
-	-mkdir @build@
+	$(mkinstalldirs) distrib @build@
 	$(MAKE) install-strip prefix=`pwd`/@build@
-	tar cvf @build@.tar @build@
-	gzip -9vf @build@.tar
+	tar cvf distrib/@build@.tar @build@
+	gzip -9vf distrib/@build@.tar
 	rm -rf @build@
 
 #
 #  Create a OpenLink taz file containing the binaries and support files
 #
 openlink-taz:
-	-mkdir @build@
+	$(mkinstalldirs) distrib @build@
 	$(MAKE) install-strip prefix=`pwd`/@build@
-	(cd @build@; tar cvf ../@build@.tar .)
-	compress -f @build@.tar
-	mv @build@.tar.Z @build@.taz
+	(cd @build@; tar cvf ../distrib/@build@.tar .)
+	compress -f distrib/@build@.tar
+	mv distrib/@build@.tar.Z distrib/@build@.taz
 	rm -rf @build@
 
 #
 #  Create a source snapshot package
 #
 snapshot:
-	$(MAKE) dist-gzip distdir=$(PACKAGE)-`date +"%Y%m%d"`
-
+	$(mkinstalldirs) distrib
+	$(MAKE) dist-gzip distdir=distrib/$(PACKAGE)-`date +"%Y%m%d"`
 
 #
 #  Create an official release package
 #
 release:
-	$(MAKE) distcheck
+	$(mkinstalldirs) distrib
+	$(MAKE) distcheck 
+	mv $(PACKAGE)-$(VERSION).tar.gz distrib
 
 #
 #  Generate ChangeLog
