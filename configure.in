@@ -83,8 +83,8 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 dnl AC_PROG_RANLIB
-dnl AC_LIBTOOL_DLOPEN
-dnl AM_PROG_LIBTOOL
+AC_LIBTOOL_DLOPEN
+AM_PROG_LIBTOOL
 
 
 ##########################################################################
