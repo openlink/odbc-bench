@@ -1,7 +1,7 @@
 #
 #  Makefile.am
-# 
-#  odbc-bench - a TPCA and TPCC benchmark program for databases 
+#
+#  odbc-bench - a TPCA and TPCC benchmark program for databases
 #  Copyright (C) 2000-2002 OpenLink Software <odbc-bench@openlinksw.com>
 #
 #  This program is free software; you can redistribute it and/or modify
@@ -26,8 +26,6 @@ SUBDIRS		= gtk
 bin_PROGRAMS	= odbc-bench-cmd odbc-bench-gtk
 
 INCLUDES	= \
-	-I$(top_srcdir)/odbc-bench \
-	-I$(top_srcdir)/odbc-bench/gtk \
 	-I$(top_srcdir)/lib \
 	@ODBC_CFLAGS@ \
 	@GTK_CFLAGS@ \
@@ -36,8 +34,8 @@ INCLUDES	= \
 else
 
 bin_PROGRAMS	= odbc-bench-cmd
+
 INCLUDES	= \
-	-I$(top_srcdir)/odbc-bench \
 	-I$(top_srcdir)/lib \
 	@ODBC_CFLAGS@ \
 	@XML_CFLAGS@
@@ -51,7 +49,6 @@ odbc_bench_gtk_LDADD	= \
 	@GTK_LIBS@ \
 	@XML_LIBS@ \
 	@LIBADD_DL@
-
 
 odbc_bench_gtk_SOURCES = \
 	command_line.c \
@@ -72,7 +69,7 @@ odbc_bench_cmd_LDADD	= \
 	../lib/libutils.a \
 	@ODBC_LIBS@ \
 	@XML_LIBS@ \
-        @LIBADD_DL@
+	@LIBADD_DL@
 
 odbc_bench_cmd_SOURCES = \
 	command_line.c \

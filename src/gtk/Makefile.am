@@ -22,8 +22,6 @@
 noinst_LTLIBRARIES		= libodbcbench-gtk.la
 
 INCLUDES	= \
-	-I$(top_srcdir)/odbc-bench \
-	-I$(top_srcdir)/odbc-bench/gtk \
 	@ODBC_CFLAGS@ \
 	@GTK_CFLAGS@ \
 	@XML_CFLAGS@
