@@ -28,7 +28,7 @@ AC_REVISION($Id$)
 ##########################################################################
 
 AC_INIT([OpenLink ODBC Benchmark Utility],
-        [0.99.21],
+        [0.99.22_pre2],
 	[odbc-bench@openlinksw.com],
 	[odbc-bench])
 
@@ -108,18 +108,11 @@ AC_CHECK_FUNCS(strerror setenv usleep poll select)
 
 ##########################################################################
 ##									##
-##  Check if we want to build the GUI applications and libraries	##
+##  Check for XML2 library functions					##
 ##									##
 ##########################################################################
-AC_ARG_ENABLE(gui,
-[  --enable-gui            build GUI applications (default),
-  --disable-gui           build GUI applications],
-[ case "${enableval}" in
-    yes) USE_GUI=true ;;
-    no)  USE_GUI=false ;;
-    *) AC_MSG_ERROR(bad value ${enableval} for --enable-gui) ;;
-  esac
-],[USE_GUI=true]) 
+
+AM_PATH_XML2(2.4.0)
 
 
 ##########################################################################
@@ -127,15 +120,37 @@ AC_ARG_ENABLE(gui,
 ##  Check for GTK library functions					##
 ##									##
 ##########################################################################
+
 USE_GTK=false
-if test x$USE_GUI = xtrue
+AM_PATH_GTK(1.2.3, [], [], gthread )
+if test x$no_gtk = x
 then
-  AM_PATH_GTK(1.2.3, [], [], gthread )
-  if test x$no_gtk = x
-  then
     USE_GTK=true
-  fi
 fi
+
+
+##########################################################################
+##									##
+##  Check if we want to build the GUI applications and libraries	##
+##									##
+##########################################################################
+
+#
+#  Put separator between options
+#
+AC_ARG_ENABLE([],[
+ODBC-Bench Specific Features:],[])
+
+AC_ARG_ENABLE(gui, [dnl
+AC_HELP_STRING([--enable-gui], [build GUI applications (default)])
+AC_HELP_STRING([--disable-gui], [build GUI applications])dnl
+], [ 
+  case "${enableval}" in
+    yes) USE_GUI=true ;;
+    no)  USE_GUI=false ;;
+    *) AC_MSG_ERROR(bad value ${enableval} for --enable-gui) ;;
+  esac
+],[USE_GUI=true]) 
 
 
 ##########################################################################
@@ -148,6 +163,11 @@ then
   USE_GUI=false
 fi
 
+if test x$USE_GUI = xfalse
+then
+  USE_GTK=false
+fi
+
 if test x$USE_GUI = xtrue
 then
   AC_DEFINE(GUI, 1, [Define if we detected a GUI library we can use])
@@ -155,15 +175,6 @@ fi
 
 AM_CONDITIONAL(GUI, [test x$USE_GUI = xtrue])
 AM_CONDITIONAL(GTK, [test x$USE_GTK = xtrue])
-
-
-##########################################################################
-##									##
-##  Check for XML2 library functions					##
-##									##
-##########################################################################
-
-AM_PATH_XML2(2.4.0)
 
 
 ##########################################################################
@@ -220,10 +231,12 @@ AC_SUBST(LIBADD_DL)
 ##									##
 ##########################################################################
 
-AC_ARG_ENABLE(pthreads,
-[  --enable-pthreads       build threaded applications (default),
-  --disable-pthreads      build non-threaded applications],
-[ case "${enableval}" in
+AC_MSG_CHECKING(for thread model)
+AC_ARG_ENABLE(pthreads, [dnl
+AC_HELP_STRING([--enable-pthreads], [build threaded applications (default)])
+AC_HELP_STRING([--disable-pthreads], [build non-threaded applications])dnl
+], [
+  case "${enableval}" in
     yes) USE_PTHREADS=true ;;
     no)  USE_PTHREADS=false ;;
     *) AC_MSG_ERROR(bad value ${enableval} for --enable-pthreads) ;;
@@ -232,21 +245,78 @@ AC_ARG_ENABLE(pthreads,
 
 if test x$USE_PTHREADS = xtrue
 then
-    CFLAGS="$CFLAGS -DWITH_PTHREADS -D_REENTRANT"
-    AC_CHECK_LIB(pthreads, pthread_create,
-    [
-	if test "$host_os" = "osf3.2"
-	then
-	  CFLAGS="$CFLAGS -DOLD_PTHREADS"
-	  LIBS="$LIBS -lpthreads -lmach -lc_r"
-	else
-	  LIBS="$LIBS -lpthreads"
-	fi
-    ],
-    [
-	AC_CHECK_LIB(pthread, pthread_create, [LIBS="$LIBS -lpthread"])
-    ])
+    AC_MSG_RESULT(enabled pthread support)
+    CPPFLAGS="$CPPFLAGS -DWITH_PTHREADS -D_REENTRANT"
+    found_lib=false
+
+    AC_MSG_CHECKING(for OS dependent thread flags)
+    case $host in
+      *-aix*)	
+		CC=cc_r7
+		AC_MSG_RESULT([use cc_r7 for AIX])
+		;;
+
+      *UnixWare*)
+      		CFLAGS="$CFLAGS -Kthread"
+		AC_MSG_RESULT([use -Kthread for UnixWare])
+		;;
+
+      i[3456]86-dg-dgux*)
+      		CFLAGS="$CFLAGS -D_POSIX4A_DRAFT6_SOURCE"
+		LIBS="$LIBS -lthread"
+		AC_MSG_RESULT([use -lthread for DG/UX])
+		;;
+
+      *-freebsd*)	
+		CFLAGS="$CFLAGS -pthread"
+		AC_MSG_RESULT([use -pthread for FreeBSD])
+		;;
+
+      *)
+		AC_MSG_RESULT([none])
+		;;
+    esac
+
+    #
+    #  Check headers
+    #
+    AC_CHECK_HEADER(pthread.h)
+
+    #
+    #  If mutex functions are in C library, we should not need to link
+    #  with -lpthread
+    #
+    AC_CHECK_FUNC(pthread_create, [found_lib=true])
+
+    #
+    #  Check out the various libraries
+    #
+    if test x$found_lib = xfalse
+    then
+	IODBC_CHECK_PTHREAD_LIB(pthreads, pthread_create,
+	[
+	    if test "$host_os" = "osf3.2"
+	    then
+	      CPPFLAGS="$CPPFLAGS -DOLD_PTHREADS"
+	      LIBS="$LIBS -lpthreads -lmach -lc_r"
+	    else
+	      LIBS="$LIBS -lpthreads"
+	    fi
+	    found_lib=true
+	])
+    fi
+    if test x$found_lib = xfalse
+    then
+	IODBC_CHECK_PTHREAD_LIB(pthread, pthread_create, 
+	[
+	    LIBS="$LIBS -lpthread"
+	    found_lib=true
+	])
+    fi 
+else
+    AC_MSG_RESULT(no thread support)
 fi
+
 
 ##########################################################################
 ##									##
@@ -273,11 +343,11 @@ ODBC_LIBS=
 #
 if test "$found_odbc" = "no"
 then
-AC_ARG_WITH(iodbc,
-[  --with-iodbc(=DIR)      Select iODBC support. 
-                              DIR is the iODBC base install directory 
-                              (default=/usr/local)],
-[
+AC_ARG_WITH(iodbc, [dnl
+AC_HELP_STRING([--with-iodbc(=DIR)], [Select iODBC support])
+  AC_HELP_STRING([], [DIR is the iODBC base install directory])
+  AC_HELP_STRING([], [(default=/usr/local)])
+] , [
     if test "$withval" = "yes"
     then
 	withval=/usr/local
@@ -317,11 +387,11 @@ fi
 #
 if test "$found_odbc" = "no"
 then
-AC_ARG_WITH(odbcsdk,
-[  --with-odbcsdk(=DIR)    Select OpenLink odbcsdk support. 
-                              DIR is the odbcsdk base install directory 
-                              (default=/usr/local)],
-[
+AC_ARG_WITH(odbcsdk, [dnl
+AC_HELP_STRING([--with-odbcsdk(=DIR)], [Select OpenLink odbcsdk support])
+  AC_HELP_STRING([], [DIR is the odbcsdk base install directory])
+  AC_HELP_STRING([], [(default=/usr/local)])
+], [
     if test "$withval" = "yes"
     then
 	withval=/usr/local
@@ -350,11 +420,11 @@ fi
 #
 if test "$found_odbc" = "no"
 then
-AC_ARG_WITH(unixodbc,
-[  --with-unixodbc(=DIR)   Select UnixODBC support. 
-                              DIR is the UnixODBC base install directory 
-                              (default=/usr/local)],
-[
+AC_ARG_WITH(unixodbc, [dnl
+AC_HELP_STRING([--with-unixodbc(=DIR)], [Select UnixODBC support])
+  AC_HELP_STRING([], [DIR is the UnixODBC base install directory])
+  AC_HELP_STRING([], [(default=/usr/local)])
+], [
     if test "$withval" = "yes"
     then
 	withval=/usr/local
@@ -379,10 +449,10 @@ fi
 #
 if test "$found_odbc" = "no"
 then
-AC_ARG_WITH(odbc-include,
-[  --with-odbc-inc=DIR     Specify custom ODBC include directory.
-                              (default=/usr/local/include)],
-[
+AC_ARG_WITH(odbc-include, [dnl
+AC_HELP_STRING([--with-odbc-inc=DIR], [Specify custom ODBC include directory])
+  AC_HELP_STRING([], [(default=/usr/local/include)])
+], [
     if test "$withval" = "yes"
     then
 	withval=/usr/local/include
@@ -397,10 +467,11 @@ AC_ARG_WITH(odbc-include,
 	AC_MSG_RESULT(no)
     fi
 ])
-AC_ARG_WITH(odbc-lib,
-[  --with-odbc-lib=DIR    Specify custom ODBC lib directory.
-                              (default=/usr/local/lib)],
-[
+
+AC_ARG_WITH(odbc-lib, [dnl
+AC_HELP_STRING([--with-odbc-lib=DIR], [Specify custom ODBC lib directory])
+  AC_HELP_STRING([], [(default=/usr/local/lib)])dnl
+], [
     if test "$withval" = "yes"
     then
 	    withval=/usr/local/lib
@@ -506,3 +577,28 @@ AC_CONFIG_FILES([
 ])
 AC_CONFIG_COMMANDS([default], [])
 AC_OUTPUT
+
+########################################################################## 
+##									##
+##  Display configuration information					##
+##									##
+##########################################################################
+echo ""
+echo ""
+echo "${PACKAGE_STRING} configuration summary"
+echo "${PACKAGE_STRING} configuration summary" | sed 's/./=/g'
+echo ""
+echo "Installation variables"
+echo "AC_HELP_STRING(prefix,		[${prefix}])"
+echo "AC_HELP_STRING(exec_prefix,	[${exec_prefix}])"
+echo ""
+echo "Installation paths"
+echo "AC_HELP_STRING(programs,		[${bindir}])"
+echo "AC_HELP_STRING(include files, 	[${includedir}])"
+echo "AC_HELP_STRING(libraries, 	[${libdir}])"
+echo "AC_HELP_STRING(manual pages, 	[${mandir}])"
+echo ""
+echo "Extensions"
+echo "AC_HELP_STRING(GUI Extensions,	[${USE_GUI}])"
+echo "AC_HELP_STRING(ThreadSafe,	[${USE_PTHREADS}])"
+echo ""
