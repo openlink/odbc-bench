@@ -1049,6 +1049,8 @@ vCreateProcedure (test_t * ptest	/* Run Configuration Parameters */
   /* Build Index on the Branch Table */
   if (ptest->tpc.a.fCreateProcedure)
     {
+      pane_log ("Dropping procedures\n");
+      SQLExecDirect (ptest->hstmt, "Drop procedure ODBC_BENCHMARK", SQL_NTS);
       pane_log ("Adding a procedure for %s\r\n",
 	  DriverMap[ptest->tpc.a.uwDrvIdx].szDbName);
       /* Execute Index Create Statement */
@@ -4548,7 +4550,7 @@ fCleanup (test_t * lpRunCfg	/* Run Configuration Parameters */
 	}
     }
 
-  pane_log ("Dropping procedures");
+  pane_log ("Dropping procedures\n");
   if (lpRunCfg->tpc.a.fCreateProcedure)
     fExecute (lpRunCfg, "Drop procedure ODBC_BENCHMARK");
 

@@ -57,7 +57,7 @@ static double *ptpca_dDiffSum = NULL;
 #define BARS_REFRESH_INTERVAL bench_get_long_pref (DISPLAY_REFRESH_RATE)
 
 
-#define SHORT_OPTIONS "d:u:p:r:m:t:P:s:n1avVRc:i:S:K:T:C"
+#define SHORT_OPTIONS "d:u:p:r:m:t:P:s:c:i:S:K:T:n1avVRCDE"
 
 static void
 usage (void)
@@ -92,15 +92,20 @@ usage (void)
   "  -S -rowset_size    - rowset size\n"
   "  -K -keyset_size    - keyset size\n"
   "  -T -trav_count     - traversal count\n"
-  "  -C -create_tables  - create the tables\n"
+  "  -C -create_tables  - create the tables and procedures\n"
+  "  -D -drop_tables    - drop the tables and procedures\n"
   "  -rcreate_table     - create the results table\n"
+  "  -rdrop_table       - drop the results table\n"
   "  -rdsn   - login dsn for result table\n"
   "  -ruid   - user id for result table\n"
   "  -rpwd   - password for result table\n"
   "  -rfile  - output filename for results data\n"
-  "  -v      - print additional info on stdout\n"
-  "  -V      - print debug info on stdout\n"
+  "  -v      - print info on stdout (error messages, test results,\n" 
+  "             messages about the creation and closing connections)\n"
+  "  -V      - print the same info on stdout as for -v and the test progress info\n"
   "  -R      - doesn't do rollbacks on deadlock\n"
+  "  -E      - doesn't execute a test, it may be used, if you want to create/drop\n" 
+  "            tables, procedures and exit after this.\n"
   "\n", stderr);
 }
 
@@ -266,7 +271,8 @@ typedef enum {
   OP_RUID,
   OP_RPWD,
   OP_RFILE,
-  OP_RCREATE_TABLE
+  OP_RCREATE_TABLE,
+  OP_RDROP_TABLE
 }
 opt_type;
 
@@ -288,11 +294,13 @@ static struct option long_options[] = {
   {"keyset_size", 1, 0, 'K'},
   {"trav_count", 1, 0, 'T'},
   {"create_tables", 0, 0, 'C'},
+  {"drop_tables", 0, 0, 'D'},
   {"rdsn", 1, 0, OP_RDSN},
   {"ruid", 1, 0, OP_RUID},
   {"rpwd", 1, 0, OP_RPWD},
   {"rfile", 1, 0, OP_RFILE},
-  {"rcreate_tables", 0, 0, OP_RCREATE_TABLE},
+  {"rcreate_table", 0, 0, OP_RCREATE_TABLE},
+  {"rdrop_table", 0, 0, OP_RDROP_TABLE},
   { 0, 0, 0, 0}
 /* name | has_arg | *flag | val */
 };
@@ -303,7 +311,10 @@ do_command_line (int argc, char *argv[])
 {
   int curr_opt;
   int Load = 0;
+  int UnLoad = 0;
+  int bExit = 0;
   int fCreateResultsTable = 0;
+  int fDropResultsTable = 0;
   int opt_index;
   char szRDSN[50] = {""};
   char szRUID[50] = {""};
@@ -468,6 +479,14 @@ do_command_line (int argc, char *argv[])
 	    Load = 1;
 	    break;
 
+	  case 'D':
+	    UnLoad = 1;
+	    break;
+
+	  case 'E':
+	    bExit = 1;
+	    break;
+
 	  case OP_RDSN:
 	    strncpy (szRDSN, optarg, 49);
 	    szRDSN[49] = 0;
@@ -487,11 +506,38 @@ do_command_line (int argc, char *argv[])
 	  case OP_RCREATE_TABLE:
 	    fCreateResultsTable = 1;
 	    break;
+	  case OP_RDROP_TABLE:
+	    fDropResultsTable = 1;
+	    break;
 
 	  default:
 	    usage ();
 	    return -2;
 	  };
+
+      
+      if (szRDSN[0])
+        results_login(szRDSN, szRUID, szRPWD);
+
+      if (fDropResultsTable)
+        drop_results_table ();
+
+      if (fCreateResultsTable)
+        create_results_table ();
+
+      if (UnLoad)
+	{
+	  do_login (&test);
+	  get_dsn_data (&test);
+	  if (!test.hdbc)
+	    {
+	      fprintf (stdout, "%s\n", test.szSQLError);
+	      fprintf (stderr, "%s\n", test.szSQLError);
+	      return -5;
+	    }
+	  fCleanup (&test);
+	  do_logout (&test);
+	}
       if (Load)
 	{
 	  do_login (&test);
@@ -504,19 +550,15 @@ do_command_line (int argc, char *argv[])
 	    }
 	  fBuildBench (&test);
 	  do_logout (&test);
-	  return 0;
 	}
+
+      if ((Load || UnLoad || fDropResultsTable || fCreateResultsTable) && bExit)
+        return 0;
 
 /* progress impl */
       n_connections = 1;
       n_threads = (test.tpc._.nThreads > 1 ? test.tpc._.nThreads : 1);
       test_types = test.TestType;
-
-      if (szRDSN[0])
-        results_login(szRDSN, szRUID, szRPWD);
-
-      if (fCreateResultsTable)
-        create_results_table ();
 
 #if defined(PTHREADS) || defined(WIN32)
       if (test.tpc._.nThreads > 1)
