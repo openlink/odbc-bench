@@ -3489,6 +3489,9 @@ fRunTransArray (test_t * lpBench,	/* Benchmark info */
   int nArrayParSize;
   UDWORD  nParamsProcessed;
 
+  hstmtUpdAcct = hstmtSelBal = hstmtUpdTeller = hstmtUpdBranch = 
+    hstmtInsHist = SQL_NULL_HSTMT;
+
   if (IDX_PARAMS != lpBench->tpc.a.fSQLOption)
     goto general_error;
 
@@ -3800,25 +3803,34 @@ fRunTransArray (test_t * lpBench,	/* Benchmark info */
     fRtn = TRUE;
 
 
+
+general_error:
   /* We're done, so dismiss the dialog */
   if (lpBench->StopProgress)
     lpBench->StopProgress ();
-  pane_log ("\n\nBenchmark finished.\r\n");
+
+  if (fDone)
+    pane_log ("\n\nBenchmark finished.\r\n");
+  else
+    pane_log ("\n\nBenchmark is ended with an error.\r\n");
 
   SQLFreeStmt (lpBench->hstmt, SQL_CLOSE);
   SQLFreeStmt (lpBench->hstmt, SQL_UNBIND);
   SQLFreeStmt (lpBench->hstmt, SQL_RESET_PARAMS);
   if (IDX_PARAMS == lpBench->tpc.a.fSQLOption)
     {
-      SQLFreeStmt (hstmtUpdAcct, SQL_DROP);
-      SQLFreeStmt (hstmtSelBal, SQL_DROP);
-      SQLFreeStmt (hstmtUpdTeller, SQL_DROP);
-      SQLFreeStmt (hstmtUpdBranch, SQL_DROP);
-      SQLFreeStmt (hstmtInsHist, SQL_DROP);
+      if (hstmtUpdAcct != SQL_NULL_HSTMT)
+        SQLFreeStmt (hstmtUpdAcct, SQL_DROP);
+      if (hstmtSelBal != SQL_NULL_HSTMT)
+        SQLFreeStmt (hstmtSelBal, SQL_DROP);
+      if (hstmtUpdTeller != SQL_NULL_HSTMT)
+        SQLFreeStmt (hstmtUpdTeller, SQL_DROP);
+      if (hstmtUpdBranch != SQL_NULL_HSTMT)
+        SQLFreeStmt (hstmtUpdBranch, SQL_DROP);
+      if (hstmtInsHist != SQL_NULL_HSTMT)
+        SQLFreeStmt (hstmtInsHist, SQL_DROP);
     }
-
-  /* If we where not cancelled due to an error */
-general_error:
+  
   XFREE(pnAcctNum);
   XFREE(pnBranchNum);
   XFREE(pnTellerNum);
@@ -3887,7 +3899,7 @@ fRunTrans (test_t * lpBench,	/* Benchmark info */
 
 
   /* hstmts for bound parameters for Prepare/Execute method */
-  HSTMT hstmtUpdAcct;		/* Update account table */
+  HSTMT hstmtUpdAcct;	/* Update account table */
 
   HSTMT hstmtSelBal;		/* Select new balance from account */
 
@@ -3904,6 +3916,9 @@ fRunTrans (test_t * lpBench,	/* Benchmark info */
   SDWORD cbBal;
 
   int ret_code;
+
+  hstmtUpdAcct = hstmtSelBal = hstmtUpdTeller = hstmtUpdBranch = 
+    hstmtInsHist = SQL_NULL_HSTMT;
 
   if (IDX_PARAMS == lpBench->tpc.a.fSQLOption 
       && lpBench->tpc.a.nArrayParSize > 0
@@ -4163,25 +4178,34 @@ fRunTrans (test_t * lpBench,	/* Benchmark info */
     fRtn = TRUE;
 
 
+  /* If we where not cancelled due to an error */
+general_error:
   /* We're done, so dismiss the dialog */
   if (lpBench->StopProgress)
     lpBench->StopProgress ();
-  pane_log ("\n\nBenchmark finished.\r\n");
+
+  if (fDone)
+    pane_log ("\n\nBenchmark finished.\r\n");
+  else
+    pane_log ("\n\nBenchmark is ended with an error.\r\n");
 
   SQLFreeStmt (lpBench->hstmt, SQL_CLOSE);
   SQLFreeStmt (lpBench->hstmt, SQL_UNBIND);
   SQLFreeStmt (lpBench->hstmt, SQL_RESET_PARAMS);
   if (IDX_PARAMS == lpBench->tpc.a.fSQLOption)
     {
-      SQLFreeStmt (hstmtUpdAcct, SQL_DROP);
-      SQLFreeStmt (hstmtSelBal, SQL_DROP);
-      SQLFreeStmt (hstmtUpdTeller, SQL_DROP);
-      SQLFreeStmt (hstmtUpdBranch, SQL_DROP);
-      SQLFreeStmt (hstmtInsHist, SQL_DROP);
+      if (hstmtUpdAcct != SQL_NULL_HSTMT)
+        SQLFreeStmt (hstmtUpdAcct, SQL_DROP);
+      if (hstmtSelBal != SQL_NULL_HSTMT)
+        SQLFreeStmt (hstmtSelBal, SQL_DROP);
+      if (hstmtUpdTeller != SQL_NULL_HSTMT)
+        SQLFreeStmt (hstmtUpdTeller, SQL_DROP);
+      if (hstmtUpdBranch != SQL_NULL_HSTMT)
+        SQLFreeStmt (hstmtUpdBranch, SQL_DROP);
+      if (hstmtInsHist != SQL_NULL_HSTMT)
+        SQLFreeStmt (hstmtInsHist, SQL_DROP);
     }
 
-  /* If we where not cancelled due to an error */
-general_error:
   if (!fDone)
     fRtn = FALSE;
 

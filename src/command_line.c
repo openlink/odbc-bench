@@ -38,6 +38,7 @@
 #include "odbcinc.h"
 #include "thr.h"
 #include "tpca_code.h"
+#include "results.h"
 
 static int verbose = 0;
 
@@ -53,7 +54,7 @@ static float spec_time_secs = -1;
 static float *pTrnTimes = NULL;
 static testtype test_types = 0;
 static float *fOldValues = NULL;
-static long curr_time_msec = 0L;
+static unsigned long curr_time_msec = 0L;
 static double *ptpca_dDiffSum = NULL;
 
 #define BARS_REFRESH_INTERVAL bench_get_long_pref (DISPLAY_REFRESH_RATE)
@@ -68,33 +69,34 @@ usage (void)
   fprintf (stderr, "Copyright (C) 2000-2002 OpenLink Software\n");
   fprintf (stderr, "Please report all bugs to <%s>\n", PACKAGE_BUGREPORT);
   fprintf (stderr, "This utility is licensed under GPL\n");
-
-  fputs ("\nUsage :\n\n", stderr);
-  fputs ("\t-d\t- login dsn\n", stderr);
-  fputs ("\t-u\t- user id\n", stderr);
-  fputs ("\t-p\t- password\n", stderr);
-  fputs ("\t-r\t- number of runs (default 1)\n", stderr);
-  fputs ("\t-m\t- duration of the run (mins) (default 5)\n", stderr);
-  fputs ("\t-t\t- number of threads (default 1)\n", stderr);
-  fputs ("\t-P\t- size for used array of parameters (default 1) \n", stderr);
-  fputs ("\t-s\t- exec | proc | prepare (default RunAll tests)\n", stderr);
-  fputs ("\t-n\t- don't try to use transactions\n", stderr);
-  fputs ("\t-1\t- do 100 row query\n", stderr);
-  fputs ("\t-a\t- asynchronous execution\n", stderr);
-  fputs ("\t-v\t- print additional info on stdout\n", stderr);
-  fputs ("\t-V\t- print debug info on stdout\n", stderr);
-  fputs ("\t-R\t- doesn't do rollbacks on deadlock\n", stderr);
-  fputs
-      ("\t-c\t- cursor type = forward | static | keyset | dynamic | mixed\n",
-      stderr);
-  fputs
-      ("\t-i\t- transaction isolation level = uncommitted | committed | repeatable | serializable\n",
-      stderr);
-  fputs ("\t-S\t- rowset size\n", stderr);
-  fputs ("\t-K\t- keyset size\n", stderr);
-  fputs ("\t-T\t- traversal count\n", stderr);
-  fputs ("\t-C\t- create the tables\n", stderr);
-  fputs ("\n", stderr);
+  fputs ("\nUsage :\n\n"
+  "  -d -dsn   - login dsn\n"
+  "  -u -uid   - user id\n"
+  "  -p -pwd   - password\n"
+  "  -r -runs  - number of runs (default 1)\n"
+  "  -m -time  - duration of the run (mins) (default 5)\n"
+  "  -t -threads    - number of threads (default 1)\n"
+  "  -P -arrayparm  - size for used array of parameters (default 1) \n"
+  "  -s -test       - exec | proc | prepare (default RunAll tests)\n"
+  "  -n -autocommit - don't try to use transactions\n"
+  "  -1 -query      - do 100 row query\n"
+  "  -a -async      - asynchronous execution\n"
+  "  -c -cursor_type    - cursor type = forward | static | keyset | dynamic "
+  "                                   | mixed\n"
+  "  -i -txn_isolation  - transaction isolation level = uncommitted | committed \n"
+  "                                                   | repeatable | serializable\n"
+  "  -S -rowset_size    - rowset size\n"
+  "  -K -keyset_size    - keyset size\n"
+  "  -T -trav_count     - traversal count\n"
+  "  -C -create_tables  - create the tables\n"
+  "  -rdsn   - login dsn for result table\n"
+  "  -ruid   - user id for result table\n"
+  "  -rpwd   - password for result table\n"
+  "  -rfile  - output filename for results data\n"
+  "  -v      - print additional info on stdout\n"
+  "  -V      - print debug info on stdout\n"
+  "  -R      - doesn't do rollbacks on deadlock\n"
+  "\n", stderr);
 }
 
 static void
@@ -148,7 +150,7 @@ static void
 stdout_setprogresstext (char *pszProgress, int nConn, int thread_no,
     float percent, int nTrnPerCall, long secs_remain, double tpca_dDiffSum)
 {
-  long time_now = get_msec_count ();
+  unsigned long time_now = get_msec_count ();
   int i;
 
   if (nConn >= 0 && thread_no >= 0 && thread_no < n_threads)
@@ -253,11 +255,52 @@ dummy_fcancel (void)
 }
 
 
+
+typedef enum { 
+  OP_RDSN = 127,
+  OP_RUID,
+  OP_RPWD,
+  OP_RFILE
+}
+opt_type;
+
+static struct option long_options[] = {
+  {"dsn", 1, 0, 'd'},
+  {"uid", 1, 0, 'u'},
+  {"pwd", 1, 0, 'p'},
+  {"runs", 1, 0, 'r'},
+  {"time", 1, 0, 'm'},
+  {"threads", 1, 0, 't'},
+  {"arrayparm", 1, 0, 'P'},
+  {"test", 1, 0, 's'},
+  {"autocommit", 0, 0, 'n'},
+  {"query", 0, 0, '1'},
+  {"async", 0, 0, 'a'},
+  {"cursor_type", 1, 0, 'c'},
+  {"txn_isolation", 1, 0, 'i'},
+  {"rowset_size", 1, 0, 'S'},
+  {"keyset_size", 1, 0, 'K'},
+  {"trav_count", 1, 0, 'T'},
+  {"create_tables", 0, 0, 'C'},
+  {"rdsn", 1, 0, OP_RDSN},
+  {"ruid", 1, 0, OP_RUID},
+  {"rpwd", 1, 0, OP_RPWD},
+  {"rfile", 1, 0, OP_RFILE},
+  { 0, 0, 0, 0}
+// name | has_arg | *flag | val
+};
+
+
 int
 do_command_line (int argc, char *argv[])
 {
   int curr_opt;
   int Load = 0;
+  int opt_index;
+  char szRDSN[50] = {""};
+  char szRUID[50] = {""};
+  char szRPWD[50] = {""};
+  char szRFILE[128] = {"results.xml"};
 
   if (argc > 1)
     {
@@ -285,7 +328,7 @@ do_command_line (int argc, char *argv[])
       pane_log = dummy_pane_log;
       memset (&test.szSQLError, 0, sizeof (test.szSQLError));
 
-      while ((curr_opt = getopt (argc, argv, SHORT_OPTIONS)) != EOF)
+      while ((curr_opt = getopt_long_only (argc, argv, SHORT_OPTIONS, long_options, &opt_index)) != EOF)
 	switch (curr_opt)
 	  {
 	  case 'd':
@@ -416,6 +459,24 @@ do_command_line (int argc, char *argv[])
 	  case 'C':
 	    Load = 1;
 	    break;
+
+	  case OP_RDSN:
+	    strncpy (szRDSN, optarg, 49);
+	    szRDSN[49] = 0;
+	    break;
+	  case OP_RUID:
+	    strncpy (szRUID, optarg, 49);
+	    szRUID[49] = 0;
+	    break;
+	  case OP_RPWD:
+	    strncpy (szRPWD, optarg, 49);
+	    szRPWD[49] = 0;
+	    break;
+	  case OP_RFILE:
+	    strncpy (szRFILE, optarg, 127);
+	    szRFILE[127] = 0;
+	    break;
+
 	  default:
 	    usage ();
 	    return -2;
@@ -440,6 +501,9 @@ do_command_line (int argc, char *argv[])
       n_threads = (test.tpc._.nThreads > 1 ? test.tpc._.nThreads : 1);
       test_types = test.TestType;
 
+      if (szRDSN[0])
+        results_login(szRDSN, szRUID, szRPWD);
+
 #if defined(PTHREADS) || defined(WIN32)
       if (test.tpc._.nThreads > 1)
 	{
@@ -456,7 +520,7 @@ do_command_line (int argc, char *argv[])
 	    {
 	      int rc = do_threads_run (1, tests, test.tpc._.nMinutes,
 		  "Command Line");
-	      do_save_run_results ("results.xml", tests, test.tpc._.nMinutes);
+	      do_save_run_results (szRFILE, tests, test.tpc._.nMinutes);
 	      if (rc)
 		return 0;
 	      else
@@ -464,8 +528,7 @@ do_command_line (int argc, char *argv[])
 	    }
 	  else
 	    {
-	      if (do_threads_run_all (1, tests, test.tpc._.nMinutes,
-		      "results.xml"))
+	      if (do_threads_run_all (1, tests, test.tpc._.nMinutes, szRFILE))
 		return 0;
 	      else
 		return -4;
@@ -491,10 +554,10 @@ do_command_line (int argc, char *argv[])
 	      if (test.tpc.a.fSQLOption != -1)
 	        {
 	          DoRun (&test, NULL);
-	          do_save_run_results ("results.xml", tests, test.tpc._.nMinutes);
+	          do_save_run_results (szRFILE, tests, test.tpc._.nMinutes);
 	        }
 	      else
-	         DoRunAll (&test, "results.xml");
+	         DoRunAll (&test, szRFILE);
 #if 0
 //	      case TPC_C:
 //		if (tpcc_run_test (NULL, ptest))
@@ -503,12 +566,14 @@ do_command_line (int argc, char *argv[])
 //		  }
 //		else
 //		  pane_log ("TPC-C RUN FAILED\n");
-//		do_save_run_results (szFileName, tests, nMinutes);
+//		do_save_run_results (szRFILE, tests, nMinutes);
 #endif
 
 	    }
 	  do_logout (&test);
 	}
+      if (szRDSN[0])
+        results_logout();
       return 0;
     }
   else

@@ -44,10 +44,10 @@ typedef struct test_s	test_t;
 #define PACKAGE			"odbc-bench"
 #define PACKAGE_BUGREPORT	"odbc-bench@openlinksw.com"
 #define PACKAGE_NAME 		"OpenLink ODBC Benchmark Utility"
-#define PACKAGE_STRING 		"OpenLink ODBC Benchmark Utility 0.99.4"
+#define PACKAGE_STRING 		"OpenLink ODBC Benchmark Utility 0.99.5"
 #define PACKAGE_TARNAME 	"odbc-bench"
-#define PACKAGE_VERSION 	"0.99.4"
-#define VERSION			"0.99.4"
+#define PACKAGE_VERSION 	"0.99.5"
+#define VERSION			"0.99.5"
 #endif
 
 extern void (*pane_log) (const char *format, ...);
@@ -167,6 +167,7 @@ struct test_s
 
   char szTemp[512];
   BOOL bTablePropsShown, bRunPropsShown;
+  test_t * test;
 };
 
 #define IS_A(test) ((test).TestType == TPC_A)

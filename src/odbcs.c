@@ -194,13 +194,6 @@ do_login (test_t *ptest)
 
   /* Set defaults for execution--use all features */
   /* supported */
-/*  ptest->fClearHistory = FALSE;
-  ptest->fExecAsync = ptest->fAsyncSupported;
-  ptest->fUseCommit = ptest->fCommitSupported;
-  ptest->fSQLOption =
-      ptest->fProcsSupported ? IDX_SPROCS : IDX_PLAINSQL;
-  ptest->fDoQuery = FALSE;
-*/
   pane_log ("Connected to %s : DSN=<%s> UID=<%s> PWD=<%s>\n",
 	ptest->szName, szDSN, szUID, szPWD);
 

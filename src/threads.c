@@ -281,6 +281,7 @@ do_threads_run (int nConnCount, OList * tests, int nMinutes, char *szTitle)
   int rc = 0;
   void (*old_pane_log) (const char *format, ...) = pane_log;
   OList *iter;
+  BOOL wasError = FALSE;
 
   nProgressIncrement = bench_get_long_pref (A_REFRESH_RATE);
   if (!nConnCount)
@@ -329,6 +330,7 @@ do_threads_run (int nConnCount, OList * tests, int nMinutes, char *szTitle)
       for (thr = 0; thr < n_threads[conn]; thr++)
 	{
 	  memcpy (&(data[conn][thr]), test, sizeof (test_t));
+          data[conn][thr].test = test;
 	  data[conn][thr].tpc._.nThreadNo = thr;
 	  data[conn][thr].tpc._.nConn = conn;
 	  START_THREAD (workers[conn][thr], worker_func, data[conn][thr]);
@@ -354,7 +356,9 @@ do_threads_run (int nConnCount, OList * tests, int nMinutes, char *szTitle)
 		  data[msg.nConn][msg.nThread].szLoginDSN,
 		  data[msg.nConn][msg.nThread].szSQLState,
 		  data[msg.nConn][msg.nThread].szSQLError);
-	      do_cancel = TRUE;
+	      strcpy(data[msg.nConn][msg.nThread].test->szSQLState, data[msg.nConn][msg.nThread].szSQLState);
+	      strcpy(data[msg.nConn][msg.nThread].test->szSQLError, data[msg.nConn][msg.nThread].szSQLError);
+              wasError = TRUE;
 	    }
 	  break;
 	case 'R':
@@ -374,7 +378,7 @@ do_threads_run (int nConnCount, OList * tests, int nMinutes, char *szTitle)
   memset (signal_pipe, 0, sizeof (signal_pipe));
   pane_log = old_pane_log;
   lpBenchInfo->StopProgress ();
-  if (!do_cancel)
+  if (!do_cancel && !wasError)
     rc = ThreadedCalcStats (tests, workers, data, nConnCount, n_threads);
   else
     pane_log ("\n\nAll Threads ended prematurely.\n");
@@ -385,7 +389,7 @@ do_threads_run (int nConnCount, OList * tests, int nMinutes, char *szTitle)
     }
   XFREE (workers);
   XFREE (data);
-  if (do_cancel)
+  if (do_cancel || wasError)
     rc = 0;
   return rc;
 }

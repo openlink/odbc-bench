@@ -1063,11 +1063,11 @@ do_threads_run_all (int nTests, OList * tests_orig, int nMinutes,
 		      for (nOption = 0; nOption < NUMITEMS (grgiOption);
 			  nOption++)
 			{
-			  CONTINUE_IF_NOT_SUPPORTED ((test->tpc.a.fSQLOption ==
-				  IDX_SPROCS && !test->fProcsSupported));
-			  /* If sprocs are not supported, then we have to skip */
 			  FOR_ALL_TESTS (test->tpc.a.fSQLOption =
 			      grgiOption[nOption]);
+			  /* If sprocs are not supported, then we have to skip */
+			  CONTINUE_IF_NOT_SUPPORTED ((test->tpc.a.fSQLOption ==
+				  IDX_SPROCS && !test->fProcsSupported));
 
 			  /* All options are set, so do the run */
 			      sprintf (szTemp, "%s%s%s%s%s%s for",
@@ -1081,8 +1081,11 @@ do_threads_run_all (int nTests, OList * tests_orig, int nMinutes,
 				  szTemp))
 			    {
 			      FOR_ALL_TESTS (if (test->szSQLError[0])
-				  make_result_node (test, ns, root));
-			      goto end;
+				  { make_result_node (test, ns, root); 
+				    test->szSQLError[0] = 
+				    test->szSQLState[0] = 0;});
+			       if (gui.isCancelled())
+			         goto end;
 			    }
 			  else
 			    {
@@ -1205,11 +1208,14 @@ DoRunAll (test_t * test_orig, char *filename)
 			      (fQuery ? crsr_names[nCursor] : ""));
 			  if (!DoRun (test, szTemp))
 			    {
-			          if (test->szSQLError[0]) {
-				make_result_node (test, ns, root);
+			       if (test->szSQLError[0]) 
+			         {
+				    make_result_node (test, ns, root);
 				    test->szSQLError[0] = '\0';
-			          } if (gui.isCancelled())
-			      goto end;
+				    test->szSQLState[0] = '\0';
+			         } 
+			       if (gui.isCancelled())
+			         goto end;
 			    }
 			  else
 			    {
