@@ -47,7 +47,7 @@ linux-rpm:
 #
 binary-tar:
 	-mkdir @build@
-	$(MAKE) install prefix=`pwd`/@build@
+	$(MAKE) install-strip prefix=`pwd`/@build@
 	tar cvf @build@.tar @build@
 	gzip -9vf @build@.tar
 	rm -rf @build@
