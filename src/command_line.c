@@ -32,6 +32,8 @@
 #include "win32/getopt.h"
 #endif
 
+#include <stdarg.h>
+
 #include "odbcbench.h"
 #include "odbcinc.h"
 #include "thr.h"
