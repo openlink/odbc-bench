@@ -96,6 +96,12 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
+/* define to SQLINTEGER if not defined in the ODBC headers */
+#undef SQLLEN
+
+/* define to SQLUINTEGER if not defined in the ODBC headers */
+#undef SQLULEN
+
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 

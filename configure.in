@@ -463,6 +463,22 @@ fi
 AC_SUBST(ODBC_CFLAGS)
 AC_SUBST(ODBC_LIBS)
 
+#
+#  Check if SQLLEN, SQLULEN, SQLBIGINT, SQLUBIGINT are defined
+#
+save_CPPFLAGS="$CPPFLAGS"
+CPPFLAGS="$CPPFLAGS $ODBC_CFLAGS"
+AC_CHECK_TYPE(SQLLEN, ,
+	AC_DEFINE(SQLLEN, SQLINTEGER,
+		[define to SQLINTEGER if not defined in the ODBC headers])
+	AC_DEFINE(SQLULEN, SQLUINTEGER,
+		[define to SQLUINTEGER if not defined in the ODBC headers]),
+[
+#include <sql.h>
+#include <sqlext.h>
+#include <sqltypes.h>
+])
+
 
 ########################################################################## 
 ##									##
