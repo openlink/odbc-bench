@@ -102,13 +102,11 @@ do_login (test_t *ptest)
   pane_log ("\r\n\r\nConnecting to %s : DSN=<%s> UID=<%s>\r\n",
 	ptest->szName, szDSN, szUID);
 
-  MUTEX_ENTER (env_mutex);
   rc = SQLAllocConnect (henv, &ptest->hdbc);
   if (rc == SQL_SUCCESS)
     rc =
 	SQLConnect (ptest->hdbc, szDSN, SQL_NTS, szUID, SQL_NTS, szPWD,
 	SQL_NTS);
-  MUTEX_LEAVE (env_mutex);
 
   ptest->szSQLError[0] = 0;
   ptest->szSQLState[0] = 0;
