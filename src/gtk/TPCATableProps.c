@@ -31,7 +31,7 @@
 #include "results.h"
 #include "tpca_code.h"
 
-static void TPCATableProps_class_init (TPCATablePropsClass * class);
+static void TPCATableProps_class_init (TPCATablePropsClass * tclass);
 static void TPCATableProps_init (TPCATableProps * tableloader);
 
 int
@@ -47,8 +47,8 @@ TPCATableProps_get_type (void)
 	sizeof (TPCATablePropsClass),
 	(GtkClassInitFunc) TPCATableProps_class_init,
 	(GtkObjectInitFunc) TPCATableProps_init,
-	(GtkArgSetFunc) NULL,
-	(GtkArgGetFunc) NULL
+	NULL,
+	NULL
       };
 
       tld_type = gtk_type_unique (gtk_vbox_get_type (), &tld_info);
@@ -58,7 +58,7 @@ TPCATableProps_get_type (void)
 }
 
 static void
-TPCATableProps_class_init (TPCATablePropsClass * class)
+TPCATableProps_class_init (TPCATablePropsClass * tclass)
 {
 }
 
@@ -447,7 +447,7 @@ TPCATableProps_save_config (TPCATableProps * pDlg)
 	  if (NULL != (found = g_list_find_custom (pDlg->pDSN->dsn_info.dsns,
 		 pDlg->ptest->tpc.a.szBranchDSN, (GCompareFunc) strcmp)))
 	strncpy (pDlg->ptest->tpc.a.szBranchDBMS,
-	    g_list_nth_data (pDlg->pDSN->dsn_info.names,
+	    (char *) g_list_nth_data (pDlg->pDSN->dsn_info.names,
 g_list_position (pDlg->pDSN->dsn_info.dsns, found)), 50);
 
       strcpy (pDlg->ptest->tpc.a.szTellerDSN,
@@ -459,7 +459,7 @@ g_list_position (pDlg->pDSN->dsn_info.dsns, found)), 50);
 	  if (NULL != (found = g_list_find_custom (pDlg->pDSN->dsn_info.dsns,
 		 pDlg->ptest->tpc.a.szTellerDSN, (GCompareFunc) strcmp)))
 	strncpy (pDlg->ptest->tpc.a.szTellerDBMS,
-	    g_list_nth_data (pDlg->pDSN->dsn_info.names,
+	    (char *) g_list_nth_data (pDlg->pDSN->dsn_info.names,
 g_list_position (pDlg->pDSN->dsn_info.dsns, found)), 50);
 
       strcpy (pDlg->ptest->tpc.a.szAccountDSN,
@@ -472,7 +472,7 @@ g_list_position (pDlg->pDSN->dsn_info.dsns, found)), 50);
 	  if (NULL != (found = g_list_find_custom (pDlg->pDSN->dsn_info.dsns,
 		 pDlg->ptest->tpc.a.szAccountDSN, (GCompareFunc) strcmp)))
 	strncpy (pDlg->ptest->tpc.a.szAccountDBMS,
-	    g_list_nth_data (pDlg->pDSN->dsn_info.names,
+	    (char *) g_list_nth_data (pDlg->pDSN->dsn_info.names,
 g_list_position (pDlg->pDSN->dsn_info.dsns, found)), 50);
 
       strcpy (pDlg->ptest->tpc.a.szHistoryDSN,
@@ -485,7 +485,7 @@ g_list_position (pDlg->pDSN->dsn_info.dsns, found)), 50);
 	  if (NULL != (found = g_list_find_custom (pDlg->pDSN->dsn_info.dsns,
 		 pDlg->ptest->tpc.a.szHistoryDSN, (GCompareFunc) strcmp)))
 	strncpy (pDlg->ptest->tpc.a.szHistoryDBMS,
-	    g_list_nth_data (pDlg->pDSN->dsn_info.names,
+	    (char *) g_list_nth_data (pDlg->pDSN->dsn_info.names,
 g_list_position (pDlg->pDSN->dsn_info.dsns, found)), 50);
     }
 }

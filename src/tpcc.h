@@ -101,7 +101,7 @@ typedef struct tpcc_s
 
 
   char timestamp_array[BATCH_SIZE][20];
-  SDWORD sql_timelen_array[BATCH_SIZE];
+  long sql_timelen_array[BATCH_SIZE];
 
   timer_account_t ten_pack_ta;
   timer_account_t new_order_ta;

@@ -21,10 +21,10 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 long RandomNumber (long *rnd_seed, long x, long y);
-int MakeAlphaString (long *rnd_seed, int sz1, int sz2, char *str);
+long MakeAlphaString (long *rnd_seed, int sz1, int sz2, char *str);
 long random_i_id (long *rnd_seed);
 long random_c_id (long *rnd_seed);
-void Lastname (int num, char *name);
+void Lastname (long num, char *name);
 
 void add_tpcc_result (test_t * lpCfg);
 void scrap_log (test_t * lpBench, HSTMT stmt);

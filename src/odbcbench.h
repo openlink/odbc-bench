@@ -74,7 +74,7 @@ extern void (*pane_log) (const char *format, ...);
 #if 0
 void pipe_trough_isql (char *szFileName);
 #else
-void pipe_trough_isql (HSTMT stmt, char *szFileName, int print_commands);
+void pipe_trough_isql (SQLHSTMT stmt, char *szFileName, int print_commands);
 #endif
 
 typedef struct GUI_s
@@ -101,7 +101,7 @@ typedef struct GUI_s
   
 } GUI_t;
 
-extern HENV henv;
+extern SQLHENV henv;
 extern GUI_t gui;
 
 /* odbc callbacks - odbcs.c */
@@ -135,16 +135,16 @@ struct test_s
   void *hwndOut;		/* Output window for logging info */
 
   /* ODBC handles */
-  HDBC hdbc;			/* Connection handle */
-  HSTMT hstmt;			/* Statement handle */
+  SQLHDBC hdbc;			/* Connection handle */
+  SQLHSTMT hstmt;		/* Statement handle */
 
   /* login data */
   char szLoginDSN[128];
   char szLoginUID[256];
   char szLoginPWD[256];
 
-  char szSQLState[10];
-  char szSQLError[256];
+  SQLCHAR szSQLState[10];
+  SQLCHAR szSQLError[256];
   char szWarning[256];
 
   /* Other info */
@@ -207,15 +207,15 @@ char *bench_get_string_pref (OdbcBenchPref pref);
 int _strnicmp (const char *s1, const char *s2, size_t n);
 char *_stristr (const char *str, const char *find);
 
-BOOL fSQLExecDirect (HSTMT hstmt, char *pszSqlStr, test_t * lpBench);
-BOOL fSQLGetData (HSTMT hstmt, UWORD icol, SWORD fCType, PTR rgbValue,
-    SDWORD cbValueMax, SDWORD FAR * pcbValue);
-BOOL fSQLBindCol (HSTMT hstmt, UWORD icol, SWORD fCType, PTR rgbValue,
-    SDWORD cbValueMax, SDWORD FAR * pcbValue);
-BOOL fSQLParamOptions (HSTMT hstmt, UDWORD crow, UDWORD *pirow);
+BOOL fSQLExecDirect (SQLHSTMT hstmt, SQLCHAR * pszSqlStr, test_t * lpBench);
+BOOL fSQLGetData (SQLHSTMT hstmt, SQLUSMALLINT icol, SQLSMALLINT fCType,
+    SQLPOINTER rgbValue, SQLLEN cbValueMax, SQLLEN * pcbValue);
+BOOL fSQLBindCol (SQLHSTMT hstmt, SQLUSMALLINT icol, SQLSMALLINT fCType,
+    SQLPOINTER rgbValue, SQLLEN cbValueMax, SQLLEN * pcbValue);
+BOOL fSQLParamOptions (SQLHSTMT hstmt, SQLULEN crow, SQLULEN * pirow);
 
 
-void sleep_msecs(int msec);
+void sleep_msecs(long msec);
 int do_save_selected (char *szFileName, OList * tests);
 void do_save_run_results (char *filename, OList * selected, int nMinutes);
 void init_test (test_t * test);

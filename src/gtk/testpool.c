@@ -87,17 +87,17 @@ create_test_pool ()
   GSList *windows_radio =
       last_radio ?
       gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (last_radio)) : NULL;
-  test_file_t *new = g_malloc (sizeof (test_file_t));
-  memset (new, 0, sizeof (test_file_t));
-  new->conn_pool = gtk_clist_new_with_titles (6, column_names);
-  gtk_clist_set_selection_mode (GTK_CLIST (new->conn_pool),
+  test_file_t *t_new = (test_file_t *) g_malloc (sizeof (test_file_t));
+  memset (t_new, 0, sizeof (test_file_t));
+  t_new->conn_pool = gtk_clist_new_with_titles (6, column_names);
+  gtk_clist_set_selection_mode (GTK_CLIST (t_new->conn_pool),
       GTK_SELECTION_MULTIPLE);
-  gtk_clist_set_shadow_type (GTK_CLIST (new->conn_pool),
+  gtk_clist_set_shadow_type (GTK_CLIST (t_new->conn_pool),
       GTK_SHADOW_ETCHED_IN);
-  gtk_clist_column_titles_passive (GTK_CLIST (new->conn_pool));
-  gtk_clist_column_titles_show (GTK_CLIST (new->conn_pool));
+  gtk_clist_column_titles_passive (GTK_CLIST (t_new->conn_pool));
+  gtk_clist_column_titles_show (GTK_CLIST (t_new->conn_pool));
 
-  files = g_list_append (files, new);
+  files = g_list_append (files, t_new);
   if (dlg)
     {
       if (!hidden)
@@ -112,10 +112,10 @@ create_test_pool ()
 	}
       else
 	gtk_widget_reparent (status, hidden);
-      gtk_container_add (GTK_CONTAINER (scrolled), new->conn_pool);
-      gtk_widget_show (new->conn_pool);
+      gtk_container_add (GTK_CONTAINER (scrolled), t_new->conn_pool);
+      gtk_widget_show (t_new->conn_pool);
     }
-  curr = new;
+  curr = t_new;
   if (dlg)
     {
       create_status_widget (dlg);
@@ -202,7 +202,7 @@ remove_selected_tests (void)
     {
       int nRow = GPOINTER_TO_INT (iter->data);
       test_t *ptest =
-	  gtk_clist_get_row_data (GTK_CLIST (curr->conn_pool), nRow);
+	  (test_t *) gtk_clist_get_row_data (GTK_CLIST (curr->conn_pool), nRow);
       gtk_clist_remove (GTK_CLIST (curr->conn_pool), nRow);
       g_free (ptest);
       iter = g_list_next (iter);
@@ -319,7 +319,7 @@ pool_update_selected (void)
       selection = g_list_next (selection), i++)
     {
       nRow = GPOINTER_TO_INT (selection->data);
-      ptest = gtk_clist_get_row_data (GTK_CLIST (curr->conn_pool), nRow);
+      ptest = (test_t *) gtk_clist_get_row_data (GTK_CLIST (curr->conn_pool), nRow);
 
       gtk_clist_set_text (GTK_CLIST (curr->conn_pool), nRow, 0,
 	  ptest->TestType == TPC_A ? "TPC-A" : "TPC-C");
@@ -433,12 +433,12 @@ close_file_pool (void)
 
   newwhere = g_list_previous (where);
   if (newwhere && newwhere->data)
-    new_curr = newwhere->data;
+    new_curr = (test_file_t *) newwhere->data;
   if (!new_curr)
     {
       newwhere = g_list_next (where);
       if (newwhere && newwhere->data)
-	new_curr = newwhere->data;
+	new_curr = (test_file_t *) newwhere->data;
     }
 
   files = g_list_remove (files, curr);

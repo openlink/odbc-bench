@@ -48,7 +48,7 @@ static char *cursor_type_names[] = {
   "Mixed"
 };
 
-static void TPCARunProps_class_init (TPCARunPropsClass * class);
+static void TPCARunProps_class_init (TPCARunPropsClass * tclass);
 static void TPCARunProps_init (TPCARunProps * tableloader);
 
 int
@@ -64,8 +64,8 @@ TPCARunProps_get_type (void)
 	sizeof (TPCARunPropsClass),
 	(GtkClassInitFunc) TPCARunProps_class_init,
 	(GtkObjectInitFunc) TPCARunProps_init,
-	(GtkArgSetFunc) NULL,
-	(GtkArgGetFunc) NULL
+	NULL,
+	NULL
       };
 
       tld_type = gtk_type_unique (gtk_vbox_get_type (), &tld_info);
@@ -75,7 +75,7 @@ TPCARunProps_get_type (void)
 }
 
 static void
-TPCARunProps_class_init (TPCARunPropsClass * class)
+TPCARunProps_class_init (TPCARunPropsClass * tclass)
 {
 }
 
@@ -214,7 +214,7 @@ TPCARunProps_new (test_t * lpBench)
 void
 TPCARunProps_save_config (TPCARunProps * dlg)
 {
-  int index;
+  unsigned int index;
 
   memset (dlg->lpBench->szSQLError, 0, sizeof (dlg->lpBench->szSQLError));
 
@@ -286,9 +286,9 @@ TPCARunProps_save_config (TPCARunProps * dlg)
     }
 
   dlg->lpBench->tpc.a.nRowsetSize =
-      GTK_ADJUSTMENT (GTK_SPIN_BUTTON (dlg->rowset_size)->adjustment)->value;
+      (short) GTK_ADJUSTMENT (GTK_SPIN_BUTTON (dlg->rowset_size)->adjustment)->value;
   dlg->lpBench->tpc.a.nTraversalCount =
-      GTK_ADJUSTMENT (GTK_SPIN_BUTTON (dlg->traversal_count)->
+      (short) GTK_ADJUSTMENT (GTK_SPIN_BUTTON (dlg->traversal_count)->
       adjustment)->value;
 }
 
@@ -327,7 +327,7 @@ TPCARunProps_init (TPCARunProps * dlg)
   GtkWidget *helper, *label, *helper1;
   GSList *radio;
   GtkObject *spin, *spin1;
-  int i;
+  unsigned int i;
 
   gtk_container_set_border_width (GTK_CONTAINER (dlg), 10);
 
@@ -476,17 +476,17 @@ TPCARunProps_init (TPCARunProps * dlg)
       enable_widget (dlg->cursor_modes[i]);
       gtk_signal_connect_object (GTK_OBJECT (dlg->cursor_modes[i]),
 	  "clicked",
-	  GTK_SIGNAL_FUNC (i == 0 ? disable_widget : enable_widget),
+	  GTK_SIGNAL_FUNC ((i == 0 ? disable_widget : enable_widget)),
 	  GTK_OBJECT (dlg->rowset_size));
 
       gtk_signal_connect_object (GTK_OBJECT (dlg->cursor_modes[i]),
 	  "clicked",
-	  GTK_SIGNAL_FUNC ((i == 4) ? enable_widget : disable_widget),
+	  GTK_SIGNAL_FUNC ((i == 4 ? enable_widget : disable_widget)),
 	  GTK_OBJECT (dlg->keyset_size));
 
       gtk_signal_connect_object (GTK_OBJECT (dlg->cursor_modes[i]),
 	  "clicked",
-	  GTK_SIGNAL_FUNC (i == 0 ? disable_widget : enable_widget),
+	  GTK_SIGNAL_FUNC ((i == 0 ? disable_widget : enable_widget)),
 	  GTK_OBJECT (dlg->traversal_count));
     }
   for (i = 0; i < sizeof (dlg->isolation_levels) / sizeof (GtkWidget *); i++)

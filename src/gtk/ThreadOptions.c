@@ -31,7 +31,7 @@
 #include "TPCARunProps.h"
 #include "ThreadOptions.h"
 
-static void ThreadOptions_class_init (ThreadOptionsClass * class);
+static void ThreadOptions_class_init (ThreadOptionsClass * tclass);
 static void ThreadOptions_init (ThreadOptions * tableloader);
 
 int
@@ -47,8 +47,8 @@ ThreadOptions_get_type (void)
 	sizeof (ThreadOptionsClass),
 	(GtkClassInitFunc) ThreadOptions_class_init,
 	(GtkObjectInitFunc) ThreadOptions_init,
-	(GtkArgSetFunc) NULL,
-	(GtkArgGetFunc) NULL
+	NULL,
+	NULL
       };
 
       tld_type = gtk_type_unique (gtk_vbox_get_type (), &tld_info);
@@ -58,7 +58,7 @@ ThreadOptions_get_type (void)
 }
 
 static void
-ThreadOptions_class_init (ThreadOptionsClass * class)
+ThreadOptions_class_init (ThreadOptionsClass * tclass)
 {
 }
 
@@ -102,7 +102,7 @@ ThreadOptions_save_config (ThreadOptions * dlg)
   dlg->test->nThreads =
       GTK_TOGGLE_BUTTON (dlg->single_threaded)->active ?
       0 :
-      GTK_ADJUSTMENT (GTK_SPIN_BUTTON (dlg->no_threads)->adjustment)->value;
+      (int) GTK_ADJUSTMENT (GTK_SPIN_BUTTON (dlg->no_threads)->adjustment)->value;
 #else
   dlg->test->nThreads = 0;
 #endif

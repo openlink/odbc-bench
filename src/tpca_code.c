@@ -37,17 +37,17 @@
 typedef struct _DRIVERMAP
 {
   char *szDbName;		/* DMBS Name */
-  UWORD uwDTM;			/* DATATYPEMAP index */
-  UWORD uwBTM;			/* BINDTYPEMAP index */
-  SWORD swITM;			/* INDEXTYPEMAP index or -1 for no index */
+  SQLUSMALLINT uwDTM;		/* DATATYPEMAP index */
+  SQLUSMALLINT uwBTM;		/* BINDTYPEMAP index */
+  SQLSMALLINT swITM;		/* INDEXTYPEMAP index or -1 for no index */
   int fIndex;			/* Index is required by this driver */
-  SWORD swProcIndex;		/* PROCEDURETEXT Index */
+  SQLSMALLINT swProcIndex;	/* PROCEDURETEXT Index */
 }
 DRIVERMAP;
 
 typedef struct _DATATYPEMAP
 {
-  UWORD uwIndex;
+  SQLUSMALLINT uwIndex;
   char *lpChar;
   char *lpFloat;
   char *lpInt;
@@ -57,11 +57,11 @@ DATATYPEMAP;
 
 typedef struct _BINDTYPEMAP
 {
-  SWORD swChar;
-  SWORD swFloat;		/* SQL_TYPE for FLOAT */
-  UWORD uwFloat;		/* cbColDef for FLOAT */
-  SWORD swInt;			/* SQL_TYPE for int */
-  UWORD uwInt;			/* cbColDef for int */
+  SQLSMALLINT swChar;
+  SQLSMALLINT swFloat;		/* SQL_TYPE for FLOAT */
+  SQLUSMALLINT uwFloat;		/* cbColDef for FLOAT */
+  SQLSMALLINT swInt;		/* SQL_TYPE for int */
+  SQLUSMALLINT uwInt;		/* cbColDef for int */
 }
 BINDTYPEMAP;
 
@@ -547,7 +547,7 @@ static char *procedures[][2] = {
 int
 getDriverMapSize (void)
 {
-  return NUMITEMS (DriverMap);
+  return (int) NUMITEMS (DriverMap);
 }
 
 
@@ -648,7 +648,7 @@ fBuildBench (test_t * ptest	/* Run Configuration Parameters */
 /*-------------------------------------------------------------------------*/
 int
 fExecute (test_t * ptest,	/* Run Configuration Parameters */
-    char *lpSQLString		/* Pointer to String to Execute */
+    SQLCHAR *lpSQLString		/* Pointer to String to Execute */
     )
 {
   RETCODE rc;
@@ -676,7 +676,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
     )
 {
   RETCODE rc;
-  UWORD uwTypeIdx;
+  SQLUSMALLINT uwTypeIdx;
   char szSQLBuffer[200];
   int uwIdx, fReqIndex, inx, TypeIdx;
   char szQualifier[100];
@@ -692,7 +692,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 
       /* Remove old table definition */
       sprintf (szSQLBuffer, szDropTable, szBranch);
-      rc = SQLExecDirect (ptest->hstmt, szSQLBuffer, SQL_NTS);
+      rc = SQLExecDirect (ptest->hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
       if (ptest->tpc.a.szBranchDSN[0])
 	{			/* attached table case */
@@ -704,7 +704,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 	  /* rexecute (.. 'drop table ...') */
 	  sprintf (szSQLBuffer, szRemoteDropTable, ptest->tpc.a.szBranchDSN,
 	      szBranch);
-	  rc = SQLExecDirect (ptest->hstmt, szSQLBuffer, SQL_NTS);
+	  rc = SQLExecDirect (ptest->hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
 	  /* rexecute (.. 'create table ...') */
 	  sprintf (szSQLBuffer, szRemoteCreateBranch,
@@ -713,7 +713,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 	      DataTypeMap[TypeIdx].lpInt,
 	      DataTypeMap[TypeIdx].lpInt,
 	      DataTypeMap[TypeIdx].lpFloat, DataTypeMap[TypeIdx].lpChar);
-	  fExecute (ptest, szSQLBuffer);
+	  fExecute (ptest, (SQLCHAR *) szSQLBuffer);
 
 	  /* rexecute (.. create index */
 	  if (ptest->tpc.a.fCreateIndex || fReqIndex)
@@ -722,7 +722,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 		  ptest->tpc.a.szBranchDSN,
 		  (char *) IndexTypeMap[uwIdx].szIndexType,
 		  szFldBranch, szBranch, szFldBranch);
-	      rc = SQLExecDirect (ptest->hstmt, szSQLBuffer, SQL_NTS);
+	      rc = SQLExecDirect (ptest->hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 	      if (RC_NOTSUCCESSFUL (rc))
 	        {
                   vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, ptest->hstmt, ptest);
@@ -733,7 +733,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 	  /* rexecute (.. attach table */
 	  sprintf (szSQLBuffer, szAttachTable, szBranch,
 	      ptest->tpc.a.szBranchDSN);
-	  fExecute (ptest, szSQLBuffer);
+	  fExecute (ptest, (SQLCHAR *) szSQLBuffer);
 	}
       else
 	{
@@ -743,7 +743,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 	      DataTypeMap[uwTypeIdx].lpInt,
 	      DataTypeMap[uwTypeIdx].lpInt,
 	      DataTypeMap[uwTypeIdx].lpFloat, DataTypeMap[uwTypeIdx].lpChar);
-	  fExecute (ptest, szSQLBuffer);
+	  fExecute (ptest, (SQLCHAR *) szSQLBuffer);
 	}
     }
 
@@ -755,7 +755,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 
       /* Remove old table definition */
       sprintf (szSQLBuffer, szDropTable, szTeller);
-      rc = SQLExecDirect (ptest->hstmt, szSQLBuffer, SQL_NTS);
+      rc = SQLExecDirect (ptest->hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
       if (ptest->tpc.a.szTellerDSN[0])
 	{			/* attached table case */
@@ -767,7 +767,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 	  /* rexecute (.. 'drop table ...') */
 	  sprintf (szSQLBuffer, szRemoteDropTable, ptest->tpc.a.szTellerDSN,
 	      szTeller);
-	  rc = SQLExecDirect (ptest->hstmt, szSQLBuffer, SQL_NTS);
+	  rc = SQLExecDirect (ptest->hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
 	  /* rexecute (.. 'create table ...') */
 	  sprintf (szSQLBuffer, szRemoteCreateTeller,
@@ -776,7 +776,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 	      DataTypeMap[TypeIdx].lpInt,
 	      DataTypeMap[TypeIdx].lpInt,
 	      DataTypeMap[TypeIdx].lpFloat, DataTypeMap[TypeIdx].lpChar);
-	  fExecute (ptest, szSQLBuffer);
+	  fExecute (ptest, (SQLCHAR *) szSQLBuffer);
 
 	  /* rexecute (.. create index */
 	  if (ptest->tpc.a.fCreateIndex || fReqIndex)
@@ -785,7 +785,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 		  ptest->tpc.a.szTellerDSN,
 		  (char *) IndexTypeMap[uwIdx].szIndexType,
 		  szFldTeller, szTeller, szFldTeller);
-	      rc = SQLExecDirect (ptest->hstmt, szSQLBuffer, SQL_NTS);
+	      rc = SQLExecDirect (ptest->hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 	      if (RC_NOTSUCCESSFUL (rc))
 	        {
                   vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, ptest->hstmt, ptest);
@@ -796,7 +796,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 	  /* attach table */
 	  sprintf (szSQLBuffer, szAttachTable, szTeller,
 	      ptest->tpc.a.szTellerDSN);
-	  fExecute (ptest, szSQLBuffer);
+	  fExecute (ptest, (SQLCHAR *) szSQLBuffer);
 	}
       else
 	{
@@ -807,7 +807,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 	      DataTypeMap[uwTypeIdx].lpInt,
 	      DataTypeMap[uwTypeIdx].lpInt,
 	      DataTypeMap[uwTypeIdx].lpFloat, DataTypeMap[uwTypeIdx].lpChar);
-	  fExecute (ptest, szSQLBuffer);
+	  fExecute (ptest, (SQLCHAR *) szSQLBuffer);
 	}
     }
 
@@ -819,7 +819,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 
       /* Remove old table definition */
       sprintf (szSQLBuffer, szDropTable, szAccount);
-      rc = SQLExecDirect (ptest->hstmt, szSQLBuffer, SQL_NTS);
+      rc = SQLExecDirect (ptest->hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
       if (ptest->tpc.a.szAccountDSN[0])
 	{			/* attached table case */
@@ -831,7 +831,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 	  /* rexecute (.. 'drop table ...') */
 	  sprintf (szSQLBuffer, szRemoteDropTable, ptest->tpc.a.szAccountDSN,
 	      szAccount);
-	  rc = SQLExecDirect (ptest->hstmt, szSQLBuffer, SQL_NTS);
+	  rc = SQLExecDirect (ptest->hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
 	  /* rexecute (.. 'create table ...') */
 	  sprintf (szSQLBuffer, szRemoteCreateAccount,
@@ -840,7 +840,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 	      DataTypeMap[TypeIdx].lpInt,
 	      DataTypeMap[TypeIdx].lpInt,
 	      DataTypeMap[TypeIdx].lpFloat, DataTypeMap[TypeIdx].lpChar);
-	  fExecute (ptest, szSQLBuffer);
+	  fExecute (ptest, (SQLCHAR *) szSQLBuffer);
 
 	  /* rexecute (.. create index */
 	  if (ptest->tpc.a.fCreateIndex || fReqIndex)
@@ -849,7 +849,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 		  ptest->tpc.a.szAccountDSN,
 		  (char *) IndexTypeMap[uwIdx].szIndexType,
 		  szFldAcct, szAccount, szFldAcct);
-	      rc = SQLExecDirect (ptest->hstmt, szSQLBuffer, SQL_NTS);
+	      rc = SQLExecDirect (ptest->hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 	      if (RC_NOTSUCCESSFUL (rc))
 	        {
                   vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, ptest->hstmt, ptest);
@@ -860,7 +860,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 	  /* attach table */
 	  sprintf (szSQLBuffer, szAttachTable, szAccount,
 	      ptest->tpc.a.szAccountDSN);
-	  fExecute (ptest, szSQLBuffer);
+	  fExecute (ptest, (SQLCHAR *) szSQLBuffer);
 	}
       else
 	{
@@ -871,7 +871,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 	      DataTypeMap[uwTypeIdx].lpInt,
 	      DataTypeMap[uwTypeIdx].lpFloat, DataTypeMap[uwTypeIdx].lpChar);
 
-	  fExecute (ptest, szSQLBuffer);
+	  fExecute (ptest, (SQLCHAR *) szSQLBuffer);
 	}
     }
 
@@ -883,7 +883,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 
       /* Remove old table definition */
       sprintf (szSQLBuffer, szDropTable, szHistory);
-      rc = SQLExecDirect (ptest->hstmt, szSQLBuffer, SQL_NTS);
+      rc = SQLExecDirect (ptest->hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
       if (ptest->tpc.a.szHistoryDSN[0])
 	{			/* attached table case */
@@ -895,7 +895,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 	  /* rexecute (.. 'drop table ...') */
 	  sprintf (szSQLBuffer, szRemoteDropTable, ptest->tpc.a.szHistoryDSN,
 	      szHistory);
-	  rc = SQLExecDirect (ptest->hstmt, szSQLBuffer, SQL_NTS);
+	  rc = SQLExecDirect (ptest->hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
 	  /* rexecute (.. 'create table ...') */
 	  sprintf (szSQLBuffer, szRemoteCreateHistory,
@@ -907,7 +907,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 	      DataTypeMap[TypeIdx].lpInt,
 	      DataTypeMap[TypeIdx].lpFloat,
 	      DataTypeMap[TypeIdx].lpTimestamp, DataTypeMap[TypeIdx].lpChar);
-	  fExecute (ptest, szSQLBuffer);
+	  fExecute (ptest, (SQLCHAR *) szSQLBuffer);
 /*
 	   rexecute (.. create index 
 	  if (ptest->fCreateIndex || fReqIndex)
@@ -918,7 +918,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 		  szFldHist,
 		  szHistory,
 		  szFldHist);
-	      rc = SQLExecDirect (ptest->lpBenchInfo->hstmt, szSQLBuffer, SQL_NTS);
+	      rc = SQLExecDirect (ptest->lpBenchInfo->hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 	      if (RC_NOTSUCCESSFUL (rc))
 	        {
                   vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, ptest->hstmt, ptest);
@@ -929,7 +929,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 	  /* attach table */
 	  sprintf (szSQLBuffer, szAttachTable, szHistory,
 	      ptest->tpc.a.szHistoryDSN);
-	  fExecute (ptest, szSQLBuffer);
+	  fExecute (ptest, (SQLCHAR *) szSQLBuffer);
 	}
       else
 	{
@@ -943,7 +943,7 @@ vCreateTables (test_t * ptest	/* Run Configuration Parameters  */
 	      DataTypeMap[uwTypeIdx].lpFloat,
 	      DataTypeMap[uwTypeIdx].lpTimestamp,
 	      DataTypeMap[uwTypeIdx].lpChar);
-	  fExecute (ptest, szSQLBuffer);
+	  fExecute (ptest, (SQLCHAR *) szSQLBuffer);
 	}
     }
 
@@ -962,9 +962,8 @@ void
 vCreateIndices (test_t * ptest	/* Run Configuration Parameters */
     )
 {
-  RETCODE rc;
   BOOL fReqIndex;
-  UWORD uwIdx;
+  SQLUSMALLINT uwIdx;
   char szSQLBuffer[128];
 
   uwIdx = DriverMap[ptest->tpc.a.uwDrvIdx].swITM;
@@ -982,7 +981,7 @@ vCreateIndices (test_t * ptest	/* Run Configuration Parameters */
       pane_log (szSQLBuffer);
       pane_log ("\r\n");
       /* Execute Index Create Statement */
-      if (!fExecute(ptest, szSQLBuffer))
+      if (!fExecute(ptest, (SQLCHAR *) szSQLBuffer))
 	pane_log ((char *) szFailedIndex, szBranch);
 
     }
@@ -998,7 +997,7 @@ vCreateIndices (test_t * ptest	/* Run Configuration Parameters */
       pane_log (szSQLBuffer);
       pane_log ("\r\n");
       /* Execute Index Create Statement */
-      if (!fExecute(ptest, szSQLBuffer))
+      if (!fExecute(ptest, (SQLCHAR *) szSQLBuffer))
 	pane_log ((char *) szFailedIndex, szTeller);
     }
 
@@ -1013,7 +1012,7 @@ vCreateIndices (test_t * ptest	/* Run Configuration Parameters */
       pane_log (szSQLBuffer);
       pane_log ("\r\n");
       /* Execute Index Create Statement */
-      if (!fExecute(ptest, szSQLBuffer))
+      if (!fExecute(ptest, (SQLCHAR *) szSQLBuffer))
 	pane_log ((char *) szFailedIndex, szAccount);
     }
 
@@ -1031,7 +1030,7 @@ vCreateIndices (test_t * ptest	/* Run Configuration Parameters */
       pane_log (szSQLBuffer);
       pane_log ("\r\n");
        Execute Index Create Statement 
-      if (!fExecute(ptest, szSQLBuffer))
+      if (!fExecute(ptest, (SQLCHAR *) szSQLBuffer))
 	pane_log ((char *) szFailedIndex, szHistory);
     }
 */
@@ -1050,7 +1049,7 @@ vCreateProcedure (test_t * ptest	/* Run Configuration Parameters */
     )
 {
   RETCODE rc;
-  UWORD uwIdx;
+  SQLUSMALLINT uwIdx;
 
   uwIdx = DriverMap[ptest->tpc.a.uwDrvIdx].swProcIndex;
 
@@ -1058,15 +1057,15 @@ vCreateProcedure (test_t * ptest	/* Run Configuration Parameters */
   if (ptest->tpc.a.fCreateProcedure)
     {
       pane_log ("Dropping procedures\r\n");
-      SQLExecDirect (ptest->hstmt, "Drop procedure ODBC_BENCHMARK", SQL_NTS);
+      SQLExecDirect (ptest->hstmt, (SQLCHAR *) "Drop procedure ODBC_BENCHMARK", SQL_NTS);
       pane_log ("Adding a procedure for %s\r\n",
 	  DriverMap[ptest->tpc.a.uwDrvIdx].szDbName);
       /* Execute Index Create Statement */
-      rc = SQLExecDirect (ptest->hstmt, procedures[uwIdx][0], SQL_NTS);
+      rc = SQLExecDirect (ptest->hstmt, (SQLCHAR *) procedures[uwIdx][0], SQL_NTS);
       IF_ERR (ptest->hstmt, rc, ptest);
       if (procedures[uwIdx][1])
         {
-          rc = SQLExecDirect (ptest->hstmt, procedures[uwIdx][1], SQL_NTS);
+          rc = SQLExecDirect (ptest->hstmt, (SQLCHAR *) procedures[uwIdx][1], SQL_NTS);
           IF_ERR (ptest->hstmt, rc, ptest);
         }
     }
@@ -1076,10 +1075,10 @@ vCreateProcedure (test_t * ptest	/* Run Configuration Parameters */
 }
 
 void
-vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
+vCreateTPCCTables (char *szDBMS, SQLHSTMT hstmt)
 {
   RETCODE rc;
-  UWORD uwTypeIdx;
+  SQLUSMALLINT uwTypeIdx;
   char szSQLBuffer[2048];
   int nDriverMapIndex = getDriverTypeIndex (szDBMS);
 
@@ -1091,7 +1090,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
 
   /* Remove old table definition */
   sprintf (szSQLBuffer, szDropTable, "warehouse");
-  rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+  rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
   /* Create new table definition */
   sprintf (szSQLBuffer, szCreateWarehouse,
@@ -1103,7 +1102,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
       DataTypeMap[uwTypeIdx].lpChar,
       DataTypeMap[uwTypeIdx].lpChar,
       DataTypeMap[uwTypeIdx].lpFloat, DataTypeMap[uwTypeIdx].lpFloat);
-  if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+  if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
     vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, NULL);
 
   /* district table. */
@@ -1112,7 +1111,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
 
   /* Remove old table definition */
   sprintf (szSQLBuffer, szDropTable, "district");
-  rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+  rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
   /* Create new table definitions */
 
@@ -1127,7 +1126,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
       DataTypeMap[uwTypeIdx].lpChar,
       DataTypeMap[uwTypeIdx].lpFloat,
       DataTypeMap[uwTypeIdx].lpFloat, DataTypeMap[uwTypeIdx].lpInt);
-  if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+  if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
     vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, NULL);
 
   /* customer table. */
@@ -1136,7 +1135,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
 
   /* Remove old table definition */
   sprintf (szSQLBuffer, szDropTable, "customer");
-  rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+  rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
   /* Create new table definitions */
 
@@ -1162,7 +1161,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
       DataTypeMap[uwTypeIdx].lpInt,
       DataTypeMap[uwTypeIdx].lpInt,
       DataTypeMap[uwTypeIdx].lpChar, DataTypeMap[uwTypeIdx].lpChar);
-  if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+  if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
     vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, NULL);
 
   /* History table. */
@@ -1171,7 +1170,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
 
   /* Remove old table definition */
   sprintf (szSQLBuffer, szDropTable, "THISTORY");
-  rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+  rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
   /* Create new table definitions */
 
@@ -1184,7 +1183,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
       DataTypeMap[uwTypeIdx].lpTimestamp,
       DataTypeMap[uwTypeIdx].lpFloat, DataTypeMap[uwTypeIdx].lpChar);
 
-  if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+  if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
     vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, NULL);
 
   /* New_order table. */
@@ -1193,7 +1192,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
 
   /* Remove old table definition */
   sprintf (szSQLBuffer, szDropTable, "NEW_ORDER");
-  rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+  rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
   /* Create new table definitions */
 
@@ -1201,7 +1200,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
       DataTypeMap[uwTypeIdx].lpInt,
       DataTypeMap[uwTypeIdx].lpInt, DataTypeMap[uwTypeIdx].lpInt);
 
-  if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+  if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
     vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, NULL);
 
   /* Orders table. */
@@ -1210,7 +1209,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
 
   /* Remove old table definition */
   sprintf (szSQLBuffer, szDropTable, "ORDERS");
-  rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+  rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
   /* Create new table definitions */
 
@@ -1223,7 +1222,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
       DataTypeMap[uwTypeIdx].lpInt,
       DataTypeMap[uwTypeIdx].lpInt, DataTypeMap[uwTypeIdx].lpInt);
 
-  if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+  if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
     vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, NULL);
 
   /* Order_line table. */
@@ -1232,7 +1231,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
 
   /* Remove old table definition */
   sprintf (szSQLBuffer, szDropTable, "ORDER_LINE");
-  rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+  rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
   /* Create new table definitions */
 
@@ -1247,7 +1246,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
       DataTypeMap[uwTypeIdx].lpInt,
       DataTypeMap[uwTypeIdx].lpFloat, DataTypeMap[uwTypeIdx].lpChar);
 
-  if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+  if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
     vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, NULL);
 
   /* item table. */
@@ -1256,7 +1255,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
 
   /* Remove old table definition */
   sprintf (szSQLBuffer, szDropTable, "ITEM");
-  rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+  rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
   /* Create new table definitions */
 
@@ -1266,7 +1265,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
       DataTypeMap[uwTypeIdx].lpChar,
       DataTypeMap[uwTypeIdx].lpFloat, DataTypeMap[uwTypeIdx].lpChar);
 
-  if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+  if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
     vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, NULL);
 
   /* stock table. */
@@ -1275,7 +1274,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
 
   /* Remove old table definition */
   sprintf (szSQLBuffer, szDropTable, "STOCK");
-  rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+  rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
   /* Create new table definitions */
 
@@ -1297,7 +1296,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
       DataTypeMap[uwTypeIdx].lpInt,
       DataTypeMap[uwTypeIdx].lpInt, DataTypeMap[uwTypeIdx].lpChar);
 
-  if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+  if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
     vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, NULL);
 
   pane_log ("\r\n\r\n");
@@ -1307,7 +1306,7 @@ vCreateTPCCTables (char *szDBMS, HSTMT hstmt)
 
 
 void
-vCreateTPCCIndices (char *szDBMS, HSTMT hstmt)
+vCreateTPCCIndices (char *szDBMS, SQLHSTMT hstmt)
 {
   char szSQLBuffer[2048];
 
@@ -1322,7 +1321,7 @@ vCreateTPCCIndices (char *szDBMS, HSTMT hstmt)
   pane_log (szSQLBuffer);
   pane_log ("\r\n");
   /* Execute Index Create Statement */
-  if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+  if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
     vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, NULL);
 
   sprintf (szSQLBuffer, szCreateIndex2,
@@ -1332,7 +1331,7 @@ vCreateTPCCIndices (char *szDBMS, HSTMT hstmt)
   pane_log (szSQLBuffer);
   pane_log ("\r\n");
   /* Execute Index Create Statement */
-  if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+  if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
     vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, NULL);
 
   sprintf (szSQLBuffer, szCreateIndex3,
@@ -1342,7 +1341,7 @@ vCreateTPCCIndices (char *szDBMS, HSTMT hstmt)
   pane_log (szSQLBuffer);
   pane_log ("\r\n");
   /* Execute Index Create Statement */
-  if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+  if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
     vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, NULL);
 
   sprintf (szSQLBuffer, szCreateIndex5,
@@ -1353,7 +1352,7 @@ vCreateTPCCIndices (char *szDBMS, HSTMT hstmt)
   pane_log (szSQLBuffer);
   pane_log ("\r\n");
   /* Execute Index Create Statement */
-  if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+  if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
     vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, NULL);
 
   sprintf (szSQLBuffer, szCreateIndex3,
@@ -1363,7 +1362,7 @@ vCreateTPCCIndices (char *szDBMS, HSTMT hstmt)
   pane_log (szSQLBuffer);
   pane_log ("\r\n");
   /* Execute Index Create Statement */
-  if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+  if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
     vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, NULL);
 
   sprintf (szSQLBuffer, szCreateIndex3,
@@ -1373,7 +1372,7 @@ vCreateTPCCIndices (char *szDBMS, HSTMT hstmt)
   pane_log (szSQLBuffer);
   pane_log ("\r\n");
   /* Execute Index Create Statement */
-  if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+  if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
     vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, NULL);
 
   sprintf (szSQLBuffer, szCreateIndex4,
@@ -1384,7 +1383,7 @@ vCreateTPCCIndices (char *szDBMS, HSTMT hstmt)
   pane_log (szSQLBuffer);
   pane_log ("\r\n");
   /* Execute Index Create Statement */
-  if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+  if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
     vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, NULL);
 
   sprintf (szSQLBuffer, szCreateIndex1,
@@ -1394,7 +1393,7 @@ vCreateTPCCIndices (char *szDBMS, HSTMT hstmt)
   pane_log (szSQLBuffer);
   pane_log ("\r\n");
   /* Execute Index Create Statement */
-  if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+  if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
     vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, NULL);
 
   sprintf (szSQLBuffer, szCreateIndex2,
@@ -1404,7 +1403,7 @@ vCreateTPCCIndices (char *szDBMS, HSTMT hstmt)
   pane_log (szSQLBuffer);
   pane_log ("\r\n");
   /* Execute Index Create Statement */
-  if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+  if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
     vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, NULL);
 }
 
@@ -1419,14 +1418,14 @@ vLoadBranch (test_t * ptest	/* Run Configuration Parameters */
     )
 {
   RETCODE rc;
-  UDWORD udwBranch = 0;
+  unsigned long udwBranch = 0;
   double dBalance = 1000.0;
-  SDWORD cbBalance = 0;
-  UDWORD udwMod = 0;
+  SQLLEN cbBalance = 0;
+  unsigned long udwMod = 0;
   char szSQLBuffer[128];
-  SDWORD cbFiller = 84;
-  UWORD uwBindIdx = 0;
-  SDWORD cbBranch = 0; 
+  SQLLEN cbFiller = 84;
+  SQLUSMALLINT uwBindIdx = 0;
+  SQLLEN cbBranch = 0; 
 
   uwBindIdx = DriverMap[ptest->tpc.a.uwDrvIdx].uwBTM;
 
@@ -1438,7 +1437,7 @@ vLoadBranch (test_t * ptest	/* Run Configuration Parameters */
 
   /* Prepare the insert statement */
   sprintf (szSQLBuffer, szInsertBranch, szBranch);
-  rc = SQLPrepare (ptest->hstmt, szSQLBuffer, SQL_NTS);
+  rc = SQLPrepare (ptest->hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
   if (rc != SQL_SUCCESS && rc != SQL_SUCCESS_WITH_INFO)
     {
       vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, ptest->hstmt, ptest);
@@ -1450,28 +1449,28 @@ vLoadBranch (test_t * ptest	/* Run Configuration Parameters */
   /* Branch ID */
   rc = fSQLBindParameter (ptest->hstmt, 1, SQL_PARAM_INPUT, SQL_C_LONG,
       BindTypeMap[uwBindIdx].swInt,
-      BindTypeMap[uwBindIdx].uwInt, 0, (PTR) & udwBranch, 0, &cbBranch);
+      BindTypeMap[uwBindIdx].uwInt, 0, (SQLPOINTER) & udwBranch, 0, &cbBranch);
 
   /* Filler ID */
   rc = fSQLBindParameter (ptest->hstmt, 2, SQL_PARAM_INPUT, SQL_C_LONG,
       BindTypeMap[uwBindIdx].swInt,
-      BindTypeMap[uwBindIdx].uwInt, 0, (PTR) & udwBranch, 0, &cbBranch);
+      BindTypeMap[uwBindIdx].uwInt, 0, (SQLPOINTER) & udwBranch, 0, &cbBranch);
 
   /* Balance */
   rc = fSQLBindParameter (ptest->hstmt, 3, SQL_PARAM_INPUT, SQL_C_DOUBLE,
       BindTypeMap[uwBindIdx].swFloat,
-      BindTypeMap[uwBindIdx].uwFloat, 0, (PTR) & dBalance, 0, &cbBalance);
+      BindTypeMap[uwBindIdx].uwFloat, 0, (SQLPOINTER) & dBalance, 0, &cbBalance);
 
   /* Filler char */
   rc = fSQLBindParameter (ptest->hstmt, 4, SQL_PARAM_INPUT, SQL_C_CHAR,
       BindTypeMap[uwBindIdx].swChar, 84, 0, ptest->szTemp, 84, &cbFiller);
 
   /* Set the Progress Dialog */
-  sprintf (szSQLBuffer, szRowsInserted, (UDWORD) 0,
-      (UDWORD) ptest->tpc.a.udwMaxBranch);
+  sprintf (szSQLBuffer, szRowsInserted, (unsigned long) 0,
+      (unsigned long) ptest->tpc.a.udwMaxBranch);
   if (ptest->SetProgressText)
     ptest->SetProgressText (szSQLBuffer, 0, 0, 0, 1, 0, 0);
-  udwMod = (UDWORD) (ptest->tpc.a.udwMaxBranch / 50);
+  udwMod = (unsigned long) (ptest->tpc.a.udwMaxBranch / 50);
   udwMod = udwMod ? udwMod : 1;
 
   /* Insert records */
@@ -1520,15 +1519,15 @@ vLoadTeller (test_t * ptest	/* Run Configuration Parameters */
 {
   RETCODE rc;
   double dBalance = 100000;
-  UDWORD udwMod = 0;
-  UDWORD udwTeller = 0;
-  UDWORD udwBranch = 0;
+  unsigned long udwMod = 0;
+  unsigned long udwTeller = 0;
+  unsigned long udwBranch = 0;
   char szSQLBuffer[128];
-  SDWORD cbFiller = 84;
-  UWORD uwBindIdx = 0;
-  SDWORD cbTeller = 0;
-  SDWORD cbBranch = 0;
-  SDWORD cbBalance = 0;
+  SQLLEN cbFiller = 84;
+  SQLUSMALLINT uwBindIdx = 0;
+  SQLLEN cbTeller = 0;
+  SQLLEN cbBranch = 0;
+  SQLLEN cbBalance = 0;
 
   uwBindIdx = DriverMap[ptest->tpc.a.uwDrvIdx].uwBTM;
 
@@ -1541,7 +1540,7 @@ vLoadTeller (test_t * ptest	/* Run Configuration Parameters */
 
   /* Prepare the insert statement */
   sprintf (szSQLBuffer, szInsertTeller, szTeller);
-  rc = SQLPrepare (ptest->hstmt, szSQLBuffer, SQL_NTS);
+  rc = SQLPrepare (ptest->hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
   if (rc != SQL_SUCCESS && rc != SQL_SUCCESS_WITH_INFO)
     {
       vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, ptest->hstmt, ptest);
@@ -1553,17 +1552,17 @@ vLoadTeller (test_t * ptest	/* Run Configuration Parameters */
   /* Teller ID */
   rc = fSQLBindParameter (ptest->hstmt, 1, SQL_PARAM_INPUT,
       SQL_C_LONG, BindTypeMap[uwBindIdx].swInt,
-      BindTypeMap[uwBindIdx].uwInt, 0, (PTR) & udwTeller, 0, &cbTeller);
+      BindTypeMap[uwBindIdx].uwInt, 0, (SQLPOINTER) & udwTeller, 0, &cbTeller);
 
   /* Branch ID */
   rc = fSQLBindParameter (ptest->hstmt, 2, SQL_PARAM_INPUT,
       SQL_C_LONG, BindTypeMap[uwBindIdx].swInt,
-      BindTypeMap[uwBindIdx].uwInt, 0, (PTR) & udwBranch, 0, &cbBranch);
+      BindTypeMap[uwBindIdx].uwInt, 0, (SQLPOINTER) & udwBranch, 0, &cbBranch);
 
   /* Balance */
   rc = fSQLBindParameter (ptest->hstmt, 3, SQL_PARAM_INPUT,
       SQL_C_DOUBLE, BindTypeMap[uwBindIdx].swFloat,
-      BindTypeMap[uwBindIdx].uwFloat, 0, (PTR) & dBalance, 0, &cbBalance);
+      BindTypeMap[uwBindIdx].uwFloat, 0, (SQLPOINTER) & dBalance, 0, &cbBalance);
 
   /* Filler char */
   rc = fSQLBindParameter (ptest->hstmt, 4, SQL_PARAM_INPUT,
@@ -1571,11 +1570,11 @@ vLoadTeller (test_t * ptest	/* Run Configuration Parameters */
       84, 0, ptest->szTemp, 84, &cbFiller);
 
   /* Set the Progress Dialog */
-  sprintf (szSQLBuffer, szRowsInserted, (UDWORD) 0,
-      (UDWORD) ptest->tpc.a.udwMaxTeller);
+  sprintf (szSQLBuffer, szRowsInserted, (unsigned long) 0,
+      (unsigned long) ptest->tpc.a.udwMaxTeller);
   if (ptest->SetProgressText)
     ptest->SetProgressText (szSQLBuffer, 0, 0, 0, 1, 0, 0);
-  udwMod = (UDWORD) (ptest->tpc.a.udwMaxTeller / 50);
+  udwMod = (unsigned long) (ptest->tpc.a.udwMaxTeller / 50);
   udwMod = udwMod ? udwMod : 1;
 
   srand ((unsigned) time (NULL));
@@ -1583,7 +1582,7 @@ vLoadTeller (test_t * ptest	/* Run Configuration Parameters */
   /* Insert records */
   for (udwTeller = 1; udwTeller <= ptest->tpc.a.udwMaxTeller; udwTeller++)
     {
-      udwBranch = (UDWORD) ((rand () % ptest->tpc.a.udwMaxBranch) + 1);
+      udwBranch = (long) ((rand () % ptest->tpc.a.udwMaxBranch) + 1);
 
       rc = SQLExecute (ptest->hstmt);
       if (RC_NOTSUCCESSFUL (rc))
@@ -1627,15 +1626,15 @@ vLoadAccount (test_t * ptest	/* Run Configuration Parameters */
 {
   RETCODE rc;
   char szSQLBuffer[128];
-  UDWORD udwAcct = 0;
-  UDWORD udwBranch = 0;
+  unsigned long udwAcct = 0;
+  unsigned long udwBranch = 0;
   double dBalance = 1000.;
-  UDWORD udwMod = 0;
-  SDWORD cbFiller = 84;
-  UWORD uwBindIdx = 0;
-  SDWORD cbAcct = 0;
-  SDWORD cbBranch = 0;
-  SDWORD cbBalance = 0;
+  unsigned long udwMod = 0;
+  SQLLEN cbFiller = 84;
+  SQLUSMALLINT uwBindIdx = 0;
+  SQLLEN cbAcct = 0;
+  SQLLEN cbBranch = 0;
+  SQLLEN cbBalance = 0;
 
   uwBindIdx = DriverMap[ptest->tpc.a.uwDrvIdx].uwBTM;
 
@@ -1647,7 +1646,7 @@ vLoadAccount (test_t * ptest	/* Run Configuration Parameters */
 
   /* Prepare the insert statement */
   sprintf (szSQLBuffer, szInsertAccount, szAccount);
-  rc = SQLPrepare (ptest->hstmt, szSQLBuffer, SQL_NTS);
+  rc = SQLPrepare (ptest->hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
   if (rc != SQL_SUCCESS && rc != SQL_SUCCESS_WITH_INFO)
     {
       vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, ptest->hstmt, ptest);
@@ -1659,17 +1658,17 @@ vLoadAccount (test_t * ptest	/* Run Configuration Parameters */
   /* Account ID */
   rc = fSQLBindParameter (ptest->hstmt, 1, SQL_PARAM_INPUT, SQL_C_LONG,
       BindTypeMap[uwBindIdx].swInt,
-      BindTypeMap[uwBindIdx].uwInt, 0, (PTR) & udwAcct, 0, &cbAcct);
+      BindTypeMap[uwBindIdx].uwInt, 0, (SQLPOINTER) & udwAcct, 0, &cbAcct);
 
   /* Branch ID */
   rc = fSQLBindParameter (ptest->hstmt, 2, SQL_PARAM_INPUT, SQL_C_LONG,
       BindTypeMap[uwBindIdx].swInt,
-      BindTypeMap[uwBindIdx].uwInt, 0, (PTR) & udwBranch, 0, &cbBranch);
+      BindTypeMap[uwBindIdx].uwInt, 0, (SQLPOINTER) & udwBranch, 0, &cbBranch);
 
   /* Balance */
   rc = fSQLBindParameter (ptest->hstmt, 3, SQL_PARAM_INPUT, SQL_C_DOUBLE,
       BindTypeMap[uwBindIdx].swFloat,
-      BindTypeMap[uwBindIdx].uwFloat, 0, (PTR) & dBalance, 0, &cbBalance);
+      BindTypeMap[uwBindIdx].uwFloat, 0, (SQLPOINTER) & dBalance, 0, &cbBalance);
 
   /* Filler char */
   rc = fSQLBindParameter (ptest->hstmt, 4, SQL_PARAM_INPUT, SQL_C_CHAR,
@@ -1677,11 +1676,11 @@ vLoadAccount (test_t * ptest	/* Run Configuration Parameters */
 
 
   /* Set the Progress Dialog */
-  sprintf (szSQLBuffer, szRowsInserted, (UDWORD) 0,
-      (UDWORD) ptest->tpc.a.udwMaxAccount);
+  sprintf (szSQLBuffer, szRowsInserted, (unsigned long) 0,
+      (unsigned long) ptest->tpc.a.udwMaxAccount);
   if (ptest->SetProgressText)
     ptest->SetProgressText (szSQLBuffer, 0, 0, 0, 1, 0, 0);
-  udwMod = (UDWORD) (ptest->tpc.a.udwMaxAccount / 50);
+  udwMod = (unsigned long) (ptest->tpc.a.udwMaxAccount / 50);
   udwMod = udwMod ? udwMod : 1;
 
 
@@ -1690,7 +1689,7 @@ vLoadAccount (test_t * ptest	/* Run Configuration Parameters */
   /* Insert Records */
   for (udwAcct = 1; udwAcct <= ptest->tpc.a.udwMaxAccount; udwAcct++)
     {
-      udwBranch = (UWORD) ((rand () % ptest->tpc.a.udwMaxBranch) + 1);
+      udwBranch = (SQLUSMALLINT) ((rand () % ptest->tpc.a.udwMaxBranch) + 1);
 
       rc = SQLExecute (ptest->hstmt);
       if (RC_NOTSUCCESSFUL (rc))
@@ -1746,7 +1745,7 @@ vLoadStoreOptions (test_t * ptest,	/* Run Configuration Parameters  */
 int
 getDriverTypeIndex (char *szDBMSName)
 {
-  int i;
+  unsigned int i;
   for (i = 0; i < sizeof (DriverMap) / sizeof (DRIVERMAP); i++)
     if (_stristr (szDBMSName, DriverMap[i].szDbName))
       return i;
@@ -1758,10 +1757,10 @@ void
 vCreateVirtuosoTPCCTables (test_t * lpBench)
 {
   RETCODE rc;
-  UWORD uwTypeIdx;
+  SQLUSMALLINT uwTypeIdx;
   char szSQLBuffer[2048], szCommandBuffer[2048];
   int nDriverMapIndex = getDriverTypeIndex (lpBench->szDBMS);
-  HSTMT hstmt = lpBench->hstmt;
+  SQLHSTMT hstmt = lpBench->hstmt;
   int indexType = DriverMap[nDriverMapIndex].swITM;
 
   uwTypeIdx = DriverMap[nDriverMapIndex].uwDTM;
@@ -1772,7 +1771,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   /* Remove old table definition */
   pane_log ("Dropping the local warehouse table\r\n");
   sprintf (szSQLBuffer, szDropTable, "warehouse");
-  rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+  rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
   if (lpBench->tpc.c.tableDSNS[0][0])
     {				/* a remote table */
@@ -1784,7 +1783,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  lpBench->tpc.c.tableDSNS[0]);
       sprintf (szSQLBuffer, szRemoteDropTable, lpBench->tpc.c.tableDSNS[0],
 	  "warehouse");
-      rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+      rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
       pane_log ("Creating the warehouse table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[0]);
@@ -1802,7 +1801,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  DataTypeMap[TypeIdx].lpChar,
 	  DataTypeMap[TypeIdx].lpChar,
 	  DataTypeMap[TypeIdx].lpFloat, DataTypeMap[TypeIdx].lpFloat);
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       pane_log
@@ -1815,14 +1814,14 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  lpBench->tpc.c.tableDSNS[0],
 	  (char *) IndexTypeMap[indexType].szIndexType,
 	  "warehouse_prime", "warehouse", "w_id");
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       pane_log ("Attaching the warehouse table from %s\r\n",
 	  lpBench->tpc.c.tableDSNS[0]);
       sprintf (szSQLBuffer, szAttachTable, "warehouse",
 	  lpBench->tpc.c.tableDSNS[0]);
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
     }
   else
@@ -1838,7 +1837,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  DataTypeMap[uwTypeIdx].lpChar,
 	  DataTypeMap[uwTypeIdx].lpChar,
 	  DataTypeMap[uwTypeIdx].lpFloat, DataTypeMap[uwTypeIdx].lpFloat);
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       sprintf (szSQLBuffer, szCreateIndex1,
@@ -1848,7 +1847,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       pane_log (szSQLBuffer);
       pane_log ("\r\n");
       /* Execute Index Create Statement */
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
     }
 
@@ -1858,7 +1857,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   /* Remove old table definition */
   pane_log ("Dropping the local district table\r\n");
   sprintf (szSQLBuffer, szDropTable, "district");
-  rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+  rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
   if (lpBench->tpc.c.tableDSNS[1][0])
     {				/* a remote table */
@@ -1870,7 +1869,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  lpBench->tpc.c.tableDSNS[1]);
       sprintf (szSQLBuffer, szRemoteDropTable, lpBench->tpc.c.tableDSNS[1],
 	  "district");
-      rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+      rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
       pane_log ("Creating the district table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[1]);
@@ -1890,7 +1889,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  DataTypeMap[TypeIdx].lpChar,
 	  DataTypeMap[TypeIdx].lpFloat,
 	  DataTypeMap[TypeIdx].lpFloat, DataTypeMap[TypeIdx].lpInt);
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       pane_log
@@ -1903,14 +1902,14 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  lpBench->tpc.c.tableDSNS[1],
 	  (char *) IndexTypeMap[indexType].szIndexType,
 	  "district_prime", "district", "d_w_id", "d_id");
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       pane_log ("Attaching the district table from %s\r\n",
 	  lpBench->tpc.c.tableDSNS[1]);
       sprintf (szSQLBuffer, szAttachTable, "district",
 	  lpBench->tpc.c.tableDSNS[1]);
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
     }
   else
@@ -1928,7 +1927,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  DataTypeMap[uwTypeIdx].lpChar,
 	  DataTypeMap[uwTypeIdx].lpFloat,
 	  DataTypeMap[uwTypeIdx].lpFloat, DataTypeMap[uwTypeIdx].lpInt);
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       sprintf (szSQLBuffer, szCreateIndex2,
@@ -1938,7 +1937,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       pane_log (szSQLBuffer);
       pane_log ("\r\n");
       /* Execute Index Create Statement */
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
     }
 
@@ -1948,7 +1947,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   /* Remove old table definition */
   pane_log ("Dropping the local customer table\r\n");
   sprintf (szSQLBuffer, szDropTable, "customer");
-  rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+  rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
   if (lpBench->tpc.c.tableDSNS[2][0])
     {				/* a remote table */
@@ -1960,7 +1959,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  lpBench->tpc.c.tableDSNS[2]);
       sprintf (szSQLBuffer, szRemoteDropTable, lpBench->tpc.c.tableDSNS[2],
 	  "customer");
-      rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+      rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
       pane_log ("Creating the customer table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[2]);
@@ -1991,7 +1990,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  DataTypeMap[TypeIdx].lpInt,
 	  DataTypeMap[TypeIdx].lpInt,
 	  DataTypeMap[TypeIdx].lpChar, DataTypeMap[TypeIdx].lpChar);
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       pane_log ("Creating the customer_prime index on customer table in %s\r\n",
@@ -2003,7 +2002,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  lpBench->tpc.c.tableDSNS[2],
 	  (char *) IndexTypeMap[indexType].szIndexType,
 	  "customer_prime", "customer", "c_w_id", "c_d_id", "c_id");
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       pane_log ("Creating the customer_ncl index on customer table in %s\r\n",
@@ -2016,14 +2015,14 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  "unique",
 	  "customer_ncl",
 	  "customer", "c_w_id", "c_d_id", "c_last", "c_first", "c_id");
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       pane_log ("Attaching the customer table from %s\r\n",
 	  lpBench->tpc.c.tableDSNS[2]);
       sprintf (szSQLBuffer, szAttachTable, "customer",
 	  lpBench->tpc.c.tableDSNS[2]);
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
     }
   else
@@ -2052,7 +2051,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  DataTypeMap[uwTypeIdx].lpInt,
 	  DataTypeMap[uwTypeIdx].lpInt,
 	  DataTypeMap[uwTypeIdx].lpChar, DataTypeMap[uwTypeIdx].lpChar);
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       sprintf (szSQLBuffer, szCreateIndex3,
@@ -2062,7 +2061,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       pane_log (szSQLBuffer);
       pane_log ("\r\n");
       /* Execute Index Create Statement */
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       sprintf (szSQLBuffer, szCreateIndex5,
@@ -2073,7 +2072,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       pane_log (szSQLBuffer);
       pane_log ("\r\n");
       /* Execute Index Create Statement */
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
     }
@@ -2084,7 +2083,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   /* Remove old table definition */
   pane_log ("Dropping the local thistory table\r\n");
   sprintf (szSQLBuffer, szDropTable, "THISTORY");
-  rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+  rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
   if (lpBench->tpc.c.tableDSNS[3][0])
     {				/* a remote table */
@@ -2095,7 +2094,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  lpBench->tpc.c.tableDSNS[3]);
       sprintf (szSQLBuffer, szRemoteDropTable, lpBench->tpc.c.tableDSNS[3],
 	  "THISTORY");
-      rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+      rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
       pane_log ("Creating the thistory table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[3]);
@@ -2112,14 +2111,14 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  DataTypeMap[TypeIdx].lpInt,
 	  DataTypeMap[TypeIdx].lpTimestamp,
 	  DataTypeMap[TypeIdx].lpFloat, DataTypeMap[TypeIdx].lpChar);
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       pane_log ("Attaching the thistory table from %s\r\n",
 	  lpBench->tpc.c.tableDSNS[3]);
       sprintf (szSQLBuffer, szAttachTable, "THISTORY",
 	  lpBench->tpc.c.tableDSNS[3]);
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
     }
   else
@@ -2135,7 +2134,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  DataTypeMap[uwTypeIdx].lpTimestamp,
 	  DataTypeMap[uwTypeIdx].lpFloat, DataTypeMap[uwTypeIdx].lpChar);
 
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
     }
 
@@ -2145,7 +2144,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   /* Remove old table definition */
   pane_log ("Dropping the local new_order table\r\n");
   sprintf (szSQLBuffer, szDropTable, "NEW_ORDER");
-  rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+  rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
   if (lpBench->tpc.c.tableDSNS[4][0])
     {				/* a remote table */
@@ -2157,7 +2156,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  lpBench->tpc.c.tableDSNS[4]);
       sprintf (szSQLBuffer, szRemoteDropTable, lpBench->tpc.c.tableDSNS[4],
 	  "NEW_ORDER");
-      rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+      rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
       pane_log ("Creating the new_order table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[4]);
@@ -2169,7 +2168,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  lpBench->tpc.c.tableDSNS[4],
 	  DataTypeMap[TypeIdx].lpInt,
 	  DataTypeMap[TypeIdx].lpInt, DataTypeMap[TypeIdx].lpInt);
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       pane_log
@@ -2182,14 +2181,14 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  lpBench->tpc.c.tableDSNS[4],
 	  (char *) IndexTypeMap[indexType].szIndexType,
 	  "NEW_ORDER_PRIME", "NEW_ORDER", "NO_W_ID", "NO_D_ID", "NO_O_ID");
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       pane_log ("Attaching the new_order table from %s\r\n",
 	  lpBench->tpc.c.tableDSNS[4]);
       sprintf (szSQLBuffer, szAttachTable, "NEW_ORDER",
 	  lpBench->tpc.c.tableDSNS[4]);
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
     }
   else
@@ -2200,7 +2199,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  DataTypeMap[uwTypeIdx].lpInt,
 	  DataTypeMap[uwTypeIdx].lpInt, DataTypeMap[uwTypeIdx].lpInt);
 
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       sprintf (szSQLBuffer, szCreateIndex3,
@@ -2210,7 +2209,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       pane_log (szSQLBuffer);
       pane_log ("\r\n");
       /* Execute Index Create Statement */
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
     }
 
@@ -2220,7 +2219,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   /* Remove old table definition */
   pane_log ("Dropping the local orders table\r\n");
   sprintf (szSQLBuffer, szDropTable, "ORDERS");
-  rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+  rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
   if (lpBench->tpc.c.tableDSNS[5][0])
     {				/* a remote table */
@@ -2232,7 +2231,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  lpBench->tpc.c.tableDSNS[5]);
       sprintf (szSQLBuffer, szRemoteDropTable, lpBench->tpc.c.tableDSNS[5],
 	  "ORDERS");
-      rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+      rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
       pane_log ("Creating the orders table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[5]);
@@ -2249,7 +2248,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  DataTypeMap[TypeIdx].lpTimestamp,
 	  DataTypeMap[TypeIdx].lpInt,
 	  DataTypeMap[TypeIdx].lpInt, DataTypeMap[TypeIdx].lpInt);
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       pane_log ("Creating the orders_prime index on orders table in %s\r\n",
@@ -2261,14 +2260,14 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  lpBench->tpc.c.tableDSNS[5],
 	  (char *) IndexTypeMap[indexType].szIndexType,
 	  "ORDERS_PRIME", "ORDERS", "O_W_ID", "O_D_ID", "O_ID");
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       pane_log ("Attaching the orders table from %s\r\n",
 	  lpBench->tpc.c.tableDSNS[5]);
       sprintf (szSQLBuffer, szAttachTable, "ORDERS",
 	  lpBench->tpc.c.tableDSNS[5]);
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
     }
   else
@@ -2284,7 +2283,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  DataTypeMap[uwTypeIdx].lpInt,
 	  DataTypeMap[uwTypeIdx].lpInt, DataTypeMap[uwTypeIdx].lpInt);
 
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       sprintf (szSQLBuffer, szCreateIndex3,
@@ -2294,7 +2293,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       pane_log (szSQLBuffer);
       pane_log ("\r\n");
       /* Execute Index Create Statement */
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
     }
 
@@ -2304,7 +2303,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   /* Remove old table definition */
   pane_log ("Dropping the local order_line table\r\n");
   sprintf (szSQLBuffer, szDropTable, "ORDER_LINE");
-  rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+  rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
   if (lpBench->tpc.c.tableDSNS[6][0])
     {				/* a remote table */
@@ -2316,7 +2315,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  lpBench->tpc.c.tableDSNS[6]);
       sprintf (szSQLBuffer, szRemoteDropTable, lpBench->tpc.c.tableDSNS[6],
 	  "ORDER_LINE");
-      rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+      rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
       pane_log ("Creating the order_line table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[6]);
@@ -2335,7 +2334,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  DataTypeMap[TypeIdx].lpTimestamp,
 	  DataTypeMap[TypeIdx].lpInt,
 	  DataTypeMap[TypeIdx].lpFloat, DataTypeMap[TypeIdx].lpChar);
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       pane_log
@@ -2349,14 +2348,14 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  (char *) IndexTypeMap[indexType].szIndexType,
 	  "ORDER_LINE_PRIME",
 	  "ORDER_LINE", "OL_W_ID", "OL_D_ID", "OL_O_ID", "OL_NUMBER");
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       pane_log ("Attaching the order_line table from %s\r\n",
 	  lpBench->tpc.c.tableDSNS[6]);
       sprintf (szSQLBuffer, szAttachTable, "ORDER_LINE",
 	  lpBench->tpc.c.tableDSNS[6]);
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
     }
   else
@@ -2374,7 +2373,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  DataTypeMap[uwTypeIdx].lpInt,
 	  DataTypeMap[uwTypeIdx].lpFloat, DataTypeMap[uwTypeIdx].lpChar);
 
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       sprintf (szSQLBuffer, szCreateIndex4,
@@ -2385,7 +2384,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       pane_log (szSQLBuffer);
       pane_log ("\r\n");
       /* Execute Index Create Statement */
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
     }
@@ -2396,7 +2395,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   /* Remove old table definition */
   pane_log ("Dropping the local item table\r\n");
   sprintf (szSQLBuffer, szDropTable, "ITEM");
-  rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+  rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
   if (lpBench->tpc.c.tableDSNS[7][0])
     {				/* a remote table */
@@ -2408,7 +2407,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  lpBench->tpc.c.tableDSNS[7]);
       sprintf (szSQLBuffer, szRemoteDropTable, lpBench->tpc.c.tableDSNS[7],
 	  "ITEM");
-      rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+      rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
       pane_log ("Creating the item table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[7]);
@@ -2422,7 +2421,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  DataTypeMap[TypeIdx].lpInt,
 	  DataTypeMap[TypeIdx].lpChar,
 	  DataTypeMap[TypeIdx].lpFloat, DataTypeMap[TypeIdx].lpChar);
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       pane_log ("Creating the item_prime index on item table in %s\r\n",
@@ -2434,14 +2433,14 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  lpBench->tpc.c.tableDSNS[7],
 	  (char *) IndexTypeMap[indexType].szIndexType,
 	  "ITEM_PRIME", "ITEM", "I_ID");
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       pane_log ("Attaching the item table from %s\r\n",
 	  lpBench->tpc.c.tableDSNS[7]);
       sprintf (szSQLBuffer, szAttachTable, "ITEM",
 	  lpBench->tpc.c.tableDSNS[7]);
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
     }
   else
@@ -2454,7 +2453,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  DataTypeMap[uwTypeIdx].lpChar,
 	  DataTypeMap[uwTypeIdx].lpFloat, DataTypeMap[uwTypeIdx].lpChar);
 
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       sprintf (szSQLBuffer, szCreateIndex1,
@@ -2464,7 +2463,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       pane_log (szSQLBuffer);
       pane_log ("\r\n");
       /* Execute Index Create Statement */
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
     }
@@ -2475,7 +2474,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
   /* Remove old table definition */
   pane_log ("Dropping the local stock table\r\n");
   sprintf (szSQLBuffer, szDropTable, "STOCK");
-  rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+  rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
   if (lpBench->tpc.c.tableDSNS[8][0])
     {				/* a remote table */
@@ -2487,7 +2486,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  lpBench->tpc.c.tableDSNS[8]);
       sprintf (szSQLBuffer, szRemoteDropTable, lpBench->tpc.c.tableDSNS[8],
 	  "STOCK");
-      rc = SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS);
+      rc = SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS);
 
       pane_log ("Creating the stock table in %s\r\n",
 	  lpBench->tpc.c.tableDSNS[8]);
@@ -2513,7 +2512,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  DataTypeMap[TypeIdx].lpInt,
 	  DataTypeMap[TypeIdx].lpInt,
 	  DataTypeMap[TypeIdx].lpInt, DataTypeMap[TypeIdx].lpChar);
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       pane_log ("Creating the stock_prime index on stock table in %s\r\n",
@@ -2525,14 +2524,14 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  lpBench->tpc.c.tableDSNS[8],
 	  (char *) IndexTypeMap[indexType].szIndexType,
 	  "STOCK_PRIME", "STOCK", "S_I_ID", "S_W_ID");
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       pane_log ("Attaching the stock table from %s\r\n",
 	  lpBench->tpc.c.tableDSNS[8]);
       sprintf (szSQLBuffer, szAttachTable, "STOCK",
 	  lpBench->tpc.c.tableDSNS[8]);
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
     }
   else
@@ -2557,7 +2556,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
 	  DataTypeMap[uwTypeIdx].lpInt,
 	  DataTypeMap[uwTypeIdx].lpInt, DataTypeMap[uwTypeIdx].lpChar);
 
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
 
       sprintf (szSQLBuffer, szCreateIndex2,
@@ -2567,7 +2566,7 @@ vCreateVirtuosoTPCCTables (test_t * lpBench)
       pane_log (szSQLBuffer);
       pane_log ("\r\n");
       /* Execute Index Create Statement */
-      if (SQL_SUCCESS != SQLExecDirect (hstmt, szSQLBuffer, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (hstmt, (SQLCHAR *) szSQLBuffer, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, lpBench);
     }
 
@@ -2602,16 +2601,16 @@ extern int do_rollback_on_deadlock;
 #define _IF_DEADLOCK_OR_ERR_GO(stmt, tag, foo, deadlocktag) \
 if (SQL_ERROR == (foo)) \
 { \
-	RETCODE _rc = SQLError (SQL_NULL_HENV, SQL_NULL_HDBC, stmt, (UCHAR *) state, NULL, \
-		(UCHAR *) & message, sizeof (message), (SWORD *) & len); \
-	if (_rc == SQL_SUCCESS && 0 == strncmp(state, "40001", 5)) \
+	RETCODE _rc = SQLError (SQL_NULL_HENV, SQL_NULL_HDBC, stmt, (SQLCHAR *) state, NULL, \
+		(SQLCHAR *) & message, sizeof (message), (SQLSMALLINT *) & len); \
+	if (_rc == SQL_SUCCESS && 0 == strncmp((char *) state, "40001", 5)) \
 	  { \
 	    goto deadlocktag; \
 	  } \
 	else \
 	  { \
-	    strncpy(lpBench->szSQLError, message, sizeof(lpBench->szSQLError)); \
-	    strncpy(lpBench->szSQLState, state, sizeof(lpBench->szSQLState)); \
+	    strncpy((char *) lpBench->szSQLError, (char *) message, sizeof(lpBench->szSQLError)); \
+	    strncpy((char *) lpBench->szSQLState, (char *) state, sizeof(lpBench->szSQLState)); \
 	    goto tag; \
 	  } \
 }
@@ -2629,7 +2628,6 @@ BOOL
 DoThreadsRun (test_t * lpBench)
 {
   int nRun;			/* Counter for each run */
-  BOOL sts = TRUE;
 
   for (nRun = 0; nRun < lpBench->tpc._.nRuns; nRun++)
     {
@@ -2707,13 +2705,13 @@ BOOL
 GetMaxVals (test_t * lpBench	/* Benchmark info */
     )
 {
-  HSTMT hstmt;
-  SDWORD cbData;
+  SQLHSTMT hstmt;
+  SQLLEN cbData;
 
   SQLAllocStmt (lpBench->hdbc, &hstmt);
   SQLSetStmtOption (hstmt, SQL_ASYNC_ENABLE, SQL_ASYNC_ENABLE_OFF);
 
-  if (!fSQLExecDirect (hstmt, "select max(BRANCH) from BRANCH", lpBench))
+  if (!fSQLExecDirect (hstmt, (SQLCHAR *) "select max(BRANCH) from BRANCH", lpBench))
     return FALSE;
   SQLFetch (hstmt);
   fSQLGetData (hstmt, 1, SQL_C_LONG, &lpBench->tpc.a.udwMaxBranch, 0,
@@ -2725,7 +2723,7 @@ GetMaxVals (test_t * lpBench	/* Benchmark info */
       return FALSE;
     }
 
-  if (!fSQLExecDirect (hstmt, "select max(TELLER) from TELLER", lpBench))
+  if (!fSQLExecDirect (hstmt, (SQLCHAR *) "select max(TELLER) from TELLER", lpBench))
     return FALSE;
   SQLFetch (hstmt);
   fSQLGetData (hstmt, 1, SQL_C_LONG, &lpBench->tpc.a.udwMaxTeller, 0,
@@ -2737,7 +2735,7 @@ GetMaxVals (test_t * lpBench	/* Benchmark info */
       return FALSE;
     }
 
-  if (!fSQLExecDirect (hstmt, "select max(ACCOUNT) from ACCOUNT", lpBench))
+  if (!fSQLExecDirect (hstmt, (SQLCHAR *) "select max(ACCOUNT) from ACCOUNT", lpBench))
     return FALSE;
   SQLFetch (hstmt);
   fSQLGetData (hstmt, 1, SQL_C_LONG, &lpBench->tpc.a.udwMaxAccount, 0,
@@ -2764,7 +2762,7 @@ GetMaxVals (test_t * lpBench	/* Benchmark info */
 ***************************************************************************/
 int
 fExecuteSql (test_t * lpBench,	/* Bench info */
-    char *pszSql		/* SQL Statement to execute */
+    SQLCHAR *pszSql		/* SQL Statement to execute */
     )
 {
   RETCODE rc;
@@ -2785,7 +2783,7 @@ fExecuteSql (test_t * lpBench,	/* Bench info */
   /* Execute the statement until finished */
   do
     {
-      rc = SQLExecDirect (lpBench->hstmt, (UCHAR FAR *) pszSql, SQL_NTS);
+      rc = SQLExecDirect (lpBench->hstmt, (SQLCHAR *) pszSql, SQL_NTS);
     }
   while (SQL_STILL_EXECUTING == rc);
   _IF_DEADLOCK_OR_ERR_GO (lpBench->hstmt, error_fexecute, rc,
@@ -2808,7 +2806,7 @@ fExecuteQuery (test_t * lpBench,	/* Bench info */
     BOOL fExecute		/* TRUE if we should execute as well */
     )
 {
-  HSTMT hstmt = SQL_NULL_HSTMT;			/* Statement handle for executes */
+  SQLHSTMT hstmt = SQL_NULL_HSTMT;			/* Statement handle for executes */
 
   RETCODE rc = SQL_SUCCESS;	/* ODBC return code */
 
@@ -2821,12 +2819,12 @@ fExecuteQuery (test_t * lpBench,	/* Bench info */
     long branch;
     double balance;
     char filler[85];
-    SDWORD account_len, branch_len, balance_len, filler_len;
+    SQLLEN account_len, branch_len, balance_len, filler_len;
   }
   buffer[100];
 
-  UDWORD row_count;
-  UWORD row_status[100];
+  SQLULEN row_count;
+  SQLUSMALLINT row_status[100];
   DECLARE_FOR_SQLERROR;
 
   if (!lpBench->tpc.a.fDoQuery)
@@ -2854,14 +2852,14 @@ fExecuteQuery (test_t * lpBench,	/* Bench info */
       if (rc == SQL_ERROR)
 	{
 	  if (SQL_SUCCESS == SQLError (SQL_NULL_HENV, lpBench->hdbc,
-		  SQL_NULL_HSTMT, state, NULL, (UCHAR *) & message,
-		  sizeof (message), (SWORD *) & len))
+		  SQL_NULL_HSTMT, state, NULL, (SQLCHAR *) & message,
+		  sizeof (message), (SQLSMALLINT *) & len))
 	    {
-	      if (0 == strncmp (state, "40001", 5))
+	      if (0 == strncmp ((char *) state, "40001", 5))
 		goto deadlock_query;
-	      strncpy (lpBench->szSQLError, message,
+	      strncpy ((char *) lpBench->szSQLError, (char *) message,
 		  sizeof (lpBench->szSQLError));
-	      strncpy (lpBench->szSQLState, state,
+	      strncpy ((char *) lpBench->szSQLState, (char *) state,
 		  sizeof (lpBench->szSQLState));
 	    }
 	  goto error_query;
@@ -2886,7 +2884,7 @@ fExecuteQuery (test_t * lpBench,	/* Bench info */
       do
 	{
 	  rc = SQLExecDirect (hstmt,
-	      "select ACCOUNT, BRANCH, BALANCE, FILLER from ACCOUNT where ACCOUNT < 101",
+	      (SQLCHAR *) "select ACCOUNT, BRANCH, BALANCE, FILLER from ACCOUNT where ACCOUNT < 101",
 	      SQL_NTS);
 	}
       while (SQL_STILL_EXECUTING == rc);
@@ -2894,8 +2892,8 @@ fExecuteQuery (test_t * lpBench,	/* Bench info */
     }
 
 /*  buffer = g_malloc0 (sizeof (struct result_s) * lpBench->tpc.a.nRowsetSize);
-  row_status = g_malloc0 (sizeof (UWORD) * lpBench->tpc.a.nRowsetSize);
-      row_status = g_malloc0 (lpBench->tpc.a.nRowsetSize * sizeof (UWORD));
+  row_status = g_malloc0 (sizeof (SQLUSMALLINT) * lpBench->tpc.a.nRowsetSize);
+      row_status = g_malloc0 (lpBench->tpc.a.nRowsetSize * sizeof (SQLUSMALLINT));
       */
   /*Bind all of the columns for return */
   fRtn = fSQLBindCol (hstmt, 1, SQL_C_LONG,
@@ -2978,10 +2976,10 @@ deadlock_query:
 ***************************************************************************/
 int
 fExecuteTrans (test_t * lpBench,	/* Bench info */
-    SDWORD nTrnCnt,		/* Transaction number */
-    SDWORD nAcctNum,		/* Account number */
-    SDWORD nTellerNum,		/* Teller number */
-    SDWORD nBranchNum,		/* Branch number */
+    long nTrnCnt,		/* Transaction number */
+    long nAcctNum,		/* Account number */
+    long nTellerNum,		/* Teller number */
+    long nBranchNum,		/* Branch number */
     double *dBalance,		/* Balance for the transaction */
     double dDelta		/* Change for each transaction */
     )
@@ -2992,7 +2990,7 @@ fExecuteTrans (test_t * lpBench,	/* Bench info */
   char szStmt[1024];		/* The statement */
 
   char *filler = "1234567890123456789012";
-  SDWORD cbBal;
+  SQLLEN cbBal;
 
 /* SQL Statements in the transactions */
   static const char gszUPD_ACCOUNTS[] =
@@ -3019,10 +3017,10 @@ fExecuteTrans (test_t * lpBench,	/* Bench info */
       return FALSE;
     }
   sprintf (szStmt, gszUPD_ACCOUNTS, dDelta, nAcctNum);
-  GO_RETCODE (fExecuteSql (lpBench, szStmt), start_over_text, error_text);
+  GO_RETCODE (fExecuteSql (lpBench, (SQLCHAR *) szStmt), start_over_text, error_text);
 
   sprintf (szStmt, gszSEL_BALANCE, nAcctNum);
-  GO_RETCODE (fExecuteSql (lpBench, szStmt), start_over_text, error_text);
+  GO_RETCODE (fExecuteSql (lpBench, (SQLCHAR *) szStmt), start_over_text, error_text);
 
   /* Retrieve new balance for the account */
   rc = SQLFetch (lpBench->hstmt);
@@ -3032,14 +3030,14 @@ fExecuteTrans (test_t * lpBench,	/* Bench info */
   SQLFreeStmt (lpBench->hstmt, SQL_CLOSE);
 
   sprintf (szStmt, gszUPD_TELLERS, dDelta, nTellerNum);
-  GO_RETCODE (fExecuteSql (lpBench, szStmt), start_over_text, error_text);
+  GO_RETCODE (fExecuteSql (lpBench, (SQLCHAR *) szStmt), start_over_text, error_text);
 
   sprintf (szStmt, gszUPD_BRANCHES, dDelta, nBranchNum);
-  GO_RETCODE (fExecuteSql (lpBench, szStmt), start_over_text, error_text);
+  GO_RETCODE (fExecuteSql (lpBench, (SQLCHAR *) szStmt), start_over_text, error_text);
 
   sprintf (szStmt, gszINSERT_HIST, nTrnCnt, nAcctNum, nTellerNum,
       nBranchNum, dDelta, lpBench->pszDateTimeSQLFunc, filler);
-  GO_RETCODE (fExecuteSql (lpBench, szStmt), start_over_text, error_text);
+  GO_RETCODE (fExecuteSql (lpBench, (SQLCHAR *) szStmt), start_over_text, error_text);
 
   /* Execute the query */
   GO_RETCODE (fExecuteQuery (lpBench, TRUE), start_over_text, error_text);
@@ -3089,14 +3087,16 @@ error:
 
 static BOOL
 fBindParameters (test_t * lpBench,
-    SDWORD * pnAcctNum,
-    SDWORD * pnTellerNum,
-    SDWORD * pnBranchNum,
+    long * pnAcctNum,
+    long * pnTellerNum,
+    long * pnBranchNum,
     double *pdDelta,
     double *pdBalance,
-    HSTMT hstmtUpdAcct,
-    HSTMT hstmtSelBal,
-    HSTMT hstmtUpdTeller, HSTMT hstmtUpdBranch, HSTMT hstmtInsHist)
+    SQLHSTMT hstmtUpdAcct,
+    SQLHSTMT hstmtSelBal,
+    SQLHSTMT hstmtUpdTeller, 
+    SQLHSTMT hstmtUpdBranch, 
+    SQLHSTMT hstmtInsHist)
 {
   BOOL fSuccess;
   RETCODE rc;
@@ -3111,16 +3111,16 @@ fBindParameters (test_t * lpBench,
       /* value of the parameters. */
       fSuccess = TRUE;
       fSuccess &= fSQLBindParameter (lpBench->hstmt, 1, SQL_PARAM_INPUT,
-	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (long), 0,
 	  &lpBench->tpc.a.nTrnCnt, sizeof (lpBench->tpc.a.nTrnCnt), NULL);
       fSuccess &= fSQLBindParameter (lpBench->hstmt, 2, SQL_PARAM_INPUT,
-	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (long), 0,
 	  pnAcctNum, sizeof (*pnAcctNum), NULL);
       fSuccess &= fSQLBindParameter (lpBench->hstmt, 3, SQL_PARAM_INPUT,
-	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (long), 0,
 	  pnTellerNum, sizeof (*pnTellerNum), NULL);
       fSuccess &= fSQLBindParameter (lpBench->hstmt, 4, SQL_PARAM_INPUT,
-	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (long), 0,
 	  pnBranchNum, sizeof (*pnBranchNum), NULL);
       fSuccess &= fSQLBindParameter (lpBench->hstmt, 5, SQL_PARAM_INPUT,
 	  SQL_C_DOUBLE, SQL_DOUBLE, sizeof (double), 0,
@@ -3137,7 +3137,7 @@ fBindParameters (test_t * lpBench,
 	  do
 	    {
 	      rc = SQLPrepare (lpBench->hstmt,
-		  "{CALL ODBC_BENCHMARK(?,?,?,?,?,?,?)}", SQL_NTS);
+		  (SQLCHAR *) "{CALL ODBC_BENCHMARK(?,?,?,?,?,?,?)}", SQL_NTS);
 	    }
 	  while (SQL_STILL_EXECUTING == rc);
 
@@ -3162,14 +3162,14 @@ fBindParameters (test_t * lpBench,
 	  SQL_C_DOUBLE, SQL_DOUBLE, sizeof (double), 0,
 	  pdDelta, sizeof (*pdDelta), NULL);
       fSuccess &= fSQLBindParameter (hstmtUpdAcct, 2, SQL_PARAM_INPUT,
-	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (long), 0,
 	  pnAcctNum, sizeof (*pnAcctNum), NULL);
       if (fSuccess)
 	{
 	  do
 	    {
 	      rc = SQLPrepare (hstmtUpdAcct,
-		  "UPDATE ACCOUNT SET BALANCE = BALANCE + ? WHERE ACCOUNT = ?",
+		  (SQLCHAR *) "UPDATE ACCOUNT SET BALANCE = BALANCE + ? WHERE ACCOUNT = ?",
 		  SQL_NTS);
 	    }
 	  while (SQL_STILL_EXECUTING == rc);
@@ -3185,14 +3185,14 @@ fBindParameters (test_t * lpBench,
 
       /* Select balance */
       fSuccess &= fSQLBindParameter (hstmtSelBal, 1, SQL_PARAM_INPUT,
-	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (long), 0,
 	  pnAcctNum, sizeof (*pnAcctNum), NULL);
       if (fSuccess)
 	{
 	  do
 	    {
 	      rc = SQLPrepare (hstmtSelBal,
-		  "SELECT BALANCE FROM ACCOUNT WHERE ACCOUNT = ?", SQL_NTS);
+		  (SQLCHAR *) "SELECT BALANCE FROM ACCOUNT WHERE ACCOUNT = ?", SQL_NTS);
 	    }
 	  while (SQL_STILL_EXECUTING == rc);
 
@@ -3209,7 +3209,7 @@ fBindParameters (test_t * lpBench,
 	  SQL_C_DOUBLE, SQL_DOUBLE, sizeof (double), 0,
 	  pdDelta, sizeof (*pdDelta), NULL);
       fSuccess &= fSQLBindParameter (hstmtUpdTeller, 2, SQL_PARAM_INPUT,
-	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (long), 0,
 	  pnTellerNum, sizeof (*pnTellerNum), NULL);
       if (fSuccess)
 	{
@@ -3217,7 +3217,7 @@ fBindParameters (test_t * lpBench,
 	  do
 	    {
 	      rc = SQLPrepare (hstmtUpdTeller,
-		  "UPDATE TELLER SET BALANCE = BALANCE + ? WHERE TELLER = ?",
+		  (SQLCHAR *) "UPDATE TELLER SET BALANCE = BALANCE + ? WHERE TELLER = ?",
 		  SQL_NTS);
 	    }
 	  while (SQL_STILL_EXECUTING == rc);
@@ -3235,7 +3235,7 @@ fBindParameters (test_t * lpBench,
 	  SQL_C_DOUBLE, SQL_DOUBLE, sizeof (double), 0,
 	  pdDelta, sizeof (*pdDelta), NULL);
       fSuccess &= fSQLBindParameter (hstmtUpdBranch, 2, SQL_PARAM_INPUT,
-	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (long), 0,
 	  pnBranchNum, sizeof (*pnBranchNum), NULL);
       if (fSuccess)
 	{
@@ -3243,7 +3243,7 @@ fBindParameters (test_t * lpBench,
 	  do
 	    {
 	      rc = SQLPrepare (hstmtUpdBranch,
-		  "UPDATE BRANCH SET BALANCE = BALANCE + ? WHERE BRANCH = ?",
+		  (SQLCHAR *) "UPDATE BRANCH SET BALANCE = BALANCE + ? WHERE BRANCH = ?",
 		  SQL_NTS);
 	    }
 	  while (SQL_STILL_EXECUTING == rc);
@@ -3259,16 +3259,16 @@ fBindParameters (test_t * lpBench,
       /* Insert History record */
 
       fSuccess &= fSQLBindParameter (hstmtInsHist, 1, SQL_PARAM_INPUT,
-	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (long), 0,
 	  &lpBench->tpc.a.nTrnCnt, sizeof (lpBench->tpc.a.nTrnCnt), NULL);
       fSuccess &= fSQLBindParameter (hstmtInsHist, 2, SQL_PARAM_INPUT,
-	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (long), 0,
 	  pnAcctNum, sizeof (*pnAcctNum), NULL);
       fSuccess &= fSQLBindParameter (hstmtInsHist, 3, SQL_PARAM_INPUT,
-	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (long), 0,
 	  pnTellerNum, sizeof (*pnTellerNum), NULL);
       fSuccess &= fSQLBindParameter (hstmtInsHist, 4, SQL_PARAM_INPUT,
-	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (long), 0,
 	  pnBranchNum, sizeof (*pnBranchNum), NULL);
       fSuccess &= fSQLBindParameter (hstmtInsHist, 5, SQL_PARAM_INPUT,
 	  SQL_C_DOUBLE, SQL_DOUBLE, sizeof (double), 0,
@@ -3287,7 +3287,7 @@ fBindParameters (test_t * lpBench,
 
 	  do
 	    {
-	      rc = SQLPrepare (hstmtInsHist, szInsStmt, SQL_NTS);
+	      rc = SQLPrepare (hstmtInsHist, (SQLCHAR *) szInsStmt, SQL_NTS);
 	    }
 	  while (SQL_STILL_EXECUTING == rc);
 
@@ -3307,24 +3307,24 @@ fBindParameters (test_t * lpBench,
 
 static BOOL
 fBindParametersArray (test_t * lpBench,
-    SDWORD nArrayParSize,
-    UDWORD * nParamsProcessed,
-    SDWORD * pnAcctNum,
-    SDWORD * pnTellerNum,
-    SDWORD * pnBranchNum,
+    int nArrayParSize,
+    unsigned long * nParamsProcessed,
+    long * pnAcctNum,
+    long * pnTellerNum,
+    long * pnBranchNum,
     double *pdDelta,
     double *pdBalance,
-    SDWORD *pID,
-    SDWORD * pIndAcctNum,
-    SDWORD * pIndTellerNum,
-    SDWORD * pIndBranchNum,
-    SDWORD *pIndDelta,
-    SDWORD *pIndBalance,
-    SDWORD *pIndID,
-    SDWORD * nAcctNum,
-    HSTMT hstmtUpdAcct,
-    HSTMT hstmtSelBal,
-    HSTMT hstmtUpdTeller, HSTMT hstmtUpdBranch, HSTMT hstmtInsHist)
+    long *pID,
+    SQLLEN * pIndAcctNum,
+    SQLLEN * pIndTellerNum,
+    SQLLEN * pIndBranchNum,
+    SQLLEN *pIndDelta,
+    SQLLEN *pIndBalance,
+    SQLLEN *pIndID,
+    unsigned long * nAcctNum,
+    SQLHSTMT hstmtUpdAcct,
+    SQLHSTMT hstmtSelBal,
+    SQLHSTMT hstmtUpdTeller, SQLHSTMT hstmtUpdBranch, SQLHSTMT hstmtInsHist)
 {
   BOOL fSuccess;
   RETCODE rc;
@@ -3345,14 +3345,14 @@ fBindParametersArray (test_t * lpBench,
 	  SQL_C_DOUBLE, SQL_DOUBLE, sizeof (double), 0,
 	  pdDelta, 0, pIndDelta);
       fSuccess &= fSQLBindParameter (hstmtUpdAcct, 2, SQL_PARAM_INPUT,
-	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (long), 0,
 	  pnAcctNum, 0, pIndAcctNum);
       if (fSuccess)
 	{
 	  do
 	    {
 	      rc = SQLPrepare (hstmtUpdAcct,
-		  "UPDATE ACCOUNT SET BALANCE = BALANCE + ? WHERE ACCOUNT = ?",
+		  (SQLCHAR *) "UPDATE ACCOUNT SET BALANCE = BALANCE + ? WHERE ACCOUNT = ?",
 		  SQL_NTS);
 	    }
 	  while (SQL_STILL_EXECUTING == rc);
@@ -3372,13 +3372,13 @@ fBindParametersArray (test_t * lpBench,
           fSuccess &= fSQLParamOptions(hstmtSelBal, nArrayParSize,
               nParamsProcessed);
           fSuccess &= fSQLBindParameter (hstmtSelBal, 1, SQL_PARAM_INPUT,
-	      SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	      SQL_C_LONG, SQL_INTEGER, sizeof (long), 0,
 	      pnAcctNum, 0, pIndAcctNum);
         }
       else
         { 
           fSuccess &= fSQLBindParameter (hstmtSelBal, 1, SQL_PARAM_INPUT,
- 	      SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+ 	      SQL_C_LONG, SQL_INTEGER, sizeof (long), 0,
 	      nAcctNum, sizeof (*nAcctNum), NULL);
         }
       if (fSuccess)
@@ -3386,7 +3386,7 @@ fBindParametersArray (test_t * lpBench,
 	  do
 	    {
 	      rc = SQLPrepare (hstmtSelBal,
-		  "SELECT BALANCE FROM ACCOUNT WHERE ACCOUNT = ?", SQL_NTS);
+		  (SQLCHAR *) "SELECT BALANCE FROM ACCOUNT WHERE ACCOUNT = ?", SQL_NTS);
 	    }
 	  while (SQL_STILL_EXECUTING == rc);
 
@@ -3405,7 +3405,7 @@ fBindParametersArray (test_t * lpBench,
 	  SQL_C_DOUBLE, SQL_DOUBLE, sizeof (double), 0,
 	  pdDelta, 0, pIndDelta);
       fSuccess &= fSQLBindParameter (hstmtUpdTeller, 2, SQL_PARAM_INPUT,
-	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (long), 0,
 	  pnTellerNum, 0, pIndTellerNum);
       if (fSuccess)
 	{
@@ -3413,7 +3413,7 @@ fBindParametersArray (test_t * lpBench,
 	  do
 	    {
 	      rc = SQLPrepare (hstmtUpdTeller,
-		  "UPDATE TELLER SET BALANCE = BALANCE + ? WHERE TELLER = ?",
+		  (SQLCHAR *) "UPDATE TELLER SET BALANCE = BALANCE + ? WHERE TELLER = ?",
 		  SQL_NTS);
 	    }
 	  while (SQL_STILL_EXECUTING == rc);
@@ -3433,7 +3433,7 @@ fBindParametersArray (test_t * lpBench,
 	  SQL_C_DOUBLE, SQL_DOUBLE, sizeof (double), 0,
 	  pdDelta, 0, pIndDelta);
       fSuccess &= fSQLBindParameter (hstmtUpdBranch, 2, SQL_PARAM_INPUT,
-	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (long), 0,
 	  pnBranchNum, 0, pIndBranchNum);
       if (fSuccess)
 	{
@@ -3441,7 +3441,7 @@ fBindParametersArray (test_t * lpBench,
 	  do
 	    {
 	      rc = SQLPrepare (hstmtUpdBranch,
-		  "UPDATE BRANCH SET BALANCE = BALANCE + ? WHERE BRANCH = ?",
+		  (SQLCHAR *) "UPDATE BRANCH SET BALANCE = BALANCE + ? WHERE BRANCH = ?",
 		  SQL_NTS);
 	    }
 	  while (SQL_STILL_EXECUTING == rc);
@@ -3458,16 +3458,16 @@ fBindParametersArray (test_t * lpBench,
       /* Insert History record */
       fSuccess &= fSQLParamOptions(hstmtInsHist, nArrayParSize, nParamsProcessed);
       fSuccess &= fSQLBindParameter (hstmtInsHist, 1, SQL_PARAM_INPUT,
-	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (long), 0,
 	  pID, 0, pIndID);
       fSuccess &= fSQLBindParameter (hstmtInsHist, 2, SQL_PARAM_INPUT,
-	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (long), 0,
 	  pnAcctNum, 0, pIndAcctNum);
       fSuccess &= fSQLBindParameter (hstmtInsHist, 3, SQL_PARAM_INPUT,
-	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (long), 0,
 	  pnTellerNum, 0, pIndTellerNum);
       fSuccess &= fSQLBindParameter (hstmtInsHist, 4, SQL_PARAM_INPUT,
-	  SQL_C_LONG, SQL_INTEGER, sizeof (SDWORD), 0,
+	  SQL_C_LONG, SQL_INTEGER, sizeof (long), 0,
 	  pnBranchNum, 0, pIndBranchNum);
       fSuccess &= fSQLBindParameter (hstmtInsHist, 5, SQL_PARAM_INPUT,
 	  SQL_C_DOUBLE, SQL_DOUBLE, sizeof (double), 0,
@@ -3483,7 +3483,7 @@ fBindParametersArray (test_t * lpBench,
 
 	  do
 	    {
-	      rc = SQLPrepare (hstmtInsHist, szInsStmt, SQL_NTS);
+	      rc = SQLPrepare (hstmtInsHist, (SQLCHAR *) szInsStmt, SQL_NTS);
 	    }
 	  while (SQL_STILL_EXECUTING == rc);
 
@@ -3536,48 +3536,48 @@ fRunTransArray (test_t * lpBench,	/* Benchmark info */
   /* Data values */
   short nWorkStn;		/* Workstation id */
 
-  SDWORD *pnAcctNum = NULL;		/* Account numbers  */
-  SDWORD nAcctNum;			/* Account number  */
+  long *pnAcctNum = NULL;		/* Account numbers  */
+  unsigned long nAcctNum;		/* Account number  */
 
-  SDWORD *pnBranchNum = NULL;		/* Branch number */
+  long *pnBranchNum = NULL;		/* Branch number */
 
-  SDWORD *pnTellerNum = NULL;		/* Teller number */
+  long *pnTellerNum = NULL;		/* Teller number */
 
   double *pdBalance = NULL; 		/* Balance for transaction */
 
   double *pdDelta = NULL;		/* Delta, randomly set */
 
-  SDWORD *pID = NULL;
+  long *pID = NULL;
 
-  SDWORD *pIndAcctNum = NULL;		
-  SDWORD *pIndBranchNum = NULL;	
-  SDWORD *pIndTellerNum = NULL;
-  SDWORD *pIndBalance = NULL;
-  SDWORD *pIndDelta = NULL;
-  SDWORD *pIndID = NULL;
+  SQLLEN *pIndAcctNum = NULL;		
+  SQLLEN *pIndBranchNum = NULL;	
+  SQLLEN *pIndTellerNum = NULL;
+  SQLLEN *pIndBalance = NULL;
+  SQLLEN *pIndDelta = NULL;
+  SQLLEN *pIndID = NULL;
 
 
   /* hstmts for bound parameters for Prepare/Execute method */
-  HSTMT hstmtUpdAcct;		/* Update account table */
+  SQLHSTMT hstmtUpdAcct;		/* Update account table */
 
-  HSTMT hstmtSelBal;		/* Select new balance from account */
+  SQLHSTMT hstmtSelBal;		/* Select new balance from account */
 
-  HSTMT hstmtUpdTeller;		/* Update teller table */
+  SQLHSTMT hstmtUpdTeller;		/* Update teller table */
 
-  HSTMT hstmtUpdBranch;		/* Update branch table */
+  SQLHSTMT hstmtUpdBranch;		/* Update branch table */
 
-  HSTMT hstmtInsHist;		/* Insert history record */
+  SQLHSTMT hstmtInsHist;		/* Insert history record */
 
   BOOL fSuccess;
 
   DECLARE_FOR_SQLERROR;
 
-  SDWORD cbBal;
+  SQLLEN cbBal;
 
   int ret_code;
   int i, nCallCnt;
   int nArrayParSize;
-  UDWORD  nParamsProcessed;
+  unsigned long  nParamsProcessed;
 
   hstmtUpdAcct = hstmtSelBal = hstmtUpdTeller = hstmtUpdBranch = 
     hstmtInsHist = SQL_NULL_HSTMT;
@@ -3595,30 +3595,30 @@ fRunTransArray (test_t * lpBench,	/* Benchmark info */
   if (nArrayParSize == 0)
     nArrayParSize = 1;
 
-  if ((pnAcctNum = (SDWORD *)malloc(sizeof(SDWORD) * nArrayParSize)) == NULL)
+  if ((pnAcctNum = (long *)malloc(sizeof(long) * nArrayParSize)) == NULL)
     goto general_error;
-  if ((pnBranchNum = (SDWORD *)malloc(sizeof(SDWORD) * nArrayParSize)) == NULL)
+  if ((pnBranchNum = (long *)malloc(sizeof(long) * nArrayParSize)) == NULL)
     goto general_error;
-  if ((pnTellerNum = (SDWORD *)malloc(sizeof(SDWORD) * nArrayParSize)) == NULL)
+  if ((pnTellerNum = (long *)malloc(sizeof(long) * nArrayParSize)) == NULL)
     goto general_error;
   if ((pdBalance = (double *)calloc(nArrayParSize, sizeof(double))) == NULL)
     goto general_error;
   if ((pdDelta = (double *)calloc(nArrayParSize, sizeof(double))) == NULL)
     goto general_error;
-  if ((pID = (SDWORD *)malloc(sizeof(SDWORD) * nArrayParSize)) == NULL)
+  if ((pID = (long *)malloc(sizeof(long) * nArrayParSize)) == NULL)
     goto general_error;
 
-  if ((pIndAcctNum = (SDWORD *)malloc(sizeof(SDWORD) * nArrayParSize)) == NULL)
+  if ((pIndAcctNum = (SQLLEN *)malloc(sizeof(SQLLEN) * nArrayParSize)) == NULL)
     goto general_error;
-  if ((pIndBranchNum = (SDWORD *)malloc(sizeof(SDWORD) * nArrayParSize)) == NULL)
+  if ((pIndBranchNum = (SQLLEN *)malloc(sizeof(SQLLEN) * nArrayParSize)) == NULL)
     goto general_error;
-  if ((pIndTellerNum = (SDWORD *)malloc(sizeof(SDWORD) * nArrayParSize)) == NULL)
+  if ((pIndTellerNum = (SQLLEN *)malloc(sizeof(SQLLEN) * nArrayParSize)) == NULL)
     goto general_error;
-  if ((pIndBalance = (SDWORD *)malloc(sizeof(SDWORD) * nArrayParSize)) == NULL)
+  if ((pIndBalance = (SQLLEN *)malloc(sizeof(SQLLEN) * nArrayParSize)) == NULL)
     goto general_error;
-  if ((pIndDelta = (SDWORD *)malloc(sizeof(SDWORD) * nArrayParSize)) == NULL)
+  if ((pIndDelta = (SQLLEN *)malloc(sizeof(SQLLEN) * nArrayParSize)) == NULL)
     goto general_error;
-  if ((pIndID = (SDWORD *)malloc(sizeof(SDWORD) * nArrayParSize)) == NULL)
+  if ((pIndID = (SQLLEN *)malloc(sizeof(SQLLEN) * nArrayParSize)) == NULL)
     goto general_error;
 
   /* Clear out any previous runs */
@@ -3629,7 +3629,7 @@ fRunTransArray (test_t * lpBench,	/* Benchmark info */
 
   /* Tell the user we are starting */
   if (lpBench->ShowProgress)
-    lpBench->ShowProgress (NULL, szTitle ? szTitle : "Running Benchmark...",
+    lpBench->ShowProgress (NULL, szTitle ? szTitle : (char *) "Running Benchmark...",
 	FALSE, lpBench->tpc._.nMinutes * 60);
 
   /* Get the start time */
@@ -3678,7 +3678,7 @@ fRunTransArray (test_t * lpBench,	/* Benchmark info */
   nCallCnt = 0;
   while ((dDiff <= dTimeToRun) && !fDone)
     {
-      SDWORD id;
+      long id;
       
       id = lpBench->tpc.a.nTrnCnt + 1;
       for (i = 0; i < nArrayParSize; i++)
@@ -3834,7 +3834,7 @@ fRunTransArray (test_t * lpBench,	/* Benchmark info */
       if (lpBench->tpc.a.fUseCommit)
 	{
 	  rc = SQLTransact (SQL_NULL_HENV, lpBench->hdbc,
-	      (UWORD) ((fRtn) ? SQL_COMMIT : SQL_ROLLBACK));
+	      (SQLUSMALLINT) ((fRtn) ? SQL_COMMIT : SQL_ROLLBACK));
 	  fRtn &= RC_SUCCESSFUL (rc);
 	}
 
@@ -3977,11 +3977,11 @@ fRunTrans (test_t * lpBench,	/* Benchmark info */
   /* Data values */
   short nWorkStn;		/* Workstation id */
 
-  SDWORD nAcctNum;		/* Account number  */
+  long nAcctNum;		/* Account number  */
 
-  SDWORD nBranchNum;		/* Branch number */
+  long nBranchNum;		/* Branch number */
 
-  SDWORD nTellerNum;		/* Teller number */
+  long nTellerNum;		/* Teller number */
 
   double dBalance = 0;		/* Balance for transaction */
 
@@ -3989,21 +3989,21 @@ fRunTrans (test_t * lpBench,	/* Benchmark info */
 
 
   /* hstmts for bound parameters for Prepare/Execute method */
-  HSTMT hstmtUpdAcct;	/* Update account table */
+  SQLHSTMT hstmtUpdAcct;	/* Update account table */
 
-  HSTMT hstmtSelBal;		/* Select new balance from account */
+  SQLHSTMT hstmtSelBal;		/* Select new balance from account */
 
-  HSTMT hstmtUpdTeller;		/* Update teller table */
+  SQLHSTMT hstmtUpdTeller;		/* Update teller table */
 
-  HSTMT hstmtUpdBranch;		/* Update branch table */
+  SQLHSTMT hstmtUpdBranch;		/* Update branch table */
 
-  HSTMT hstmtInsHist;		/* Insert history record */
+  SQLHSTMT hstmtInsHist;		/* Insert history record */
 
   BOOL fSuccess;
 
   DECLARE_FOR_SQLERROR;
 
-  SDWORD cbBal;
+  SQLLEN cbBal;
 
   int ret_code;
 
@@ -4028,7 +4028,7 @@ fRunTrans (test_t * lpBench,	/* Benchmark info */
 
   /* Tell the user we are starting */
   if (lpBench->ShowProgress)
-    lpBench->ShowProgress (NULL, szTitle ? szTitle : "Running Benchmark...",
+    lpBench->ShowProgress (NULL, szTitle ? szTitle : (char *) "Running Benchmark...",
 	FALSE, lpBench->tpc._.nMinutes * 60);
 
   /* Get the start time */
@@ -4207,7 +4207,7 @@ fRunTrans (test_t * lpBench,	/* Benchmark info */
       if (lpBench->tpc.a.fUseCommit)
 	{
 	  rc = SQLTransact (SQL_NULL_HENV, lpBench->hdbc,
-	      (UWORD) ((fRtn) ? SQL_COMMIT : SQL_ROLLBACK));
+	      (SQLUSMALLINT) ((fRtn) ? SQL_COMMIT : SQL_ROLLBACK));
 	  fRtn &= RC_SUCCESSFUL (rc);
 	}
 
@@ -4346,12 +4346,23 @@ txn_isolation_from_name (char *iso)
 char *
 cursor_type_name (long nCursorType, char *def)
 {
-  return
-      (nCursorType == SQL_CURSOR_FORWARD_ONLY ? "ForwardOnly" :
-      (nCursorType == SQL_CURSOR_STATIC ? "Static" :
-	  (nCursorType == SQL_CURSOR_KEYSET_DRIVEN ? "Keyset" :
-	      (nCursorType == SQL_CURSOR_DYNAMIC ? "Dynamic" :
-		  (nCursorType == SQL_CURSOR_MIXED ? "Mixed" : def)))));
+  switch (nCursorType)
+    {
+    case SQL_CURSOR_FORWARD_ONLY:
+      return ("ForwardOnly");
+
+    case SQL_CURSOR_STATIC:
+      return ("Static");
+
+    case SQL_CURSOR_KEYSET_DRIVEN:
+      return ("Keyset");
+
+    case SQL_CURSOR_DYNAMIC:
+      return ("Dynamic");
+
+    default:
+      return def;
+    }
 }
 
 
@@ -4473,13 +4484,13 @@ CalcStats (
 
       if (lpBench->tpc._.nThreads == 0 || nOk == lpBench->tpc._.nThreads)
         {
-          status = (lpBench->szWarning[0] ? "WARN" : "OK");
+          status = (lpBench->szWarning[0] ? (char *) "WARN" : (char *) "OK");
           message = lpBench->szWarning;
         }
       else
         {
-          status = (lpBench->szSQLError[0] ? lpBench->szSQLState : "OK");
-          message = lpBench->szSQLError;
+          status = (lpBench->szSQLError[0] ? (char *) lpBench->szSQLState : (char *) "OK");
+          message = (char *) lpBench->szSQLError;
         }
 
       do_add_results_record ("TPC-A", szOptions,
@@ -4515,7 +4526,7 @@ CalcStats (
                lpBench->szLoginDSN, -1, -1,
                -1, -1, -1, -1, lpBench->szDriverName, 
                lpBench->szDriverVer, lpBench->fHaveResults,
-               lpBench->szSQLState, lpBench->szSQLError);
+               (char *) lpBench->szSQLState, (char *) lpBench->szSQLError);
            }
 
        }
@@ -4535,7 +4546,7 @@ fCleanup (test_t * lpRunCfg	/* Run Configuration Parameters */
     )
 {
   char szTempBuff[128];
-  int i;
+  unsigned int i;
   static char szBranch[] = "BRANCH";
   static char szTeller[] = "TELLER";
   static char szAccount[] = "ACCOUNT";
@@ -4573,7 +4584,7 @@ fCleanup (test_t * lpRunCfg	/* Run Configuration Parameters */
 	{
 	  pane_log ("Dropping table: %s\r\n", Tables[i].szTable);
 	  sprintf (szTempBuff, "Drop Table %s", Tables[i].szTable);
-	  fExecute (lpRunCfg, szTempBuff);
+	  fExecute (lpRunCfg, (SQLCHAR *) szTempBuff);
 
 	  if (Tables[i].szDSN[0])
 	    {
@@ -4581,14 +4592,14 @@ fCleanup (test_t * lpRunCfg	/* Run Configuration Parameters */
 		  Tables[i].szTable, Tables[i].szDSN);
 	      sprintf (szTempBuff, "rexecute ('%s', 'Drop Table %s')",
 		  Tables[i].szDSN, Tables[i].szTable);
-	      fExecute (lpRunCfg, szTempBuff);
+	      fExecute (lpRunCfg, (SQLCHAR *) szTempBuff);
 	    }
 	}
     }
 
   pane_log ("Dropping procedures\r\n");
   if (lpRunCfg->tpc.a.fCreateProcedure)
-    fExecute (lpRunCfg, "Drop procedure ODBC_BENCHMARK");
+    fExecute (lpRunCfg, (SQLCHAR *) "Drop procedure ODBC_BENCHMARK");
 
   return TRUE;
 }
@@ -4602,7 +4613,7 @@ fCleanup (test_t * lpRunCfg	/* Run Configuration Parameters */
 #endif
 
 void 
-sleep_msecs (int msecs)
+sleep_msecs (long msecs)
 {
 #if defined(WIN32)
   Sleep (msecs);

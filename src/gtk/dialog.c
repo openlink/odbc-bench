@@ -38,7 +38,7 @@ message_box_new (GtkWidget * Parent, const gchar * Text, const gchar * Title)
   gtk_window_set_title (GTK_WINDOW (dlg), Title ? Title : "Message");
   gtk_container_border_width (GTK_CONTAINER (dlg), 10);
   text = gtk_label_new (Text ? Text : "Message");
-  gtk_label_set_justify (text, GTK_JUSTIFY_LEFT);
+  gtk_label_set_justify (GTK_LABEL (text), GTK_JUSTIFY_LEFT);
   gtk_widget_show (text);
   gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dlg)->vbox), text, TRUE, TRUE, 0);
 
@@ -218,13 +218,13 @@ fill_file_name (char *szFileName, char *caption, int add_xmls)
 	  szExt = strrchr (sel, '.');
 	  if (!szExt && add_xmls)
 	    {
-	      szName = g_malloc (strlen (sel) + 5);
+	      szName = (char *) g_malloc (strlen (sel) + 5);
 	      strcpy (szName, sel);
 	      strcat (szName, ".xml");
 	    }
 	  else
 	    {
-	      szName = g_malloc (strlen (sel) + 1);
+	      szName = (char *) g_malloc (strlen (sel) + 1);
 	      strcpy (szName, sel);
 	    }
 	  gtk_widget_destroy (filew);
@@ -240,7 +240,7 @@ fill_file_name (char *szFileName, char *caption, int add_xmls)
       char *szExt = strrchr (szFileName, '.');
       if (!szExt && add_xmls)
 	{
-	  szName = g_malloc (strlen (szFileName) + 5);
+	  szName = (char *) g_malloc (strlen (szFileName) + 5);
 	  strcpy (szName, szFileName);
 	  strcat (szName, ".xml");
 	}

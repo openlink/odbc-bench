@@ -24,31 +24,12 @@
 #include <windows.h>
 #endif
 
-#if (defined(UDBC))
-#  include <libudbc.h>
-#elif (defined(IODBC))
-#  include <sql.h>
-#  include <sqlext.h>
-#elif (defined(IODBC3))
-#  include <sql.h>
-#  include <sqlext.h>
-#else
 #include <sql.h>
 #include <sqlext.h>
-#endif
-
-#if !defined (IODBC) && !defined (WIN32)
-#define UINT unsigned int
-#define WORD unsigned int
-#define DWORD unsigned long
-#endif
 
 extern int messages_off;
 extern int quiet;
-void print_error (HENV e1, HDBC e2, HSTMT e3, void *test);
-
-extern SDWORD sql_nts;
-extern SDWORD long_len;
+void print_error (SQLHENV e1, SQLHDBC e2, SQLHSTMT e3, void *test);
 
 #define vShowErrors(dlg, henv, hdbc, hstmt, _test_) print_error(henv, hdbc, hstmt, _test_)
 
@@ -81,16 +62,16 @@ if (SQL_ERROR == (foo)) \
 
 #define SLEEP_COUNT	10000
 #define DECLARE_FOR_SQLERROR \
-int len; \
-char state[10] = {""}; \
-char message[256] = {""}
+SQLSMALLINT len; \
+SQLCHAR state[10] = {""}; \
+SQLCHAR message[256] = {""}
 
 #define IF_DEADLOCK_OR_ERR_GO(stmt, tag, foo, deadlocktag) \
 if (SQL_ERROR == (foo)) \
 { \
-	RETCODE _rc = SQLError (SQL_NULL_HENV, SQL_NULL_HDBC, stmt, (UCHAR *) state, NULL, \
-		(UCHAR *) & message, sizeof (message), (SWORD *) & len); \
-	if (_rc == SQL_SUCCESS && 0 == strncmp(state, "40001", 5)) \
+	RETCODE _rc = SQLError (SQL_NULL_HENV, SQL_NULL_HDBC, stmt, (SQLCHAR *) state, NULL, \
+		(SQLCHAR *) message, sizeof (message), &len); \
+	if (_rc == SQL_SUCCESS && 0 == strncmp((char *) state, "40001", 5)) \
 	  { \
 	    goto deadlocktag; \
 	  } \
@@ -101,17 +82,17 @@ if (SQL_ERROR == (foo)) \
 }
 
 #define SAVE_SQL_ERROR(_stat, _msg) \
-strncpy ((_stat), state, sizeof (_stat)); \
-strncpy ((_msg), message, sizeof (_msg)); \
+strncpy ((char *) (_stat), (char *) state, sizeof (_stat)); \
+strncpy ((char *) (_msg), (char *) message, sizeof (_msg)); \
 pane_log ("SQL Error [%s] : %s\n", _stat, _msg)
 
 
 #define IF_DEADLOCK_OR_ERR_GO_WITH_ROLLBACK(stmt, tag, foo, deadlocktag) \
 if (SQL_ERROR == (foo)) \
 { \
-	RETCODE _rc = SQLError (stmt, stmt, stmt, (UCHAR *) state, NULL, \
-		(UCHAR *) & message, sizeof (message), (SWORD *) & len); \
-	if (_rc == SQL_SUCCESS && 0 == strncmp(state, "40001", 5)) \
+	RETCODE _rc = SQLError (stmt, stmt, stmt, (SQLCHAR *) state, NULL, \
+		(SQLCHAR *) message, sizeof (message), &len); \
+	if (_rc == SQL_SUCCESS && 0 == strncmp((char *) state, "40001", 5)) \
 	  { \
             if (do_rollback_on_deadlock && \
 		(IS_C (*lpBench) || (IS_A (*lpBench) && lpBench->tpc.a.fUseCommit)) \
@@ -121,8 +102,8 @@ if (SQL_ERROR == (foo)) \
 	  } \
 	else \
 	  { \
-	    strncpy(lpBench->szSQLError, message, sizeof (lpBench->szSQLError) - 1); \
-	    strncpy(lpBench->szSQLState, state, 5); \
+	    strncpy((char *) lpBench->szSQLError, (char *) message, sizeof (lpBench->szSQLError) - 1); \
+	    strncpy((char *) lpBench->szSQLState, (char *) state, 5); \
 	    lpBench->szSQLError[255] = 0; \
 	    lpBench->szSQLError[255] = 0; \
 	    goto tag; \
@@ -201,7 +182,7 @@ SQLBindCol (stmt, n, SQL_C_LONG, &buf, sizeof (buf) , &len)
 
 #define INIT_STMT(hdbc, st, text, _test_) \
 	SQLAllocStmt (hdbc, &st); \
-	IF_ERR_RETURN (st, SQLPrepare (st, (UCHAR *) text, SQL_NTS), 0, _test_);
+	IF_ERR_RETURN (st, SQLPrepare (st, (SQLCHAR *) text, SQL_NTS), 0, _test_);
 
 
 #define HIST_READ(st) \

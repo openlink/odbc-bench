@@ -26,12 +26,11 @@
 #include "odbcbench.h"
 #include "thr.h"
 
-SDWORD sql_nts = SQL_NTS, long_len;
 int messages_off = 0;
 int do_rollback_on_deadlock = 1;
 int quiet = 0;
 
-HENV henv = SQL_NULL_HENV;
+SQLHENV henv = SQL_NULL_HENV;
 
 static MUTEX_T env_mutex;
 MUTEX_T log_mutex;
@@ -49,14 +48,14 @@ do_free_env (int isFreeMutex)
     return;
 
   SQLFreeEnv (henv);
-  henv = (HENV) 0;
+  henv = SQL_NULL_HENV;
 }
 
 void
 do_alloc_env ()
 {
   RETCODE rc;
-  char szError[256], szState[10];
+  SQLCHAR szError[256], szState[10];
 
   do_free_env (0);
 
@@ -67,7 +66,7 @@ do_alloc_env ()
   if (rc == SQL_ERROR)
     {
       szError[0] = szState[0] = 0;
-      SQLError (henv, 0, 0, szState, NULL, szError, sizeof (szError), NULL);
+      SQLError (henv, SQL_NULL_HDBC, SQL_NULL_HSTMT, szState, NULL, szError, sizeof (szError), NULL);
       if (gui.err_message)
         gui.err_message("do_alloc_env : STATE : %s - %s\r\n", szState, szError);
       if (gui.main_quit)
@@ -82,7 +81,7 @@ do_login (test_t *ptest)
 {
   RETCODE rc;
   char *szDSN, *szUID, *szPWD;
-  HSTMT hstmt;
+  SQLHSTMT hstmt;
 
   szDSN = ptest->szLoginDSN;
   szUID = ptest->szLoginUID;
@@ -105,7 +104,7 @@ do_login (test_t *ptest)
   rc = SQLAllocConnect (henv, &ptest->hdbc);
   if (rc == SQL_SUCCESS)
     rc =
-	SQLConnect (ptest->hdbc, szDSN, SQL_NTS, szUID, SQL_NTS, szPWD,
+	SQLConnect (ptest->hdbc, (SQLCHAR *) szDSN, SQL_NTS, (SQLCHAR *) szUID, SQL_NTS, (SQLCHAR *) szPWD,
 	SQL_NTS);
 
   ptest->szSQLError[0] = 0;
@@ -136,7 +135,7 @@ do_login (test_t *ptest)
 
   if (IS_A (*ptest))
     {
-      UDWORD  irow;
+      SQLULEN irow;
       
       rc = SQLAllocStmt (ptest->hdbc, &hstmt);
       if (rc == SQL_ERROR)
@@ -157,7 +156,7 @@ do_login (test_t *ptest)
                  SQL_DRIVER_ODBC_VER, szBuff, sizeof (szBuff), NULL);
           if (RC_SUCCESSFUL (rc))
             {
-              UDWORD param;
+              SQLINTEGER param;
 
               szBuff[2] = 0;
               if (atoi(szBuff) >= 3);
@@ -218,7 +217,7 @@ void
 get_dsn_data (test_t * ptest)
 {
   long ulDTFunc;
-  SWORD sTxnCapable;
+  SQLSMALLINT sTxnCapable;
   char szBuff[256];
   RETCODE rc;
 
@@ -238,7 +237,7 @@ get_dsn_data (test_t * ptest)
   if ('Y' == *szBuff)
     {
       rc = SQLProcedures (ptest->hstmt, NULL, 0, NULL, 0,
-	  "ODBC_BENCHMARK", SQL_NTS);
+	  (SQLCHAR *) "ODBC_BENCHMARK", SQL_NTS);
       if (SQL_SUCCESS != rc || SQL_SUCCESS != SQLFetch (ptest->hstmt))
 	*szBuff = 'N';
       SQLFreeStmt (ptest->hstmt, SQL_CLOSE);
@@ -250,7 +249,7 @@ get_dsn_data (test_t * ptest)
   if ('Y' == *szBuff)
     {
       rc = SQLTables (ptest->hstmt, NULL, 0, NULL, 0,
-	  "RESULTS", SQL_NTS, "TABLE", SQL_NTS);
+	  (SQLCHAR *) "RESULTS", SQL_NTS, (SQLCHAR *) "TABLE", SQL_NTS);
       if (SQL_SUCCESS != rc || SQL_SUCCESS != SQLFetch (ptest->hstmt))
 	*szBuff = 'N';
       SQLFreeStmt (ptest->hstmt, SQL_CLOSE);
@@ -296,14 +295,14 @@ do_logout (test_t *ptest)
     return;
 
   SQLFreeStmt (ptest->hstmt, SQL_DROP);
-  ptest->hstmt = (HSTMT) 0;
+  ptest->hstmt = SQL_NULL_HSTMT;
 
   if (!ptest->hdbc)
     return;
 
   SQLDisconnect (ptest->hdbc);
   SQLFreeConnect (ptest->hdbc);
-  ptest->hdbc = (HDBC) 0;
+  ptest->hdbc = SQL_NULL_HDBC;
 
   if (IS_C (*ptest))
     {
@@ -327,10 +326,10 @@ do_logout (test_t *ptest)
 }
 
 void
-print_error (HENV env, HDBC dbc, HSTMT stmt, void *_test)
+print_error (SQLHENV env, SQLHDBC dbc, SQLHSTMT stmt, void *_test)
 {
   test_t *test = (test_t *)_test;
-  char szMessage[256], szState[10];
+  SQLCHAR szMessage[256], szState[10];
   RETCODE rc;
 
   szMessage[0] = szState[0] = 0;
@@ -347,21 +346,20 @@ print_error (HENV env, HDBC dbc, HSTMT stmt, void *_test)
 	gui.warn_message ("SQL Error [%s] : %s\r\n", szState, szMessage);
       if (test)
 	{
-	  strncpy (test->szSQLError, szMessage, sizeof (test->szSQLError));
-	  strncpy (test->szSQLState, szState, sizeof (test->szSQLState));
+	  strncpy ((char *) test->szSQLError, (char *) szMessage, sizeof (test->szSQLError));
+	  strncpy ((char *) test->szSQLState, (char *) szState, sizeof (test->szSQLState));
 	}
     }
 }
 
 /*-------------------------------------------------------------------------*/
-/* fSQLParamOption 
-/*                                                                                                                                                 */
+/* fSQLParamOption 							   */
 /* Returns:  TRUE if function was successful, FALSE if there was an error  */
 /*-------------------------------------------------------------------------*/
 BOOL
-fSQLParamOptions (HSTMT hstmt,
-UDWORD crow,
-UDWORD *pirow)
+fSQLParamOptions (SQLHSTMT hstmt,
+SQLULEN crow,
+SQLULEN *pirow)
 {
   RETCODE rc;
 
@@ -378,12 +376,17 @@ UDWORD *pirow)
 /* Returns:  TRUE if function was successful, FALSE if there was an error  */
 /*-------------------------------------------------------------------------*/
 BOOL
-fSQLBindParameter (HSTMT hstmt,
-UWORD ipar,
-SWORD fParamType,
-SWORD fCType,
-SWORD fSqlType,
-UDWORD cbColDef, SWORD ibScale, PTR rgbValue, SDWORD cbValueMax, SDWORD FAR * pcbValue)
+fSQLBindParameter (
+  SQLHSTMT	hstmt,
+  SQLUSMALLINT	ipar,
+  SQLSMALLINT	fParamType,
+  SQLSMALLINT	fCType,
+  SQLSMALLINT	fSqlType,
+  SQLULEN	cbColDef,
+  SQLSMALLINT	ibScale,
+  SQLPOINTER	rgbValue,
+  SQLLEN	cbValueMax,
+  SQLLEN *	pcbValue)
 {
   RETCODE rc;
 
@@ -391,14 +394,14 @@ UDWORD cbColDef, SWORD ibScale, PTR rgbValue, SDWORD cbValueMax, SDWORD FAR * pc
       fCType, fSqlType, cbColDef, ibScale, rgbValue, cbValueMax, pcbValue);
   if (SQL_ERROR == rc && fSqlType >= SQL_INTEGER && fSqlType <= SQL_DOUBLE)
     {
-      char szSQLSTATE[6];
-      SDWORD lErr;
-      char msg[20];
-      SWORD cbmsg;
+      SQLCHAR szSQLSTATE[6];
+      SQLINTEGER lErr;
+      SQLCHAR msg[20];
+      SQLSMALLINT cbmsg;
 
       *szSQLSTATE = '\0';
       SQLError (0, 0, hstmt, szSQLSTATE, &lErr, msg, sizeof (msg), &cbmsg);
-      if (!strcmp (szSQLSTATE, "S1C00"))
+      if (!strcmp ((char *) szSQLSTATE, "S1C00"))
 	rc = SQLBindParameter (hstmt, ipar, fParamType,
 	    fCType, SQL_NUMERIC, 15, ibScale, rgbValue, cbValueMax, pcbValue);
     }
@@ -414,13 +417,14 @@ UDWORD cbColDef, SWORD ibScale, PTR rgbValue, SDWORD cbValueMax, SDWORD FAR * pc
  Returns:  TRUE if function was successful, FALSE if there was an error
 ***************************************************************************/
 BOOL
-fSQLGetData (HSTMT hstmt,	/* Statement handle */
-    UWORD icol,			/* Column number */
-    SWORD fCType,		/* C data type */
-    PTR rgbValue,		/* Buffer to bind to */
-    SDWORD cbValueMax,		/* Maximum size of rgbValue */
-    SDWORD FAR * pcbValue	/* Available bytes to return */
-    )
+fSQLGetData (
+  SQLHSTMT	hstmt,		/* Statement handle */
+  SQLUSMALLINT	icol,		/* Column number */
+  SQLSMALLINT	fCType,		/* C data type */
+  SQLPOINTER	rgbValue,	/* Buffer to bind to */
+  SQLLEN	cbValueMax,	/* Maximum size of rgbValue */
+  SQLLEN *	pcbValue	/* Available bytes to return */
+  )
 {
   RETCODE rc;
 
@@ -437,16 +441,17 @@ fSQLGetData (HSTMT hstmt,	/* Statement handle */
  Returns:  TRUE if function was successful, FALSE if there was an error
 ***************************************************************************/
 BOOL
-fSQLExecDirect (HSTMT hstmt,	/* Statement handle */
-    char *pszSqlStr,		/* SQL String to execute */
-    test_t * lpBench)
+fSQLExecDirect (
+  SQLHSTMT	hstmt,		/* Statement handle */
+  SQLCHAR *	pszSqlStr,	/* SQL String to execute */
+  test_t *	lpBench)
 {
   DECLARE_FOR_SQLERROR;
   RETCODE rc = SQL_ERROR;
 deadlock_execdir:
   if (lpBench->fCancel && lpBench->fCancel ())
     goto error_execdir;
-  rc = SQLExecDirect (hstmt, (UCHAR FAR *) pszSqlStr, SQL_NTS);
+  rc = SQLExecDirect (hstmt, pszSqlStr, SQL_NTS);
   IF_DEADLOCK_OR_ERR_GO_WITH_ROLLBACK (hstmt, error_execdir, rc,
       deadlock_execdir);
 
@@ -460,13 +465,14 @@ error_execdir:
  Returns:  TRUE if function was successful, FALSE if there was an error
 ***************************************************************************/
 BOOL
-fSQLBindCol (HSTMT hstmt,	/* Statement handle */
-    UWORD icol,			/* Column number */
-    SWORD fCType,		/* C data type */
-    PTR rgbValue,		/* Buffer to bind to */
-    SDWORD cbValueMax,		/* Maximum size of rgbValue */
-    SDWORD FAR * pcbValue	/* Available bytes to return */
-    )
+fSQLBindCol (
+  SQLHSTMT	hstmt,		/* Statement handle */
+  SQLUSMALLINT	icol,		/* Column number */
+  SQLSMALLINT	fCType,		/* C data type */
+  SQLPOINTER	rgbValue,	/* Buffer to bind to */
+  SQLLEN	cbValueMax,	/* Maximum size of rgbValue */
+  SQLLEN *	pcbValue	/* Available bytes to return */
+  )
 {
   RETCODE rc;
 
@@ -503,7 +509,7 @@ _strnicmp (const char *s1, const char *s2, size_t n)
 char *
 _stristr (const char *str, const char *find)
 {
-  int len;
+  size_t len;
   const char *cp;
   const char *ep;
 

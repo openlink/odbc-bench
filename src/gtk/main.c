@@ -230,7 +230,7 @@ make_new_test (GtkWidget * widget, gpointer data)
 
       if (bOk)
 	{
-	  test_t *ptest = g_malloc (sizeof (test_t));
+	  test_t *ptest = (test_t *) g_malloc (sizeof (test_t));
 	  memset (ptest, 0, sizeof (test_t));
 
 	  strncpy (ptest->szName, gtk_entry_get_text (GTK_ENTRY (name)),
@@ -384,7 +384,7 @@ edit_login (GtkWidget * widget, gpointer data)
     {
       iter = tests;
       if (!ptest)
-	ptest = iter->data;
+	ptest = (test_t *) iter->data;
 
       ptest->tpc.a.uwDrvIdx = -1;
       rc = do_login_gtk (login, ptest);
@@ -668,7 +668,6 @@ run_selected (GtkWidget * widget, gpointer data)
   int nTests = pool_connection_count ();
   OList *tests = get_selected_tests_list (), *iter;
   char *szFileName = NULL;
-  int rc;
 
   if (!nTests)
     return;
@@ -792,7 +791,7 @@ run_selected (GtkWidget * widget, gpointer data)
 	      get_dsn_data (ptest);
 	      if (ptest->TestType == TPC_A)
 	        {
-	          fExecuteSql (ptest, "delete from HISTORY");
+	          fExecuteSql (ptest, (SQLCHAR *) "delete from HISTORY");
 	          SQLTransact (SQL_NULL_HENV, ptest->hdbc, SQL_COMMIT);
 	        }
 	      do_logout (ptest);
@@ -901,53 +900,53 @@ pipe_trough_isql_handler (GtkWidget * widget, gpointer data)
 
 static GtkItemFactoryEntry menu_items[] = {
   {"/_File", NULL, NULL, 0, "<Branch>"},
-  {"/File/New", "<control>N", make_new_setup, 0, NULL},
-  {"/File/_Open...", "<control>O", load_setup, 0, NULL},
-  {"/File/_Save", "<control>S", save_setup, 0, NULL},
-  {"/File/Save _As...", "<control>A", save_setup_as, 0, NULL},
-  {"/File/_Close", NULL, close_setup, 0, NULL},
+  {"/File/New", "<control>N", (GtkItemFactoryCallback) make_new_setup, 0, NULL},
+  {"/File/_Open...", "<control>O", (GtkItemFactoryCallback) load_setup, 0, NULL},
+  {"/File/_Save", "<control>S", (GtkItemFactoryCallback) save_setup, 0, NULL},
+  {"/File/Save _As...", "<control>A", (GtkItemFactoryCallback) save_setup_as, 0, NULL},
+  {"/File/_Close", NULL, (GtkItemFactoryCallback) close_setup, 0, NULL},
   {"/File/sep1", NULL, NULL, 0, "<Separator>"},
-  {"/File/_Clear log", NULL, clear_status_handler, 0, NULL},
+  {"/File/_Clear log", NULL, (GtkItemFactoryCallback) clear_status_handler, 0, NULL},
 #ifdef PIPE_DEBUG
-  {"/File/pipe trough isql", NULL, pipe_trough_isql_handler, 0, NULL},
+  {"/File/pipe trough isql", NULL, (GtkItemFactoryCallback) pipe_trough_isql_handler, 0, NULL},
 #endif  
   {"/File/sep2", NULL, NULL, 0, "<Separator>"},
-  {"/File/E_xit", "<control>X", destroy_handler, 0, NULL},
+  {"/File/E_xit", "<control>X", (GtkItemFactoryCallback) destroy_handler, 0, NULL},
 
   {"/_Edit", NULL, NULL, 0, "<Branch>"},
-  {"/Edit/New Benchmark Item...", "<control>Insert", make_new_test, 0, NULL},
-  {"/Edit/Delete selected items", NULL, close_test, 0, NULL},
-  {"/Edit/Save selected items as...", NULL, save_test_as, 0, NULL},
+  {"/Edit/New Benchmark Item...", "<control>Insert", (GtkItemFactoryCallback) make_new_test, 0, NULL},
+  {"/Edit/Delete selected items", NULL, (GtkItemFactoryCallback) close_test, 0, NULL},
+  {"/Edit/Save selected items as...", NULL, (GtkItemFactoryCallback) save_test_as, 0, NULL},
   {"/Edit/sep1", NULL, NULL, 0, "<Separator>"},
-  {"/Edit/_Login details...", "<control>L", edit_login, 0, NULL},
-  {"/Edit/_Table details...", "<control>T", edit_tables, 0, NULL},
-  {"/Edit/R_un details...", "<control>U", edit_run, 0, NULL},
+  {"/Edit/_Login details...", "<control>L", (GtkItemFactoryCallback) edit_login, 0, NULL},
+  {"/Edit/_Table details...", "<control>T", (GtkItemFactoryCallback) edit_tables, 0, NULL},
+  {"/Edit/R_un details...", "<control>U", (GtkItemFactoryCallback) edit_run, 0, NULL},
   {"/Edit/sep2", NULL, NULL, 0, "<Separator>"},
-  {"/Edit/_Insert file...", "<control>I", insert_file, 0, NULL},
+  {"/Edit/_Insert file...", "<control>I", (GtkItemFactoryCallback) insert_file, 0, NULL},
 
   {"/_Action", NULL, NULL, 0, "<Branch>"},
-  {"/Action/_Create tables&procedures", NULL, create_tables, 0, NULL},
-  {"/Action/_Drop tables&procedures", NULL, drop_tables, 0, NULL},
+  {"/Action/_Create tables&procedures", NULL, (GtkItemFactoryCallback) create_tables, 0, NULL},
+  {"/Action/_Drop tables&procedures", NULL, (GtkItemFactoryCallback) drop_tables, 0, NULL},
   {"/Action/sep1", NULL, NULL, 0, "<Separator>"},
-  {"/Action/Run _Selected", "<control>R", run_selected, 0, NULL},
+  {"/Action/Run _Selected", "<control>R", (GtkItemFactoryCallback) run_selected, 0, NULL},
 
   {"/_Results", NULL, NULL, 0, "<Branch>"},
-  {"/Results/_Connect...", NULL, do_results_login, 0, NULL},
-  {"/Results/_Disconnect", NULL, do_results_logout, 0, NULL},
+  {"/Results/_Connect...", NULL, (GtkItemFactoryCallback) do_results_login, 0, NULL},
+  {"/Results/_Disconnect", NULL, (GtkItemFactoryCallback) do_results_logout, 0, NULL},
   {"/Results/sep1", NULL, NULL, 0, "<Separator>"},
-  {"/Results/C_reate the table", NULL, do_create_results_table, 0, NULL},
-  {"/Results/Dr_op the table", NULL, do_drop_results_table, 0, NULL},
+  {"/Results/C_reate the table", NULL, (GtkItemFactoryCallback) do_create_results_table, 0, NULL},
+  {"/Results/Dr_op the table", NULL, (GtkItemFactoryCallback) do_drop_results_table, 0, NULL},
 
   {"/_Preferences", NULL, NULL, 0, "<Branch>"},
 
-  {"/Preferences/Display refresh rate...", NULL, set_display_refresh_rate,
+  {"/Preferences/Display refresh rate...", NULL, (GtkItemFactoryCallback) set_display_refresh_rate,
       0, NULL},
-  {"/Preferences/Lock timeout...", NULL, set_lock_timeout, 0, NULL},
+  {"/Preferences/Lock timeout...", NULL, (GtkItemFactoryCallback) set_lock_timeout, 0, NULL},
 
   {"/_Window", NULL, NULL, 0, "<Branch>"},
 
   {"/_Help", NULL, NULL, 0, "<LastBranch>"},
-  {"/Help/_About", "<control>F1", help_about_handler, 0, NULL},
+  {"/Help/_About", "<control>F1", (GtkItemFactoryCallback) help_about_handler, 0, NULL},
 };
 
 
@@ -1035,7 +1034,7 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
 
   get_main_menu (dlg, &menubar);
   gtk_table_attach (GTK_TABLE (table), menubar, 0, 1, 0, 1,
-      GTK_FILL | GTK_EXPAND, 0, 0, 0);
+      GTK_FILL | GTK_EXPAND, (GtkAttachOptions) (0), 0, 0);
   gtk_widget_show (menubar);
 
   scrolled = gtk_scrolled_window_new (NULL, NULL);

@@ -1,9 +1,9 @@
 /*
  *  ServerDSN.c
- * 
+ *
  *  $Id$
  *
- *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
+ *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
  *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -30,8 +30,9 @@
 #include "odbcbench_gtk.h"
 #include "ServerDSN.h"
 
-static void ServerDSN_class_init (ServerDSNClass * class);
+static void ServerDSN_class_init (ServerDSNClass * sclass);
 static void ServerDSN_init (ServerDSN * tableloader);
+
 
 int
 ServerDSN_get_type (void)
@@ -46,8 +47,8 @@ ServerDSN_get_type (void)
 	sizeof (ServerDSNClass),
 	(GtkClassInitFunc) ServerDSN_class_init,
 	(GtkObjectInitFunc) ServerDSN_init,
-	(GtkArgSetFunc) NULL,
-	(GtkArgGetFunc) NULL
+	NULL,
+	NULL
       };
 
       tld_type = gtk_type_unique (gtk_dialog_get_type (), &tld_info);
@@ -56,6 +57,7 @@ ServerDSN_get_type (void)
   return tld_type;
 }
 
+
 enum
 {
   DO_THE_WORK_SIGNAL,
@@ -63,15 +65,15 @@ enum
   LAST_SIGNAL
 };
 
-static gint ServerDSN_signals[LAST_SIGNAL] = { 0 };
+static guint ServerDSN_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-ServerDSN_class_init (ServerDSNClass * class)
+ServerDSN_class_init (ServerDSNClass * sclass)
 {
   GtkObjectClass *object_class;
 
-  object_class = (GtkObjectClass *) class;
+  object_class = (GtkObjectClass *) sclass;
 
   ServerDSN_signals[DO_THE_WORK_SIGNAL] = gtk_signal_new ("do_the_work",
       GTK_RUN_FIRST,
@@ -87,9 +89,10 @@ ServerDSN_class_init (ServerDSNClass * class)
 
   gtk_object_class_add_signals (object_class, ServerDSN_signals, LAST_SIGNAL);
 
-  class->ServerDSN_do_the_work = NULL;
-  class->ServerDSN_dsns_changed = NULL;
+  sclass->ServerDSN_do_the_work = NULL;
+  sclass->ServerDSN_dsns_changed = NULL;
 }
+
 
 #define free_dsns_list(list, type, prefix) \
 { \
@@ -102,11 +105,12 @@ ServerDSN_class_init (ServerDSNClass * class)
   list = NULL; \
 }
 
+
 static long
 fill_dsns_list (ServerDSN * dlg)
 {
-  char szDSNName[50], szDBMS[50];
-  DWORD len1 = SQL_NTS, len2 = SQL_NTS;
+  SQLCHAR szDSNName[50], szDBMS[50];
+  SQLLEN len1 = SQL_NTS, len2 = SQL_NTS;
   char *szNewDSN, *szNewDBMS;
   long ret = 0;
   test_t *lpBench = dlg->lpBench;
@@ -120,39 +124,44 @@ fill_dsns_list (ServerDSN * dlg)
       ret = 1;
       if (SQL_SUCCESS !=
 	  SQLPrepare (lpBench->hstmt,
-"select DS_DSN, get_keyword (17, deserialize (DS_CONN_STR), 'ANSI') from DB.DBA.SYS_DATA_SOURCE",
-SQL_NTS))
+	      (SQLCHAR *)
+	      "select DS_DSN, get_keyword (17, deserialize (DS_CONN_STR), 'ANSI') from DB.DBA.SYS_DATA_SOURCE",
+	      SQL_NTS))
 	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
+	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt,
+	      lpBench);
 	  goto error;
 	}
 
       if (SQL_SUCCESS !=
 	  SQLBindCol (lpBench->hstmt,
-1, SQL_C_CHAR, szDSNName, sizeof (szDSNName), &len1))
+	      1, SQL_C_CHAR, szDSNName, sizeof (szDSNName), &len1))
 	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
+	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt,
+	      lpBench);
 	  goto error;
 	}
       if (SQL_SUCCESS !=
 	  SQLBindCol (lpBench->hstmt,
-2, SQL_C_CHAR, szDBMS, sizeof (szDBMS), &len2))
+	      2, SQL_C_CHAR, szDBMS, sizeof (szDBMS), &len2))
 	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
+	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt,
+	      lpBench);
 	  goto error;
 	}
 
       if (SQL_SUCCESS != SQLExecute (lpBench->hstmt))
 	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
+	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt,
+	      lpBench);
 	  goto error;
 	}
 
       while (SQL_SUCCESS == SQLFetch (lpBench->hstmt))
 	{
 	  int nPos;
-	  szNewDSN = g_malloc (len1 + 1);
-	  szNewDBMS = g_malloc (len2 + 1);
+	  szNewDSN = (char *) g_malloc (len1 + 1);
+	  szNewDBMS = (char *) g_malloc (len2 + 1);
 	  memcpy (szNewDSN, szDSNName, len1);
 	  szNewDSN[len1] = 0;
 	  dsn_info->dsns =
@@ -169,7 +178,8 @@ error:
   return ret;
 }
 
-static char *dsn_proc =
+
+static SQLCHAR dsn_proc[] =
     "create procedure gtkbench_sql_data_sources(in n integer) { \n"
     "  declare v1,v2,n1 integer; \n"
     "  declare n1 integer; \n"
@@ -184,13 +194,16 @@ static char *dsn_proc =
     "      dsn_name := aref(v2, 0); \n"
     "      dsn_desc := aref(v2, 1); \n"
     "      result(dsn_name, dsn_desc); \n"
-    "      n1 := n1 + 1; \n" "  } \n" "}";
+    "      n1 := n1 + 1; \n"
+    "    } \n"
+    "}";
+
 
 static long
 fill_avail_dsns_list (ServerDSN * dlg)
 {
   char szDSNName[50], szDBMS[50];
-  DWORD len1 = SQL_NTS, len2 = SQL_NTS;
+  SQLLEN len1 = SQL_NTS, len2 = SQL_NTS;
   char *szNewDSN, *szNewDBMS;
   long ret = 0, proc_defined = 0;
   test_t *lpBench = dlg->lpBench;
@@ -205,7 +218,8 @@ fill_avail_dsns_list (ServerDSN * dlg)
 
       if (SQL_SUCCESS != SQLExecDirect (lpBench->hstmt, dsn_proc, SQL_NTS))
 	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
+	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt,
+	      lpBench);
 	  goto error;
 	}
 
@@ -213,38 +227,42 @@ fill_avail_dsns_list (ServerDSN * dlg)
 
       if (SQL_SUCCESS !=
 	  SQLPrepare (lpBench->hstmt,
-"gtkbench_sql_data_sources (0)", SQL_NTS))
+	      (SQLCHAR *) "gtkbench_sql_data_sources (0)", SQL_NTS))
 	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
+	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt,
+	      lpBench);
 	  goto error;
 	}
 
       if (SQL_SUCCESS !=
 	  SQLBindCol (lpBench->hstmt,
-1, SQL_C_CHAR, szDSNName, sizeof (szDSNName), &len1))
+	      1, SQL_C_CHAR, szDSNName, sizeof (szDSNName), &len1))
 	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
+	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt,
+	      lpBench);
 	  goto error;
 	}
       if (SQL_SUCCESS !=
 	  SQLBindCol (lpBench->hstmt,
-2, SQL_C_CHAR, szDBMS, sizeof (szDBMS), &len2))
+	      2, SQL_C_CHAR, szDBMS, sizeof (szDBMS), &len2))
 	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
+	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt,
+	      lpBench);
 	  goto error;
 	}
 
       if (SQL_SUCCESS != SQLExecute (lpBench->hstmt))
 	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
+	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt,
+	      lpBench);
 	  goto error;
 	}
 
       while (SQL_SUCCESS == SQLFetch (lpBench->hstmt))
 	{
 	  int nPos;
-	  szNewDSN = g_malloc (len1 + 1);
-	  szNewDBMS = g_malloc (len2 + 1);
+	  szNewDSN = (char *) g_malloc (len1 + 1);
+	  szNewDBMS = (char *) g_malloc (len2 + 1);
 	  memcpy (szNewDSN, szDSNName, len1);
 	  szNewDSN[len1] = 0;
 	  dsn_info->dsns =
@@ -258,7 +276,7 @@ fill_avail_dsns_list (ServerDSN * dlg)
     error:
       if (proc_defined)
 	SQLExecDirect (lpBench->hstmt,
-	    "drop procedure gtkbench_sql_data_sources", SQL_NTS);
+	    (SQLCHAR *) "drop procedure gtkbench_sql_data_sources", SQL_NTS);
 
     }
   return ret;
@@ -279,8 +297,8 @@ ServerDSN_new (test_t * lpBench)
   while (dsns && names)
     {
       static gchar *cols[2];
-      cols[0] = dsns->data;
-      cols[1] = names->data;
+      cols[0] = (gchar *) dsns->data;
+      cols[1] = (gchar *) names->data;
       gtk_clist_append (GTK_CLIST (newdlg->available_list), cols);
       dsns = g_list_next (dsns);
       names = g_list_next (names);
@@ -292,8 +310,8 @@ ServerDSN_new (test_t * lpBench)
   while (dsns && names)
     {
       static gchar *cols[2];
-      cols[0] = dsns->data;
-      cols[1] = names->data;
+      cols[0] = (gchar *) dsns->data;
+      cols[1] = (gchar *) names->data;
       gtk_clist_append (GTK_CLIST (newdlg->defined_list), cols);
       dsns = g_list_next (dsns);
       names = g_list_next (names);
@@ -301,6 +319,7 @@ ServerDSN_new (test_t * lpBench)
   gtk_clist_columns_autosize (GTK_CLIST (newdlg->defined_list));
   return (GTK_WIDGET (newdlg));
 }
+
 
 static void
 add_a_server_dsn (GtkWidget * widget, ServerDSN * tbl)
@@ -313,7 +332,7 @@ add_a_server_dsn (GtkWidget * widget, ServerDSN * tbl)
   pwd = gtk_entry_get_text (GTK_ENTRY (tbl->rpwd));
 
   if (SQL_SUCCESS != SQLPrepare (tbl->lpBench->hstmt,
-	  "vd_remote_data_source (?, '', ?, ?)", SQL_NTS))
+	  (SQLCHAR *) "vd_remote_data_source (?, '', ?, ?)", SQL_NTS))
     goto error;
 
   IBINDNTS (tbl->lpBench->hstmt, 1, dsn);
@@ -327,10 +346,10 @@ add_a_server_dsn (GtkWidget * widget, ServerDSN * tbl)
 error:
   if (isError)
     {
-      char state[10], msg[256];
+      SQLCHAR state[10], msg[256];
       if (SQL_SUCCESS == SQLError (SQL_NULL_HENV, SQL_NULL_HDBC,
 	      tbl->lpBench->hstmt, state, NULL, msg, sizeof (msg), NULL))
-	ok_cancel_dialog (msg, "Error");
+	ok_cancel_dialog ((char *) msg, "Error");
     }
 
   SQLFreeStmt (tbl->lpBench->hstmt, SQL_CLOSE);
@@ -346,8 +365,8 @@ error:
 	  while (dsns && names)
 	    {
 	      static gchar *cols[2];
-	      cols[0] = dsns->data;
-	      cols[1] = names->data;
+	      cols[0] = (gchar *) dsns->data;
+	      cols[1] = (gchar *) names->data;
 	      gtk_clist_append (GTK_CLIST (tbl->defined_list), cols);
 	      dsns = g_list_next (dsns);
 	      names = g_list_next (names);
@@ -357,14 +376,17 @@ error:
     }
 }
 
+
 static void
 set_the_dsn_entry (GtkWidget * widget,
     gint row, gint column, GdkEventButton * event, ServerDSN * tbl)
 {
   char *szSelText;
+
   gtk_clist_get_text (GTK_CLIST (widget), row, 0, &szSelText);
   gtk_entry_set_text (GTK_ENTRY (tbl->rdsn), szSelText);
 }
+
 
 static void
 emit_signal_handler (GtkWidget * widget, gpointer data)
@@ -422,8 +444,7 @@ ServerDSN_init (ServerDSN * dlg)
 
   LoginFrame = gtk_frame_new ("Login Data");
   gtk_container_set_border_width (GTK_CONTAINER (LoginFrame), 5);
-  gtk_table_attach_defaults (GTK_TABLE (master_table), LoginFrame, 0, 1, 6,
-      8);
+  gtk_table_attach_defaults (GTK_TABLE (master_table), LoginFrame, 0, 1, 6, 8);
 
   helper = gtk_hbox_new (FALSE, 2);
   gtk_container_set_border_width (GTK_CONTAINER (helper), 2);
@@ -445,7 +466,7 @@ ServerDSN_init (ServerDSN * dlg)
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
       GTK_SIGNAL_FUNC (add_a_server_dsn), dlg);
   gtk_table_attach (GTK_TABLE (master_table), button, 0, 1, 8, 9,
-      0, GTK_EXPAND | GTK_FILL, 0, 0);
+      (GtkAttachOptions) (0), GTK_EXPAND | GTK_FILL, 0, 0);
 
   DefinedFrame = gtk_frame_new ("Defined DSNs");
   gtk_container_set_border_width (GTK_CONTAINER (DefinedFrame), 5);

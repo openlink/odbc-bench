@@ -24,11 +24,11 @@
 
 #include "odbcbench.h"
 
-static HDBC res_hdbc = SQL_NULL_HDBC;
-static HSTMT res_hstmt = SQL_NULL_HSTMT;
+static SQLHDBC res_hdbc = SQL_NULL_HDBC;
+static SQLHSTMT res_hstmt = SQL_NULL_HSTMT;
 static int res_fHaveResults = 0;
 
-static DWORD null_val = SQL_NULL_DATA;
+static SQLLEN null_val = SQL_NULL_DATA;
 
 void
 results_logout ()
@@ -37,13 +37,13 @@ results_logout ()
     return;
 
   SQLFreeStmt (res_hstmt, SQL_DROP);
-  res_hstmt = (HSTMT) 0;
+  res_hstmt = SQL_NULL_HSTMT;
 
   if (!res_hdbc)
     return;
 
   SQLFreeConnect (res_hdbc);
-  res_hdbc = (HDBC) 0;
+  res_hdbc = SQL_NULL_HDBC;
   pane_log ("results connection closed\r\n");
 }
 
@@ -57,7 +57,7 @@ results_login (char *szDSN, char *szUID, char *szPWD)
 
   rc = SQLAllocConnect (henv, &res_hdbc);
   IF_CERR_GO (res_hdbc, done, rc, NULL);
-  rc = SQLConnect (res_hdbc, szDSN, SQL_NTS, szUID, SQL_NTS, szPWD, SQL_NTS);
+  rc = SQLConnect (res_hdbc, (SQLCHAR *) szDSN, SQL_NTS, (SQLCHAR *) szUID, SQL_NTS, (SQLCHAR *) szPWD, SQL_NTS);
   IF_CERR_GO (res_hdbc, done, rc, NULL);
 
   rc = SQLAllocStmt (res_hdbc, &res_hstmt);
@@ -65,7 +65,7 @@ results_login (char *szDSN, char *szUID, char *szPWD)
 
   szBuff = 'Y';
   rc = SQLTables (res_hstmt, NULL, 0, NULL, 0,
-    "RESULTS", SQL_NTS, "TABLE", SQL_NTS);
+    (SQLCHAR *) "RESULTS", SQL_NTS, (SQLCHAR *) "TABLE", SQL_NTS);
   if (SQL_SUCCESS != rc || SQL_SUCCESS != SQLFetch (res_hstmt))
     szBuff = 'N';
   SQLFreeStmt (res_hstmt, SQL_CLOSE);
@@ -75,7 +75,7 @@ done:
   return (rc == SQL_SUCCESS || rc == SQL_SUCCESS_WITH_INFO);
 }
 
-static char *szCreateResultsSQL =
+static SQLCHAR szCreateResultsSQL[] =
     "create table RESULTS ("
     "		RUNT 		timestamp, "
     "		URL 		varchar(255),"
@@ -96,7 +96,7 @@ void
 create_results_table ()
 {
   RETCODE rc;
-  HSTMT stmt;
+  SQLHSTMT stmt;
 
   if (!res_hstmt)
     {
@@ -122,7 +122,7 @@ void
 drop_results_table ()
 {
   RETCODE rc;
-  HSTMT stmt;
+  SQLHSTMT stmt;
 
   if (!res_hstmt)
     {
@@ -135,7 +135,7 @@ drop_results_table ()
       pane_log ("Not Connected\r\n");
       return;
     }
-  rc = SQLExecDirect (stmt, "drop table RESULTS", SQL_NTS);
+  rc = SQLExecDirect (stmt, (SQLCHAR *) "drop table RESULTS", SQL_NTS);
   IF_ERR_GO (stmt, drop_error, rc, NULL);
 
   pane_log ("Results table dropped successfully%s\r\n",
@@ -144,21 +144,21 @@ drop_error:
   rc = 0;
 }
 
-static char *szInsertResultsSQL =
+static SQLCHAR szInsertResultsSQL[] =
     "insert into RESULTS (BTYPE, URL, OPTIONS, TPS, TOTTIME, NTRANS, SUB1S, SUB2S, TRNTIME, DRVRNAME, DRVRVER, STATE, MSG) "
     "	values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 void
 do_add_results_record (char *test_type, char *result_test_type,
-    HENV env, HDBC dbc, HSTMT stmt,
+    SQLHENV env, SQLHDBC dbc, SQLHSTMT stmt,
     char *szDSN, float ftps, double dDiffSum, long nTrnCnt,
     float fsub1, float fsub2, float fAvgTPTime,
     char *szDriverName, char *szDriverVer, int driver_has_results,
     char *szState, char *szMessage)
 {
   RETCODE rc;
-  HSTMT lstmt = res_hstmt ? res_hstmt : stmt;
-  HDBC ldbc = res_hdbc ? res_hdbc : dbc;
+  SQLHSTMT lstmt = res_hstmt ? res_hstmt : stmt;
+  SQLHDBC ldbc = res_hdbc ? res_hdbc : dbc;
 
   if (!res_fHaveResults && !driver_has_results)
     return;
@@ -208,11 +208,11 @@ do_add_results_record (char *test_type, char *result_test_type,
     IBINDNTS (lstmt, 11, szDriverVer);
 
   if (!szState)
-    IBINDNTS (lstmt, 12, "OK");
+    IBINDNTS (lstmt, 12, (SQLCHAR *) "OK");
   else
     IBINDNTS (lstmt, 12, szState);
   if (!szMessage)
-    IBINDNTS (lstmt, 13, "");
+    IBINDNTS (lstmt, 13, (SQLCHAR *) "");
   else
     IBINDNTS (lstmt, 13, szMessage);
 
@@ -276,7 +276,7 @@ add_tpcc_result (test_t * lpCfg)
 
       do_add_results_record ("TPC-C", szTemp,
 	  henv, lpCfg->hdbc, lpCfg->hstmt,
-	  lpCfg->szDSN,
+	  (char *) lpCfg->szDSN,
 	  lpCfg->tpc.c.tpcc_sum / lpCfg->tpc.c.nRounds,
 	  lpCfg->tpc.c.run_time,
 	  lpCfg->tpc.c.nRounds *

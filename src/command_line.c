@@ -43,13 +43,10 @@ extern int messages_off;
 extern int do_rollback_on_deadlock;
 
 /* progress impl */
-static int cmd_nThreads = 0;
-static int *cmd_thread = NULL;
-
 static int n_threads, n_connections = 0;
 static float spec_time_secs = -1;
 static float *pTrnTimes = NULL;
-static testtype test_types = 0;
+static testtype test_types = TPC_A;
 static float *fOldValues = NULL;
 static unsigned long curr_time_msec = 0L;
 static double *ptpca_dDiffSum = NULL;
@@ -146,6 +143,7 @@ stdout_showprogress (void * parent_win, char * title, int nThreads,
   MUTEX_LEAVE (log_mutex);
 }
 
+#if 0
 static void
 stdout_setprogresstext0 (char *pszProgress, int n_conn, int thread_no,
     float nValue, int nTrnPerCall, long secs_remain, double tpca_dDiffSum)
@@ -159,6 +157,7 @@ stdout_setprogresstext0 (char *pszProgress, int n_conn, int thread_no,
   fputc ('\b', stderr);
   MUTEX_LEAVE (log_mutex);
 }
+#endif
 
 
 
@@ -188,7 +187,7 @@ stdout_setprogresstext (char *pszProgress, int nConn, int thread_no,
       ptpca_dDiffSum[thread_no] = tpca_dDiffSum;
       pTrnTimes[thread_no] = percent;
 
-      if (time_now - curr_time_msec > BARS_REFRESH_INTERVAL)
+      if (time_now - curr_time_msec > (unsigned long) BARS_REFRESH_INTERVAL)
         {
           long total_txns = 0;
           double txn_time = 0;
@@ -207,7 +206,7 @@ stdout_setprogresstext (char *pszProgress, int nConn, int thread_no,
           MUTEX_LEAVE (log_mutex);
 	}
     }
-  if (time_now - curr_time_msec > BARS_REFRESH_INTERVAL)
+  if (time_now - curr_time_msec > (unsigned long) BARS_REFRESH_INTERVAL)
     curr_time_msec = get_msec_count ();
 }
 
@@ -321,7 +320,6 @@ do_command_line (int argc, char *argv[])
   int curr_opt;
   int Load = 0;
   int UnLoad = 0;
-  int bExit = 0;
   int fCreateResultsTable = 0;
   int fDropResultsTable = 0;
   int opt_index;
@@ -636,7 +634,7 @@ do_command_line (int argc, char *argv[])
 	          return -5;
 	        }
 
-              fExecuteSql (&test, "delete from HISTORY");
+              fExecuteSql (&test, (SQLCHAR *) "delete from HISTORY");
               SQLTransact (SQL_NULL_HENV, test.hdbc, SQL_COMMIT);
 	      do_logout (&test);
 

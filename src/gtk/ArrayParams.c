@@ -32,7 +32,7 @@
 #include "TPCARunProps.h"
 #include "ArrayParams.h"
 
-static void ArrayParams_class_init (ArrayParamsClass * class);
+static void ArrayParams_class_init (ArrayParamsClass * aclass);
 static void ArrayParams_init (ArrayParams * tableloader);
 
 int
@@ -48,8 +48,8 @@ ArrayParams_get_type (void)
 	sizeof (ArrayParamsClass),
 	(GtkClassInitFunc) ArrayParams_class_init,
 	(GtkObjectInitFunc) ArrayParams_init,
-	(GtkArgSetFunc) NULL,
-	(GtkArgGetFunc) NULL
+	NULL,
+	NULL
       };
 
       tld_type = gtk_type_unique (gtk_vbox_get_type (), &tld_info);
@@ -59,7 +59,7 @@ ArrayParams_get_type (void)
 }
 
 static void
-ArrayParams_class_init (ArrayParamsClass * class)
+ArrayParams_class_init (ArrayParamsClass * aclass)
 {
 }
 
@@ -95,7 +95,7 @@ ArrayParams_save_config (ArrayParams * dlg)
   dlg->test->nArrayParSize =
       !GTK_TOGGLE_BUTTON (dlg->use_ArrayParams)->active ?
       0 :
-      GTK_ADJUSTMENT (GTK_SPIN_BUTTON (dlg->no_params)->adjustment)->value;
+      (int) GTK_ADJUSTMENT (GTK_SPIN_BUTTON (dlg->no_params)->adjustment)->value;
 }
 
 

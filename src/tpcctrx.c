@@ -24,11 +24,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <memory.h>
+#include <time.h>
+
 #ifndef WIN32
 #include <sys/time.h>
 #include <unistd.h>
-#else
-#include <time.h>
 #endif
 
 #include "odbcbench.h"
@@ -68,7 +68,7 @@ static const char new_order_text_ora[] = "{call new_order_proc(?, ?, ?, ?, ?,   
 	((lpCfg->tpc.c.bIsVirtuoso) ? (new_order_text_kubl) : ((lpCfg->tpc.c.bIsOracle) ? (new_order_text_ora) : (new_order_text_mssql)))
 
 static int
-stmt_result_sets (HSTMT stmt)
+stmt_result_sets (SQLHSTMT stmt)
 {
   RETCODE rc;
   DECLARE_FOR_SQLERROR;
@@ -107,13 +107,13 @@ deadlock_rs:
 }
 
 
-static int
+static long
 make_supply_w_id (test_t * lpCfg)
 {
   if (lpCfg->tpc.c.count_ware > 1
       && RandomNumber (&lpCfg->tpc.c.rnd_seed, 0, 99) < 10)
     {
-      int n, n_tries = 0;
+      long n, n_tries = 0;
       do
 	{
 	  n =
@@ -306,7 +306,7 @@ slevel (test_t * lpCfg)
   long d_id = RandomNumber (&lpCfg->tpc.c.rnd_seed, 1, DIST_PER_WARE);
   long threshold = 20;
   long count;
-  SDWORD count_len = sizeof (long);
+  SQLLEN count_len = sizeof (long);
   DECLARE_FOR_SQLERROR;
 
 deadlock_sl:
@@ -318,7 +318,7 @@ deadlock_sl:
   IBINDL (lpCfg->tpc.c.slevel_stmt, 2, d_id);
   IBINDL (lpCfg->tpc.c.slevel_stmt, 3, threshold);
   SQLBindParameter (lpCfg->tpc.c.slevel_stmt, 4, SQL_PARAM_OUTPUT, SQL_C_LONG,
-      SQL_INTEGER, 0, 0, &count, sizeof (SDWORD), &count_len);
+      SQL_INTEGER, 0, 0, &count, sizeof (count), &count_len);
 
   SQLSetStmtOption (lpCfg->tpc.c.slevel_stmt, SQL_CONCURRENCY,
       SQL_CONCUR_ROWVER);
@@ -431,7 +431,7 @@ do_10_pack (test_t * lpCfg)
   duration = get_msec_count () - start;
   lpCfg->tpc.c.tpcc_sum += 600000 / duration;
   pane_log ("-- %ld tpmC\r\n", 600000 / duration);
-  return (600000 / duration);
+  return (int) (600000L / duration);
 }
 
 
@@ -447,7 +447,7 @@ reset_times (test_t * lpCfg)
 }
 
 
-static int
+static long
 get_warehouse_count (test_t * lpCfg)
 {
   LOCAL_STMT (lpCfg->hdbc, lpCfg->tpc.c.misc_stmt,
@@ -464,12 +464,12 @@ get_warehouse_count (test_t * lpCfg)
       lpCfg->tpc.c.count_ware - 1) + 1;
 
   SQLFreeStmt (lpCfg->tpc.c.misc_stmt, SQL_DROP);
-  lpCfg->tpc.c.misc_stmt = (HSTMT) 0;
+  lpCfg->tpc.c.misc_stmt = SQL_NULL_HSTMT;
   return lpCfg->tpc.c.count_ware;
 
 err:
   SQLFreeStmt (lpCfg->tpc.c.misc_stmt, SQL_DROP);
-  lpCfg->tpc.c.misc_stmt = (HSTMT) 0;
+  lpCfg->tpc.c.misc_stmt = SQL_NULL_HSTMT;
 
   lpCfg->tpc.c.count_ware = 0;
   lpCfg->tpc.c.local_w_id = 0;

@@ -34,7 +34,7 @@ get_dsn_list (void)
 {
   char *szDSN = (char *) g_malloc (256);
   GList *list = NULL;
-  SWORD nDSN;
+  SQLSMALLINT nDSN;
 
   if (SQL_SUCCESS == SQLDataSources (henv, SQL_FETCH_FIRST, (UCHAR *) szDSN,
 	  255, &nDSN, NULL, 0, NULL))

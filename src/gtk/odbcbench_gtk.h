@@ -44,8 +44,7 @@ void login_dialog (GtkWidget * Parent, gpointer data);	/* show a login combo wit
 char *fill_file_name (char *szFileName, char *caption, int add_xmls);
 
 /* progress implementations - dialog.c */
-void do_ShowProgress (GtkWidget * parent, gchar * title,
-    gboolean bForceSingle, float nMax);
+void do_ShowProgress (void * parent, char * title, BOOL bForceSingle, float nMax);
 void do_SetWorkingItem (char *pszWorking);
 void do_SetProgressText (char *pszProgress, int nConn, int thread_no,
     float percent, int nTrnPerCall, long secs_remain, double tpca_dDiffSum);

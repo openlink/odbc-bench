@@ -37,9 +37,7 @@ do_results_logout (GtkWidget * widget, gpointer data)
 static void
 results_login_gtk (GtkWidget * widget, gpointer data)
 {
-  RETCODE rc;
   LoginBox *box = LOGINBOX (widget);
-  char szBuff;
 
   results_logout();
   results_login(box->szDSN, box->szUID, box->szPWD);

@@ -80,7 +80,7 @@ int do_threads_run (int nConnCount, OList * tests, int nMinutes,
 int do_threads_run_all (int nTests, OList * tests, int nMinutes,
     char *filename);
 extern MUTEX_T log_mutex;
-extern int nProgressIncrement;
+extern long nProgressIncrement;
 #define THREADED
 void DoRunAll (test_t * test, char *filename);
 #endif

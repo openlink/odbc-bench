@@ -24,6 +24,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "odbcbench.h"
 #include "thr.h"
@@ -168,10 +169,9 @@ found:
 
 
 void
-do_ShowProgress (GtkWidget * parent, gchar * title, gboolean bForceSingle,
+do_ShowProgress (void * parent, char * title, BOOL bForceSingle,
     float fMax)
 {
-
   GtkWidget *Frame, *helper, *thread_hbox = NULL, *thread_tps;
   int i;
   int nConn, n_max_threads = 1;

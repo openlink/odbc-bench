@@ -38,12 +38,12 @@ typedef struct tpca_s
   /*              IDX_PLAINSQL */
   /*              IDX_PARAMS */
   /*              IDX_SPROCS */
-  UDWORD udwMaxBranch;		/* Count of branches */
-  UDWORD udwMaxTeller;		/* Count of tellers */
-  UDWORD udwMaxAccount;		/* Count of accounts */
-  SDWORD nTrnCnt;		/* Count of transaction to date */
-  SDWORD nTrnCnt1Sec;		/* Count of trans < 1 */
-  SDWORD nTrnCnt2Sec;		/* Count of trans 1 < n < 2 */
+  unsigned long udwMaxBranch;	/* Count of branches */
+  unsigned long udwMaxTeller;	/* Count of tellers */
+  unsigned long udwMaxAccount;	/* Count of accounts */
+  long nTrnCnt;			/* Count of transaction to date */
+  long nTrnCnt1Sec;		/* Count of trans < 1 */
+  long nTrnCnt2Sec;		/* Count of trans 1 < n < 2 */
   double dDiffSum;		/* Sum of transaction execute time */
 
   /* Statistics done after the run */

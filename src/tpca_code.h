@@ -37,23 +37,24 @@ void vLoadTeller (test_t * lpRunCfg);
 void vLoadAccount (test_t * lpRunCfg);
 void vLoadStoreOptions (test_t * lpRunCfg, int fLoad);
 void vDisplayLoad (test_t * lpBenchInfo);
-int fExecute (test_t * lpRunCfg, char *lpSQLString);
+int fExecute (test_t * lpRunCfg, SQLCHAR *lpSQLString);
 void vCreateVirtuosoTPCCTables (test_t * lpBench);
 
-void vCreateTPCCTables (char *szDBMS, HSTMT hstmt);
-void vCreateTPCCIndices (char *szDBMS, HSTMT hstmt);
+void vCreateTPCCTables (char *szDBMS, SQLHSTMT hstmt);
+void vCreateTPCCIndices (char *szDBMS, SQLHSTMT hstmt);
 
 int getDriverTypeIndex (char *szDBMSName);
 
-BOOL fSQLBindParameter (HSTMT hstmt, UWORD ipar, SWORD fParamType,
-    SWORD fCType, SWORD fSqlType, UDWORD cbColDef, SWORD ibScale,
-    PTR rgbValue, SDWORD cbValueMax, SDWORD FAR * pcbValue);
+BOOL fSQLBindParameter (SQLHSTMT hstmt, SQLUSMALLINT ipar,
+    SQLSMALLINT fParamType, SQLSMALLINT fCType, SQLSMALLINT fSqlType,
+    SQLULEN cbColDef, SQLSMALLINT ibScale, SQLPOINTER rgbValue,
+    SQLLEN cbValueMax, SQLLEN * pcbValue);
 
 int getDriverMapSize (void);
 char *getDriverDBMSName (int i);
 
   /* execution */
-int fExecuteSql (test_t * lpBench, char *pszSql);
+int fExecuteSql (test_t * lpBench, SQLCHAR *pszSql);
 BOOL DoRun (test_t * lpBench, char *szTitle);
 BOOL DoThreadsRun (test_t * lpBench);
 BOOL fRunTrans (test_t * lpBench, char *szTitle);

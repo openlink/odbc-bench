@@ -21,6 +21,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include <stdio.h>
+#include <string.h>
 #include <sys/types.h>
 
 #ifndef WIN32
@@ -38,7 +39,7 @@
 
 static volatile BOOL do_cancel = FALSE;
 static int signal_pipe[2];
-int nProgressIncrement = 0;
+long nProgressIncrement = 0;
 
 typedef struct bench_msg_s
 {
@@ -164,7 +165,7 @@ ThreadedCalcStats (OList * tests, THREAD_T ** workers,
   OList *iter;
   int nConn;
   int rc = 1;
-  int rc1;
+  int rc1 = 1;
 
   for (iter = tests, nConn = 0; iter && nConn < nConnCount;
       nConn++, iter = o_list_next (iter))
@@ -256,8 +257,8 @@ ThreadedCalcStats (OList * tests, THREAD_T ** workers,
 
           if (nOkA == 0 && !test->szSQLState[0] && !test->szSQLError[0])
             {
-              strcpy(test->szSQLState, "ERROR");
-              strcpy(test->szSQLError, "All Threads ended prematurely.");
+              strcpy((char *) test->szSQLState, "ERROR");
+              strcpy((char *) test->szSQLError, "All Threads ended prematurely.");
             }
 
 	  if (test->hdbc)
@@ -345,7 +346,7 @@ do_threads_run (int nConnCount, OList * tests, int nMinutes, char *szTitle)
           get_dsn_data (test);
           if (test->hdbc && IS_A (*test))
 	    {
-	      fExecuteSql (test, "delete from HISTORY");
+	      fExecuteSql (test, (SQLCHAR *) "delete from HISTORY");
 	      SQLTransact (SQL_NULL_HENV, test->hdbc, SQL_COMMIT);
 	    }
           do_logout (test);
@@ -387,8 +388,8 @@ do_threads_run (int nConnCount, OList * tests, int nMinutes, char *szTitle)
 		  data[msg.nConn][msg.nThread].szLoginDSN,
 		  data[msg.nConn][msg.nThread].szSQLState,
 		  data[msg.nConn][msg.nThread].szSQLError);
-	      strcpy(data[msg.nConn][msg.nThread].test->szSQLState, data[msg.nConn][msg.nThread].szSQLState);
-	      strcpy(data[msg.nConn][msg.nThread].test->szSQLError, data[msg.nConn][msg.nThread].szSQLError);
+	      strcpy((char *)data[msg.nConn][msg.nThread].test->szSQLState, (char *)data[msg.nConn][msg.nThread].szSQLState);
+	      strcpy((char *)data[msg.nConn][msg.nThread].test->szSQLError, (char *)data[msg.nConn][msg.nThread].szSQLError);
               wasError = TRUE;
 	    }
 	  break;
@@ -428,7 +429,9 @@ do_threads_run (int nConnCount, OList * tests, int nMinutes, char *szTitle)
 }
 
 
+#if 0
 void
 pthread_yield (void)
 {
 }
+#endif

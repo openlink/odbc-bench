@@ -113,7 +113,7 @@ test_type_from_name (char *opt)
 
 #define _xmlNewProp(ent, nam, val) \
 { \
-  prop = xmlNewProp(ent, nam, val); \
+  prop = xmlNewProp(ent, (xmlChar *) nam, (xmlChar *) val); \
   prop->doc = (ent)->doc;\
 }
 
@@ -124,15 +124,15 @@ make_test_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
   char szProp[1024];
   xmlAttrPtr prop;
 
-  tst = xmlNewChild (parent, ns, "test", NULL);
+  tst = xmlNewChild (parent, ns, (xmlChar *) "test", NULL);
   _xmlNewProp (tst, "id", test->szName);
-  _xmlNewProp (tst, "type", test->TestType == TPC_A ? "tpc_a" : "tpc_c");
+  _xmlNewProp (tst, "type", (test->TestType == TPC_A ? "tpc_a" : "tpc_c"));
 
-  login = xmlNewChild (tst, ns, "login", NULL);
+  login = xmlNewChild (tst, ns, (xmlChar *) "login", NULL);
 
   if (test->szLoginDSN[0])
     {
-      dsn = xmlNewChild (login, ns, "dsn", NULL);
+      dsn = xmlNewChild (login, ns, (xmlChar *) "dsn", NULL);
       _xmlNewProp (dsn, "id", test->szLoginDSN);
       _xmlNewProp (dsn, "name", test->szLoginDSN);
       _xmlNewProp (dsn, "uid", test->szLoginUID);
@@ -146,7 +146,7 @@ make_test_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
   switch (test->TestType)
     {
     case TPC_A:
-      schema = xmlNewChild (tst, ns, "aschema", NULL);
+      schema = xmlNewChild (tst, ns, (xmlChar *) "aschema", NULL);
       sprintf (szProp, "%d", test->tpc.a.fCreateProcedure);
       _xmlNewProp (schema, "procedures", szProp);
       sprintf (szProp, "%d", test->tpc.a.fCreateIndex);
@@ -155,7 +155,7 @@ make_test_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
 	_xmlNewProp (schema, "type",
 	    getDriverDBMSName (test->tpc.a.uwDrvIdx));
 
-      table = xmlNewChild (schema, ns, "table", NULL);
+      table = xmlNewChild (schema, ns, (xmlChar *) "table", NULL);
       _xmlNewProp (table, "name", "branch");
       sprintf (szProp, "%d", test->tpc.a.fCreateBranch);
       _xmlNewProp (table, "create", szProp);
@@ -165,13 +165,13 @@ make_test_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
       _xmlNewProp (table, "count", szProp);
       if (test->tpc.a.szBranchDSN[0])
 	{
-	  dsn = xmlNewChild (table, ns, "dsn", NULL);
+	  dsn = xmlNewChild (table, ns, (xmlChar *) "dsn", NULL);
 	  _xmlNewProp (dsn, "id", test->tpc.a.szBranchDSN);
 	  _xmlNewProp (dsn, "name", test->tpc.a.szBranchDSN);
 	  _xmlNewProp (dsn, "DBMS", test->tpc.a.szBranchDBMS);
 	}
 
-      table = xmlNewChild (schema, ns, "table", NULL);
+      table = xmlNewChild (schema, ns, (xmlChar *) "table", NULL);
       _xmlNewProp (table, "name", "teller");
       sprintf (szProp, "%d", test->tpc.a.fCreateTeller);
       _xmlNewProp (table, "create", szProp);
@@ -181,13 +181,13 @@ make_test_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
       _xmlNewProp (table, "count", szProp);
       if (test->tpc.a.szTellerDSN[0])
 	{
-	  dsn = xmlNewChild (table, ns, "dsn", NULL);
+	  dsn = xmlNewChild (table, ns, (xmlChar *) "dsn", NULL);
 	  _xmlNewProp (dsn, "id", test->tpc.a.szTellerDSN);
 	  _xmlNewProp (dsn, "name", test->tpc.a.szTellerDSN);
 	  _xmlNewProp (dsn, "DBMS", test->tpc.a.szTellerDBMS);
 	}
 
-      table = xmlNewChild (schema, ns, "table", NULL);
+      table = xmlNewChild (schema, ns, (xmlChar *) "table", NULL);
       _xmlNewProp (table, "name", "account");
       sprintf (szProp, "%d", test->tpc.a.fCreateAccount);
       _xmlNewProp (table, "create", szProp);
@@ -197,13 +197,13 @@ make_test_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
       _xmlNewProp (table, "count", szProp);
       if (test->tpc.a.szAccountDSN[0])
 	{
-	  dsn = xmlNewChild (table, ns, "dsn", NULL);
+	  dsn = xmlNewChild (table, ns, (xmlChar *) "dsn", NULL);
 	  _xmlNewProp (dsn, "id", test->tpc.a.szAccountDSN);
 	  _xmlNewProp (dsn, "name", test->tpc.a.szAccountDSN);
 	  _xmlNewProp (dsn, "DBMS", test->tpc.a.szAccountDBMS);
 	}
 
-      table = xmlNewChild (schema, ns, "table", NULL);
+      table = xmlNewChild (schema, ns, (xmlChar *) "table", NULL);
       _xmlNewProp (table, "name", "history");
       sprintf (szProp, "%d", test->tpc.a.fCreateHistory);
       _xmlNewProp (table, "create", szProp);
@@ -211,13 +211,13 @@ make_test_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
       _xmlNewProp (table, "count", "0");
       if (test->tpc.a.szHistoryDSN[0])
 	{
-	  dsn = xmlNewChild (table, ns, "dsn", NULL);
+	  dsn = xmlNewChild (table, ns, (xmlChar *) "dsn", NULL);
 	  _xmlNewProp (dsn, "id", test->tpc.a.szHistoryDSN);
 	  _xmlNewProp (dsn, "name", test->tpc.a.szHistoryDSN);
 	  _xmlNewProp (dsn, "DBMS", test->tpc.a.szHistoryDBMS);
 	}
 
-      run = xmlNewChild (tst, ns, "arun", NULL);
+      run = xmlNewChild (tst, ns, (xmlChar *) "arun", NULL);
       sprintf (szProp, "%d", test->tpc._.nThreads);
       _xmlNewProp (run, "threads", szProp);
       sprintf (szProp, "%d", test->tpc.a.nArrayParSize);
@@ -257,25 +257,25 @@ make_test_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
 	};
 	int i;
 
-	schema = xmlNewChild (tst, ns, "cschema", NULL);
+	schema = xmlNewChild (tst, ns, (xmlChar *) "cschema", NULL);
 	sprintf (szProp, "%ld", test->tpc.c.count_ware);
 	_xmlNewProp (tst, "warehouses", szProp);
 	for (i = 0; i < 9; i++)
 	  {
-	    table = xmlNewChild (schema, ns, "table", NULL);
+	    table = xmlNewChild (schema, ns, (xmlChar *) "table", NULL);
 	    _xmlNewProp (table, "name", szNames[i]);
 	    _xmlNewProp (table, "create", "1");
 	    _xmlNewProp (table, "load", "0");
 	    _xmlNewProp (table, "count", "0");
 	    if (test->tpc.c.tableDSNS[i][0])
 	      {
-		dsn = xmlNewChild (table, ns, "dsn", NULL);
+		dsn = xmlNewChild (table, ns, (xmlChar *) "dsn", NULL);
 		_xmlNewProp (dsn, "id", test->tpc.c.tableDSNS[i]);
 		_xmlNewProp (dsn, "name", test->tpc.c.tableDSNS[i]);
 		_xmlNewProp (dsn, "DBMS", test->tpc.c.tableDBMSes[i]);
 	      }
 	  }
-	run = xmlNewChild (tst, ns, "crun", NULL);
+	run = xmlNewChild (tst, ns, (xmlChar *) "crun", NULL);
 	sprintf (szProp, "%d", test->tpc._.nThreads);
 	_xmlNewProp (run, "threads", szProp);
       }
@@ -294,11 +294,11 @@ do_save_selected (char *filename, OList * tests)
   int ret;
   OList *iter = tests;
 
-  doc = xmlNewDoc ("1.0");
-  xmlCreateIntSubset (doc, "tests", NULL, "odbc-bench.dtd");
+  doc = xmlNewDoc ((xmlChar *) "1.0");
+  xmlCreateIntSubset (doc, (xmlChar *) "tests", NULL, (xmlChar *) "odbc-bench.dtd");
   ns = NULL;
 
-  root = xmlNewDocNode (doc, ns, "tests", NULL);
+  root = xmlNewDocNode (doc, ns, (xmlChar *) "tests", NULL);
   xmlDocSetRootElement (doc, root);
 
   iter = tests;
@@ -326,7 +326,7 @@ do_save_selected (char *filename, OList * tests)
 }
 
 #define XML_GET_PROP(elem, nam, def) \
-if (!(szProp = xmlGetProp (elem, nam))) \
+if (!(szProp = (char *) xmlGetProp (elem, (xmlChar *) nam))) \
   szProp = def;
 
 static int
@@ -357,13 +357,13 @@ make_test_from_node (xmlNodePtr cur)
   test_t *ret;
   char *szProp;
 
-  if (strcmp (cur->name, "test"))
+  if (strcmp ((char *) cur->name, "test"))
     {
       pane_log ("document of the wrong type");
       return NULL;
     }
 
-  ret = malloc (sizeof (test_t));
+  ret = (test_t *) malloc (sizeof (test_t));
   memset (ret, 0, sizeof (test_t));
 
   XML_GET_PROP (cur, "type", "tpc_a");
@@ -382,14 +382,14 @@ make_test_from_node (xmlNodePtr cur)
 
   while (cur)
     {
-      if (!strcmp ("login", cur->name))
+      if (!strcmp ("login", (char *) cur->name))
 	{
 	  xmlNodePtr dsn = cur->children;
 	  while (dsn && xmlIsBlankNode (dsn))
 	    {
 	      dsn = dsn->next;
 	    }
-	  if (dsn && !strcmp (dsn->name, "dsn"))
+	  if (dsn && !strcmp ((char *) dsn->name, "dsn"))
 	    {
 	      char szDriverName[128], szDriverVer[128], szDBMS[128],
 		  szDBMSVer[128];
@@ -449,7 +449,7 @@ make_test_from_node (xmlNodePtr cur)
 */
 	    }
 	}
-      else if (!strcmp ("aschema", cur->name) && ret->TestType == TPC_A)
+      else if (!strcmp ("aschema", (char *) cur->name) && ret->TestType == TPC_A)
 	{
 	  xmlNodePtr tables;
 	  XML_GET_PROP (cur, "procedures", "");
@@ -474,13 +474,13 @@ make_test_from_node (xmlNodePtr cur)
 	  tables = cur->children;
 	  while (tables)
 	    {
-	      if (!strcmp (tables->name, "table"))
+	      if (!strcmp ((char *) tables->name, "table"))
 		{
 		  xmlNodePtr dsn = tables->children;
 
 		  while (dsn && xmlIsBlankNode (dsn))
 		    dsn = dsn->next;
-		  if (dsn && !strcmp (dsn->name, "dsn"))
+		  if (dsn && !strcmp ((char *) dsn->name, "dsn"))
 		    dsn = NULL;
 
 		  XML_GET_PROP (tables, "name", "");
@@ -563,7 +563,7 @@ make_test_from_node (xmlNodePtr cur)
 	      tables = tables->next;
 	    }
 	}
-      else if (!strcmp ("arun", cur->name) && ret->TestType == TPC_A)
+      else if (!strcmp ("arun", (char *) cur->name) && ret->TestType == TPC_A)
 	{
 	  XML_GET_PROP (cur, "threads", "");
 	  ret->tpc._.nThreads = atoi (szProp);
@@ -646,7 +646,7 @@ make_test_from_node (xmlNodePtr cur)
 	  XML_GET_PROP (cur, "type", "");
 	  ret->tpc.a.fSQLOption = test_type_from_name (szProp);
 	}
-      else if (!strcmp ("cschema", cur->name) && ret->TestType == TPC_C)
+      else if (!strcmp ("cschema", (char *) cur->name) && ret->TestType == TPC_C)
 	{
 	  xmlNodePtr table, dsn;
 	  int inx;
@@ -664,7 +664,7 @@ make_test_from_node (xmlNodePtr cur)
 		  dsn = table->children;
 		  while (dsn && xmlIsBlankNode (dsn))
 		    dsn = dsn->next;
-		  if (dsn && !strcmp (dsn->name, "dsn"))
+		  if (dsn && !strcmp ((char *) dsn->name, "dsn"))
 		    {
 		      XML_GET_PROP (dsn, "name", "");
 		      strncpy (ret->tpc.c.tableDSNS[inx], szProp,
@@ -678,7 +678,7 @@ make_test_from_node (xmlNodePtr cur)
 	      table = table->next;
 	    }
 	}
-      else if (!strcmp ("crun", cur->name) && ret->TestType == TPC_C)
+      else if (!strcmp ("crun", (char *) cur->name) && ret->TestType == TPC_C)
 	{
 	  XML_GET_PROP (cur, "threads", "");
 	  ret->tpc._.nThreads = atoi (szProp);
@@ -710,7 +710,7 @@ do_load_test (char *filename)
       xmlFreeDoc (doc);
       return;
     }
-  if (strcmp (cur->name, "tests"))
+  if (strcmp ((char *) cur->name, "tests"))
     {
       pane_log ("document of the wrong type, root node != tests");
       xmlFreeDoc (doc);
@@ -720,7 +720,7 @@ do_load_test (char *filename)
   cur = cur->children;
   while (cur)
     {
-      if (!strcmp (cur->name, "test"))
+      if (!strcmp ((char *) cur->name, "test"))
 	{
 	  test_t *ret = make_test_from_node (cur);
 	  if (!(gui.add_test_to_the_pool (ret)))
@@ -738,29 +738,29 @@ timer_account_node (timer_account_t * ta, timer_account_t * pack, xmlNsPtr ns,
     xmlNodePtr parent)
 {
   char szProp[1024];
-  xmlNodePtr timer = xmlNewChild (parent, ns, "timer", NULL);
+  xmlNodePtr timer = xmlNewChild (parent, ns, (xmlChar *) "timer", NULL);
   xmlAttrPtr prop;
   _xmlNewProp (timer, "name", ta->ta_name);
 
   if (ta->ta_n_samples && pack->ta_total)
     {
       sprintf (szProp, "%ld", ta->ta_min);
-      xmlNewChild (timer, ns, "min", szProp);
+      xmlNewChild (timer, ns, (xmlChar *) "min", (xmlChar *) szProp);
 
       sprintf (szProp, "%ld", ta->ta_total / ta->ta_n_samples);
-      xmlNewChild (timer, ns, "avg", szProp);
+      xmlNewChild (timer, ns, (xmlChar *) "avg", (xmlChar *) szProp);
 
       sprintf (szProp, "%ld", ta->ta_max);
-      xmlNewChild (timer, ns, "max", szProp);
+      xmlNewChild (timer, ns, (xmlChar *) "max", (xmlChar *) szProp);
 
       sprintf (szProp, "%ld", ta->ta_total);
-      xmlNewChild (timer, ns, "total", szProp);
+      xmlNewChild (timer, ns, (xmlChar *) "total", (xmlChar *) szProp);
 
       sprintf (szProp, "%ld", ta->ta_n_samples);
-      xmlNewChild (timer, ns, "samples", szProp);
+      xmlNewChild (timer, ns, (xmlChar *) "samples", (xmlChar *) szProp);
 
       sprintf (szProp, "%ld", (100 * ta->ta_total) / (pack->ta_total));
-      xmlNewChild (timer, ns, "pct", szProp);
+      xmlNewChild (timer, ns, (xmlChar *) "pct", (xmlChar *) szProp);
     }
 
   return timer;
@@ -775,12 +775,12 @@ make_result_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
   xmlAttrPtr prop;
   result =
       xmlNewChild (parent, ns,
-      test->TestType == TPC_C ? "cresult" : "aresult", NULL);
+      test->TestType == TPC_C ? (xmlChar *) "cresult" : (xmlChar *) "aresult", NULL);
 
   if (test->is_unsupported)
     {
-      _xmlNewProp (result, "state", "UNSUPPORTED");
-      _xmlNewProp (result, "message", "These test options are unsupported by odbc driver");
+      _xmlNewProp (result, (xmlChar *) "state", (xmlChar *) "UNSUPPORTED");
+      _xmlNewProp (result, (xmlChar *) "message", (xmlChar *) "These test options are unsupported by odbc driver");
     }
   else if (test->szSQLState[0])
     {
@@ -803,46 +803,46 @@ make_result_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
     {
     case TPC_A:
       sprintf (szProp, "%f", test->tpc.a.dDiffSum);
-      xmlNewChild (result, ns, "TransactionTime", szProp);
+      xmlNewChild (result, ns, (xmlChar *) "TransactionTime", (xmlChar *) szProp);
 
       sprintf (szProp, "%ld", test->tpc.a.nTrnCnt);
-      xmlNewChild (result, ns, "Transactions", szProp);
+      xmlNewChild (result, ns, (xmlChar *) "Transactions", (xmlChar *) szProp);
 
       sprintf (szProp, "%ld", test->tpc.a.nTrnCnt1Sec);
-      xmlNewChild (result, ns, "Transactions1Sec", szProp);
+      xmlNewChild (result, ns, (xmlChar *) "Transactions1Sec", (xmlChar *) szProp);
 
       sprintf (szProp, "%ld", test->tpc.a.nTrnCnt2Sec);
-      xmlNewChild (result, ns, "Transactions2Sec", szProp);
+      xmlNewChild (result, ns, (xmlChar *) "Transactions2Sec", (xmlChar *) szProp);
 
       sprintf (szProp, "%f", test->tpc.a.ftps);
-      xmlNewChild (result, ns, "TransactionsPerSec", szProp);
+      xmlNewChild (result, ns, (xmlChar *) "TransactionsPerSec", (xmlChar *) szProp);
 
       sprintf (szProp, "%f", test->tpc.a.fsub1);
-      xmlNewChild (result, ns, "Sub1SecPct", szProp);
+      xmlNewChild (result, ns, (xmlChar *) "Sub1SecPct", (xmlChar *) szProp);
 
       sprintf (szProp, "%f", test->tpc.a.fsub2);
-      xmlNewChild (result, ns, "Sub2SecPct", szProp);
+      xmlNewChild (result, ns, (xmlChar *) "Sub2SecPct", (xmlChar *) szProp);
 
       sprintf (szProp, "%f", test->tpc.a.fAvgTPTime);
-      xmlNewChild (result, ns, "AvgProcTime", szProp);
+      xmlNewChild (result, ns, (xmlChar *) "AvgProcTime", (xmlChar *) szProp);
       break;
 
     case TPC_C:
       sprintf (szProp, "%f", test->tpc.c.tpcc_sum / test->tpc.c.nRounds);
-      xmlNewChild (result, ns, "tpmC", szProp);
+      xmlNewChild (result, ns, (xmlChar *) "tpmC", (xmlChar *) szProp);
 
       sprintf (szProp, "%ld",
 	  test->tpc.c.nRounds *
 	  (test->tpc._.nThreads ? test->tpc._.nThreads : 1));
-      xmlNewChild (result, ns, "tenpacks", szProp);
+      xmlNewChild (result, ns, (xmlChar *) "tenpacks", (xmlChar *) szProp);
 
       sprintf (szProp, "%ld", test->tpc.c.local_w_id);
-      xmlNewChild (result, ns, "local_w_id", szProp);
+      xmlNewChild (result, ns, (xmlChar *) "local_w_id", (xmlChar *) szProp);
 
       sprintf (szProp, "%f", test->tpc.c.run_time);
-      xmlNewChild (result, ns, "run_time", szProp);
+      xmlNewChild (result, ns, (xmlChar *) "run_time", (xmlChar *) szProp);
 
-      res = xmlNewChild (result, ns, "timers", NULL);
+      res = xmlNewChild (result, ns, (xmlChar *) "timers", NULL);
       tmr =
 	  timer_account_node (&test->tpc.c.new_order_ta,
 	  &test->tpc.c.ten_pack_ta, ns, res);
@@ -877,11 +877,11 @@ do_save_run_results (char *filename, OList * selected, int nMinutes)
 
   time (&tim);
   _tm = gmtime (&tim);
-  doc = xmlNewDoc ("1.0");
-  xmlCreateIntSubset (doc, "run", NULL, "odbc-bench.dtd");
+  doc = xmlNewDoc ((xmlChar *) "1.0");
+  xmlCreateIntSubset (doc, (xmlChar *) "run", NULL, (xmlChar *) "odbc-bench.dtd");
   ns = NULL;
 
-  root = xmlNewDocNode (doc, ns, "run", NULL);
+  root = xmlNewDocNode (doc, ns, (xmlChar *) "run", NULL);
   sprintf (szProp, "%d", nMinutes);
   _xmlNewProp (root, "duration", szProp);
   sprintf (szProp, "%04d-%02d-%02dT%02d:%02d:%02d.%03ld",
@@ -997,7 +997,7 @@ do_threads_run_all (int nTests, OList * tests_orig, int nMinutes,
   int fAsync;			/* Asynchronous execution */
   int fQuery;			/* Execute query option */
   int fTrans;			/* Execute query option */
-  int nOption;			/* Index for sql options */
+  unsigned int nOption;		/* Index for sql options */
   int nIsolation;		/* Index for sql options */
   int nCursor;			/* Index for sql options */
   OList *iter, *tests = NULL;
@@ -1024,11 +1024,11 @@ do_threads_run_all (int nTests, OList * tests_orig, int nMinutes,
 
   time (&tim);
   _tm = gmtime (&tim);
-  doc = xmlNewDoc ("1.0");
-  xmlCreateIntSubset (doc, "run", NULL, "odbc-bench.dtd");
+  doc = xmlNewDoc ((xmlChar *) "1.0");
+  xmlCreateIntSubset (doc, (xmlChar *) "run", NULL, (xmlChar *) "odbc-bench.dtd");
   ns = NULL;
 
-  root = xmlNewDocNode (doc, ns, "run", NULL);
+  root = xmlNewDocNode (doc, ns, (xmlChar *) "run", NULL);
   sprintf (szProp, "%d", nMinutes);
   _xmlNewProp (root, "duration", szProp);
   sprintf (szProp, "%04d-%02d-%02dT%02d:%02d:%02d.%03ld",
@@ -1089,7 +1089,7 @@ do_threads_run_all (int nTests, OList * tests_orig, int nMinutes,
 			  MARK_IF_NOT_SUPPORTED ((test->tpc.a.nArrayParSize > 1 
 			        && !test->fBatchSupported), bArr_unsupported);
 
-                          tst = calloc (1, sizeof (test_t));
+                          tst = (test_t *) calloc (1, sizeof (test_t));
 
                           tst->tpc.a.fExecAsync = fAsync;
                           tst->tpc.a.fUseCommit = fTrans;
@@ -1136,7 +1136,7 @@ do_threads_run_all (int nTests, OList * tests_orig, int nMinutes,
   iter = tests_orig;
   while (iter)
     {
-      test_t *tst = malloc (sizeof (test_t));
+      test_t *tst = (test_t *) malloc (sizeof (test_t));
       memcpy (tst, iter->data, sizeof (test_t));
       tests = o_list_append (tests, tst);
       iter = o_list_next (iter);
@@ -1147,7 +1147,7 @@ do_threads_run_all (int nTests, OList * tests_orig, int nMinutes,
     {
       BOOL sts;
       test_t *tst = (test_t *) cur_test->data;
-      sprintf(szTemp,"Estimate time: %d min. | Test: %d of %d | %s", 
+      sprintf(szTemp,"Estimate time: %ld min. | Test: %d of %d | %s", 
         (long)(nMinutes * run_size), i + 1, list_size,
         tst->szTitle);
 
@@ -1204,7 +1204,7 @@ DoRunAll (test_t * test_orig, char *filename)
   int fAsync;			/* Asynchronous execution */
   int fQuery;			/* Execute query option */
   int fTrans;			/* Execute query option */
-  int nOption;			/* Index for sql options */
+  unsigned int nOption;		/* Index for sql options */
   int nIsolation;		/* Index for sql options */
   int nCursor;			/* Index for sql options */
   char szTemp[256];
@@ -1230,11 +1230,11 @@ DoRunAll (test_t * test_orig, char *filename)
 
   time (&tim);
   _tm = gmtime (&tim);
-  doc = xmlNewDoc ("1.0");
-  xmlCreateIntSubset (doc, "run", NULL, "odbc-bench.dtd");
+  doc = xmlNewDoc ((xmlChar *) "1.0");
+  xmlCreateIntSubset (doc, (xmlChar *) "run", NULL, (xmlChar *) "odbc-bench.dtd");
   ns = NULL;
 
-  root = xmlNewDocNode (doc, ns, "run", NULL);
+  root = xmlNewDocNode (doc, ns, (xmlChar *) "run", NULL);
   sprintf (szProp, "%d", test_orig->tpc._.nMinutes);
   _xmlNewProp (root, "duration", szProp);
   sprintf (szProp, "%04d-%02d-%02dT%02d:%02d:%02d.%03ld",
@@ -1312,7 +1312,7 @@ DoRunAll (test_t * test_orig, char *filename)
                           else
                             bArr_unsupported = FALSE;
 
-                          test = malloc (sizeof (test_t));
+                          test = (test_t *) malloc (sizeof (test_t));
                           memcpy (test, test_orig, sizeof (test_t));
 
                           test->hstmt = 0;
@@ -1364,7 +1364,7 @@ DoRunAll (test_t * test_orig, char *filename)
     {
       BOOL sts;
       test = (test_t *) cur_test->data;
-      sprintf(szTemp,"Estimate time: %d min. | Test: %d of %d | %s", 
+      sprintf(szTemp,"Estimate time: %ld min. | Test: %d of %d | %s", 
         (long)(test->tpc._.nMinutes * run_size), i + 1, list_size,
         test->szTitle);
 

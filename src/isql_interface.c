@@ -40,7 +40,7 @@
 static FILE *
 open_file (char *szFileName, char *szMode)
 {
-  int nFileName = strlen (szFileName);
+  size_t nFileName = strlen (szFileName);
   char *szNewName = NULL, *szHelper;
   FILE *fi = NULL;
 
@@ -49,7 +49,7 @@ open_file (char *szFileName, char *szMode)
 
   if (NULL != (szHelper = getenv ("GTKBENCH")))
     { /* from the environment */
-      szNewName = malloc (nFileName + strlen (szHelper) + 2);
+      szNewName = (char *) malloc (nFileName + strlen (szHelper) + 2);
       sprintf (szNewName, "%s/%s", szHelper, szFileName);
       fi = fopen (szNewName, szMode);
       XFREE (szNewName);
@@ -88,7 +88,7 @@ open_file (char *szFileName, char *szMode)
     return fi;
   }
 #endif
-  szNewName = calloc(1, nFileName + strlen (GTKBENCH_DEF_DIR) + 2);
+  szNewName = (char *) malloc(nFileName + strlen (GTKBENCH_DEF_DIR) + 2);
   sprintf (szNewName, "%s/%s", GTKBENCH_DEF_DIR, szFileName);
   fi = fopen (szNewName, szMode);
   XFREE (szNewName);
@@ -97,14 +97,14 @@ open_file (char *szFileName, char *szMode)
 
 
 void
-pipe_trough_isql (HDBC hdbc, char *szFileName, int print_commands)
+pipe_trough_isql (SQLHDBC hdbc, char *szFileName, int print_commands)
 {
   char szLine[1024];
-  long cmd_length = 0;
+  size_t cmd_length = 0;
   OSList *gs = NULL;
   RETCODE rc;
   FILE *fi = open_file (szFileName, "rt");
-  HSTMT hstmt;
+  SQLHSTMT hstmt;
 
   if (!fi)
     {
@@ -128,12 +128,12 @@ pipe_trough_isql (HDBC hdbc, char *szFileName, int print_commands)
 	{
 	  if (cmd_length)
 	    {
-	      char *szCommand = malloc (cmd_length + 1), *szPtr = szCommand;
+	      char *szCommand = (char *) malloc (cmd_length + 1), *szPtr = szCommand;
 	      OSList *iter = gs;
 	      memset (szCommand, 0, cmd_length + 1);
 	      while (iter)
 		{
-		  int line_len = strlen (iter->data);
+		  size_t line_len = strlen ((char *) iter->data);
 		  if (line_len)
 		    {
 		      memcpy (szPtr, iter->data, line_len);
@@ -151,7 +151,7 @@ pipe_trough_isql (HDBC hdbc, char *szFileName, int print_commands)
 		  if (gui.message)
 		    gui.message ("%s", szCommand);
 		}
-	      rc = SQLExecDirect (hstmt, szCommand, SQL_NTS);
+	      rc = SQLExecDirect (hstmt, (SQLCHAR *) szCommand, SQL_NTS);
 	      XFREE (szCommand);
 	      if (SQL_SUCCESS != rc)
 		vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, NULL);
@@ -161,12 +161,12 @@ pipe_trough_isql (HDBC hdbc, char *szFileName, int print_commands)
       else
 	{
 	  char *szStr = szLine, *szLineToPush;
-	  int line_len = strlen (szLine);
+	  size_t line_len = strlen (szLine);
 	  while (*szStr && *szStr < 0x020)
 	    szStr++;
 	  if (szStr[0] && szStr[0] == '-' && szStr[1] && szStr[1] == '-')
 	    continue;		/* on comment */
-	  szLineToPush = malloc (line_len + 1);
+	  szLineToPush = (char *) malloc (line_len + 1);
 	  memcpy (szLineToPush, szLine, line_len + 1);
 	  gs = o_slist_append(gs, szLineToPush);
 	  cmd_length += line_len;

@@ -27,7 +27,7 @@ int results_login (char *szDSN, char *szUID, char *sz_PWD);
 void create_results_table ();
 void drop_results_table ();
 void do_add_results_record (char *test_type, char *result_test_type,
-    HENV env, HDBC dbc, HSTMT stmt,
+    SQLHENV env, SQLHDBC dbc, SQLHSTMT stmt,
     char *szDSN, float ftps, double dDiffSum, long nTrnCnt,
     float fsub1, float fsub2, float fAvgTPTime,
     char *szDriverName, char *szDriverVer, int driver_has_results,

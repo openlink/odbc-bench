@@ -25,7 +25,7 @@
 
 #include "LoginBox.h"
 
-static void LoginBox_class_init (LoginBoxClass * class);
+static void LoginBox_class_init (LoginBoxClass * lclass);
 static void LoginBox_init (LoginBox * login_box);
 
 int
@@ -41,8 +41,8 @@ LoginBox_get_type (void)
 	sizeof (LoginBoxClass),
 	(GtkClassInitFunc) LoginBox_class_init,
 	(GtkObjectInitFunc) LoginBox_init,
-	(GtkArgSetFunc) NULL,
-	(GtkArgGetFunc) NULL
+	NULL,
+	NULL
       };
 
       e_type = gtk_type_unique (gtk_dialog_get_type (), &e_info);
@@ -58,15 +58,15 @@ enum
   LAST_SIGNAL
 };
 
-static gint LoginBox_signals[LAST_SIGNAL] = { 0 };
+static guint LoginBox_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-LoginBox_class_init (LoginBoxClass * class)
+LoginBox_class_init (LoginBoxClass * lclass)
 {
   GtkObjectClass *object_class;
 
-  object_class = (GtkObjectClass *) class;
+  object_class = (GtkObjectClass *) lclass;
 
   LoginBox_signals[DO_THE_WORK_SIGNAL] = gtk_signal_new ("do_the_work",
       GTK_RUN_FIRST,
@@ -82,8 +82,8 @@ LoginBox_class_init (LoginBoxClass * class)
 
   gtk_object_class_add_signals (object_class, LoginBox_signals, LAST_SIGNAL);
 
-  class->LoginBox_do_the_work = NULL;
-  class->LoginBox_closed = NULL;
+  lclass->LoginBox_do_the_work = NULL;
+  lclass->LoginBox_closed = NULL;
 }
 
 

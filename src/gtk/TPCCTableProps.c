@@ -31,7 +31,7 @@
 #include "TPCCTableProps.h"
 #include "TPCATableProps.h"
 
-static void TPCCTableProps_class_init (TPCCTablePropsClass * class);
+static void TPCCTableProps_class_init (TPCCTablePropsClass * tclass);
 static void TPCCTableProps_init (TPCCTableProps * tableloader);
 
 int
@@ -47,8 +47,8 @@ TPCCTableProps_get_type (void)
 	sizeof (TPCCTablePropsClass),
 	(GtkClassInitFunc) TPCCTableProps_class_init,
 	(GtkObjectInitFunc) TPCCTableProps_init,
-	(GtkArgSetFunc) NULL,
-	(GtkArgGetFunc) NULL
+	NULL,
+	NULL
       };
 
       tld_type = gtk_type_unique (gtk_vbox_get_type (), &tld_info);
@@ -58,7 +58,7 @@ TPCCTableProps_get_type (void)
 }
 
 static void
-TPCCTableProps_class_init (TPCCTablePropsClass * class)
+TPCCTableProps_class_init (TPCCTablePropsClass * tclass)
 {
 }
 
@@ -125,11 +125,11 @@ TPCCTableProps_save_config (TPCCTableProps * newdlg)
 	  (found =
  g_list_find_custom (dsn->dsn_info.dsns, szValue, (GCompareFunc) strcmp)))
 	strncpy (newdlg->lpBench->tpc.c.tableDBMSes[i],
-	    g_list_nth_data (dsn->dsn_info.names,
+	    (char *) g_list_nth_data (dsn->dsn_info.names,
 g_list_position (dsn->dsn_info.dsns, found)), 50);
     }
   newdlg->lpBench->tpc.c.count_ware =
-      gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (newdlg->n_ware));
+      (int) gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (newdlg->n_ware));
 }
 
 

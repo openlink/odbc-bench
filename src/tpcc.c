@@ -63,15 +63,15 @@ static long
 NURand (long *rnd_seed, int a, int x, int y)
 {
   return ((((RandomNumber (rnd_seed, 0, a) |
-		  RandomNumber (rnd_seed, x, y)) + 1234567)
+		  RandomNumber (rnd_seed, x, y)) + 1234567L)
 	  % (y - x + 1)) + x);
 }
 
 
-int
+long
 MakeAlphaString (long *rnd_seed, int sz1, int sz2, char *str)
 {
-  int sz = RandomNumber (rnd_seed, sz1, sz2);
+  long sz = RandomNumber (rnd_seed, sz1, sz2);
   int inx;
   for (inx = 0; inx < sz; inx++)
     str[inx] = 'a' + (inx % 24);
@@ -105,23 +105,23 @@ random_i_id (long *rnd_seed)
 
 
 void
-scrap_log (test_t * lpCfg, HSTMT stmt)
+scrap_log (test_t * lpCfg, SQLHSTMT stmt)
 {
   if (_stristr (lpCfg->szDBMS, "SQL Server"))
     {
       IS_ERR (stmt, SQLExecDirect (stmt,
-	      (UCHAR *)
+	      (SQLCHAR *)
 	      "dump transaction tpcc to disk='null.dat' with no_log",
 	      SQL_NTS), lpCfg);
     }
   else if (_stristr (lpCfg->szDBMS, "Virtuoso"))
     {
-      IS_ERR (stmt, SQLExecDirect (stmt, (UCHAR *) "checkpoint", SQL_NTS), lpCfg);
+      IS_ERR (stmt, SQLExecDirect (stmt, (SQLCHAR *) "checkpoint", SQL_NTS), lpCfg);
     }
   else if (_stristr (lpCfg->szDBMS, "Oracle"))
     {
       IS_ERR (stmt, SQLExecDirect (stmt,
-	      (UCHAR *) "alter system checkpoint", SQL_NTS), lpCfg);
+	      (SQLCHAR *) "alter system checkpoint", SQL_NTS), lpCfg);
     }
 }
 
@@ -839,7 +839,7 @@ Orders (test_t * lpCfg, long d_id, long w_id)
 	      RandomNumber (&lpCfg->tpc.c.rnd_seed, 1L, MAXITEMS);
 	  ol_supply_w_id[ol_fill] = o_w_id[fill];
 	  ol_quantity[ol_fill] = 5;
-	  ol_amount[ol_fill] = 0.0;
+	  ol_amount[ol_fill] = 0;
 
 	  MakeAlphaString (&lpCfg->tpc.c.rnd_seed, 24, 24,
 	      ol_dist_info[ol_fill]);
@@ -892,7 +892,7 @@ MakeAddress (long *rnd_seed, char *str1, char *str2, char *city, char *state,
  |      name - last name string
  +==================================================================*/
 void
-Lastname (int num, char *name)
+Lastname (long num, char *name)
 {
   static char *n[] = {
     "BAR", "OUGHT", "ABLE", "PRI", "PRES",
@@ -1013,7 +1013,7 @@ tpcc_schema_cleanup (void * widget, test_t * lpBench)
     "ITEM",
     "STOCK"
   };
-  int i;
+  unsigned int i;
   static char *szDropTable = "drop table %s\r\n";
   char szSQL[100];
 
@@ -1047,7 +1047,7 @@ tpcc_schema_cleanup (void * widget, test_t * lpBench)
       lpBench->SetProgressText (szTables[i], 0, 0, i, 1, 0, 0);
       sprintf (szSQL, szDropTable, szTables[i]);
       pane_log (szSQL);
-      if (SQL_SUCCESS != SQLExecDirect (lpBench->hstmt, szSQL, SQL_NTS))
+      if (SQL_SUCCESS != SQLExecDirect (lpBench->hstmt, (SQLCHAR *) szSQL, SQL_NTS))
 	vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
     }
   if (_stristr (lpBench->szDBMS, "Virtuoso"))
