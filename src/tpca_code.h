@@ -57,8 +57,8 @@ int fExecuteSql (test_t * lpBench, char *pszSql);
 BOOL DoRun (test_t * lpBench, char *szTitle);
 BOOL DoThreadsRun (test_t * lpBench);
 BOOL fRunTrans (test_t * lpBench, char *szTitle);
-void CalcStats (test_t * lpBench, long lTranCnt, long lSubSecTranCnt,
-    long lBetween, double dDiffSum);
+void CalcStats (BOOL runStatus, int nOk, test_t * lpBench, long lTranCnt, 
+    long lSubSecTranCnt, long lBetween, double dDiffSum);
 
 char *txn_isolation_name (long txn_isolation, char *def);
 long txn_isolation_from_name (char *iso);

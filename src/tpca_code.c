@@ -634,7 +634,8 @@ fBuildBench (test_t * ptest	/* Run Configuration Parameters */
   do_add_results_record ("TPC-A", ptest->szTemp,
       henv, ptest->hdbc, ptest->hstmt,
       ptest->szDSN, -1, end_time - start_time, -1,
-      -1, -1, -1, ptest->szDriverName, ptest->szDriverVer, ptest->fHaveResults);
+      -1, -1, -1, ptest->szDriverName, ptest->szDriverVer, ptest->fHaveResults,
+      "OK", "");
   return TRUE;
 }
 
@@ -2592,11 +2593,15 @@ BOOL
 DoThreadsRun (test_t * lpBench)
 {
   int nRun;			/* Counter for each run */
+  BOOL sts = TRUE;
 
   for (nRun = 0; nRun < lpBench->tpc._.nRuns; nRun++)
     {
-      if (!fRunTrans (lpBench, NULL))
-	return FALSE;
+      if (!lpBench->is_unsupported)
+        {
+          if (!fRunTrans (lpBench, NULL))
+  	    return FALSE;
+        }
     }
 
   /* User didn't break, so return success */
@@ -2615,23 +2620,19 @@ DoRun (test_t * lpBench,	/* Benchmark settings */
     char *szTitle)
 {
   int nRun;			/* Counter for each run */
+  BOOL sts = TRUE;
 
   /* Do every requested run for the time allotted  */
   for (nRun = 0; nRun < lpBench->tpc._.nRuns; nRun++)
     {
       pane_log ("Starting benchmark run number: %d\r\n", nRun + 1);
-      if (fRunTrans (lpBench, szTitle))
-	CalcStats (lpBench,
+      if (!lpBench->is_unsupported)
+        sts = fRunTrans (lpBench, szTitle);
+
+      CalcStats (sts, (sts ? 1: 0), lpBench,
 	    lpBench->tpc.a.nTrnCnt,
 	    lpBench->tpc.a.nTrnCnt1Sec,
 	    lpBench->tpc.a.nTrnCnt2Sec, lpBench->tpc.a.dDiffSum);
-      else
-	{
-	  if (lpBench->szSQLError[0])
-	    pane_log ("Error running the benchmark : %s\n",
-		lpBench->szSQLError);
-	  return FALSE;
-	}
     }
 
   /* User didn't break, so return success */
@@ -3970,8 +3971,7 @@ fRunTrans (test_t * lpBench,	/* Benchmark info */
     hstmtInsHist = SQL_NULL_HSTMT;
 
   if (IDX_PARAMS == lpBench->tpc.a.fSQLOption 
-      && lpBench->tpc.a.nArrayParSize > 0
-      && lpBench->fBatchSupported)
+      && lpBench->tpc.a.nArrayParSize > 0)
     return fRunTransArray (lpBench, szTitle);
 
   /* clear history table; get limits for each value  */
@@ -4333,7 +4333,10 @@ cursor_type_from_name (char *crsr)
 }
 
 void
-CalcStats (test_t * lpBench,	/* Main stat information */
+CalcStats (
+    BOOL   runStatus,
+    int    nOk,
+    test_t * lpBench,	        /* Main stat information */
     long lTranCnt,		/* Transaction count */
     long lSubSecTranCnt,	/* Sub-second transaction count  */
     long lBetween,		/* Between 1 and 2 second transaction count */
@@ -4341,7 +4344,7 @@ CalcStats (test_t * lpBench,	/* Main stat information */
     )
 {
   char szBuf[254];
-  char szOptions[100];
+  char szOptions[254];
 
   /* Build a string with the execution options used */
   *szOptions = '\0';
@@ -4396,44 +4399,93 @@ CalcStats (test_t * lpBench,	/* Main stat information */
     szOptions[strlen (szOptions) - 1] = '\0';
 
   /* Do the calculations */
-  lpBench->tpc.a.dOverhead = (lpBench->tpc._.nMinutes * 60) - dDiffSum;
-  lpBench->tpc.a.ftps = (float) (lTranCnt / dDiffSum);
-  lpBench->tpc.a.fsub1 = ((float) lSubSecTranCnt / (float) lTranCnt) * 100;
-  lpBench->tpc.a.fsub2 = ((float) lBetween / (float) lTranCnt) * 100;
-  lpBench->tpc.a.fAvgTPTime = (float) (dDiffSum / lTranCnt);
-
-  /* And print the results */
-  pane_log ("Calculating statistics:\n");
-  pane_log ("\tSQL options used:\t\t\t\t%s\n", szOptions);
-  pane_log ("\tTransaction time:\t\t\t\t%f\n", dDiffSum);
-  pane_log ("\tEnvironmental overhead:\t\t%f\n", lpBench->tpc.a.dOverhead);
-  pane_log ("\tTotal transactions:\t\t\t\t%ld\n", lTranCnt);
-  pane_log ("\tTransactions per second:\t\t%f\n", lpBench->tpc.a.ftps);
-  pane_log ("\t%c less than 1 second:\t\t\t%f\n", '%', lpBench->tpc.a.fsub1);
-  pane_log ("\t%c 1 < n < 2 seconds:\t\t\t%f\n", '%', lpBench->tpc.a.fsub2);
-  pane_log ("\tAverage processing time:\t\t%f\n", lpBench->tpc.a.fAvgTPTime);
-  if (lpBench->tpc.a.nArrayParSize > 1 
-      && (!lpBench->fBatchSupported || !lpBench->fSQLBatchSupported))
+  if ((runStatus || nOk) && !lpBench->is_unsupported)
     {
-      if (!lpBench->fBatchSupported)
-        {
-          pane_log ("\t   The ODBC driver '%s' doesn't support the 'SQLParamOptions' call, \n",
-		lpBench->szDriverName);
-	  pane_log ("\t therefore the 'ArrayOptimization' was disabled\n");
-	}
-      else if (!lpBench->fSQLBatchSupported)
+      char *status;
+      char *message;
+
+      lpBench->tpc.a.dOverhead = (lpBench->tpc._.nMinutes * 60) - dDiffSum;
+      lpBench->tpc.a.ftps = (float) (lTranCnt / dDiffSum);
+      lpBench->tpc.a.fsub1 = ((float) lSubSecTranCnt / (float) lTranCnt) * 100;
+      lpBench->tpc.a.fsub2 = ((float) lBetween / (float) lTranCnt) * 100;
+      lpBench->tpc.a.fAvgTPTime = (float) (dDiffSum / lTranCnt);
+
+      /* And print the results */
+      pane_log ("Calculating statistics:\n");
+      pane_log ("\tSQL options used:\t\t\t\t%s\n", szOptions);
+      pane_log ("\tTransaction time:\t\t\t\t%f\n", dDiffSum);
+      pane_log ("\tEnvironmental overhead:\t\t%f\n", lpBench->tpc.a.dOverhead);
+      pane_log ("\tTotal transactions:\t\t\t\t%ld\n", lTranCnt);
+      pane_log ("\tTransactions per second:\t\t%f\n", lpBench->tpc.a.ftps);
+      pane_log ("\t%c less than 1 second:\t\t\t%f\n", '%', lpBench->tpc.a.fsub1);
+      pane_log ("\t%c 1 < n < 2 seconds:\t\t\t%f\n", '%', lpBench->tpc.a.fsub2);
+      pane_log ("\tAverage processing time:\t\t%f\n", lpBench->tpc.a.fAvgTPTime);
+
+      if (lpBench->tpc.a.nArrayParSize > 1 && !lpBench->fSQLBatchSupported)
         {
           pane_log ("\t   The ODBC driver '%s' doesn't support batches for SELECT queries, \n",
-		lpBench->szDriverName);
-	  pane_log ("\t therefore the 'ArrayOptimization' for SELECT queries was disabled\n");
-	}
+            lpBench->szDriverName);
+          pane_log ("\t therefore the 'ArrayOptimization' for SELECT queries was disabled\n");
+
+          sprintf(lpBench->szWarning, "The ODBC driver doesn't support batches for SELECT queries. "
+            " The 'ArrayOptimization' for SELECT queries was disabled");
+        }
+
+      if (lpBench->tpc._.nThreads == 0 || nOk == lpBench->tpc._.nThreads)
+        {
+          status = (lpBench->szWarning[0] ? "WARN" : "OK");
+          message = lpBench->szWarning;
+        }
+      else
+        {
+          status = (lpBench->szSQLError[0] ? lpBench->szSQLState : "OK");
+          message = lpBench->szSQLError;
+        }
+
+      do_add_results_record ("TPC-A", szOptions,
+          henv, lpBench->hdbc, lpBench->hstmt,
+          lpBench->szLoginDSN, lpBench->tpc.a.ftps, dDiffSum,
+          lTranCnt, lpBench->tpc.a.fsub1, lpBench->tpc.a.fsub2,
+          lpBench->tpc.a.fAvgTPTime, lpBench->szDriverName, 
+          lpBench->szDriverVer, lpBench->fHaveResults, status, message);
+    }
+  
+  if (!runStatus || lpBench->is_unsupported)
+    {
+     if (lpBench->is_unsupported)
+       {
+         char *msg = {"These test options aren't supported by odbc driver"};
+
+         pane_log ("\t   %s \n", msg);
+         pane_log ("\tSQL options used:\t\t\t\t%s\n", szOptions);
+
+         do_add_results_record ("TPC-A", szOptions,
+           henv, lpBench->hdbc, lpBench->hstmt,
+           lpBench->szLoginDSN, -1, -1,
+           -1, -1, -1, -1, lpBench->szDriverName, 
+           lpBench->szDriverVer, lpBench->fHaveResults,
+           "UNSUPPORTED", msg);
+       }
+     else
+       {
+         if (lpBench->szSQLError[0])
+           {
+             do_add_results_record ("TPC-A", szOptions,
+               henv, lpBench->hdbc, lpBench->hstmt,
+               lpBench->szLoginDSN, -1, -1,
+               -1, -1, -1, -1, lpBench->szDriverName, 
+               lpBench->szDriverVer, lpBench->fHaveResults,
+               lpBench->szSQLState, lpBench->szSQLError);
+           }
+
+       }
+
+     if (lpBench->tpc._.nThreads > 0 && nOk == 0)
+       pane_log ("\n\nAll Threads ended prematurely.\n");
+
     }
 
-  do_add_results_record ("TPC-A", szOptions,
-      henv, lpBench->hdbc, lpBench->hstmt,
-      lpBench->szLoginDSN, lpBench->tpc.a.ftps, dDiffSum,
-      lTranCnt, lpBench->tpc.a.fsub1, lpBench->tpc.a.fsub2,
-      lpBench->tpc.a.fAvgTPTime, lpBench->szDriverName, lpBench->szDriverVer, lpBench->fHaveResults);
+
 }
 
 

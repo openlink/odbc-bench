@@ -154,8 +154,8 @@ worker_func (void *data)
 }
 
 static int
-ThreadedCalcStats (OList * tests, THREAD_T ** workers, test_t ** data,
-    int nConnCount, int *nThreads)
+ThreadedCalcStats (OList * tests, THREAD_T ** workers, 
+    test_t ** data, int nConnCount, int *nThreads)
 {
   OList *iter;
   int nConn;
@@ -165,7 +165,9 @@ ThreadedCalcStats (OList * tests, THREAD_T ** workers, test_t ** data,
       nConn++, iter = o_list_next (iter))
     {
       int nOkA = 0, nOkC = 0;
+      int nA = 0, nC = 0;
       DWORD result;
+      BOOL runStatus = TRUE;
       int i;
       test_t *test = (test_t *) iter->data;
       if (IS_A (*test))
@@ -187,21 +189,30 @@ ThreadedCalcStats (OList * tests, THREAD_T ** workers, test_t ** data,
       for (i = 0; i < nThreads[nConn]; i++)
 	{
 	  GET_EXIT_STATUS (workers[nConn][i], &result);
-	  if (result)
-	    {
-	      switch (data[nConn][i].TestType)
-		{
-		case TPC_A:
-		  nOkA++;
-		  test->tpc.a.nTrnCnt += data[nConn][i].tpc.a.nTrnCnt;
-		  test->tpc.a.nTrnCnt1Sec += data[nConn][i].tpc.a.nTrnCnt1Sec;
-		  test->tpc.a.nTrnCnt2Sec += data[nConn][i].tpc.a.nTrnCnt2Sec;
-		  if (data[nConn][i].tpc.a.dDiffSum > test->tpc.a.dDiffSum)
-		    test->tpc.a.dDiffSum = data[nConn][i].tpc.a.dDiffSum;
-		  break;
-		case TPC_C:
-		  nOkC++;
 
+	  if (!result)
+	    runStatus = result;
+
+	  switch (data[nConn][i].TestType)
+	    {
+	    case TPC_A:
+	      nA++;
+	      if (!test->is_unsupported && result)
+	        {
+	          nOkA++;
+	          test->tpc.a.nTrnCnt += data[nConn][i].tpc.a.nTrnCnt;
+	          test->tpc.a.nTrnCnt1Sec += data[nConn][i].tpc.a.nTrnCnt1Sec;
+	          test->tpc.a.nTrnCnt2Sec += data[nConn][i].tpc.a.nTrnCnt2Sec;
+	          if (data[nConn][i].tpc.a.dDiffSum > test->tpc.a.dDiffSum)
+	            test->tpc.a.dDiffSum = data[nConn][i].tpc.a.dDiffSum;
+	        }
+	      break;
+
+	    case TPC_C:
+	      nC++;
+  	      if (result)
+	        {
+	          nOkC++;
 		  test->tpc.c.tpcc_sum += data[nConn][i].tpc.c.tpcc_sum;
 		  test->tpc.c.run_time += data[nConn][i].tpc.c.run_time;
 		  test->tpc.c.nRounds += data[nConn][i].tpc.c.nRounds;
@@ -219,22 +230,24 @@ ThreadedCalcStats (OList * tests, THREAD_T ** workers, test_t ** data,
 		      &(data[nConn][i].tpc.c.slevel_ta));
 		  ta_merge (&(test->tpc.c.ostat_ta),
 		      &(data[nConn][i].tpc.c.ostat_ta));
-		  break;
 		}
+	      break;
 	    }
 	}
 
-      if (nOkA || nOkC)
+      if (nA || nOkC)
 	do_login (test);
 
-      if (nOkA)
+      if (nA)
 	{
-	  pane_log
+	  if (nOkA)
+	    pane_log
 	      ("\n\n%s - %s(%s) - %d TPC-A Threads ended with no errors.\n",
 	      test->szName, test->szDBMS, test->szDriverName, nOkA);
 
 	  if (test->hdbc)
-	    CalcStats (test, test->tpc.a.nTrnCnt, test->tpc.a.nTrnCnt1Sec,
+	    CalcStats (runStatus, nOkA, test, test->tpc.a.nTrnCnt, 
+	        test->tpc.a.nTrnCnt1Sec,
 		test->tpc.a.nTrnCnt2Sec, test->tpc.a.dDiffSum);
 	}
 
@@ -248,9 +261,10 @@ ThreadedCalcStats (OList * tests, THREAD_T ** workers, test_t ** data,
 	    add_tpcc_result (test);
 	}
 
-      if (nOkA || nOkC)
+      if (nA || nOkC)
 	do_logout (test);
-      else
+
+      if (!(nOkA || nOkC))
 	{
 	  pane_log ("\n\n%s - %s(%s) - All Threads ended prematurely.\n",
 	      test->szName, test->szDBMS, test->szDriverName);
@@ -298,8 +312,8 @@ do_threads_run (int nConnCount, OList * tests, int nMinutes, char *szTitle)
   do_cancel = FALSE;
   time (&start_time);
 
-  sprintf (szTemp, "%s Running for %d minutes", szTitle, nMinutes);
-  lpBenchInfo->ShowProgress (NULL, szTemp, FALSE, nMinutes * 60);
+  sprintf (szTemp, "Running for %d minutes", nMinutes);
+  lpBenchInfo->ShowProgress (NULL, szTitle, FALSE, nMinutes * 60);
   lpBenchInfo->SetWorkingItem (szTemp);
 
   data = (test_t **) malloc (nConnCount * sizeof (test_t *));
@@ -378,17 +392,19 @@ do_threads_run (int nConnCount, OList * tests, int nMinutes, char *szTitle)
   memset (signal_pipe, 0, sizeof (signal_pipe));
   pane_log = old_pane_log;
   lpBenchInfo->StopProgress ();
-  if (!do_cancel && !wasError)
-    rc = ThreadedCalcStats (tests, workers, data, nConnCount, n_threads);
-  else
-    pane_log ("\n\nAll Threads ended prematurely.\n");
+
+  rc = ThreadedCalcStats (tests, workers, data, nConnCount, n_threads);
+
   for (iter = tests, conn = 0; iter; iter = o_list_next (iter), conn++)
     {
       XFREE (workers[conn]);
       XFREE (data[conn]);
     }
+
   XFREE (workers);
   XFREE (data);
+  XFREE (n_threads);
+
   if (do_cancel || wasError)
     rc = 0;
   return rc;

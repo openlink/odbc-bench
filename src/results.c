@@ -87,8 +87,10 @@ static char *szCreateResultsSQL =
     "		SUB2S		float,"
     "		TRNTIME		float,"
     "		BTYPE		varchar(10),"
-    "		DRVRNAME	char(128),"
-    "		DRVRVER		char(128)" ")";
+    "		DRVRNAME	varchar(128),"
+    "		DRVRVER		varchar(128),"
+    "		STATE		varchar(16)," 
+    "		MSG		varchar(255)" ")";
 
 void
 create_results_table ()
@@ -143,15 +145,16 @@ drop_error:
 }
 
 static char *szInsertResultsSQL =
-    "insert into RESULTS (BTYPE, URL, OPTIONS, TPS, TOTTIME, NTRANS, SUB1S, SUB2S, TRNTIME, DRVRNAME, DRVRVER) "
-    "	values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    "insert into RESULTS (BTYPE, URL, OPTIONS, TPS, TOTTIME, NTRANS, SUB1S, SUB2S, TRNTIME, DRVRNAME, DRVRVER, STATE, MSG) "
+    "	values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 void
 do_add_results_record (char *test_type, char *result_test_type,
     HENV env, HDBC dbc, HSTMT stmt,
     char *szDSN, float ftps, double dDiffSum, long nTrnCnt,
     float fsub1, float fsub2, float fAvgTPTime,
-    char *szDriverName, char *szDriverVer, int driver_has_results)
+    char *szDriverName, char *szDriverVer, int driver_has_results,
+    char *szState, char *szMessage)
 {
   RETCODE rc;
   HSTMT lstmt = res_hstmt ? res_hstmt : stmt;
@@ -203,6 +206,15 @@ do_add_results_record (char *test_type, char *result_test_type,
   else
     IBINDNTS (lstmt, 11, szDriverVer);
 
+  if (!szState)
+    IBINDNTS (lstmt, 12, "OK");
+  else
+    IBINDNTS (lstmt, 12, szState);
+  if (!szMessage)
+    IBINDNTS (lstmt, 13, "");
+  else
+    IBINDNTS (lstmt, 13, szMessage);
+
   rc = SQLExecute (lstmt);
   SQLTransact (env, dbc, SQL_COMMIT);
   if (rc == SQL_SUCCESS)
@@ -229,7 +241,8 @@ add_tpcc_result (test_t * lpCfg)
 	  lpCfg->szDSN,
 	  lpCfg->tpc.c.count_ware, 
 	  lpCfg->tpc.c.run_time, -1, -1, -1, -1,
-	  lpCfg->szDriverName, lpCfg->szDriverVer, lpCfg->fHaveResults);
+	  lpCfg->szDriverName, lpCfg->szDriverVer, lpCfg->fHaveResults, 
+	  "OK", "");
     }
   else if (lpCfg->tpc.c.run_time > 0 && lpCfg->tpc.c.tpcc_sum > 0)	/* run the benchmark */
     {
@@ -267,6 +280,7 @@ add_tpcc_result (test_t * lpCfg)
 	  lpCfg->tpc.c.run_time,
 	  lpCfg->tpc.c.nRounds *
 	  (lpCfg->tpc._.nThreads ? lpCfg->tpc._.nThreads : 1), -1, -1, -1,
-	  lpCfg->szDriverName, lpCfg->szDriverVer, lpCfg->fHaveResults);
+	  lpCfg->szDriverName, lpCfg->szDriverVer, lpCfg->fHaveResults,
+	  "OK", "");
     }
 }

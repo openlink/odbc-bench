@@ -30,5 +30,6 @@ void do_add_results_record (char *test_type, char *result_test_type,
     HENV env, HDBC dbc, HSTMT stmt,
     char *szDSN, float ftps, double dDiffSum, long nTrnCnt,
     float fsub1, float fsub2, float fAvgTPTime,
-    char *szDriverName, char *szDriverVer, int driver_has_results);
+    char *szDriverName, char *szDriverVer, int driver_has_results,
+    char *szState, char *szMessage);
 #endif
