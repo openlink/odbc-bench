@@ -42,9 +42,10 @@ INCLUDES	= \
 endif
 
 
+odbc_bench_gtk_LDFLAGS  = -static
 odbc_bench_gtk_LDADD	= \
 	../lib/libutils.a \
-	gtk/libodbcbench-gtk.la \
+	gtk/libodbcbench-gtk.a \
 	@ODBC_LIBS@ \
 	@GTK_LIBS@ \
 	@XML_LIBS@ \
@@ -64,7 +65,7 @@ odbc_bench_gtk_SOURCES = \
 	tpcc.c \
 	tpcctrx.c
 
-
+odbc_bench_cmd_LDFLAGS  = -static
 odbc_bench_cmd_LDADD	= \
 	../lib/libutils.a \
 	@ODBC_LIBS@ \
