@@ -20,7 +20,6 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include <gtk/gtk.h>
 #include <stdio.h>
 #include <sys/types.h>
 
@@ -29,14 +28,15 @@
 #  include <unistd.h>
 #else
 #  include <time.h>
+#  define pipe(phandles)	_pipe (phandles, 4096, _O_BINARY)
 #endif
+
 #include "odbcbench.h"
 #include "thr.h"
 #include "tpca_code.h"
 #include "tpccfun.h"
-#include "testpool.h"
 
-static volatile gboolean do_cancel = FALSE;
+static volatile BOOL do_cancel = FALSE;
 static int signal_pipe[2];
 
 typedef struct msg_s
@@ -71,7 +71,7 @@ dummy_SetWorkingItem (char *pszItem)
 }
 
 
-static gboolean
+static BOOL
 threaded_fCancel (void)
 {
   return do_cancel;
@@ -85,8 +85,7 @@ dummy_pane_log (const char *szFormat, ...)
 
 
 static void
-dummy_ShowProgress (GtkWidget * widget, gchar * text, gboolean bForceSingle,
-    float fMax)
+dummy_ShowProgress (void * widget, char * text, BOOL bForceSingle, float fMax)
 {
 }
 
@@ -124,7 +123,7 @@ worker_func (void *data)
       lpBenchInfo->hdbc = 0;
       lpBenchInfo->tpc._.nThreads = 1;
 
-      do_login (NULL, lpBenchInfo);
+      do_login (lpBenchInfo);
       result = FALSE;
       if (lpBenchInfo->hstmt)
 	switch (lpBenchInfo->TestType)
@@ -136,7 +135,7 @@ worker_func (void *data)
 	    result = tpcc_run_test (NULL, lpBenchInfo) ? TRUE : FALSE;
 	    break;
 	  }
-      do_logout (NULL, lpBenchInfo);
+      do_logout (lpBenchInfo);
     }
 
   if (!signal_pipe[1] || sizeof (msg_t) != write (signal_pipe[1], &msg, sizeof (msg_t)))
@@ -150,15 +149,15 @@ worker_func (void *data)
 }
 
 static int
-ThreadedCalcStats (GList * tests, THREAD_T ** workers, test_t ** data,
+ThreadedCalcStats (OList * tests, THREAD_T ** workers, test_t ** data,
     int nConnCount, int *nThreads)
 {
-  GList *iter;
+  OList *iter;
   int nConn;
   int rc = 1;
 
   for (iter = tests, nConn = 0; iter && nConn < nConnCount;
-      nConn++, iter = g_list_next (iter))
+      nConn++, iter = o_list_next (iter))
     {
       int nOkA = 0, nOkC = 0;
       DWORD result;
@@ -221,7 +220,7 @@ ThreadedCalcStats (GList * tests, THREAD_T ** workers, test_t ** data,
 	}
 
       if (nOkA || nOkC)
-	do_login (NULL, test);
+	do_login (test);
 
       if (nOkA)
 	{
@@ -241,11 +240,11 @@ ThreadedCalcStats (GList * tests, THREAD_T ** workers, test_t ** data,
 	      test->szName, test->szDBMS, test->szDriverName, nOkC);
 	  test->tpc.c.run_time /= nOkC;
 	  if (test->hdbc)
-	    add_tpcc_result (NULL, test);
+	    add_tpcc_result (test);
 	}
 
       if (nOkA || nOkC)
-	do_logout (NULL, test);
+	do_logout (test);
       else
 	{
 	  pane_log ("\n\n%s - %s(%s) - All Threads ended prematurely.\n",
@@ -258,7 +257,7 @@ ThreadedCalcStats (GList * tests, THREAD_T ** workers, test_t ** data,
 
 
 int
-do_threads_run (int nConnCount, GList * tests, int nMinutes, char *szTitle)
+do_threads_run (int nConnCount, OList * tests, int nMinutes, char *szTitle)
 {
   test_t *lpBenchInfo;
   test_t **data;
@@ -276,7 +275,7 @@ do_threads_run (int nConnCount, GList * tests, int nMinutes, char *szTitle)
   int thr, conn;
   int rc = 0;
   void (*old_pane_log) (const char *format, ...) = pane_log;
-  GList *iter;
+  OList *iter;
 
   nProgressIncrement = bench_get_long_pref (A_REFRESH_RATE);
   if (!nConnCount)
@@ -297,28 +296,28 @@ do_threads_run (int nConnCount, GList * tests, int nMinutes, char *szTitle)
   lpBenchInfo->ShowProgress (NULL, szTemp, FALSE, nMinutes * 60);
   lpBenchInfo->SetWorkingItem (szTemp);
 
-  data = (test_t **) g_malloc (nConnCount * sizeof (test_t *));
-  workers = (THREAD_T **) g_malloc (nConnCount * sizeof (THREAD_T *));
-  n_threads = (int *) g_malloc (nConnCount * sizeof (int));
+  data = (test_t **) malloc (nConnCount * sizeof (test_t *));
+  workers = (THREAD_T **) malloc (nConnCount * sizeof (THREAD_T *));
+  n_threads = (int *) malloc (nConnCount * sizeof (int));
   pane_log = dummy_pane_log;
 
-  for (iter = tests, conn = 0; iter; iter = g_list_next (iter), conn++)
+  for (iter = tests, conn = 0; iter; iter = o_list_next (iter), conn++)
     {
       test_t *test = (test_t *) iter->data;
       test->tpc._.nMinutes = nMinutes;
-      do_login (NULL, test);
+      do_login (test);
       get_dsn_data (test);
       if (test->hdbc && IS_A (*test))
 	{
 	  fExecuteSql (test, "delete from HISTORY");
 	  SQLTransact (SQL_NULL_HENV, test->hdbc, SQL_COMMIT);
 	}
-      do_logout (NULL, test);
+      do_logout (test);
 
       n_threads[conn] = test->tpc._.nThreads ? test->tpc._.nThreads : 1;
-      data[conn] = (test_t *) g_malloc (n_threads[conn] * sizeof (test_t));
+      data[conn] = (test_t *) malloc (n_threads[conn] * sizeof (test_t));
       workers[conn] =
-	  (THREAD_T *) g_malloc (n_threads[conn] * sizeof (THREAD_T));
+	  (THREAD_T *) malloc (n_threads[conn] * sizeof (THREAD_T));
       nThreads += n_threads[conn];
       memset (test->szSQLError, 0, sizeof (test->szSQLError));
       memset (test->szSQLState, 0, sizeof (test->szSQLState));
@@ -339,7 +338,7 @@ do_threads_run (int nConnCount, GList * tests, int nMinutes, char *szTitle)
       switch (msg.Type)
 	{
 	case 'F':
-	  do_MarkFinished (msg.nConn, msg.nThread);
+	  gui.do_MarkFinished (msg.nConn, msg.nThread);
 	  sprintf (szTemp, "%s %3d threads running", szTitle, --nThreadsWork);
 	  lpBenchInfo->SetWorkingItem (szTemp);
 	  if (data[msg.nConn][msg.nThread].szSQLError[0])
@@ -373,88 +372,18 @@ do_threads_run (int nConnCount, GList * tests, int nMinutes, char *szTitle)
     rc = ThreadedCalcStats (tests, workers, data, nConnCount, n_threads);
   else
     pane_log ("\n\nAll Threads ended prematurely.\n");
-  for (iter = tests, conn = 0; iter; iter = g_list_next (iter), conn++)
+  for (iter = tests, conn = 0; iter; iter = o_list_next (iter), conn++)
     {
-      g_free (workers[conn]);
-      g_free (data[conn]);
+      XFREE (workers[conn]);
+      XFREE (data[conn]);
     }
-  g_free (workers);
-  g_free (data);
+  XFREE (workers);
+  XFREE (data);
   if (do_cancel)
     rc = 0;
   return rc;
 }
 
-#if 0
-gboolean
-do_threads_run_all (GtkWidget * widget, gpointer data)
-{
-  gboolean fAsync;		/* Asynchronous execution */
-  gboolean fQuery;		/* Execute query option */
-  gboolean fTrans;		/* Execute query option */
-  int nOption;			/* Index for sql options */
-  static short grgiOption[] = {
-    IDX_PLAINSQL,
-    IDX_PARAMS,
-    IDX_SPROCS
-  };
-
-  static char *grgiOptionNames[] = {
-    "SQL Text",
-    "Prepare & Execute using bound parameters",
-    "Stored procedures"
-  };
-  char szTemp[128];
-
-  lpBENCHINFO lpBenchInfo = (lpBENCHINFO) data;
-
-  fExecuteSql (lpBenchInfo, "delete from HISTORY");
-  SQLTransact (NULL, lpBenchInfo->hdbc, SQL_COMMIT);
-
-  for (fAsync = FALSE; fAsync <= TRUE; fAsync++)
-    {
-      /* If async is not supported, then skip this try */
-      if (!lpBenchInfo->fAsyncSupported && fAsync)
-	continue;
-      lpBenchInfo->fExecAsync = fAsync;
-
-      for (fTrans = FALSE; fTrans <= TRUE; fTrans++)
-	{
-	  /* If transactions are not supported, then skip them */
-	  if (!lpBenchInfo->fCommitSupported && fTrans)
-	    continue;
-	  lpBenchInfo->fUseCommit = fTrans;
-
-	  /* Vary the use of the 100 row query */
-	  for (fQuery = FALSE; fQuery <= TRUE; fQuery++)
-	    {
-	      lpBenchInfo->fDoQuery = fQuery;
-
-	      /* Loop around the SQL options */
-	      for (nOption = 0; nOption < NUMITEMS (grgiOption); nOption++)
-		{
-		  /* If sprocs are not supported, then we have to skip */
-		  lpBenchInfo->fSQLOption = grgiOption[nOption];
-		  if (IDX_SPROCS == lpBenchInfo->fSQLOption &&
-		      !lpBenchInfo->fProcsSupported)
-		    continue;
-
-		  /* All options are set, so do the run */
-		  sprintf (szTemp, "%s%s%s%s for",
-		      grgiOptionNames[nOption],
-		      (fAsync ? "/Async" : ""),
-		      (fQuery ? "/Query" : ""), (fTrans ? "/Trans" : ""));
-		  if (!do_threads_run (lpBenchInfo, szTemp))
-		    {
-		      return FALSE;
-		    }
-		}		/* SQL options */
-	    }			/* Execution query  */
-	}			/* Transactions */
-    }				/* Async */
-  return TRUE;
-}
-#endif
 
 void
 pthread_yield (void)

@@ -31,12 +31,10 @@
 #elif defined (WIN32)
 #include "win32/getopt.h"
 #endif
-#include <gtk/gtk.h>
 
 #include "odbcbench.h"
 #include "odbcinc.h"
 #include "thr.h"
-#include "testpool.h"
 #include "tpca_code.h"
 
 static int verbose = 0;
@@ -87,7 +85,7 @@ stdout_pane_log (const char *format, ...)
 }
 
 static void
-stdout_showprogress (GtkWidget * widget, gchar * title, int nThreads,
+stdout_showprogress (void * parent_win, char * title, int nThreads,
     float nMax)
 {
   printf ("\n%s\n", title);
@@ -110,7 +108,7 @@ dummy_pane_log (const char *format, ...)
 }
 
 static void
-dummy_showprogress (GtkWidget * widget, gchar * title, int nThreads,
+dummy_showprogress (void * parent_win, char * title, int nThreads,
     float nMax)
 {
 }
@@ -136,7 +134,6 @@ dummy_fcancel (void)
 {
   return FALSE;
 }
-extern void make_new_setup (GtkWidget * widget, gpointer data);
 
 
 int
@@ -148,17 +145,14 @@ do_command_line (int argc, char *argv[])
   if (argc > 1)
     {
       test_t test;
-      GList *tests = NULL;
+      OList *tests = NULL;
 
-/*      make_new_setup (NULL, NULL);*/
       memset (&test, 0, sizeof (test));
       test.TestType = TPC_A;
       strcpy (test.szName, "CommandLine");
       init_test (&test);
-/*      add_test_to_the_pool (&test);*/
-      for_all_in_pool ();
-      tests = g_list_append (tests, &test);
-/*      tests = get_selected_tests ();*/
+      gui.for_all_in_pool ();
+      tests = o_list_append (tests, &test);
       test.ShowProgress = dummy_showprogress;
       test.SetWorkingItem = dummy_setworkingitem;
       test.SetProgressText = dummy_setprogresstext;
@@ -303,7 +297,7 @@ do_command_line (int argc, char *argv[])
 	  };
       if (Load)
 	{
-	  do_login (NULL, &test);
+	  do_login (&test);
 	  get_dsn_data (&test);
 	  if (!test.hdbc)
 	    {
@@ -312,14 +306,14 @@ do_command_line (int argc, char *argv[])
 	      return -5;
 	    }
 	  fBuildBench (&test);
-	  do_logout (NULL, &test);
+	  do_logout (&test);
 	  return 0;
 	}
 
 #if defined(PTHREADS) || defined(WIN32)
       if (test.tpc._.nThreads > 1)
 	{
-	  do_login (NULL, &test);
+	  do_login (&test);
 	  get_dsn_data (&test);
 	  if (!test.hdbc)
 	    {
@@ -327,7 +321,7 @@ do_command_line (int argc, char *argv[])
 	      fprintf (stdout, "%s\n", test.szSQLError);
 	      return -5;
 	    }
-	  do_logout (NULL, &test);
+	  do_logout (&test);
 	  if (test.tpc.a.fSQLOption != -1)
 	    {
 	      int rc = do_threads_run (1, tests, test.tpc._.nMinutes,
@@ -351,7 +345,7 @@ do_command_line (int argc, char *argv[])
       else
 #endif
 	{
-	  do_login (NULL, &test);
+	  do_login (&test);
 	  get_dsn_data (&test);
 	  if (!test.hdbc)
 	    {
@@ -362,7 +356,7 @@ do_command_line (int argc, char *argv[])
 	  else
 	    DoRun (&test, NULL);
 	  do_save_run_results ("results.xml", tests, test.tpc._.nMinutes);
-	  do_logout (NULL, &test);
+	  do_logout (&test);
 	}
       return 0;
     }

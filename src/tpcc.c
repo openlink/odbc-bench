@@ -20,7 +20,6 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include <gtk/gtk.h>
 
 #ifdef WIN32
 #include <windows.h>
@@ -136,13 +135,13 @@ gettimestamp_2 (char *ts)
 
 
 void
-tpcc_create_db (GtkWidget * widget, test_t * lpCfg)
+tpcc_create_db (void * widget, test_t * lpCfg)
 {
 
   int i;
   long start_time = -1, end_time = -1;
 
-  do_login (NULL, lpCfg);
+  do_login (lpCfg);
 
   lpCfg->tpc.c.bIsOracle = FALSE;
   lpCfg->tpc.c.bIsSybase = FALSE;
@@ -217,11 +216,11 @@ tpcc_create_db (GtkWidget * widget, test_t * lpCfg)
   if (start_time != -1 && end_time != -1)
     {
       lpCfg->tpc.c.run_time = (end_time - start_time) / 1000;
-      add_tpcc_result (widget, lpCfg);
+      add_tpcc_result (lpCfg);
     }
 done:
   tpcc_close_stmts (widget, lpCfg);
-  do_logout (NULL, lpCfg);
+  do_logout (lpCfg);
   lpCfg->StopProgress ();
 }
 
@@ -272,9 +271,8 @@ LoadItems (test_t * lpCfg)
       /* Generate Item Data */
       i_id[fill] = i_id_1;
       MakeAlphaString (&lpCfg->tpc.c.rnd_seed, 14, 24, i_name[fill]);
-      i_price[fill] =
-	  ((float) RandomNumber (&lpCfg->tpc.c.rnd_seed, 100L,
-  10000L)) / 100.0;
+      i_price[fill] =  ((float) RandomNumber (&lpCfg->tpc.c.rnd_seed, 100L,
+	10000L)) / 100.0;
       idatasiz =
 	  MakeAlphaString (&lpCfg->tpc.c.rnd_seed, 26, 50, i_data[fill]);
       if (orig[i_id_1])
@@ -907,7 +905,7 @@ Lastname (int num, char *name)
 
 
 void
-tpcc_init_globals (GtkWidget * widget, test_t * lpCfg)
+tpcc_init_globals (void * widget, test_t * lpCfg)
 {
   int i;
   for (i = 0; i < BATCH_SIZE; i++)
@@ -924,7 +922,7 @@ tpcc_init_globals (GtkWidget * widget, test_t * lpCfg)
       }
 
 void
-tpcc_close_stmts (GtkWidget * widget, test_t * lpCfg)
+tpcc_close_stmts (void * widget, test_t * lpCfg)
 {
   CLOSE_STMT (misc_stmt);
   CLOSE_STMT (new_order_stmt);
@@ -945,7 +943,7 @@ tpcc_close_stmts (GtkWidget * widget, test_t * lpCfg)
 
 
 void
-tpcc_schema_create (GtkWidget * widget, test_t * lpBench)
+tpcc_schema_create (void * widget, test_t * lpBench)
 {
 
   pane_log ("TPC-C SCHEMA CREATION STARTED\n\n");
@@ -998,7 +996,7 @@ tpcc_schema_create (GtkWidget * widget, test_t * lpBench)
 
 
 void
-tpcc_schema_cleanup (GtkWidget * widget, test_t * lpBench)
+tpcc_schema_cleanup (void * widget, test_t * lpBench)
 {
 
   static char *szTables[] = {
@@ -1023,7 +1021,7 @@ tpcc_schema_cleanup (GtkWidget * widget, test_t * lpBench)
     }
 
   pane_log ("\n\nSCHEMA CLEANUP STARTED\n");
-  do_login (NULL, lpBench);
+  do_login (lpBench);
 
   if (!lpBench->hstmt)
     {
@@ -1067,6 +1065,6 @@ tpcc_schema_cleanup (GtkWidget * widget, test_t * lpBench)
     }
   lpBench->SetProgressText (szTables[i], 0, 0, 100, 1);
   lpBench->StopProgress ();
-  do_logout (NULL, lpBench);
+  do_logout (lpBench);
   pane_log ("\n\nSCHEMA CLEANUP FINISHED\n");
 }

@@ -20,14 +20,12 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include <gtk/gtk.h>
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "odbcbench.h"
-#include "ServerDSN.h"
 #include "results.h"
 #include "tpca_code.h"
 #ifndef WIN32
@@ -515,174 +513,6 @@ getDriverDBMSName (int i)
   return DriverMap[i].szDbName;
 }
 
-#define free_dsns_list(list, type, prefix) \
-{ \
-  type *iter = list; \
-  while (iter) \
-    { \
-      g_free (iter->data); \
-      iter = prefix##_next (iter); \
-    } \
-  list = NULL; \
-}
-
-long
-fill_dsns_list (test_t * lpBench, dsn_info_t * dsn_info)
-{
-  char szDSNName[50], szDBMS[50];
-  DWORD len1 = SQL_NTS, len2 = SQL_NTS;
-  char *szNewDSN, *szNewDBMS;
-  long ret = 0;
-
-  free_dsns_list (dsn_info->dsns, GList, g_list);
-  free_dsns_list (dsn_info->names, GList, g_list);
-
-  if (_stristr (lpBench->szDBMS, "Virtuoso"))
-    {
-      ret = 1;
-      if (SQL_SUCCESS !=
-	  SQLPrepare (lpBench->hstmt,
-"select DS_DSN, get_keyword (17, deserialize (DS_CONN_STR), 'ANSI') from DB.DBA.SYS_DATA_SOURCE",
-SQL_NTS))
-	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
-	  goto error;
-	}
-
-      if (SQL_SUCCESS !=
-	  SQLBindCol (lpBench->hstmt,
-1, SQL_C_CHAR, szDSNName, sizeof (szDSNName), &len1))
-	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
-	  goto error;
-	}
-      if (SQL_SUCCESS !=
-	  SQLBindCol (lpBench->hstmt,
-2, SQL_C_CHAR, szDBMS, sizeof (szDBMS), &len2))
-	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
-	  goto error;
-	}
-
-      if (SQL_SUCCESS != SQLExecute (lpBench->hstmt))
-	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
-	  goto error;
-	}
-
-      while (SQL_SUCCESS == SQLFetch (lpBench->hstmt))
-	{
-	  int nPos;
-	  szNewDSN = g_malloc (len1 + 1);
-	  szNewDBMS = g_malloc (len2 + 1);
-	  memcpy (szNewDSN, szDSNName, len1);
-	  szNewDSN[len1] = 0;
-	  dsn_info->dsns =
-	      g_list_insert_sorted (dsn_info->dsns, szNewDSN,
-	      (GCompareFunc) strcmp);
-	  nPos = g_list_index (dsn_info->dsns, szNewDSN);
-	  memcpy (szNewDBMS, szDBMS, len2);
-	  szNewDBMS[len2] = 0;
-	  dsn_info->names = g_list_insert (dsn_info->names, szNewDBMS, nPos);
-	}
-    }
-error:
-  return ret;
-}
-
-static char *dsn_proc =
-    "create procedure odbcbench_sql_data_sources(in n integer) { \n"
-    "  declare v1,v2,n1 integer; \n"
-    "  declare n1 integer; \n"
-    "  declare dsn_name, dsn_desc varchar; \n"
-    "  \n"
-    "  v1 := sql_data_sources(); \n"
-    "  result_names(dsn_name, dsn_desc); \n"
-    "  n1 := 0; \n"
-    "  while (n1 < length(v1))  \n"
-    "    { \n"
-    "      v2 := aref(v1, n1); \n"
-    "      dsn_name := aref(v2, 0); \n"
-    "      dsn_desc := aref(v2, 1); \n"
-    "      result(dsn_name, dsn_desc); \n"
-    "      n1 := n1 + 1; \n" "  } \n" "}";
-
-long
-fill_avail_dsns_list (test_t * lpBench, dsn_info_t * dsn_info)
-{
-  char szDSNName[50], szDBMS[50];
-  DWORD len1 = SQL_NTS, len2 = SQL_NTS;
-  char *szNewDSN, *szNewDBMS;
-  long ret = 0, proc_defined = 0;
-
-  free_dsns_list (dsn_info->dsns, GList, g_list);
-  free_dsns_list (dsn_info->names, GList, g_list);
-
-  if (_stristr (lpBench->szDBMS, "Virtuoso"))
-    {
-      ret = 1;
-
-      if (SQL_SUCCESS != SQLExecDirect (lpBench->hstmt, dsn_proc, SQL_NTS))
-	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
-	  goto error;
-	}
-
-      proc_defined = 1;
-
-      if (SQL_SUCCESS !=
-	  SQLPrepare (lpBench->hstmt,
-"odbcbench_sql_data_sources (0)", SQL_NTS))
-	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
-	  goto error;
-	}
-
-      if (SQL_SUCCESS !=
-	  SQLBindCol (lpBench->hstmt,
-1, SQL_C_CHAR, szDSNName, sizeof (szDSNName), &len1))
-	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
-	  goto error;
-	}
-      if (SQL_SUCCESS !=
-	  SQLBindCol (lpBench->hstmt,
-2, SQL_C_CHAR, szDBMS, sizeof (szDBMS), &len2))
-	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
-	  goto error;
-	}
-
-      if (SQL_SUCCESS != SQLExecute (lpBench->hstmt))
-	{
-	  vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, lpBench->hstmt, lpBench);
-	  goto error;
-	}
-
-      while (SQL_SUCCESS == SQLFetch (lpBench->hstmt))
-	{
-	  int nPos;
-	  szNewDSN = g_malloc (len1 + 1);
-	  szNewDBMS = g_malloc (len2 + 1);
-	  memcpy (szNewDSN, szDSNName, len1);
-	  szNewDSN[len1] = 0;
-	  dsn_info->dsns =
-	      g_list_insert_sorted (dsn_info->dsns, szNewDSN,
-	      (GCompareFunc) strcmp);
-	  nPos = g_list_index (dsn_info->dsns, szNewDSN);
-	  memcpy (szNewDBMS, szDBMS, len2);
-	  szNewDBMS[len2] = 0;
-	  dsn_info->names = g_list_insert (dsn_info->names, szNewDBMS, nPos);
-	}
-    error:
-      if (proc_defined)
-	SQLExecDirect (lpBench->hstmt,
-	    "drop procedure odbcbench_sql_data_sources", SQL_NTS);
-
-    }
-  return ret;
-}
-
 
 /*-------------------------------------------------------------------------*/
 /* fBuildBench - Control Procedure for Build the Benchmark tables. */
@@ -708,7 +538,8 @@ fBuildBench (test_t * ptest	/* Run Configuration Parameters */
     }
 
   /* Create table Definitions */
-  vBusy ();			/* Change to Hourglass Cursor */
+  if (gui.vBusy)
+    gui.vBusy ();			/* Change to Hourglass Cursor */
   vCreateTables (ptest);
 
   if (-1 != DriverMap[ptest->tpc.a.uwDrvIdx].swITM
@@ -717,7 +548,8 @@ fBuildBench (test_t * ptest	/* Run Configuration Parameters */
   if (-1 != DriverMap[ptest->tpc.a.uwDrvIdx].swProcIndex
       && ptest->tpc.a.fCreateProcedure)
     vCreateProcedure (ptest);
-  vBusy ();			/* Change to Normal Cursor */
+  if (gui.vBusy)
+    gui.vBusy ();			/* Change to Normal Cursor */
 
   /* Insert Records into Tables */
   if (ptest->tpc.a.fLoadBranch)
@@ -1534,7 +1366,7 @@ vLoadBranch (test_t * ptest	/* Run Configuration Parameters */
   char szSQLBuffer[128];
   SDWORD cbFiller = 84;
   UWORD uwBindIdx;
-  SDWORD cbBranch, dbBalance;
+  SDWORD cbBranch; 
 
   uwBindIdx = DriverMap[ptest->tpc.a.uwDrvIdx].uwBTM;
 
@@ -2705,8 +2537,6 @@ if (SQL_ERROR == (foo)) \
   goto tag; \
 }
 
-#define XFREE(X)  if (X) free(X);
-
 #define MAX_MIN_SIZE		2
 
 BOOL
@@ -2914,7 +2744,8 @@ fExecuteQuery (test_t * lpBench,	/* Bench info */
 
   if (lpBench->tpc.a.nRowsetSize > 100)
     {
-      g_error ("Rowset size can't be greater then 100\n");
+      if (gui.err_message)
+        gui.err_message ("Rowset size can't be greater then 100\n");
       exit (-1);
     }
   /* Give user some feed-back */
@@ -3622,7 +3453,7 @@ fRunTransArray (test_t * lpBench,	/* Benchmark info */
 
   SDWORD *pnTellerNum = NULL;		/* Teller number */
 
-  double *pdBalance = NULL; // = 0;	/* Balance for transaction */
+  double *pdBalance = NULL; 		/* Balance for transaction */
 
   double *pdDelta = NULL;		/* Delta, randomly set */
 
@@ -3667,7 +3498,7 @@ fRunTransArray (test_t * lpBench,	/* Benchmark info */
     return FALSE;
 
   nArrayParSize = lpBench->tpc.a.nArrayParSize;
-
+  
   if (nArrayParSize == 0)
     nArrayParSize = 1;
 
@@ -3885,7 +3716,6 @@ fRunTransArray (test_t * lpBench,	/* Benchmark info */
 	while (SQL_STILL_EXECUTING == rc);
 	IF_DEADLOCK_OR_ERR_GO_WITH_ROLLBACK (hstmtUpdBranch, general_error,
 	    rc, deadlock_main);
-
 	/* Insert into history table */
 	do
 	  {
@@ -4105,8 +3935,7 @@ fRunTrans (test_t * lpBench,	/* Benchmark info */
   rc = SQLSetConnectOption (lpBench->hdbc, SQL_AUTOCOMMIT,
       (lpBench->tpc.a.fUseCommit) ? SQL_AUTOCOMMIT_OFF : SQL_AUTOCOMMIT_ON);
   rc = SQLSetConnectOption (lpBench->hdbc, SQL_ASYNC_ENABLE,
-      (lpBench->tpc.
-a.fExecAsync) ? SQL_ASYNC_ENABLE_ON : SQL_ASYNC_ENABLE_OFF);
+     (lpBench->tpc.a.fExecAsync) ? SQL_ASYNC_ENABLE_ON : SQL_ASYNC_ENABLE_OFF);
 
   /* Create a unique workstation id by using our instance handle */
 #ifndef WIN32
@@ -4252,6 +4081,7 @@ a.fExecAsync) ? SQL_ASYNC_ENABLE_ON : SQL_ASYNC_ENABLE_OFF);
       /* build SQL string with all values */
       else
 	{
+	  fRtn = TRUE;
 	  if (lpBench->SetWorkingItem)
 	    lpBench->SetWorkingItem ("Executing SQL text with no parameters");
 

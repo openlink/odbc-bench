@@ -1,5 +1,5 @@
 /*
- *  results.h
+ *  olist.h
  * 
  *  $Id$
  *
@@ -20,15 +20,41 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef __RESULTS_H_
-#define __RESULTS_H_
-void results_logout ();
-void results_login (char *szDSN, char *szUID, char *sz_PWD);
-void create_results_table ();
-void drop_results_table ();
-void do_add_results_record (char *test_type, char *result_test_type,
-    HENV env, HDBC dbc, HSTMT stmt,
-    char *szDSN, float ftps, double dDiffSum, long nTrnCnt,
-    float fsub1, float fsub2, float fAvgTPTime,
-    char *szDriverName, char *szDriverVer, int driver_has_results);
-#endif
+#ifndef __OLIST_H__
+#define __OLIST_H__
+
+typedef struct _OList		OList;
+typedef struct _OSList		OSList;
+
+struct _OList
+{
+  void *data;
+  OList *next;
+  OList *prev;
+};
+
+struct _OSList
+{
+  void *data;
+  OSList *next;
+};
+
+/* Doubly linked lists
+ */
+OList* o_list_alloc	  (void);
+void   o_list_free	  (OList     *list);
+OList* o_list_append	  (OList     *list,
+			   void *   data);
+OList* o_list_last	  (OList     *list);
+#define o_list_next(list) ((list) ? (((OList *)list)->next) : NULL)
+
+/* Singly linked lists
+ */
+OSList* o_slist_alloc	    (void);
+void	o_slist_free	    (OSList   *list);
+OSList* o_slist_append	    (OSList   *list,
+			     void *  data);
+OSList* o_slist_last	    (OSList   *list);
+#define o_slist_next(list) ((list) ? (((OSList *)list)->next) : NULL)
+
+#endif /* __OLIST_H__ */

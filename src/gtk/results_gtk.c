@@ -1,5 +1,5 @@
 /*
- *  prefs.c
+ *  results.c
  * 
  *  $Id$
  *
@@ -20,56 +20,52 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include <gtk/gtk.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 #include "odbcbench.h"
+#include "LoginBox.h"
+#include "util.h"
+#include "results.h"
 
-struct pref_s
+void
+do_results_logout (GtkWidget * widget, gpointer data)
 {
-  long a_refresh_rate;
-  long c_refresh_rate;
-  long lock_timeout;
-  long display_refresh_rate;
-} 
- prefs = {10, 1, 0, 80};
-
-long
-bench_get_long_pref (OdbcBenchPref pref)
-{
-  switch (pref)
-    {
-    case A_REFRESH_RATE:
-      return prefs.a_refresh_rate;
-    case C_REFRESH_RATE:
-      return prefs.c_refresh_rate;
-    case LOCK_TIMEOUT:
-      return prefs.lock_timeout;
-    case DISPLAY_REFRESH_RATE:
-      return prefs.display_refresh_rate;
-    }
-  return -1;
+  results_logout();
 }
 
-
-int
-bench_set_long_pref (OdbcBenchPref pref, long value)
+static void
+results_login_gtk (GtkWidget * widget, gpointer data)
 {
-  switch (pref)
-    {
-    case A_REFRESH_RATE:
-      prefs.a_refresh_rate = value;
-      return 1;
-    case C_REFRESH_RATE:
-      prefs.c_refresh_rate = value;
-      return 1;
-    case LOCK_TIMEOUT:
-      prefs.lock_timeout = value;
-      return 1;
-    case DISPLAY_REFRESH_RATE:
-      prefs.display_refresh_rate = value;
-      return 1;
-    }
-  return 0;
+  RETCODE rc;
+  LoginBox *box = LOGINBOX (widget);
+  char szBuff;
+
+  results_logout();
+  results_login(box->szDSN, box->szUID, box->szPWD);
 }
+
+void
+do_results_login (GtkWidget * widget, gpointer data)
+{
+  GtkWidget *box;
+
+  box = LoginBox_new ("Results connect", get_dsn_list (), NULL, NULL, NULL);
+  gtk_signal_connect (GTK_OBJECT (box), "do_the_work",
+      GTK_SIGNAL_FUNC (results_login_gtk), NULL);
+  gtk_widget_show (box);
+}
+
+void
+do_create_results_table (GtkWidget * widget, gpointer data)
+{
+  create_results_table();
+}
+
+void
+do_drop_results_table (GtkWidget * widget, gpointer data)
+{
+  drop_results_table();
+}
+
 

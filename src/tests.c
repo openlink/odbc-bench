@@ -24,7 +24,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <gtk/gtk.h>
 
 #include <libxml/xmlmemory.h>
 #if defined(LIBXML_VERSION) && LIBXML_VERSION >= 20000
@@ -35,8 +34,52 @@
 
 #include "odbcbench.h"
 #include "tpca_code.h"
-#include "testpool.h"
 #include "thr.h"
+
+void
+init_test (test_t * ptest)
+{
+  ptest->ShowProgress = gui.ShowProgress;
+  ptest->SetWorkingItem = gui.SetWorkingItem;
+  ptest->SetProgressText = gui.SetProgressText;
+  ptest->StopProgress = gui.StopProgress;
+  ptest->fCancel = gui.fCancel;
+  ptest->tpc._.nMinutes = 5;
+  ptest->tpc._.nRuns = 1;
+  switch (ptest->TestType)
+    {
+    case TPC_A:
+      {
+	tpca_t *a = &ptest->tpc.a;
+	a->uwDrvIdx = -1;
+	a->fClearHistory = TRUE;
+	a->fSQLOption = IDX_PLAINSQL;
+	a->udwMaxBranch = 10;
+	a->udwMaxTeller = 100;
+	a->udwMaxAccount = 1000;
+
+	a->fCreateBranch = TRUE;
+	a->fCreateTeller = TRUE;
+	a->fCreateAccount = TRUE;
+	a->fCreateHistory = TRUE;
+	a->fLoadBranch = TRUE;
+	a->fLoadTeller = TRUE;
+	a->fLoadAccount = TRUE;
+	a->fCreateIndex = TRUE;
+	a->fCreateProcedure = TRUE;
+      }
+      break;
+    case TPC_C:
+      {
+	tpcc_t *c = &ptest->tpc.c;
+	c->count_ware = 1;
+	c->local_w_id = 1;
+	c->nRounds = 1;
+      }
+      break;
+    }
+}
+
 
 char *
 test_type_name (long fSQLOption, char *def)
@@ -55,7 +98,7 @@ test_type_name (long fSQLOption, char *def)
 }
 
 
-long
+short
 test_type_from_name (char *opt)
 {
   if (!strcmp (opt, "execute"))
@@ -243,13 +286,13 @@ make_test_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
 
 
 int
-do_save_selected (char *filename, GList * tests)
+do_save_selected (char *filename, OList * tests)
 {
   xmlDocPtr doc;
   xmlNsPtr ns;
   xmlNodePtr tst, root;
   int ret;
-  GList *iter = tests;
+  OList *iter = tests;
 
   doc = xmlNewDoc ("1.0");
   xmlCreateIntSubset (doc, "tests", NULL, "odbc-bench.dtd");
@@ -264,7 +307,7 @@ do_save_selected (char *filename, GList * tests)
       test_t *test = (test_t *) iter->data;
 
       tst = make_test_node (test, ns, root);
-      iter = g_list_next (iter);
+      iter = o_list_next (iter);
     }
 
   ret = (xmlSaveFile (filename, doc) != -1);
@@ -276,7 +319,7 @@ do_save_selected (char *filename, GList * tests)
 	{
 	  test_t *test = (test_t *) iter->data;
 	  test->is_dirty = FALSE;
-	  iter = g_list_next (iter);
+	  iter = o_list_next (iter);
 	}
     }
   return ret;
@@ -320,7 +363,7 @@ make_test_from_node (xmlNodePtr cur)
       return NULL;
     }
 
-  ret = g_malloc (sizeof (test_t));
+  ret = malloc (sizeof (test_t));
   memset (ret, 0, sizeof (test_t));
 
   XML_GET_PROP (cur, "type", "tpc_a");
@@ -379,7 +422,7 @@ make_test_from_node (xmlNodePtr cur)
 		      ret->szName, szDBMS, szDBMSVer, szDriverName,
 		      szDriverVer);
 		}
-/*	      do_login (NULL, ret);
+/*	      do_login (ret);
 	      if (ret->szSQLError[0])
 		{
 		  pane_log ("Error logging in : [%s] %s\n", ret->szSQLState, ret->szSQLError);
@@ -642,7 +685,7 @@ make_test_from_node (xmlNodePtr cur)
 	}
       cur = cur->next;
     }
-  /* do_logout (NULL, ret); */
+  /* do_logout (ret); */
   return ret;
 }
 
@@ -680,8 +723,8 @@ do_load_test (char *filename)
       if (!strcmp (cur->name, "test"))
 	{
 	  test_t *ret = make_test_from_node (cur);
-	  if (!add_test_to_the_pool (ret))
-	    g_free (ret);
+	  if (!(gui.add_test_to_the_pool (ret)))
+	    XFREE (ret);
 	}
       cur = cur->next;
     }
@@ -810,7 +853,7 @@ make_result_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
 }
 
 void
-do_save_run_results (char *filename, GList * selected, int nMinutes)
+do_save_run_results (char *filename, OList * selected, int nMinutes)
 {
   xmlDocPtr doc;
   xmlNsPtr ns;
@@ -818,7 +861,7 @@ do_save_run_results (char *filename, GList * selected, int nMinutes)
   char szProp[1024];
   time_t tim;
   struct tm *_tm;
-  GList *iter = selected;
+  OList *iter = selected;
   xmlAttrPtr prop;
 
   time (&tim);
@@ -841,7 +884,7 @@ do_save_run_results (char *filename, GList * selected, int nMinutes)
     {
       test_t *test = (test_t *) iter->data;
       result = make_result_node (test, ns, root);
-      iter = g_list_next (iter);
+      iter = o_list_next (iter);
     }
   xmlSaveFile (filename, doc);
   xmlFreeDoc (doc);
@@ -858,7 +901,7 @@ while (iter) \
     supported = FALSE; \
     break; \
   } \
-  iter = g_list_next (iter); \
+  iter = o_list_next (iter); \
 } \
 if (!supported) \
   continue
@@ -869,7 +912,7 @@ while (iter) \
 { \
   test_t *test = (test_t *)iter->data; \
   action; \
-  iter = g_list_next (iter); \
+  iter = o_list_next (iter); \
 }
 
 static char *iso_names[] = {
@@ -923,7 +966,7 @@ static char *grgiOptionNames[] = {
 
 
 int
-do_threads_run_all (int nTests, GList * tests_orig, int nMinutes,
+do_threads_run_all (int nTests, OList * tests_orig, int nMinutes,
     char *filename)
 {
   int fAsync;			/* Asynchronous execution */
@@ -932,8 +975,7 @@ do_threads_run_all (int nTests, GList * tests_orig, int nMinutes,
   int nOption;			/* Index for sql options */
   int nIsolation;		/* Index for sql options */
   int nCursor;			/* Index for sql options */
-  int fParOpt;
-  GList *iter = tests_orig, *tests = NULL;
+  OList *iter = tests_orig, *tests = NULL;
   int supported;
   xmlAttrPtr prop;
 
@@ -963,13 +1005,10 @@ do_threads_run_all (int nTests, GList * tests_orig, int nMinutes,
 
   while (iter)
     {
-      test_t *tst = g_malloc (sizeof (test_t));
-/*      do_login (NULL, iter->data);
-      get_dsn_data (iter->data);
-      do_logout (NULL, iter->data);*/
+      test_t *tst = malloc (sizeof (test_t));
       memcpy (tst, iter->data, sizeof (test_t));
-      tests = g_list_append (tests, tst);
-      iter = g_list_next (iter);
+      tests = o_list_append (tests, tst);
+      iter = o_list_next (iter);
     }
 
   for (fAsync = FALSE; fAsync <= TRUE; fAsync++)
@@ -1030,18 +1069,9 @@ do_threads_run_all (int nTests, GList * tests_orig, int nMinutes,
 			  FOR_ALL_TESTS (test->tpc.a.fSQLOption =
 			      grgiOption[nOption]);
 
-                          for(fParOpt = FALSE; fParOpt <= TRUE; fParOpt++)
-			    {
-			      CONTINUE_IF_NOT_SUPPORTED ((fParOpt == TRUE
-			        && (nOption != IDX_PARAMS || 
-			            !test->fBatchSupported)));
-			      FOR_ALL_TESTS (test->tpc.a.nArrayParSize =
-			          (fParOpt ? 10 : 0));
-
 			  /* All options are set, so do the run */
-			      sprintf (szTemp, "%s%s%s%s%s%s%s for",
+			      sprintf (szTemp, "%s%s%s%s%s%s for",
 			      grgiOptionNames[nOption],
-			        (fParOpt ? "/ArrParams" : ""),
 			      (fAsync ? "/Async" : ""),
 			      (fQuery ? "/Query" : ""),
 			      (fTrans ? "/Trans" : ""),
@@ -1061,14 +1091,13 @@ do_threads_run_all (int nTests, GList * tests_orig, int nMinutes,
 			    }
 			}
 		    }
-		    }
 		}		/* SQL options */
 	    }			/* Execution query  */
 	}			/* Transactions */
     }				/* Async */
 end:
-  FOR_ALL_TESTS (g_free (test));
-  g_list_free (tests);
+  FOR_ALL_TESTS (XFREE (test));
+  o_list_free (tests);
   xmlSaveFile (filename, doc);
   xmlFreeDoc (doc);
   return TRUE;
@@ -1084,7 +1113,6 @@ DoRunAll (test_t * test_orig, char *filename)
   int nOption;			/* Index for sql options */
   int nIsolation;		/* Index for sql options */
   int nCursor;			/* Index for sql options */
-  int fParOpt;
   char szTemp[128];
   xmlDocPtr doc;
   xmlNsPtr ns;
@@ -1095,7 +1123,7 @@ DoRunAll (test_t * test_orig, char *filename)
   test_t *test;
   xmlAttrPtr prop;
 
-  test = g_malloc (sizeof (test_t));
+  test = malloc (sizeof (test_t));
   memcpy (test, test_orig, sizeof (test_t));
 
   time (&tim);
@@ -1167,18 +1195,9 @@ DoRunAll (test_t * test_orig, char *filename)
 				  && !test->fProcsSupported))
 			    continue;
 
-                          for(fParOpt = FALSE; fParOpt <= TRUE; fParOpt++)
-			    {
-			      test->tpc.a.nArrayParSize = (fParOpt ? 10 : 0);
-			      if ((fParOpt == TRUE
-			         && (nOption != IDX_PARAMS || 
-			             !test->fBatchSupported)));
-			        continue;
-
 			  /* All options are set, so do the run */
-			      sprintf (szTemp, "%s%s%s%s%s%s%s for",
+			      sprintf (szTemp, "%s%s%s%s%s%s for",
 			      grgiOptionNames[nOption],
-			          (fParOpt ? "/ArrParams" : ""),
 			      (fAsync ? "/Async" : ""),
 			      (fQuery ? "/Query" : ""),
 			      (fTrans ? "/Trans" : ""),
@@ -1189,15 +1208,13 @@ DoRunAll (test_t * test_orig, char *filename)
 			          if (test->szSQLError[0]) {
 				make_result_node (test, ns, root);
 				    test->szSQLError[0] = '\0';
-			          } if (isCancelled())
+			          } if (gui.isCancelled())
 			      goto end;
 			    }
 			  else
 			    {
 			      make_result_node (test, ns, root);
 			    }
-			    }
-			  
 			}
 		    }
 		}		/* SQL options */
@@ -1205,7 +1222,7 @@ DoRunAll (test_t * test_orig, char *filename)
 	}			/* Transactions */
     }				/* Async */
 end:
-  g_free (test);
+  XFREE (test);
   xmlSaveFile (filename, doc);
   xmlFreeDoc (doc);
 }

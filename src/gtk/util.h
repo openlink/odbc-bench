@@ -1,5 +1,5 @@
 /*
- *  results.h
+ *  util.h
  * 
  *  $Id$
  *
@@ -20,15 +20,11 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef __RESULTS_H_
-#define __RESULTS_H_
-void results_logout ();
-void results_login (char *szDSN, char *szUID, char *sz_PWD);
-void create_results_table ();
-void drop_results_table ();
-void do_add_results_record (char *test_type, char *result_test_type,
-    HENV env, HDBC dbc, HSTMT stmt,
-    char *szDSN, float ftps, double dDiffSum, long nTrnCnt,
-    float fsub1, float fsub2, float fAvgTPTime,
-    char *szDriverName, char *szDriverVer, int driver_has_results);
+#ifdef WIN32
+#include <windows.h>
 #endif
+
+GList *get_dsn_list (void);
+void set_display_refresh_rate (GtkWidget * widget, gpointer data);
+void set_lock_timeout (GtkWidget * widget, gpointer data);
+

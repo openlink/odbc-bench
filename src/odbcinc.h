@@ -212,8 +212,7 @@ SQLSetStmtOption (st, SQL_CONCURRENCY, SQL_CONCUR_ROWVER)
 SQLBindParameter (stmt, ipar, SQL_PARAM_INPUT, ct, sqlt, prec, sc, ptr, prec, len)
 #endif
 
-void do_logout (GtkWidget * widget, gpointer data);
-void do_login (GtkWidget * widget, gpointer data);
-void do_alloc_env (GtkWidget * widget, gpointer data);
-void do_free_env (GtkWidget * widget, gpointer data);
-GList *get_dsn_list (void);
+void do_logout (test_t * data);
+void do_login (test_t * data);
+void do_alloc_env (void);
+void do_free_env (int isFreeMutex);

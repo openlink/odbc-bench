@@ -75,9 +75,9 @@ typedef HANDLE THREAD_T;
 
 #endif
 #if defined (PTHREADS) || defined(WIN32)
-int do_threads_run (int nConnCount, GList * tests, int nMinutes,
+int do_threads_run (int nConnCount, OList * tests, int nMinutes,
     char *szTitle);
-int do_threads_run_all (int nTests, GList * tests, int nMinutes,
+int do_threads_run_all (int nTests, OList * tests, int nMinutes,
     char *filename);
 extern MUTEX_T log_mutex;
 extern int nProgressIncrement;

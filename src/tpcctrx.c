@@ -20,7 +20,6 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include <gtk/gtk.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -85,7 +84,8 @@ stmt_result_sets (HSTMT stmt)
       while (rc != SQL_NO_DATA_FOUND && rc != SQL_ERROR);
       if (rc == SQL_ERROR)
 	{
-	  g_warning ("\n    Line %d, file %s\n", __LINE__, __FILE__);
+	  if (gui.warn_message)
+	    gui.warn_message ("\n    Line %d, file %s\n", __LINE__, __FILE__);
 	  print_error (stmt, stmt, stmt, NULL);
 	  return 0;
 	}
@@ -95,7 +95,8 @@ stmt_result_sets (HSTMT stmt)
   if (rc == SQL_ERROR)
     {
       print_error (stmt, stmt, stmt, NULL);
-      g_warning ("\n    Line %d, file %s\n", __LINE__, __FILE__);
+      if (gui.warn_message)
+        gui.warn_message ("\n    Line %d, file %s\n", __LINE__, __FILE__);
     }
 
   SQLFreeStmt (stmt, SQL_CLOSE);
@@ -476,7 +477,7 @@ err:
 }
 
 int
-tpcc_run_test (GtkWidget * widget, test_t * lpCfg)
+tpcc_run_test (void * widget, test_t * lpCfg)
 {
   char szTemp[128];
   time_t start_time, curr_time;

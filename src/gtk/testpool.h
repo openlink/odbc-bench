@@ -25,18 +25,16 @@
 
 GtkWidget *create_test_pool (void);
 int add_test_to_the_pool (test_t * ptest);
-void init_test (test_t * test);
 void remove_selected_tests (void);
 int pool_connection_count (void);
 GList *get_selected_tests (void);
+OList *get_selected_tests_list (void);
 void for_all_in_pool (void);
 void pool_update_selected (void);
 
-int do_save_selected (char *szFileName, GList * tests);
 void do_load_test (char *szFileName);
 void pool_set_selected_items (GList * list);
 void pool_set_selected_item (test_t * test);
-void do_save_run_results (char *filename, GList * selected, int nMinutes);
 
 gboolean getIsFileDirty (void);
 void setIsFileDirty (gboolean isit);

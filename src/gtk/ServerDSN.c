@@ -27,6 +27,7 @@
 #include <string.h>
 
 #include "odbcbench.h"
+#include "odbcbench_gtk.h"
 #include "ServerDSN.h"
 
 static void ServerDSN_class_init (ServerDSNClass * class);

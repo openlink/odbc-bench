@@ -25,8 +25,6 @@
 #include <errno.h>
 #include <string.h>
 
-#include <gtk/gtk.h>
-
 #include "odbcbench.h"
 
 #define SCRIPT_DELIMITER ';'
@@ -38,6 +36,7 @@
 #define GTKBENCH_DEF_DIR "/usr/lib/gtkbench"
 #endif
 #endif
+
 static FILE *
 open_file (char *szFileName, char *szMode)
 {
@@ -50,10 +49,10 @@ open_file (char *szFileName, char *szMode)
 
   if (NULL != (szHelper = getenv ("GTKBENCH")))
     { /* from the environment */
-      szNewName = g_malloc (nFileName + strlen (szHelper) + 2);
+      szNewName = malloc (nFileName + strlen (szHelper) + 2);
       sprintf (szNewName, "%s/%s", szHelper, szFileName);
       fi = fopen (szNewName, szMode);
-      g_free (szNewName);
+      XFREE (szNewName);
       if (fi)
 	return fi;
     }
@@ -89,10 +88,10 @@ open_file (char *szFileName, char *szMode)
     return fi;
   }
 #endif
-  szNewName = g_malloc0 (nFileName + strlen (GTKBENCH_DEF_DIR) + 2);
+  szNewName = calloc(1, nFileName + strlen (GTKBENCH_DEF_DIR) + 2);
   sprintf (szNewName, "%s/%s", GTKBENCH_DEF_DIR, szFileName);
   fi = fopen (szNewName, szMode);
-  g_free (szNewName);
+  XFREE (szNewName);
   return fi;
 }
 
@@ -102,7 +101,7 @@ pipe_trough_isql (HDBC hdbc, char *szFileName, int print_commands)
 {
   char szLine[1024];
   long cmd_length = 0;
-  GSList *gs = NULL;
+  OSList *gs = NULL;
   RETCODE rc;
   FILE *fi = open_file (szFileName, "rt");
   HSTMT hstmt;
@@ -129,8 +128,8 @@ pipe_trough_isql (HDBC hdbc, char *szFileName, int print_commands)
 	{
 	  if (cmd_length)
 	    {
-	      char *szCommand = g_malloc (cmd_length + 1), *szPtr = szCommand;
-	      GSList *iter = gs;
+	      char *szCommand = malloc (cmd_length + 1), *szPtr = szCommand;
+	      OSList *iter = gs;
 	      memset (szCommand, 0, cmd_length + 1);
 	      while (iter)
 		{
@@ -141,18 +140,19 @@ pipe_trough_isql (HDBC hdbc, char *szFileName, int print_commands)
 		      cmd_length -= line_len;
 		      szPtr += line_len;
 		    }
-		  g_free (iter->data);
-		  iter = g_slist_next (iter);
+		  XFREE (iter->data);
+		  iter = o_slist_next (iter);
 		}
-	      g_slist_free (gs);
+	      o_slist_free (gs);
 	      gs = NULL;
-	      g_assert (!cmd_length);
+	      assert (!cmd_length);
 	      if (print_commands)
 		{
-		  g_message ("%s", szCommand);
+		  if (gui.message)
+		    gui.message ("%s", szCommand);
 		}
 	      rc = SQLExecDirect (hstmt, szCommand, SQL_NTS);
-	      g_free (szCommand);
+	      XFREE (szCommand);
 	      if (SQL_SUCCESS != rc)
 		vShowErrors (NULL, SQL_NULL_HENV, SQL_NULL_HDBC, hstmt, NULL);
 	      SQLFreeStmt (hstmt, SQL_CLOSE);
@@ -166,20 +166,20 @@ pipe_trough_isql (HDBC hdbc, char *szFileName, int print_commands)
 	    szStr++;
 	  if (szStr[0] && szStr[0] == '-' && szStr[1] && szStr[1] == '-')
 	    continue;		/* on comment */
-	  szLineToPush = g_malloc (line_len + 1);
+	  szLineToPush = malloc (line_len + 1);
 	  memcpy (szLineToPush, szLine, line_len + 1);
-	  gs = g_slist_append (gs, szLineToPush);
+	  gs = o_slist_append(gs, szLineToPush);
 	  cmd_length += line_len;
 	}
     }
   {
-    GSList *iter = gs;
+    OSList *iter = gs;
     while (iter)
       {
-	g_free (iter->data);
-	iter = g_slist_next (iter);
+	XFREE (iter->data);
+	iter = o_slist_next (iter);
       };
-    g_slist_free (gs);
+    o_slist_free (gs);
   }
   fclose (fi);
   SQLFreeStmt (hstmt, SQL_DROP);

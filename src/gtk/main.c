@@ -26,9 +26,11 @@
 #include <gtk/gtk.h>
 
 #include "odbcbench.h"
+#include "odbcbench_gtk.h"
 #include "testpool.h"
 #include "LoginBox.h"
 #include "results.h"
+#include "results_gtk.h"
 #include "ArrayParams.h"
 #include "ThreadOptions.h"
 #include "TPCATableProps.h"
@@ -37,19 +39,40 @@
 #include "tpca_code.h"
 #include "tpccfun.h"
 #include "thr.h"
+#include "util.h"
+
+GUI_t gui;
 
 void close_test (GtkWidget * widget, gpointer data);
 GtkWidget *dlg = NULL, *scrolled, *windows, *status_box, *global_status;
 extern GtkWidget *status;
 static GtkWidget *menubar;
 
+void
+do_login_gtk (GtkWidget * widget, gpointer data)
+{
+  LoginBox *login_box = NULL;
+  test_t *ptest = (test_t *) data;
+
+  if (widget)
+    {
+      login_box = LOGINBOX (widget);
+      strcpy (ptest->szLoginDSN, login_box->szDSN);
+      strcpy (ptest->szLoginUID, login_box->szUID);
+      strcpy (ptest->szLoginPWD, login_box->szPWD);
+    }
+  do_login(ptest);
+}
+
+
 char *
 do_close_selected_tests (char *filename, answer_code * rc)
 {
-  GList *tests = get_selected_tests (), *iter;
+  OList *tests = get_selected_tests_list (), *iter;
   int is_dirty = 0;
   char *retfile = NULL;
   answer_code local_rc;
+
   if (!rc)
     rc = &local_rc;
 
@@ -63,7 +86,7 @@ do_close_selected_tests (char *filename, answer_code * rc)
 	{
 	  is_dirty = TRUE;
 	}
-      iter = g_list_next (iter);
+      iter = o_list_next (iter);
     }
   if (is_dirty || getIsFileDirty ())
     {
@@ -83,7 +106,7 @@ do_close_selected_tests (char *filename, answer_code * rc)
       remove_selected_tests ();
       setIsFileDirty (TRUE);
     }
-  g_list_free (tests);
+  o_list_free(tests);
   return retfile;
 }
 
@@ -247,7 +270,7 @@ insert_file (GtkWidget * widget, gpointer data)
 void
 save_setup (GtkWidget * widget, gpointer data)
 {
-  GList *tests = NULL;
+  OList *tests = NULL;
   if (getFilesCount ())
     {
       char *filename =
@@ -256,9 +279,9 @@ save_setup (GtkWidget * widget, gpointer data)
 	{
 	  setTheFileName (filename);
 	  for_all_in_pool ();
-	  tests = get_selected_tests ();
+	  tests = get_selected_tests_list ();
 	  do_save_selected (filename, tests);
-	  g_list_free (tests);
+	  o_list_free (tests);
 	  setIsFileDirty (FALSE);
 	}
     }
@@ -268,7 +291,7 @@ save_setup (GtkWidget * widget, gpointer data)
 void
 save_test_as (GtkWidget * widget, gpointer data)
 {
-  GList *tests = get_selected_tests ();
+  OList *tests = get_selected_tests_list ();
   if (tests)
     {
       char *filename = fill_file_name (NULL, "Select output file", TRUE);
@@ -277,7 +300,7 @@ save_test_as (GtkWidget * widget, gpointer data)
 	  do_save_selected (filename, tests);
 	  g_free (filename);
 	}
-      g_list_free (tests);
+      o_list_free (tests);
     }
 }
 
@@ -326,7 +349,7 @@ edit_login (GtkWidget * widget, gpointer data)
       if (!ptest)
 	ptest = iter->data;
 
-      do_login (login, ptest);
+      do_login_gtk (login, ptest);
       ptest->is_dirty = TRUE;
       if (ptest->szSQLError[0])
 	{
@@ -336,14 +359,14 @@ edit_login (GtkWidget * widget, gpointer data)
 	  return;
 	}
       get_dsn_data (ptest);
-      do_logout (NULL, ptest);
+      do_logout (ptest);
 
       while (NULL != (iter = g_list_next (iter)))
 	{
 	  test_t *ptest = (test_t *) iter->data;
-	  do_login (login, ptest);
+	  do_login_gtk (login, ptest);
 	  get_dsn_data (ptest);
-	  do_logout (NULL, ptest);
+	  do_logout (ptest);
 	  ptest->is_dirty = TRUE;
 	}
       pool_update_selected ();
@@ -517,7 +540,7 @@ create_tables (GtkWidget * widget, gpointer data)
     {
       test_t *ptest = (test_t *) iter->data;
       pool_set_selected_item (ptest);
-      do_login (NULL, ptest);
+      do_login_gtk (NULL, ptest);
       if (ptest->hdbc)
 	{
 	  switch (ptest->TestType)
@@ -531,7 +554,7 @@ create_tables (GtkWidget * widget, gpointer data)
 		  tpcc_create_db (NULL, ptest);
 		  break;
 	    }
-	  do_logout (NULL, ptest);
+	  do_logout (ptest);
 	}
       iter = g_list_next (iter);
     }
@@ -558,7 +581,7 @@ drop_tables (GtkWidget * widget, gpointer data)
     {
       test_t *ptest = (test_t *) iter->data;
       pool_set_selected_item (ptest);
-      do_login (NULL, ptest);
+      do_login_gtk (NULL, ptest);
       if (ptest->hdbc)
 	{
 	  switch (ptest->TestType)
@@ -571,7 +594,7 @@ drop_tables (GtkWidget * widget, gpointer data)
 		  tpcc_schema_cleanup (NULL, ptest);
 		  break;
 	    }
-	  do_logout (NULL, ptest);
+	  do_logout (ptest);
 	}
       iter = g_list_next (iter);
     }
@@ -600,7 +623,7 @@ run_selected (GtkWidget * widget, gpointer data)
   GtkWidget *dlg, *label, *entry, *hbox, *btn, *filename;
   gboolean bOk = FALSE, bRunAll = FALSE, canRunAll = TRUE;
   int nTests = pool_connection_count ();
-  GList *tests = get_selected_tests (), *iter;
+  OList *tests = get_selected_tests_list (), *iter;
   char *szFileName = NULL;
 
   if (!nTests)
@@ -651,7 +674,7 @@ run_selected (GtkWidget * widget, gpointer data)
     {
       if (((test_t *) iter->data)->TestType != TPC_A)
 	canRunAll = FALSE;
-      iter = g_list_next (iter);
+      iter = o_list_next (iter);
     }
   if (canRunAll)
     {
@@ -720,7 +743,7 @@ run_selected (GtkWidget * widget, gpointer data)
 	{
 	  memset (ptest->szSQLError, 0, sizeof (ptest->szSQLError));
 	  memset (ptest->szSQLState, 0, sizeof (ptest->szSQLState));
-	  do_login (NULL, ptest);
+	  do_login_gtk (NULL, ptest);
 	  get_dsn_data (ptest);
 	  ptest->tpc._.nMinutes = nMinutes;
 	  if (ptest->hdbc)
@@ -742,14 +765,14 @@ run_selected (GtkWidget * widget, gpointer data)
 	      case TPC_C:
 		if (tpcc_run_test (NULL, ptest))
 		  {
-		    add_tpcc_result (NULL, ptest);
+		    add_tpcc_result (ptest);
 		  }
 		else
 		  pane_log ("TPC-C RUN FAILED\n");
 		do_save_run_results (szFileName, tests, nMinutes);
 		break;
 	      }
-	  do_logout (NULL, ptest);
+	  do_logout (ptest);
 	}
       if (menubar)
 	gtk_widget_set_sensitive (GTK_WIDGET (menubar), TRUE);
@@ -758,7 +781,7 @@ run_selected (GtkWidget * widget, gpointer data)
 end:
   if (szFileName)
     g_free (szFileName);
-  g_list_free (tests);
+  o_list_free (tests);
 }
 
 /*
@@ -785,7 +808,7 @@ destroy_handler (GtkWidget * widget, gpointer data)
 	return;
       close_file_pool ();
     }
-  do_free_env (widget, data);
+  do_free_env (1);
   gtk_main_quit ();
 }
 
@@ -814,9 +837,9 @@ pipe_trough_isql_handler (GtkWidget * widget, gpointer data)
   for (iter = tests; iter; iter = g_list_next (iter))
     {
       test_t *ptest = (test_t *)iter->data;
-      do_login (NULL, ptest);
+      do_login_gtk (NULL, ptest);
       pipe_trough_isql (ptest->hdbc, "gogo.sql", 1);
-      do_logout (NULL, ptest);
+      do_logout (ptest);
     }
   g_list_free (tests);
 }
@@ -849,13 +872,13 @@ static GtkItemFactoryEntry menu_items[] = {
   {"/Edit/_Insert file...", "<control>I", insert_file, 0, NULL},
 
   {"/_Action", NULL, NULL, 0, "<Branch>"},
-  {"/Action/_Create tables&procedures", "<control>C", create_tables, 0, NULL},
-  {"/Action/_Drop tables&procedures", "<control>D", drop_tables, 0, NULL},
+  {"/Action/_Create tables&procedures", NULL, create_tables, 0, NULL},
+  {"/Action/_Drop tables&procedures", NULL, drop_tables, 0, NULL},
   {"/Action/sep1", NULL, NULL, 0, "<Separator>"},
   {"/Action/Run _Selected", "<control>R", run_selected, 0, NULL},
 
   {"/_Results", NULL, NULL, 0, "<Branch>"},
-  {"/Results/_Connect...", NULL, results_login, 0, NULL},
+  {"/Results/_Connect...", NULL, do_results_login, 0, NULL},
   {"/Results/_Disconnect", NULL, do_results_logout, 0, NULL},
   {"/Results/sep1", NULL, NULL, 0, "<Separator>"},
   {"/Results/C_reate the table", NULL, do_create_results_table, 0, NULL},
@@ -920,8 +943,24 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
   char **argv;
   argv = command_line_to_argv (GetCommandLine (), &argc);
 #endif
-  do_alloc_env (NULL, NULL);
+  do_alloc_env ();
 
+  memset(&gui, 0, sizeof(gui));
+  gui.main_quit = gtk_main_quit;
+  gui.err_message = g_error;
+  gui.warn_message = g_warning;
+  gui.message = g_message;
+  gui.add_test_to_the_pool = add_test_to_the_pool;
+  gui.for_all_in_pool = for_all_in_pool;
+  gui.do_MarkFinished = do_MarkFinished;
+
+  gui.isCancelled = isCancelled;
+  gui.ShowProgress = do_ShowProgress;
+  gui.SetWorkingItem = do_SetWorkingItem;
+  gui.SetProgressText = do_SetProgressText;
+  gui.StopProgress = do_StopProgress;
+  gui.fCancel = do_fCancel;
+  gui.vBusy = vBusy;  
 
   if (argc > 2)
     return do_command_line (argc, argv);
@@ -956,7 +995,7 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled),
       GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   gtk_widget_show (status_box);
-  create_status_widget ();
+  create_status_widget (dlg);
   global_status = status;
   gtk_container_add (GTK_CONTAINER (status_box), global_status);
   gtk_table_attach_defaults (GTK_TABLE (table), status_box, 0, 1, 5, 11);

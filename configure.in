@@ -420,6 +420,7 @@ AC_SUBST(ODBC_LIBS)
 AC_CONFIG_FILES([
     Makefile 
     src/Makefile
+    src/gtk/Makefile
     scripts/Makefile
 ])
 AC_CONFIG_COMMANDS([default], [])

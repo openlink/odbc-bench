@@ -20,11 +20,9 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include <gtk/gtk.h>
 #include <stdio.h>
 
 #include "odbcbench.h"
-#include "LoginBox.h"
 
 static HDBC res_hdbc = SQL_NULL_HDBC;
 static HSTMT res_hstmt = SQL_NULL_HSTMT;
@@ -33,7 +31,7 @@ static int res_fHaveResults = 0;
 static DWORD null_val = SQL_NULL_DATA;
 
 void
-do_results_logout (GtkWidget * widget, gpointer data)
+results_logout ()
 {
   if (!res_hstmt)
     return;
@@ -49,20 +47,17 @@ do_results_logout (GtkWidget * widget, gpointer data)
   pane_log ("results connection closed\n");
 }
 
-static void
-do_results_login (GtkWidget * widget, gpointer data)
+void
+results_login (char *szDSN, char *szUID, char *szPWD)
 {
   RETCODE rc;
-  LoginBox *box = LOGINBOX (widget);
   char szBuff;
 
-  do_results_logout (widget, data);
+  results_logout ();
 
   rc = SQLAllocConnect (henv, &res_hdbc);
   IF_CERR_GO (res_hdbc, done, rc, NULL);
-  rc =
-      SQLConnect (res_hdbc, box->szDSN, SQL_NTS, box->szUID, SQL_NTS,
-      box->szPWD, SQL_NTS);
+  rc = SQLConnect (res_hdbc, szDSN, SQL_NTS, szUID, SQL_NTS, szPWD, SQL_NTS);
   IF_CERR_GO (res_hdbc, done, rc, NULL);
 
   rc = SQLAllocStmt (res_hdbc, &res_hstmt);
@@ -70,25 +65,14 @@ do_results_login (GtkWidget * widget, gpointer data)
 
   szBuff = 'Y';
   rc = SQLTables (res_hstmt, NULL, 0, NULL, 0,
-      "RESULTS", SQL_NTS, "TABLE", SQL_NTS);
+    "RESULTS", SQL_NTS, "TABLE", SQL_NTS);
   if (SQL_SUCCESS != rc || SQL_SUCCESS != SQLFetch (res_hstmt))
     szBuff = 'N';
   SQLFreeStmt (res_hstmt, SQL_CLOSE);
   res_fHaveResults = (szBuff == 'Y');
-  pane_log ("results connection opened to %s\n", box->szDSN);
+  pane_log ("results connection opened to %s\n", szDSN);
 done:
   rc = 0;
-}
-
-void
-results_login (GtkWidget * widget, gpointer data)
-{
-  GtkWidget *box;
-
-  box = LoginBox_new ("Results connect", get_dsn_list (), NULL, NULL, NULL);
-  gtk_signal_connect (GTK_OBJECT (box), "do_the_work",
-      GTK_SIGNAL_FUNC (do_results_login), NULL);
-  gtk_widget_show (box);
 }
 
 static char *szCreateResultsSQL =
@@ -107,7 +91,7 @@ static char *szCreateResultsSQL =
     "		DRVRVER		char(128)" ")";
 
 void
-do_create_results_table (GtkWidget * widget, gpointer data)
+create_results_table ()
 {
   RETCODE rc;
   HSTMT stmt;
@@ -133,7 +117,7 @@ create_error:
 }
 
 void
-do_drop_results_table (GtkWidget * widget, gpointer data)
+drop_results_table ()
 {
   RETCODE rc;
   HSTMT stmt;
@@ -222,14 +206,16 @@ do_add_results_record (char *test_type, char *result_test_type,
   rc = SQLExecute (lstmt);
   SQLTransact (env, dbc, SQL_COMMIT);
   if (rc == SQL_SUCCESS)
-    pane_log ("Results written to the results table%s\n",
-	res_hstmt ? "" : " using main connection");
+    {
+      pane_log ("Results written to the results table%s\n",
+  	  res_hstmt ? "" : " using main connection");
+    }	
   SQLFreeStmt (lstmt, SQL_CLOSE);
 }
 
 
 void
-add_tpcc_result (GtkWidget * widget, test_t * lpCfg)
+add_tpcc_result (test_t * lpCfg)
 {
   char szTemp[1024];
 
@@ -241,7 +227,8 @@ add_tpcc_result (GtkWidget * widget, test_t * lpCfg)
       do_add_results_record ("TPC-C", szTemp,
 	  henv, lpCfg->hdbc, lpCfg->hstmt,
 	  lpCfg->szDSN,
-	  lpCfg->tpc.c.count_ware, lpCfg->tpc.c.run_time, -1, -1, -1, -1,
+	  lpCfg->tpc.c.count_ware, 
+	  lpCfg->tpc.c.run_time, -1, -1, -1, -1,
 	  lpCfg->szDriverName, lpCfg->szDriverVer, lpCfg->fHaveResults);
     }
   else if (lpCfg->tpc.c.run_time > 0 && lpCfg->tpc.c.tpcc_sum > 0)	/* run the benchmark */

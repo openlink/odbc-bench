@@ -25,6 +25,7 @@
 #include <gtk/gtk.h>
 
 #include "odbcbench.h"
+#include "odbcbench_gtk.h"
 
 GtkWidget *
 message_box_new (GtkWidget * Parent, const gchar * Text, const gchar * Title)
