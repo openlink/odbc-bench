@@ -37,8 +37,21 @@ typedef struct test_s	test_t;
 
 #define XFREE(X)   if (X) free(X);
 
+
 /*
- * Reasonable defaults
+ *  Boolean support
+ */
+#ifndef TRUE
+#define TRUE	1
+#endif
+
+#ifndef FALSE
+#define FALSE	0
+#endif
+
+
+/*
+ *  Reasonable defaults
  */
 #ifndef HAVE_CONFIG_H
 #define PACKAGE			"odbc-bench"
