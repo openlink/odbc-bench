@@ -19,7 +19,7 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-lib_LTLIBRARIES		= libodbcbench-gtk.la
+noinst_LTLIBRARIES		= libodbcbench-gtk.la
 
 INCLUDES	= \
 	-I$(top_srcdir)/odbc-bench \
