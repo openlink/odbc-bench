@@ -301,11 +301,9 @@ do_logout (test_t *ptest)
   if (!ptest->hdbc)
     return;
 
-  MUTEX_ENTER (env_mutex);
   SQLDisconnect (ptest->hdbc);
   SQLFreeConnect (ptest->hdbc);
   ptest->hdbc = (HDBC) 0;
-  MUTEX_LEAVE (env_mutex);
 
   if (IS_C (*ptest))
     {
