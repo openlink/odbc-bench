@@ -462,6 +462,7 @@ AC_SUBST(ODBC_LIBS)
 ##########################################################################
 AC_CONFIG_FILES([
     Makefile 
+    lib/Makefile
     src/Makefile
     src/gtk/Makefile
     scripts/Makefile

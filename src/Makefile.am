@@ -28,24 +28,29 @@ bin_PROGRAMS	= odbc-bench-cmd odbc-bench-gtk
 INCLUDES	= \
 	-I$(top_srcdir)/odbc-bench \
 	-I$(top_srcdir)/odbc-bench/gtk \
+	-I$(top_srcdir)/lib \
 	@ODBC_CFLAGS@ \
 	@GTK_CFLAGS@ \
 	@XML_CFLAGS@
-
-odbc_bench_gtk_LDADD	= \
-	gtk/libodbcbench-gtk.la \
-	@ODBC_LIBS@ \
-	@GTK_LIBS@ \
-	@XML_LIBS@
 
 else
 
 bin_PROGRAMS	= odbc-bench-cmd
 INCLUDES	= \
 	-I$(top_srcdir)/odbc-bench \
+	-I$(top_srcdir)/lib \
 	@ODBC_CFLAGS@ \
 	@XML_CFLAGS@
 endif
+
+
+odbc_bench_gtk_LDADD	= \
+	../lib/libutils.a \
+	gtk/libodbcbench-gtk.la \
+	@ODBC_LIBS@ \
+	@GTK_LIBS@ \
+	@XML_LIBS@ \
+	@LIBADD_DL@
 
 
 odbc_bench_gtk_SOURCES = \
@@ -64,9 +69,10 @@ odbc_bench_gtk_SOURCES = \
 
 
 odbc_bench_cmd_LDADD	= \
-        -ldl \
+	../lib/libutils.a \
 	@ODBC_LIBS@ \
-	@XML_LIBS@
+	@XML_LIBS@ \
+        @LIBADD_DL@
 
 odbc_bench_cmd_SOURCES = \
 	command_line.c \
@@ -95,10 +101,3 @@ noinst_HEADERS	= \
 	tpcc.h \
 	tpccfun.h \
 	olist.h
-
-EXTRA_DIST	= \
-	win32/getopt.c \
-	win32/getopt.h \
-	win32/getopt1.c \
-	win32/mycrt.c 
-
