@@ -135,7 +135,7 @@ drop_results_table ()
       pane_log ("Not Connected\n");
       return;
     }
-  rc = SQLExecDirect (stmt, "drop table results", SQL_NTS);
+  rc = SQLExecDirect (stmt, "drop table RESULTS", SQL_NTS);
   IF_ERR_GO (stmt, drop_error, rc, NULL);
 
   pane_log ("Results table dropped successfully%s\n",
