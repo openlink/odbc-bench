@@ -220,7 +220,7 @@ AC_SUBST(LIBADD_DL)
 ##									##
 ##########################################################################
 
-AC_ARG_ENABLE(gui,
+AC_ARG_ENABLE(pthreads,
 [  --enable-pthreads       build threaded applications (default),
   --disable-pthreads      build non-threaded applications],
 [ case "${enableval}" in
