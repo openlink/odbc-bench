@@ -310,7 +310,7 @@ do_save_selected (char *filename, OList * tests)
       iter = o_list_next (iter);
     }
 
-  ret = (xmlSaveFile (filename, doc) != -1);
+  ret = (xmlSaveFormatFile (filename, doc, 1) != -1);
   xmlFreeDoc (doc);
   if (ret)
     {
@@ -897,7 +897,7 @@ do_save_run_results (char *filename, OList * selected, int nMinutes)
       result = make_result_node (test, ns, root);
       iter = o_list_next (iter);
     }
-  xmlSaveFile (filename, doc);
+  xmlSaveFormatFile (filename, doc, 1);
   xmlFreeDoc (doc);
 }
 
@@ -1180,7 +1180,7 @@ do_threads_run_all (int nTests, OList * tests_orig, int nMinutes,
 	      test->szWarning[0] = 
 	      test->szSQLError[0] = 
 	      test->szSQLState[0] = 0);
-      xmlSaveFile (filename, doc);
+      xmlSaveFormatFile (filename, doc, 1);
     }
 
 
@@ -1377,7 +1377,7 @@ DoRunAll (test_t * test_orig, char *filename)
         goto end;
 
       make_result_node (test, ns, root);
-      xmlSaveFile (filename, doc);
+      xmlSaveFormatFile (filename, doc, 1);
       test->szWarning [0] = '\0';
       test->szSQLError[0] = '\0';
       test->szSQLState[0] = '\0';
