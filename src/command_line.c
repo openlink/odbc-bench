@@ -26,11 +26,8 @@
 #include <stdlib.h>
 #include <string.h>
 #endif
-#if defined (linux)
+
 #include <getopt.h>
-#elif defined (WIN32)
-#include "win32/getopt.h"
-#endif
 
 #include <stdarg.h>
 
