@@ -43,13 +43,24 @@ linux-rpm:
 	rpm -ba contrib/RedHat/odbc-bench.spec
 
 #
-#  Create a tar file containing the library and include files
+#  Create a tar file containing the binaries and support files
 #
 binary-tar:
 	-mkdir @build@
 	$(MAKE) install-strip prefix=`pwd`/@build@
 	tar cvf @build@.tar @build@
 	gzip -9vf @build@.tar
+	rm -rf @build@
+
+#
+#  Create a OpenLink taz file containing the binaries and support files
+#
+openlink-taz:
+	-mkdir @build@
+	$(MAKE) install-strip prefix=`pwd`/@build@
+	(cd @build@; tar cvf ../@build@.tar .)
+	compress -f @build@.tar
+	mv @build@.tar.Z @build@.taz
 	rm -rf @build@
 
 #
