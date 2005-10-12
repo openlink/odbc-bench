@@ -1,5 +1,5 @@
 odbc-bench - a TPC-A and TPC-C like benchmark program for databases
-Copyright (C) 2000-2003 by OpenLink Software <odbc-bench@openlinksw.com>
+Copyright (C) 2000-2005 by OpenLink Software <odbc-bench@openlinksw.com>
 All Rights Reserved.
 
 
@@ -14,7 +14,130 @@ DISCLAIMER
 ==========
 
 The benchmarks in this application are loosely based on the TPC-A and
-TPC-C standard benchmarks, but this application does not claim to be a
-full or precise implementation, nor are the results obtained by this
+TPC-C standard benchmarks, but this application does not claim to be
+a full or precise implementation, nor are the results obtained by this
 application necessarily comparable to the vendor's published results.
 
+
+Package Dependencies
+====================
+To compile this application, please make sure the following packages
+and recommended versions are installed on your system.
+
+        Package	  Version  From
+	========  =======  ==================================
+	gtk+	  1.2.10   ftp://ftp.gtk.org/pub/gtk/v1.2
+	xml2      2.5.4    ftp://xmlsoft.org/
+
+
+For development purposes the following packages may also be required:
+
+        Package	  Version  From
+	========  =======  ==================================
+	autoconf  2.57	   ftp://ftp.gnu.org/pub/gnu/autoconf
+	automake  1.6.3	   ftp://ftp.gnu.org/pub/gnu/automake
+	libtool   1.4.3	   ftp://ftp.gnu.org/pub/gnu/libtool
+
+The above version are used for generating the source distributions with
+are currently generated on a standard RedHat 9 installation. Older version
+of these packages can sometimes be used, but could cause build problems.
+
+To check the version number of the tools installed on your system,
+use one of the following commands:
+
+    $ autoconf --version
+    $ automake --version
+    $ libtoolize --version
+    $ gtk-config --version
+    $ xml2-config --version
+
+
+
+Building software
+=================
+
+This application is portable to a great number of systems. Building
+requires the following steps:
+
+  step 1. Run configure to adjust to target platform
+  step 2. Run make
+  step 3. Run make install
+
+
+Running configure
+-----------------
+The configure program will examine your system for various compiler
+flags, system options etc. In some case extra flags need to be added
+for the C compler to work properly.
+
+For a full list of options, please run:
+
+    ./configure --help
+
+
+The most important arguments are:
+
+*  --prefix=PREFIX         install architecture-independent files in PREFIX
+
+   By default, `make install' will install all the files in
+   `/usr/local/bin', `/usr/local/lib' etc.  You can specify an
+   installation prefix other than `/usr/local' using `--prefix', for
+   instance `--prefix=$HOME'.
+
+
+*  --enable-gui            build GUI applications (default)
+*  --disable-gui           build GUI applications
+
+   By default, both a command line and a graphical version of odbc-bench
+   are build, if the GTK+ libraries can be found. If GTK could not be
+   found, is unusable, or when --disable-gui is used, only a commandline
+   version of the odbc-bench tool is build.
+
+
+*  --enable-pthreads       build threaded applications (default)
+*  --disable-pthreads      build non-threaded applications
+
+   By default, a multithreaded application is build, unless
+   --disable-pthreads is explicitly added to the commandline of configure.
+
+
+*  --with-iodbc(=DIR)      Select iODBC support
+*  --with-odbcsdk(=DIR)    Select OpenLink odbcsdk support
+*  --with-unixodbc(=DIR)   Select UnixODBC support
+*  --with-datadirect(=DIR) Select DataDirect support
+
+   Specify one of these flags to state which driver manager you want
+   to use. The optional =DIR argument should be pointed to the base
+   installation directory of that Driver Manager. If the requested Driver
+   Manager not found, the system will try to locate an appropriate Driver
+   Manager in one of the system library paths.
+
+
+*  --with-odbc-inc=DIR     Specify custom ODBC include directory
+*  --with-odbc-lib=DIR     Specify custom ODBC lib directory
+   
+   If the above methods all fail, or an unknown driver manager is used, 
+   these flags can be used to point to the correct include and lib paths.
+
+
+*  --with-xml-prefix=DIR   Prefix where libxml is installed (optional)
+
+   This flag is only needed when libxml2 is installed in a non-default
+   directory.
+
+
+Some influential environment variables:
+  CC          C compiler command
+  CFLAGS      C compiler flags
+  LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
+              nonstandard directory <lib dir>
+
+
+
+A typical configure command looks something line:
+
+    ./configure --prefix=/usr/local --with-iodbc=/usr/local/iODBC \
+    	--with-xml-prefix=/usr/local/xml2
+
+The configure script will perform a large number of checks to find all
+the header files, libraries and programs the build process needs.
