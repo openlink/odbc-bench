@@ -28,7 +28,7 @@ AC_REVISION($Id$)
 ##########################################################################
 
 AC_INIT([OpenLink ODBC Benchmark Utility],
-        [0.99.22],
+        [0.99.23],
 	[odbc-bench@openlinksw.com],
 	[odbc-bench])
 
@@ -359,19 +359,19 @@ AC_HELP_STRING([--with-iodbc(=DIR)], [Select iODBC support])
     AC_MSG_CHECKING([for iODBC support])
     if test -f "$withval/lib/libiodbc.dylib"
     then
-	found_odbc=yes				# Mac OS X
+	found_odbc=iODBC				# Mac OS X
 	ODBC_CFLAGS="-I$withval/include"
 	ODBC_LIBS="-L$withval/lib -liodbc -liodbcinst"
 	AC_MSG_RESULT(yes)
     elif test -x "$IODBC_CONFIG"
     then
-	found_odbc=yes
+	found_odbc=iODBC
 	ODBC_CFLAGS=`$IODBC_CONFIG --cflags`
 	ODBC_LIBS=`$IODBC_CONFIG --static-libs`
 	AC_MSG_RESULT(yes)
     elif test -f "$withval/lib/libiodbc.a"
     then
-	found_odbc=yes
+	found_odbc=iODBC
 	ODBC_CFLAGS="-I$withval/include"
 	ODBC_LIBS="$withval/lib/libiodbc.a $withval/lib/libiodbcinst.a"
 	AC_MSG_RESULT(yes)
@@ -400,7 +400,7 @@ AC_HELP_STRING([--with-odbcsdk(=DIR)], [Select OpenLink odbcsdk support])
     AC_MSG_CHECKING([for OpenLink odbcsdk support])
     if test -f "$withval/lib/libiodbc.a"
     then
-	found_odbc=yes
+	found_odbc=odbcsdk
 	ODBC_CFLAGS="-I$withval/include"
 	ODBC_LIBS="$withval/lib/libiodbc.a"
 	if test -f "$withval/lib/libiodbcinst.a"
@@ -431,9 +431,37 @@ AC_HELP_STRING([--with-unixodbc(=DIR)], [Select UnixODBC support])
     fi
 
     AC_MSG_CHECKING([for UnixODBC support])
-    if test -f "$withval/lib/libodbc.la"
+    if test -f "$withval/lib/libodbc.a"
     then
-	found_odbc=yes
+	found_odbc=unixODBC
+	ODBC_CFLAGS="-I$withval/include"
+	ODBC_LIBS="-L$withval/lib -lodbc"
+	AC_MSG_RESULT(yes)
+    else
+	AC_MSG_RESULT(no)
+    fi
+])
+fi
+
+#
+#  Check for DataDirect support
+#
+if test "$found_odbc" = "no"
+then
+AC_ARG_WITH(datadirect, [dnl
+AC_HELP_STRING([--with-datadirect(=DIR)], [Select DataDirect support])
+  AC_HELP_STRING([], [DIR is the DataDirect base install directory])
+  AC_HELP_STRING([], [(default=/usr/local)])
+], [
+    if test "$withval" = "yes"
+    then
+	withval=/usr/local
+    fi
+
+    AC_MSG_CHECKING([for DataDirect support])
+    if test -f "$withval/lib/libodbc.a"
+    then
+	found_odbc=DataDirect
 	ODBC_CFLAGS="-I$withval/include"
 	ODBC_LIBS="-L$withval/lib -lodbc"
 	AC_MSG_RESULT(yes)
@@ -481,12 +509,12 @@ AC_HELP_STRING([--with-odbc-lib=DIR], [Specify custom ODBC lib directory])
     test -n "$withval" && LDFLAGS="$LDFLAGS -L$withval"
     AC_CHECK_LIB(iodbc, SQLConnect, 
     [
-	ODBC_LIBS="-L$withval -liodbc"; found_odbc=yes
+	ODBC_LIBS="-L$withval -liodbc"; found_odbc=iODBC
     ],
     [
 	AC_CHECK_LIB(odbc, SQLConnect,
 	[
-	    ODBC_LIBS="-L$withval -lodbc"; found_odbc=yes
+	    ODBC_LIBS="-L$withval -lodbc"; found_odbc=ODBC
 	])
     ])
     LDFLAGS=$ac_save_LDFLAGS
@@ -504,7 +532,7 @@ then
     AC_MSG_CHECKING([for iODBC support])
     if test -x "$IODBC_CONFIG"
     then
-	found_odbc=yes
+	found_odbc=iODBC
 	ODBC_CFLAGS=`$IODBC_CONFIG --cflags`
 	ODBC_LIBS=`$IODBC_CONFIG --static-libs`
 	AC_MSG_RESULT(yes)
@@ -519,12 +547,12 @@ if test "$found_odbc" = "no"
 then
     AC_CHECK_LIB(iodbc, SQLConnect, 
     [
-	ODBC_LIBS="-liodbc"; found_odbc=yes
+	ODBC_LIBS="-liodbc"; found_odbc=iODBC
     ],
     [
 	AC_CHECK_LIB(odbc, SQLConnect,
 	[
-	    ODBC_LIBS="-lodbc"; found_odbc=yes
+	    ODBC_LIBS="-lodbc"; found_odbc=ODBC
 	])
     ])
 fi
@@ -599,6 +627,7 @@ echo "AC_HELP_STRING(libraries, 	[${libdir}])"
 echo "AC_HELP_STRING(manual pages, 	[${mandir}])"
 echo ""
 echo "Extensions"
+echo "AC_HELP_STRING(Driver Manager,	[${found_odbc}])"
 echo "AC_HELP_STRING(GUI Extensions,	[${USE_GUI}])"
 echo "AC_HELP_STRING(ThreadSafe,	[${USE_PTHREADS}])"
 echo ""
