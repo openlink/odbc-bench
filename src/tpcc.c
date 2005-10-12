@@ -1006,6 +1006,8 @@ tpcc_schema_create (void *widget, test_t * lpBench)
     }
   else
     {
+      vCreateTPCCTables (lpBench->szDBMS, lpBench->hstmt);
+      vCreateTPCCIndices (lpBench->szDBMS, lpBench->hstmt);
       pane_log ("No procedure definition script for the DBMS %s\r\n",
 	  lpBench->szDBMS);
     }
