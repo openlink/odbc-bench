@@ -32,7 +32,6 @@ OList *get_selected_tests_list (void);
 void for_all_in_pool (void);
 void pool_update_selected (void);
 
-void do_load_test (char *szFileName);
 void pool_set_selected_items (GList * list);
 void pool_set_selected_item (test_t * test);
 

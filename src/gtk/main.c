@@ -767,72 +767,13 @@ run_selected (GtkWidget * widget, gpointer data)
 	  goto end;
 	}
 
-      pane_log ("RUN STARTED\r\n");
       if (menubar)
 	gtk_widget_set_sensitive (GTK_WIDGET (menubar), FALSE);
-      ptest = (test_t *) tests->data;
-      if (nTests > 1 || ptest->tpc._.nThreads > 1)
-	{
-#if defined(PTHREADS) || defined(WIN32)
-	  if (!bRunAll)
-	    {
-	      do_threads_run (nTests, tests, nMinutes, "Running test");
-	      do_save_run_results (szFileName, tests, nMinutes);
-	    }
-	  else
-	    do_threads_run_all (nTests, tests, nMinutes, szFileName);
-#else
-	  pane_log ("More than one thread required and not supported");
-	  goto end;
-#endif
-	}
-      else
-	{
-	  memset (ptest->szSQLError, 0, sizeof (ptest->szSQLError));
-	  memset (ptest->szSQLState, 0, sizeof (ptest->szSQLState));
-	  if (do_login_gtk (NULL, ptest))
-	    {
-	      get_dsn_data (ptest);
-	      if (ptest->TestType == TPC_A)
-		{
-		  fExecuteSql (ptest, (SQLCHAR *) "delete from HISTORY");
-		  SQLTransact (SQL_NULL_HENV, ptest->hdbc, SQL_COMMIT);
-		}
-	      do_logout (ptest);
-
-	      ptest->tpc._.nMinutes = nMinutes;
-
-	      switch (ptest->TestType)
-		{
-		case TPC_A:
-		  if (bRunAll)
-		    DoRunAll (ptest, szFileName);
-		  else
-		    {
-		      DoRun (ptest, NULL);
-		      do_save_run_results (szFileName, tests, nMinutes);
-		    }
-
-		  break;
-
-		case TPC_C:
-		  do_login_gtk (NULL, ptest);
-		  if (tpcc_run_test (NULL, ptest))
-		    {
-		      add_tpcc_result (ptest);
-		    }
-		  else
-		    pane_log ("TPC-C RUN FAILED\r\n");
-		  do_save_run_results (szFileName, tests, nMinutes);
-		  do_logout (ptest);
-		  break;
-		}
-	    }
-	}
+      do_run_selected (tests, nTests, szFileName, nMinutes, bRunAll);
       if (menubar)
 	gtk_widget_set_sensitive (GTK_WIDGET (menubar), TRUE);
-      pane_log ("RUN FINISHED\r\n");
     }
+
 end:
   if (szFileName)
     g_free (szFileName);

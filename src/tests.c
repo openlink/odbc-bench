@@ -886,6 +886,72 @@ make_result_node (test_t * test, xmlNsPtr ns, xmlNodePtr parent)
   return result;
 }
 
+void
+do_run_selected (OList *tests, int nTests,
+    char *szFileName, int nMinutes, BOOL bRunAll)
+{
+  test_t *ptest;
+
+  pane_log ("RUN STARTED\r\n");
+  ptest = (test_t *) tests->data;
+  if (nTests > 1 || ptest->tpc._.nThreads > 1)
+    {
+#if defined(PTHREADS) || defined(WIN32)
+      if (!bRunAll)
+        {
+	  do_threads_run (nTests, tests, nMinutes, "Running test");
+	  do_save_run_results (szFileName, tests, nMinutes);
+	}
+      else
+	  do_threads_run_all (nTests, tests, nMinutes, szFileName);
+#else
+      pane_log ("More than one thread required and not supported");
+      goto end;
+#endif
+    }
+  else
+    {
+      memset (ptest->szSQLError, 0, sizeof (ptest->szSQLError));
+      memset (ptest->szSQLState, 0, sizeof (ptest->szSQLState));
+      if (do_login (ptest))
+	{
+	  get_dsn_data (ptest);
+	  if (ptest->TestType == TPC_A)
+	    {
+	      fExecuteSql (ptest, (SQLCHAR *) "delete from HISTORY");
+	      SQLTransact (SQL_NULL_HENV, ptest->hdbc, SQL_COMMIT);
+	    }
+	  do_logout (ptest);
+
+	  ptest->tpc._.nMinutes = nMinutes;
+
+	  switch (ptest->TestType)
+	    {
+	    case TPC_A:
+	      if (bRunAll)
+		DoRunAll (ptest, szFileName);
+	      else
+		{
+		  DoRun (ptest, NULL);
+		  do_save_run_results (szFileName, tests, nMinutes);
+		}
+
+	      break;
+
+	    case TPC_C:
+	      do_login (ptest);
+	      if (tpcc_run_test (NULL, ptest))
+		add_tpcc_result (ptest);
+	      else
+		pane_log ("TPC-C RUN FAILED\r\n");
+	      do_save_run_results (szFileName, tests, nMinutes);
+	      do_logout (ptest);
+	      break;
+	    }
+	}
+    }
+  pane_log ("RUN FINISHED\r\n");
+}
 
 void
 do_save_run_results (char *filename, OList * selected, int nMinutes)

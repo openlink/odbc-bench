@@ -228,6 +228,10 @@ void sleep_msecs (long msec);
 int do_save_selected (char *szFileName, OList * tests);
 void do_save_run_results (char *filename, OList * selected, int nMinutes);
 void init_test (test_t * test);
+void do_run_selected (OList * selected, int nTests,
+    char *szFileName, int nMinutes, BOOL bRunAll);
+void do_load_test (char *filename);
+
 
 #ifdef __cplusplus
 }
