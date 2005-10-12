@@ -23,6 +23,10 @@
 #ifndef __TPCA_CODE_H__
 #define __TPCA_CODE_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define NUMITEMS(p1) (sizeof(p1)/sizeof(p1[0]))
 #define SQL_TXN_DRIVER_DEFAULT	0
 #define SQL_CURSOR_MIXED	100
@@ -65,4 +69,9 @@ char *txn_isolation_name (long txn_isolation, char *def);
 long txn_isolation_from_name (char *iso);
 char *cursor_type_name (long txn_isolation, char *def);
 long cursor_type_from_name (char *def);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif

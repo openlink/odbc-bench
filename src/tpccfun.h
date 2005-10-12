@@ -20,6 +20,11 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+ 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 long RandomNumber (long *rnd_seed, long x, long y);
 long MakeAlphaString (long *rnd_seed, int sz1, int sz2, char *str);
 long random_i_id (long *rnd_seed);
@@ -38,5 +43,8 @@ void tpcc_schema_create (void *widget, test_t * lpBench);
 void tpcc_schema_cleanup (void *widget, test_t * lpBench);
 void tpca_run_one (void *widget, void *data);
 
-
 void print_times_str (test_t * lpCfg, char *szBuffer);
+
+#ifdef __cplusplus
+}
+#endif

@@ -27,6 +27,10 @@
 #include <sql.h>
 #include <sqlext.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern int messages_off;
 extern int quiet;
 void print_error (SQLHENV e1, SQLHDBC e2, SQLHSTMT e3, void *test);
@@ -197,3 +201,7 @@ void do_logout (test_t * data);
 int do_login (test_t * data);
 void do_alloc_env (void);
 void do_free_env (int isFreeMutex);
+
+#ifdef __cplusplus
+}
+#endif

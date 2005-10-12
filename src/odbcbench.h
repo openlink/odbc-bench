@@ -30,6 +30,10 @@ typedef struct test_s	test_t;
 #include "odbcinc.h"
 #include "olist.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define NUMITEMS(p1) (sizeof(p1)/sizeof(p1[0]))
 #define IDX_PLAINSQL 1011
 #define	IDX_PARAMS   1012
@@ -64,6 +68,10 @@ typedef struct test_s	test_t;
 #endif
 
 extern void (*pane_log) (const char *format, ...);
+
+#ifdef assert
+#undef assert
+#endif
 
 #ifdef _DEBUG
 #define assert(exp)	((exp)&& gui.err_message ? (void)0 : gui.err_message("'%s', File %s, line %d", #exp, __FILE__, __LINE__))
@@ -220,3 +228,7 @@ void sleep_msecs (long msec);
 int do_save_selected (char *szFileName, OList * tests);
 void do_save_run_results (char *filename, OList * selected, int nMinutes);
 void init_test (test_t * test);
+
+#ifdef __cplusplus
+}
+#endif

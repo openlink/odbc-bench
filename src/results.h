@@ -23,6 +23,11 @@
 
 #ifndef __RESULTS_H_
 #define __RESULTS_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void results_logout ();
 int results_login (char *szDSN, char *szUID, char *sz_PWD);
 void create_results_table ();
@@ -33,4 +38,9 @@ void do_add_results_record (char *test_type, char *result_test_type,
     float fsub1, float fsub2, float fAvgTPTime,
     char *szDriverName, char *szDriverVer, int driver_has_results,
     char *szState, char *szMessage);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif

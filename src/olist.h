@@ -23,6 +23,10 @@
 #ifndef __OLIST_H__
 #define __OLIST_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct _OList		OList;
 typedef struct _OSList		OSList;
 
@@ -55,4 +59,9 @@ OSList *o_slist_last (OSList * list);
 
 #define o_slist_next(list) ((list) ? (((OSList *)list)->next) : NULL)
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* __OLIST_H__ */
+
