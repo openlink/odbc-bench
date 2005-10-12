@@ -307,6 +307,9 @@ TPCARunProps_save_config (TPCARunProps * dlg)
   dlg->lpBench->tpc.a.nRowsetSize =
       (short) GTK_ADJUSTMENT (GTK_SPIN_BUTTON (dlg->rowset_size)->
       adjustment)->value;
+  dlg->lpBench->tpc.a.nKeysetSize =
+      (short) GTK_ADJUSTMENT (GTK_SPIN_BUTTON (dlg->keyset_size)->
+      adjustment)->value;
   dlg->lpBench->tpc.a.nTraversalCount =
       (short) GTK_ADJUSTMENT (GTK_SPIN_BUTTON (dlg->traversal_count)->
       adjustment)->value;
