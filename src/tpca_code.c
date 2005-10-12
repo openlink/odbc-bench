@@ -297,7 +297,7 @@ DRIVERMAP DriverMap[] = {
   {"IBM DB2", 8, 0, 0, FALSE, -1},
   {"Progress 9", 8, 11, 0, FALSE, 5},
   {"Progress", 8, 0, 11, FALSE, -1},
-  {"Virtuoso", 1, 0, 0, FALSE, 0}
+  {"Virtuoso", 1, 0, 0, FALSE, 0} // should be the last!
 };
 
 
@@ -4613,7 +4613,7 @@ sleep_msecs (long msecs)
 {
 #if defined(WIN32)
   Sleep (msecs);
-#elif defined (HAVE_USLEEP)
+#elif defined (HAVE_USLEEP) || defined(__APPLE__)
   usleep (msecs * 1000L);
 #elif defined (HAVE_POLL)
   poll (NULL, 0, msecs);
