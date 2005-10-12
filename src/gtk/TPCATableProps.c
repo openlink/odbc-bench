@@ -270,7 +270,7 @@ make_sub_controls (TPCATableProps * tableloader)
   second_vbox = gtk_vbox_new (FALSE, 10);
   gtk_box_pack_start (GTK_BOX (main_hbox), second_vbox, TRUE, TRUE, 0);
 
-  IndexesFrame = gtk_frame_new ("Indexes");
+  IndexesFrame = gtk_frame_new ("Indices");
   gtk_container_border_width (GTK_CONTAINER (IndexesFrame), 5);
   gtk_box_pack_start (GTK_BOX (second_vbox), IndexesFrame, TRUE, TRUE, 0);
 
@@ -279,7 +279,7 @@ make_sub_controls (TPCATableProps * tableloader)
   gtk_container_add (GTK_CONTAINER (IndexesFrame), helper);
 
   tableloader->create_indexes =
-      gtk_check_button_new_with_label ("Create Indexes");
+      gtk_check_button_new_with_label ("Create Indices");
   gtk_box_pack_start (GTK_BOX (helper), tableloader->create_indexes, TRUE,
       TRUE, 0);
 
@@ -372,8 +372,12 @@ load_config (TPCATableProps * pDlg)
   sprintf (pDlg->ptest->szTemp, "%lu", pDlg->ptest->tpc.a.udwMaxAccount);
   gtk_entry_set_text (GTK_ENTRY (pDlg->num_accounts), pDlg->ptest->szTemp);
 
-  gtk_entry_set_text (GTK_ENTRY (GTK_COMBO (pDlg->dbmstype)->entry),
-      getDriverDBMSName (pDlg->ptest->tpc.a.uwDrvIdx));
+  if (pDlg->ptest->tpc.a.uwDrvIdx >= 0 &&
+      pDlg->ptest->tpc.a.uwDrvIdx < getDriverMapSize())
+    {
+      gtk_entry_set_text (GTK_ENTRY (GTK_COMBO (pDlg->dbmstype)->entry),
+          getDriverDBMSName (pDlg->ptest->tpc.a.uwDrvIdx));
+    }
 
   gtk_entry_set_text (GTK_ENTRY (GTK_COMBO (pDlg->branch_dsn)->entry),
       pDlg->ptest->tpc.a.szBranchDSN[0] ? pDlg->ptest->tpc.
@@ -426,7 +430,7 @@ TPCATableProps_save_config (TPCATableProps * pDlg)
 
   strcpy (pDlg->ptest->szTemp,
       gtk_entry_get_text (GTK_ENTRY (GTK_COMBO (pDlg->dbmstype)->entry)));
-  pDlg->ptest->tpc.a.uwDrvIdx = 16;
+  pDlg->ptest->tpc.a.uwDrvIdx = getDriverMapSize() - 1;
   for (i = 0; i < getDriverMapSize (); i++)
     if (!strcmp (pDlg->ptest->szTemp, getDriverDBMSName (i)))
       {
