@@ -1,0 +1,1146 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 39;
+	objects = {
+		02345980000FD03B11CA0E72 = {
+			children = (
+				1870340FFE93FCAF11CA0CD7,
+			);
+			isa = PBXVariantGroup;
+			name = main.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+//020
+//021
+//022
+//023
+//024
+//080
+//081
+//082
+//083
+//084
+		0867D6AAFE840B52C02AAC07 = {
+			children = (
+				0867D6ABFE840B52C02AAC07,
+			);
+			isa = PBXVariantGroup;
+			name = InfoPlist.strings;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		0867D6ABFE840B52C02AAC07 = {
+			fileEncoding = 10;
+			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
+			name = English;
+			path = English.lproj/InfoPlist.strings;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+//080
+//081
+//082
+//083
+//084
+//180
+//181
+//182
+//183
+//184
+		1870340FFE93FCAF11CA0CD7 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = English.lproj/main.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+//180
+//181
+//182
+//183
+//184
+//190
+//191
+//192
+//193
+//194
+		195DF8CFFE9D517E11CA2CBB = {
+			children = (
+				8D0C4E970486CD37000505A6,
+			);
+			isa = PBXGroup;
+			name = Products;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+//190
+//191
+//192
+//193
+//194
+//1E0
+//1E1
+//1E2
+//1E3
+//1E4
+		1E189D4E08EAC84A00DBF474 = {
+			children = (
+				1E189D5F08EAC8C700DBF474,
+				1E189D6008EAC8C700DBF474,
+				1E189D6108EAC8C700DBF474,
+				1E189D6208EAC8C700DBF474,
+				1E189D6308EAC8C700DBF474,
+				1E189D6408EAC8C700DBF474,
+				1E189D6508EAC8C700DBF474,
+				1E189D6608EAC8C700DBF474,
+			);
+			isa = PBXGroup;
+			name = Images;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		1E189D5F08EAC8C700DBF474 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.png;
+			name = HRidges.png;
+			path = Images/HRidges.png;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E189D6008EAC8C700DBF474 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.png;
+			name = HRidgesDisabled.png;
+			path = Images/HRidgesDisabled.png;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E189D6108EAC8C700DBF474 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.png;
+			name = HSplitter.png;
+			path = Images/HSplitter.png;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E189D6208EAC8C700DBF474 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.png;
+			name = HSplitterDisabled.png;
+			path = Images/HSplitterDisabled.png;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E189D6308EAC8C700DBF474 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.png;
+			name = VRidges.png;
+			path = Images/VRidges.png;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E189D6408EAC8C700DBF474 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.png;
+			name = VRidgesDisabled.png;
+			path = Images/VRidgesDisabled.png;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E189D6508EAC8C700DBF474 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.png;
+			name = VSplitter.png;
+			path = Images/VSplitter.png;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E189D6608EAC8C700DBF474 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.png;
+			name = VSplitterDisabled.png;
+			path = Images/VSplitterDisabled.png;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E189D6708EAC8C700DBF474 = {
+			fileRef = 1E189D5F08EAC8C700DBF474;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E189D6808EAC8C700DBF474 = {
+			fileRef = 1E189D6008EAC8C700DBF474;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E189D6908EAC8C700DBF474 = {
+			fileRef = 1E189D6108EAC8C700DBF474;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E189D6A08EAC8C700DBF474 = {
+			fileRef = 1E189D6208EAC8C700DBF474;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E189D6B08EAC8C700DBF474 = {
+			fileRef = 1E189D6308EAC8C700DBF474;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E189D6C08EAC8C700DBF474 = {
+			fileRef = 1E189D6408EAC8C700DBF474;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E189D6D08EAC8C700DBF474 = {
+			fileRef = 1E189D6508EAC8C700DBF474;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E189D6E08EAC8C800DBF474 = {
+			fileRef = 1E189D6608EAC8C700DBF474;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E189D6F08EAC90000DBF474 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = SplitView.cp;
+			path = ../src/macosx/SplitView.cp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E189D7008EAC90000DBF474 = {
+			fileRef = 1E189D6F08EAC90000DBF474;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E189D7108EAC97E00DBF474 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = TCarbonEvent.cp;
+			path = ../src/macosx/TCarbonEvent.cp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E189D7308EAC97E00DBF474 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = TView.cp;
+			path = ../src/macosx/TView.cp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E189D7408EAC97E00DBF474 = {
+			fileRef = 1E189D7108EAC97E00DBF474;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E189D7608EAC97E00DBF474 = {
+			fileRef = 1E189D7308EAC97E00DBF474;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E22DD2C08EEA2AA00314488 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			name = command_line.c;
+			path = ../src/command_line.c;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E22DD2D08EEA2AA00314488 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			name = isql_interface.c;
+			path = ../src/isql_interface.c;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E22DD2E08EEA2AA00314488 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			name = odbcs.c;
+			path = ../src/odbcs.c;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E22DD2F08EEA2AA00314488 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			name = olist.c;
+			path = ../src/olist.c;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E22DD3008EEA2AA00314488 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			name = prefs.c;
+			path = ../src/prefs.c;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E22DD3108EEA2AA00314488 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			name = results.c;
+			path = ../src/results.c;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E22DD3208EEA2AA00314488 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			name = tests.c;
+			path = ../src/tests.c;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E22DD3308EEA2AA00314488 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			name = threads.c;
+			path = ../src/threads.c;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E22DD3408EEA2AA00314488 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			name = time.c;
+			path = ../src/time.c;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E22DD3508EEA2AA00314488 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			name = tpca_code.c;
+			path = ../src/tpca_code.c;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E22DD3608EEA2AA00314488 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			name = tpcc.c;
+			path = ../src/tpcc.c;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E22DD3708EEA2AA00314488 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			name = tpcctrx.c;
+			path = ../src/tpcctrx.c;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E22DD3808EEA2AA00314488 = {
+			fileRef = 1E22DD2C08EEA2AA00314488;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E22DD3908EEA2AA00314488 = {
+			fileRef = 1E22DD2D08EEA2AA00314488;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E22DD3A08EEA2AA00314488 = {
+			fileRef = 1E22DD2E08EEA2AA00314488;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E22DD3B08EEA2AA00314488 = {
+			fileRef = 1E22DD2F08EEA2AA00314488;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E22DD3C08EEA2AA00314488 = {
+			fileRef = 1E22DD3008EEA2AA00314488;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E22DD3D08EEA2AA00314488 = {
+			fileRef = 1E22DD3108EEA2AA00314488;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E22DD3E08EEA2AA00314488 = {
+			fileRef = 1E22DD3208EEA2AA00314488;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E22DD3F08EEA2AA00314488 = {
+			fileRef = 1E22DD3308EEA2AA00314488;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E22DD4008EEA2AA00314488 = {
+			fileRef = 1E22DD3408EEA2AA00314488;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E22DD4108EEA2AA00314488 = {
+			fileRef = 1E22DD3508EEA2AA00314488;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E22DD4208EEA2AA00314488 = {
+			fileRef = 1E22DD3608EEA2AA00314488;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E22DD4308EEA2AA00314488 = {
+			fileRef = 1E22DD3708EEA2AA00314488;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E22DD4F08EEA30E00314488 = {
+			children = (
+				1E300DE508FC2A8700564761,
+				1E300DC808FC285E00564761,
+				1E300DC908FC285E00564761,
+				1E300DCA08FC285E00564761,
+				1E300DCB08FC285E00564761,
+				1E300DCC08FC285E00564761,
+				20286C2BFDCF999611CA2CEA,
+				32DBCF6D0370B57F00C91783,
+				1E189D7308EAC97E00DBF474,
+				1E189D6F08EAC90000DBF474,
+				1E189D7108EAC97E00DBF474,
+				1E300D8308FC193400564761,
+				1E300D8708FC195400564761,
+				1E300D9508FC1C1C00564761,
+				1E300D9608FC1C1C00564761,
+				1E300D9808FC1CCC00564761,
+				1E300D9908FC1CCC00564761,
+				1E300D9B08FC1DF100564761,
+				1E300D9C08FC1EA500564761,
+				1E300DB508FC227100564761,
+				1E300DED08FC2B5D00564761,
+				1E300DEE08FC2B5D00564761,
+				1E300DF508FC2D4500564761,
+				1E300EA608FC319D00564761,
+				1E300ED708FC34DF00564761,
+			);
+			isa = PBXGroup;
+			name = macosx;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		1E22DE8408EEA4E300314488 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = iODBC.framework;
+			path = /Library/Frameworks/iODBC.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		1E22DE8508EEA4E300314488 = {
+			fileRef = 1E22DE8408EEA4E300314488;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E300D8308FC193400564761 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = util.h;
+			path = ../src/macosx/util.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300D8708FC195400564761 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			name = util.c;
+			path = ../src/macosx/util.c;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300D8808FC195400564761 = {
+			fileRef = 1E300D8708FC195400564761;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E300D9508FC1C1C00564761 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = Dialog.h;
+			path = ../src/macosx/Dialog.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300D9608FC1C1C00564761 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = Dialog.cpp;
+			path = ../src/macosx/Dialog.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300D9708FC1C1C00564761 = {
+			fileRef = 1E300D9608FC1C1C00564761;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E300D9808FC1CCC00564761 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = LoginDialog.h;
+			path = ../src/macosx/LoginDialog.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300D9908FC1CCC00564761 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = LoginDialog.cpp;
+			path = ../src/macosx/LoginDialog.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300D9A08FC1CCC00564761 = {
+			fileRef = 1E300D9908FC1CCC00564761;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E300D9B08FC1DF100564761 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = odbcbench_macosx.h;
+			path = ../src/macosx/odbcbench_macosx.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300D9C08FC1EA500564761 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = TestPool.h;
+			path = ../src/macosx/TestPool.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300DA808FC204500564761 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = odbcinc.h;
+			path = ../src/odbcinc.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300DA908FC204500564761 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = olist.h;
+			path = ../src/olist.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300DAA08FC204500564761 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = results.h;
+			path = ../src/results.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300DAB08FC204500564761 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = thr.h;
+			path = ../src/thr.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300DAC08FC204500564761 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = timeacct.h;
+			path = ../src/timeacct.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300DAD08FC204500564761 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = tpca_code.h;
+			path = ../src/tpca_code.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300DAE08FC204500564761 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = tpca.h;
+			path = ../src/tpca.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300DAF08FC204500564761 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = tpcc.h;
+			path = ../src/tpcc.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300DB008FC204500564761 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = tpccfun.h;
+			path = ../src/tpccfun.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300DB508FC227100564761 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = TestPool.cpp;
+			path = ../src/macosx/TestPool.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300DB608FC227100564761 = {
+			fileRef = 1E300DB508FC227100564761;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E300DC808FC285E00564761 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = SplitView.h;
+			path = ../src/macosx/SplitView.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300DC908FC285E00564761 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = TCarbonEvent.h;
+			path = ../src/macosx/TCarbonEvent.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300DCA08FC285E00564761 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = TestPoolItemList.cpp;
+			path = ../src/macosx/TestPoolItemList.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300DCB08FC285E00564761 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = TRect.h;
+			path = ../src/macosx/TRect.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300DCC08FC285E00564761 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = TView.h;
+			path = ../src/macosx/TView.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300DCD08FC285E00564761 = {
+			fileRef = 1E300DCA08FC285E00564761;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E300DE508FC2A8700564761 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = TestPoolItemList.h;
+			path = ../src/macosx/TestPoolItemList.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300DED08FC2B5D00564761 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = StatusDialog.h;
+			path = ../src/macosx/StatusDialog.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300DEE08FC2B5D00564761 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = StatusDialog.cpp;
+			path = ../src/macosx/StatusDialog.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300DEF08FC2B5D00564761 = {
+			fileRef = 1E300DEE08FC2B5D00564761;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E300DF508FC2D4500564761 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = file.cpp;
+			path = ../src/macosx/file.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300DF608FC2D4500564761 = {
+			fileRef = 1E300DF508FC2D4500564761;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E300EA608FC319D00564761 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = run_details.cpp;
+			path = "/Volumes/openlink/odbc-bench/src/macosx/run_details.cpp";
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		1E300EA708FC319D00564761 = {
+			fileRef = 1E300EA608FC319D00564761;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E300ED708FC34DF00564761 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = table_details.cpp;
+			path = ../src/macosx/table_details.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		1E300ED808FC34DF00564761 = {
+			fileRef = 1E300ED708FC34DF00564761;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1E300F4808FC408F00564761 = {
+			isa = PBXFileReference;
+			lastKnownFileType = "compiled.mach-o.dylib";
+			name = libxml2.2.dylib;
+			path = /usr/lib/libxml2.2.dylib;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		1E300F4908FC408F00564761 = {
+			fileRef = 1E300F4808FC408F00564761;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//1E0
+//1E1
+//1E2
+//1E3
+//1E4
+//200
+//201
+//202
+//203
+//204
+		20286C28FDCF999611CA2CEA = {
+			buildSettings = {
+			};
+			buildStyles = (
+				4A9504C5FFE6A39111CA0CBA,
+				4A9504C6FFE6A39111CA0CBA,
+			);
+			hasScannedForEncodings = 1;
+			isa = PBXProject;
+			mainGroup = 20286C29FDCF999611CA2CEA;
+			projectDirPath = "";
+			targets = (
+				8D0C4E890486CD37000505A6,
+			);
+		};
+		20286C29FDCF999611CA2CEA = {
+			children = (
+				20286C2AFDCF999611CA2CEA,
+				20286C2CFDCF999611CA2CEA,
+				20286C32FDCF999611CA2CEA,
+				195DF8CFFE9D517E11CA2CBB,
+			);
+			isa = PBXGroup;
+			name = "odbc-bench";
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		20286C2AFDCF999611CA2CEA = {
+			children = (
+				1E300F4808FC408F00564761,
+				1E300DA808FC204500564761,
+				1E300DA908FC204500564761,
+				1E300DAA08FC204500564761,
+				1E300DAB08FC204500564761,
+				1E300DAC08FC204500564761,
+				1E300DAD08FC204500564761,
+				1E300DAE08FC204500564761,
+				1E300DAF08FC204500564761,
+				1E300DB008FC204500564761,
+				1E22DD4F08EEA30E00314488,
+				1E22DD2C08EEA2AA00314488,
+				1E22DD2D08EEA2AA00314488,
+				1E22DD2E08EEA2AA00314488,
+				1E22DD2F08EEA2AA00314488,
+				1E22DD3008EEA2AA00314488,
+				1E22DD3108EEA2AA00314488,
+				1E22DD3208EEA2AA00314488,
+				1E22DD3308EEA2AA00314488,
+				1E22DD3408EEA2AA00314488,
+				1E22DD3508EEA2AA00314488,
+				1E22DD3608EEA2AA00314488,
+				1E22DD3708EEA2AA00314488,
+			);
+			isa = PBXGroup;
+			name = Sources;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		20286C2BFDCF999611CA2CEA = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = main.cpp;
+			path = ../src/macosx/main.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		20286C2CFDCF999611CA2CEA = {
+			children = (
+				1E189D4E08EAC84A00DBF474,
+				8D0C4E960486CD37000505A6,
+				0867D6AAFE840B52C02AAC07,
+				02345980000FD03B11CA0E72,
+			);
+			isa = PBXGroup;
+			name = Resources;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		20286C32FDCF999611CA2CEA = {
+			children = (
+				1E22DE8408EEA4E300314488,
+				20286C33FDCF999611CA2CEA,
+				4A9504CAFFE6A41611CA0CBA,
+				4A9504C8FFE6A3BC11CA0CBA,
+			);
+			isa = PBXGroup;
+			name = "External Frameworks and Libraries";
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		20286C33FDCF999611CA2CEA = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = Carbon.framework;
+			path = /System/Library/Frameworks/Carbon.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+//200
+//201
+//202
+//203
+//204
+//320
+//321
+//322
+//323
+//324
+		32DBCF6D0370B57F00C91783 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = "odbc-bench_Prefix.pch";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+//320
+//321
+//322
+//323
+//324
+//4A0
+//4A1
+//4A2
+//4A3
+//4A4
+		4A9504C5FFE6A39111CA0CBA = {
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PREBINDING = NO;
+				ZERO_LINK = YES;
+			};
+			isa = PBXBuildStyle;
+			name = Development;
+		};
+		4A9504C6FFE6A39111CA0CBA = {
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				PREBINDING = NO;
+				ZERO_LINK = NO;
+			};
+			isa = PBXBuildStyle;
+			name = Deployment;
+		};
+		4A9504C8FFE6A3BC11CA0CBA = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = ApplicationServices.framework;
+			path = /System/Library/Frameworks/ApplicationServices.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		4A9504CAFFE6A41611CA0CBA = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = CoreServices.framework;
+			path = /System/Library/Frameworks/CoreServices.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+//4A0
+//4A1
+//4A2
+//4A3
+//4A4
+//8D0
+//8D1
+//8D2
+//8D3
+//8D4
+		8D0C4E890486CD37000505A6 = {
+			buildPhases = (
+				8D0C4E8C0486CD37000505A6,
+				8D0C4E8F0486CD37000505A6,
+				8D0C4E910486CD37000505A6,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "odbc-bench_Prefix.pch";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /usr/include/libxml2;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				PREBINDING = NO;
+				PRODUCT_NAME = "odbc-bench";
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			dependencies = (
+			);
+			isa = PBXNativeTarget;
+			name = "odbc-bench";
+			productInstallPath = "$(HOME)/Applications";
+			productName = "odbc-bench";
+			productReference = 8D0C4E970486CD37000505A6;
+			productType = "com.apple.product-type.application";
+		};
+		8D0C4E8C0486CD37000505A6 = {
+			buildActionMask = 2147483647;
+			files = (
+				8D0C4E8D0486CD37000505A6,
+				8D0C4E8E0486CD37000505A6,
+				1E189D6708EAC8C700DBF474,
+				1E189D6808EAC8C700DBF474,
+				1E189D6908EAC8C700DBF474,
+				1E189D6A08EAC8C700DBF474,
+				1E189D6B08EAC8C700DBF474,
+				1E189D6C08EAC8C700DBF474,
+				1E189D6D08EAC8C700DBF474,
+				1E189D6E08EAC8C800DBF474,
+			);
+			isa = PBXResourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8D0C4E8D0486CD37000505A6 = {
+			fileRef = 0867D6AAFE840B52C02AAC07;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		8D0C4E8E0486CD37000505A6 = {
+			fileRef = 02345980000FD03B11CA0E72;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		8D0C4E8F0486CD37000505A6 = {
+			buildActionMask = 2147483647;
+			files = (
+				8D0C4E900486CD37000505A6,
+				1E189D7008EAC90000DBF474,
+				1E189D7408EAC97E00DBF474,
+				1E189D7608EAC97E00DBF474,
+				1E22DD3808EEA2AA00314488,
+				1E22DD3908EEA2AA00314488,
+				1E22DD3A08EEA2AA00314488,
+				1E22DD3B08EEA2AA00314488,
+				1E22DD3C08EEA2AA00314488,
+				1E22DD3D08EEA2AA00314488,
+				1E22DD3E08EEA2AA00314488,
+				1E22DD3F08EEA2AA00314488,
+				1E22DD4008EEA2AA00314488,
+				1E22DD4108EEA2AA00314488,
+				1E22DD4208EEA2AA00314488,
+				1E22DD4308EEA2AA00314488,
+				1E300D8808FC195400564761,
+				1E300D9708FC1C1C00564761,
+				1E300D9A08FC1CCC00564761,
+				1E300DB608FC227100564761,
+				1E300DCD08FC285E00564761,
+				1E300DEF08FC2B5D00564761,
+				1E300DF608FC2D4500564761,
+				1E300EA708FC319D00564761,
+				1E300ED808FC34DF00564761,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8D0C4E900486CD37000505A6 = {
+			fileRef = 20286C2BFDCF999611CA2CEA;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		8D0C4E910486CD37000505A6 = {
+			buildActionMask = 2147483647;
+			files = (
+				8D0C4E920486CD37000505A6,
+				1E22DE8508EEA4E300314488,
+				1E300F4908FC408F00564761,
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8D0C4E920486CD37000505A6 = {
+			fileRef = 20286C33FDCF999611CA2CEA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		8D0C4E960486CD37000505A6 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text.plist;
+			path = Info.plist;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8D0C4E970486CD37000505A6 = {
+			explicitFileType = wrapper.application;
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = "odbc-bench.app";
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+	};
+	rootObject = 20286C28FDCF999611CA2CEA;
+}
