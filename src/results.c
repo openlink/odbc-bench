@@ -34,6 +34,8 @@ static SQLLEN null_val = SQL_NULL_DATA;
 void
 results_logout ()
 {
+  res_fHaveResults = FALSE;
+  
   if (!res_hstmt)
     return;
 
@@ -123,7 +125,8 @@ create_results_table ()
 
   pane_log ("Results table created%s\r\n",
       (res_hstmt ? "" : " using the main connection"));
-
+  res_fHaveResults = TRUE;
+  
 create_error:
   rc = 0;
 }
