@@ -779,9 +779,9 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = run_details.cpp;
-			path = "/Volumes/openlink/odbc-bench/src/macosx/run_details.cpp";
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/macosx/run_details.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		1E300EA708FC319D00564761 = {
 			fileRef = 1E300EA608FC319D00564761;
@@ -858,6 +858,7 @@
 		};
 		20286C2AFDCF999611CA2CEA = {
 			children = (
+				CDBCE2CE090CD06900C4B449,
 				1E300F4808FC408F00564761,
 				1E300DA808FC204500564761,
 				1E300DA908FC204500564761,
@@ -1097,6 +1098,8 @@
 				1E300DF608FC2D4500564761,
 				1E300EA708FC319D00564761,
 				1E300ED808FC34DF00564761,
+				CDBCE2D0090CD09200C4B449,
+				CDBCE2D2090CD0A500C4B449,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1140,6 +1143,56 @@
 			path = "odbc-bench.app";
 			refType = 3;
 			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+//8D0
+//8D1
+//8D2
+//8D3
+//8D4
+//CD0
+//CD1
+//CD2
+//CD3
+//CD4
+		CDBCE2CE090CD06900C4B449 = {
+			children = (
+				CDBCE2D1090CD0A500C4B449,
+				CDBCE2CF090CD09200C4B449,
+			);
+			isa = PBXGroup;
+			name = lib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		CDBCE2CF090CD09200C4B449 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			name = getopt.c;
+			path = ../lib/getopt.c;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		CDBCE2D0090CD09200C4B449 = {
+			fileRef = CDBCE2CF090CD09200C4B449;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		CDBCE2D1090CD0A500C4B449 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			name = getopt1.c;
+			path = ../lib/getopt1.c;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		CDBCE2D2090CD0A500C4B449 = {
+			fileRef = CDBCE2D1090CD0A500C4B449;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 	};
 	rootObject = 20286C28FDCF999611CA2CEA;
