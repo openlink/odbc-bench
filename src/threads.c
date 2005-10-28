@@ -348,9 +348,9 @@ do_threads_run (int nConnCount, OList * tests, int nMinutes, char *szTitle)
   lpBenchInfo->ShowProgress (NULL, szTitle, FALSE, nMinutes * 60);
   lpBenchInfo->SetWorkingItem (szTemp);
 
-  data = (test_t **) malloc (nConnCount * sizeof (test_t *));
-  workers = (THREAD_T **) malloc (nConnCount * sizeof (THREAD_T *));
-  n_threads = (int *) malloc (nConnCount * sizeof (int));
+  data = (test_t **) calloc (nConnCount, sizeof (test_t *));
+  workers = (THREAD_T **) calloc (nConnCount, sizeof (THREAD_T *));
+  n_threads = (int *) calloc (nConnCount, sizeof (int));
   pane_log = dummy_pane_log;
 
   for (iter = tests, conn = 0; iter; iter = o_list_next (iter), conn++)
@@ -368,9 +368,9 @@ do_threads_run (int nConnCount, OList * tests, int nMinutes, char *szTitle)
 	  do_logout (test);
 
 	  n_threads[conn] = test->tpc._.nThreads ? test->tpc._.nThreads : 1;
-	  data[conn] = (test_t *) malloc (n_threads[conn] * sizeof (test_t));
+	  data[conn] = (test_t *) calloc (n_threads[conn], sizeof (test_t));
 	  workers[conn] =
-	      (THREAD_T *) malloc (n_threads[conn] * sizeof (THREAD_T));
+	      (THREAD_T *) calloc (n_threads[conn], sizeof (THREAD_T));
 	  nThreads += n_threads[conn];
 	  memset (test->szSQLError, 0, sizeof (test->szSQLError));
 	  memset (test->szSQLState, 0, sizeof (test->szSQLState));
