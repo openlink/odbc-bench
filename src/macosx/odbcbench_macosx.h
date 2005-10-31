@@ -58,15 +58,20 @@ class OPL_TestPoolItemList;
 void do_open(OPL_TestPool *testPool);
 
 // Save item list to file
-void do_save(OPL_TestPoolItemList *itemList, bool askFileName, bool setFileName);
+bool do_save(OPL_TestPoolItemList *itemList, bool askFileName, bool setFileName);
+
+// Save changes to file
+bool do_save_changes(OPL_TestPool *testPool, bool quitting);
 
 // Add test to the pool
 int OPL_add_test_to_the_pool(test_t *test);
 
 // Application menu
 void do_preferences();
+OSStatus do_quit();
 
 // File menu
+void do_file_new();
 void do_file_open();
 void do_file_save();
 void do_file_save_as();

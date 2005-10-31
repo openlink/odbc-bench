@@ -49,9 +49,14 @@ CFComparisonResult OPL_CFString_cmp(const void *a, const void *b, void * /* ctx 
 OSStatus OPL_GetFSRefFromAEDesc(FSRef *fsRef, AEDesc *item);
 
 // Get file name for saving
-OSStatus OPL_getSaveFileName(char *path, size_t path_len,
-					CFStringRef title, CFStringRef defaultFileName);
+bool OPL_getSaveFileName(char *path, size_t path_len,
+					     CFStringRef title, CFStringRef defaultFileName);
 
+// Ask to save changes
+bool
+OPL_getSaveChangesFileName(char *path, size_t path_len,
+						   CFStringRef fileName, bool quitting);
+					
 #ifdef __cplusplus
 }
 #endif

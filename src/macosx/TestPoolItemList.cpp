@@ -73,15 +73,17 @@ error:
 
 // Get item list
 /* static */ OPL_TestPoolItemList *
-OPL_TestPoolItemList::get(DataBrowserItemState itemState, bool allowEmpty)
+OPL_TestPoolItemList::get(OPL_TestPool *testPool,
+	DataBrowserItemState itemState, bool allowEmpty)
 {
-	OPL_TestPool *testPool;
 	OPL_TestPoolItemList *itemList;
 	
 	// get current test pool (if any)
-	testPool = OPL_TestPool::get();
-	if (testPool == NULL)
-		goto error;
+	if (testPool == NULL) {
+		testPool = OPL_TestPool::get();
+		if (testPool == NULL)
+			goto error;
+	}
 	
 	// create and initialize new instance
 	itemList = new OPL_TestPoolItemList(testPool);

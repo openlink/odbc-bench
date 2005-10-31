@@ -176,6 +176,64 @@ error:
 	return err;
 }
 
+// Close window
+OSStatus
+OPL_CloseWindow()
+{
+	OPL_TestPool *testPool;
+
+	testPool = OPL_TestPool::get();
+	if (testPool != NULL) {
+		EventRef event;
+		
+		if (testPool->isDirty() && !do_save_changes(testPool, false))
+			return noErr;
+			
+		WindowRef window = testPool->getWindow();
+		delete testPool;
+		RemoveWindowProperty(window, kPropertyCreator, kPropertyTag);
+			
+		CreateEvent(NULL, kEventClassWindow, kEventWindowClose, 0, 0, &event);
+		SetEventParameter(event, kEventParamDirectObject, typeWindowRef,
+			sizeof(window), &window);
+		SendEventToEventTarget(event, GetWindowEventTarget(window));
+	}
+	
+	return noErr;
+}
+
+// Process menu command
+pascal OSStatus
+window_event_handler(EventHandlerCallRef handlerRef, EventRef eventRef, void *userData)
+{
+	OSStatus err = eventNotHandledErr;
+	UInt32 eventClass = GetEventClass(eventRef);
+	UInt32 eventKind = GetEventKind(eventRef);
+	HICommand cmd;
+
+	if (eventClass != kEventClassCommand && eventKind != kEventCommandProcess)
+		return err;
+	
+	// Obtain HICommand
+	err = GetEventParameter(eventRef, kEventParamDirectObject,  
+		typeHICommand, NULL, sizeof(cmd), NULL, &cmd);
+	require_noerr(err, error);
+	
+	// Process commands
+	err = noErr;
+	switch (cmd.commandID) {
+	case kHICommandClose:
+		err = OPL_CloseWindow();
+		break;
+		
+	default:
+		return eventNotHandledErr;
+	}
+	
+error:
+	return err;
+}
+
 // Create new main window
 OSStatus
 OPL_NewWindow(CFStringRef filename /* = NULL */)
@@ -292,34 +350,22 @@ OPL_NewWindow(CFStringRef filename /* = NULL */)
 		sizeof(logView), &logView);
 	require_noerr(err, error);
 
+	// install window event handler
+    static EventTypeSpec window_events[] = {
+		{ kEventClassCommand, kEventCommandProcess }
+	};
+
+	static EventHandlerUPP g_eventHandlerUPP = NULL;
+	if (!g_eventHandlerUPP)
+		g_eventHandlerUPP = NewEventHandlerUPP(window_event_handler);
+	err = InstallWindowEventHandler(window, g_eventHandlerUPP,
+		GetEventTypeCount(window_events), window_events, NULL, NULL);
+
     // the window was created hidden so show it.
     ShowWindow(window);
 	
 error:
 	return err;
-}
-
-// Close window
-OSStatus
-OPL_CloseWindow()
-{
-	OPL_TestPool *testPool;
-
-	testPool = OPL_TestPool::get();
-	if (testPool != NULL) {
-		EventRef event;
-		
-		WindowRef window = testPool->getWindow();
-		delete testPool;
-		RemoveWindowProperty(window, kPropertyCreator, kPropertyTag);
-			
-		CreateEvent(NULL, kEventClassWindow, kEventWindowClose, 0, 0, &event);
-		SetEventParameter(event, kEventParamDirectObject, typeWindowRef,
-			sizeof(window), &window);
-		SendEventToEventTarget(event, GetWindowEventTarget(window));
-	}
-	
-	return noErr;
 }
 
 // Process menu command
@@ -347,9 +393,13 @@ app_event_handler(EventHandlerCallRef handlerRef, EventRef eventRef, void *userD
 		do_preferences();
 		break;
 
+	case kHICommandQuit:
+		err = do_quit();
+		break;
+		
 // File menu
 	case kHICommandNew:
-		err = OPL_NewWindow();
+		do_file_new();
 		break;
 
 	case kHICommandOpen:
@@ -362,10 +412,6 @@ app_event_handler(EventHandlerCallRef handlerRef, EventRef eventRef, void *userD
 		
 	case kHICommandSaveAs:
 		do_file_save_as();
-		break;
-		
-	case kHICommandClose:
-		err = OPL_CloseWindow();
 		break;
 		
 	case CMD_CLEAR_LOG:
@@ -671,13 +717,12 @@ main(int argc, char *argv[])
 		GetEventTypeCount(menu_events), menu_events, NULL, NULL);
 	require_noerr(err, CantInstallEventHandler);
 
-	err = OPL_NewWindow();
-    require_noerr(err, CantCreateWindow);
+	// create new empty document
+	do_file_new();
     
 	// Call the event loop
     RunApplicationEventLoop();
 
-CantCreateWindow:
 CantSetMenuBar:
 CantGetNibRef:
 CantInstallEventHandler:
@@ -688,6 +733,32 @@ CantInstallEventHandler:
 
 static ControlID kPrefRefreshRate = { 'PREF', 0 };
 static ControlID kPrefLockTimeout = { 'PREF', 1 };
+
+OSStatus
+do_quit()
+{
+	OSStatus err = noErr;
+	WindowRef window;
+	
+	for (window = GetFrontWindowOfClass(kDocumentWindowClass, false);
+	     window != NULL;
+		 window = GetNextWindowOfClass(window, kDocumentWindowClass, false)) {
+		// get TestPool instance
+		OPL_TestPool *testPool;
+		
+		err = GetWindowProperty(window, kPropertyCreator, kPropertyTag,
+		   sizeof(testPool), NULL, &testPool);
+		require_noerr(err, error);
+		
+		if (testPool->isDirty() && !do_save_changes(testPool, true))
+			return noErr;
+	}
+	
+error:
+	if (err == noErr)
+		return eventNotHandledErr;
+	return noErr;
+}
 
 void
 do_preferences()
@@ -714,6 +785,22 @@ do_preferences()
 // File menu
 
 void
+do_file_new()
+{
+	OSStatus err;
+	
+	err = OPL_NewWindow();
+    require_noerr(err, error);
+
+	OPL_TestPool *testPool;
+	if ((testPool = OPL_TestPool::get()) != NULL)
+		testPool->setDirty(true);
+
+error:
+	/* nothing to do */;
+}
+
+void
 do_file_open()
 {
 	do_open(NULL);
@@ -727,7 +814,10 @@ do_file_save()
 	if (allItems.get() == NULL)
 		return;
 
-	do_save(allItems.get(), false, true);
+	if (!do_save(allItems.get(), false, true))
+		return;
+		
+	allItems->getTestPool()->setDirty(false);
 }
 
 void
@@ -738,7 +828,10 @@ do_file_save_as()
 	if (allItems.get() == NULL)
 		return;
 
-	do_save(allItems.get(), true, true);
+	if (!do_save(allItems.get(), true, true))
+		return;
+		
+	allItems->getTestPool()->setDirty(false);
 }
 
 void
@@ -779,8 +872,15 @@ do_new_item()
 	test->is_dirty = TRUE;
 	init_test(test);
 
-	if (!OPL_add_test_to_the_pool(test))
+	if (!OPL_add_test_to_the_pool(test)) {
 		free(test);
+		return;
+	}
+
+	OPL_TestPool *testPool = OPL_TestPool::get();
+	if (testPool == NULL)
+		return;
+	testPool->setDirty(true);
 }
 
 void
@@ -792,6 +892,7 @@ do_delete_items()
 		return;
 
 	selectedItems->remove();
+	selectedItems->getTestPool()->setDirty(true);
 }
 
 void
@@ -863,6 +964,7 @@ do_login_details()
 	free(uid);
 	free(pwd);
 	selectedItems->update();
+	selectedItems->getTestPool()->setDirty(true);
 }
 
 void
@@ -875,6 +977,7 @@ do_insert_file()
 		return;
 		
 	do_open(testPool);
+	testPool->setDirty(true);
 }
 
 // Action menu

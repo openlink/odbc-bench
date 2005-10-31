@@ -187,6 +187,8 @@ do_table_details_tpc_c(test_t *test)
 void
 do_table_details()
 {
+	bool isDirty = false;
+	
 	std::auto_ptr<OPL_TestPoolItemList> selectedItems(
 		OPL_TestPoolItemList::getSelected());
 	if (selectedItems.get() == NULL)
@@ -208,5 +210,10 @@ do_table_details()
 
 		if (!rc)
 			break;
+		if (!isDirty)
+			isDirty = true;
 	}
+
+	if (isDirty)
+		selectedItems->getTestPool()->setDirty(true);
 }

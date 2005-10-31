@@ -21,6 +21,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <memory>
 #include "odbcbench_macosx.h"
 #include "TestPoolItemList.h"
 #include "util.h"
@@ -92,7 +93,7 @@ error:
 }
 
 // Save item list to file
-void
+bool
 do_save(OPL_TestPoolItemList *itemList, bool askFileName, bool setFileName)
 {
 	OPL_TestPool *testPool = itemList->getTestPool();
@@ -101,7 +102,7 @@ do_save(OPL_TestPoolItemList *itemList, bool askFileName, bool setFileName)
 	
 	if (!testPool->getFileName() || askFileName) {
 		if (!OPL_getSaveFileName(path, sizeof(path), NULL, NULL))
-			return;
+			return false;
 			
 		if (setFileName)
 			testPool->setFileName(OPL_char_to_CFString(path));
@@ -116,4 +117,36 @@ do_save(OPL_TestPoolItemList *itemList, bool askFileName, bool setFileName)
 	item_olist = itemList->getAsOList();
 	do_save_selected(path, item_olist);
 	o_list_free(item_olist);
+	
+	return true;
+}
+
+// Save changes
+bool
+do_save_changes(OPL_TestPool *testPool, bool quitting)
+{
+	char path[PATH_MAX];
+	OList *item_olist;
+	
+	if (!OPL_getSaveChangesFileName(path, sizeof(path), testPool->getFileName(), quitting)) {
+		// cancel
+		return false;
+	}
+	if (path[0] == '\0') {
+		// don't save changes
+		return true;
+	}
+		
+	testPool->setFileName(OPL_char_to_CFString(path));
+	
+	std::auto_ptr<OPL_TestPoolItemList> allItems(
+		OPL_TestPoolItemList::getAll(testPool));
+	if (allItems.get() == NULL)
+		return false;
+
+	item_olist = allItems->getAsOList();
+	do_save_selected(path, item_olist);
+	o_list_free(item_olist);
+
+	return true;
 }

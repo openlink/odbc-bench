@@ -219,21 +219,39 @@ OPL_GetFSRefFromAEDesc(FSRef *fsRef, AEDesc *desc)
     return (err);
 }
 
+// make file name
+static void
+OPL_appendFileName(char *path, size_t path_len, CFStringRef saveFileName)
+{
+	char *p;
+
+	p = OPL_CFString_to_char(saveFileName);
+	strlcat(path, p, path_len);
+	free(p);
+
+	// append .xml
+	p = strrchr(path, '/');
+	if (p == NULL)
+		p = path;
+	p = strchr(p, '.');
+	if (p == NULL)
+		strlcat(path, ".xml", path_len);
+}
+
 // Get file name for saving
-OSStatus
+bool
 OPL_getSaveFileName(char *path, size_t path_len,
 					CFStringRef title, CFStringRef defaultFileName)
 {
 	OSStatus err;
 	NavDialogRef saveDialog = NULL;
+	NavDialogCreationOptions dialogOptions;
 	NavReplyRecord reply;
 	bool got_reply = false;
-	NavDialogCreationOptions dialogOptions;
 	NavUserAction userAction;
 	AEKeyword keyword;
 	AEDesc desc;
 	FSRef fsref;
-	char *filename, *p;
 	
 	// create Save dialog
 	err = NavGetDefaultDialogCreationOptions(&dialogOptions);
@@ -243,13 +261,13 @@ OPL_getSaveFileName(char *path, size_t path_len,
 	err = NavCreatePutFileDialog(&dialogOptions,
 		'OPL ', kNavGenericSignature, NULL, NULL, &saveDialog);
 	require_noerr(err, error);
-	
+
 	if (title)
 		SetWindowTitleWithCFString(NavDialogGetWindow(saveDialog), title);
 	if (defaultFileName)
 		NavDialogSetSaveFileName(saveDialog, defaultFileName);
 		
-	// run Open dialog
+	// run Save dialog
 	err = NavDialogRun(saveDialog);
 	require_noerr(err, error);
 
@@ -275,19 +293,9 @@ OPL_getSaveFileName(char *path, size_t path_len,
 	err = FSRefMakePath(&fsref, (UInt8 *) path, path_len);
 	require_noerr(err, error);
 
-	filename = OPL_CFString_to_char(reply.saveFileName);
 	strlcat(path, "/", path_len);
-	strlcat(path, filename, path_len);
-	free(filename);
+	OPL_appendFileName(path, path_len, reply.saveFileName);
 
-	// append .xml
-	p = strrchr(path, '/');
-	if (p == NULL)
-		p = path;
-	p = strchr(p, '.');
-	if (p == NULL)
-		strlcat(path, ".xml", path_len);
-		
 error:
 	if (got_reply)
 		NavDisposeReply(&reply);
@@ -297,3 +305,47 @@ error:
 	return err == noErr;
 }
 
+// Ask to save changes
+bool
+OPL_getSaveChangesFileName(char *path, size_t path_len,
+						   CFStringRef fileName, bool quitting)
+{
+	OSStatus err;
+	NavDialogRef saveDialog = NULL;
+	NavDialogCreationOptions dialogOptions;
+	NavUserAction userAction;
+	
+	// create Save Changes dialog
+	err = NavGetDefaultDialogCreationOptions(&dialogOptions);
+	require_noerr(err, error);
+	dialogOptions.modality = kWindowModalityAppModal;
+	
+	err = NavCreateAskSaveChangesDialog(&dialogOptions,
+		quitting ?
+		     kNavSaveChangesQuittingApplication : kNavSaveChangesClosingDocument,
+		NULL, NULL, &saveDialog);
+	require_noerr(err, error);
+
+	NavDialogSetSaveFileName(saveDialog, fileName);
+	
+	// run Save Changes dialog
+	err = NavDialogRun(saveDialog);
+	require_noerr(err, error);
+
+	// get user action
+	userAction = NavDialogGetUserAction(saveDialog);
+	if (userAction == kNavUserActionNone || userAction == kNavUserActionCancel) {
+		err = userCanceledErr;
+		goto error;
+	}
+
+	path[0] = '\0';
+	if (userAction == kNavUserActionSaveChanges)
+		OPL_appendFileName(path, path_len, fileName);
+	
+error:
+	if (saveDialog != NULL)
+		NavDialogDispose(saveDialog);
+
+	return err == noErr;
+}

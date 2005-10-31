@@ -102,6 +102,18 @@ public:
 	// takes ownership of passed filename
 	void setFileName(CFStringRef filename);
 
+	// Get dirty state
+	bool isDirty()
+	{
+		return m_isDirty;
+	}
+		
+	// Set dirty state
+	void setDirty(bool isDirty)
+	{
+		m_isDirty = isDirty;
+	}
+		
 private:
 	CFStringRef m_filename;
 	ControlRef m_itemView;
@@ -109,6 +121,7 @@ private:
     UInt32 m_nextItemID;
 	CFMutableDictionaryRef m_items;
 	CFMutableArrayRef m_logMsgs;
+	bool m_isDirty;
 };
 
 #endif /* _MACOSX_TESTPOOL_H_ */

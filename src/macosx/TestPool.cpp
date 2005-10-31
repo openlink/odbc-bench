@@ -26,7 +26,7 @@
 
 OPL_TestPool::OPL_TestPool(ControlRef itemView, ControlRef logView, CFStringRef filename):
 	m_filename(NULL), m_itemView(itemView), m_logView(logView),
-	m_nextItemID(0)
+	m_nextItemID(0), m_isDirty(false)
 {
 	m_items = CFDictionaryCreateMutable(NULL, 0,
 		&kCFTypeDictionaryKeyCallBacks, NULL);

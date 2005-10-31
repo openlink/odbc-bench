@@ -38,12 +38,12 @@ public:
 	
 	static OPL_TestPoolItemList *getSelected()
 	{
-		return get(kDataBrowserItemIsSelected, false);
+		return get(NULL, kDataBrowserItemIsSelected, false);
 	}
 	
-	static OPL_TestPoolItemList *getAll()
+	static OPL_TestPoolItemList *getAll(OPL_TestPool *testPool = NULL)
 	{
-		return get(kDataBrowserItemAnyState, true);
+		return get(testPool, kDataBrowserItemAnyState, true);
 	}
 	
 	// Get test pool
@@ -94,7 +94,8 @@ private:
 	bool init(DataBrowserItemState itemState, bool allowEmpty);
 
 	// Get item list
-	static OPL_TestPoolItemList *get(DataBrowserItemState itemState, bool allowEmpty);
+	static OPL_TestPoolItemList *get(OPL_TestPool *testPool,
+		DataBrowserItemState itemState, bool allowEmpty);
 	
 	// Get selected items
 	DataBrowserItemID *getItems()
