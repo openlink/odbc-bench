@@ -1,3 +1,116 @@
+2005-11-01 13:09  source
+
+	* Removed files that are installed when running bootstrap.sh script
+	  (pvk)
+
+2005-11-01 13:07  source
+
+	* Added check for both libtoolize and glibtoolize for Mac OS X
+	* Added -I flag for aclocal to check macros in admin directory
+	* Added extra blank lines to output
+	  (pvk)
+
+2005-11-01 12:56  source
+
+	* Add gtk macros in case system does not have GTK installed (pvk)
+
+2005-11-01 12:50  source
+
+	* Install in DSTROOT rather then HOME directory (pvk)
+
+2005-11-01 12:49  source
+
+	* Files to ignore (pvk)
+
+2005-11-01 12:49  source
+
+	* Added simple Makefile (pvk)
+
+2005-11-01 12:46  source
+
+	* Fixed font size problems (pvk)
+
+2005-10-31 08:25  source
+
+	* Added code to check and save changed data on exit (mk)
+
+2005-10-28 15:49  source
+
+	* Added GPL copyright comments in all files (pvk)
+
+2005-10-28 15:42  source
+
+	* Use calloc instead of malloc to fix core dump due to uninitialized data
+	  (pvk)
+
+2005-10-28 10:36  source
+
+	* Fixed problem with absolute paths in project
+	* Added some missing files to build
+	  (pvk)
+
+2005-10-24 08:05  source
+
+	* Initial code for Mac OS X (mk)
+
+2005-10-24 08:00  source
+
+	* Initial code for Mac OS X (mk)
+
+2005-10-24 07:51  source
+
+	* Fixed problem with results table (mk)
+
+2005-10-12 13:47  source
+
+	* Fixed method of detecting with ODBC DriverManager is installed on the
+	  system (pvk)
+
+2005-10-12 13:46  source
+
+	* Better information on how to get this project up and running (pvk)
+
+2005-10-12 13:45  source
+
+	* Abstracted do_load_test and do_run_selected to generic code, so it
+	  can be called from either GTK or Carbon code (mk)
+
+2005-10-12 13:43  source
+
+	* Fixed small issues with Table details dialog (mk)
+
+2005-10-12 12:23  source
+
+	* Fixed problem setting keysetsize in GTK panel (mk)
+
+2005-10-12 12:21  source
+
+	* Small fixes for Mac OS X build (mk)
+
+2005-10-12 12:21  source
+
+	* Fixed building Tables and Indexes for TPCC testing (mk)
+
+2005-10-12 12:17  source
+
+	* Fixed C++ compilation warnings (mk)
+
+2004-12-20 12:38  source
+
+	* Added documentation (hw)
+
+2004-12-13 10:19  source
+
+	* Renamed gtk_bench.dsp to odbc_bench.dsp (pvk)
+
+2004-12-13 10:17  source
+
+	* Fixed locating script files (pvk)
+
+2004-07-21 08:25  source
+
+	* Fixed delimiter between Oracle stored procedures (pvk)
+
 2004-07-13 00:09  source
 
 	* Updated version number to 0.99.22 (pvk)
@@ -443,4 +556,8 @@
 2002-06-28 12:17  source
 
 	* Initial checkin of odbc-bench source code (pvk)
+
+1970-01-01 00:00  
+
+	[no log message]
 
