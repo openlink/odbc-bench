@@ -1,1 +1,6 @@
 ltmain.sh
+config.guess
+config.sub
+mkinstalldirs
+missing
+install-sh
