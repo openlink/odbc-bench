@@ -24,8 +24,13 @@
 #include <windows.h>
 #endif
 
+#if defined (USE_IODBC_FRAMEWORK)
+#include <iODBC/sql.h>
+#include <iODBC/sqlext.h>
+#else
 #include <sql.h>
 #include <sqlext.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
