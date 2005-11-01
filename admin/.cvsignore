@@ -1,6 +1,7 @@
-ltmain.sh
 config.guess
 config.sub
-mkinstalldirs
-missing
+depcomp
 install-sh
+ltmain.sh
+missing
+mkinstalldirs
