@@ -99,3 +99,29 @@ noinst_HEADERS	= \
 	tpcc.h \
 	tpccfun.h \
 	olist.h
+
+EXTRA_DIST	= \
+	macosx/Dialog.cpp \
+	macosx/Dialog.h \
+	macosx/file.cpp \
+	macosx/LoginDialog.cpp \
+	macosx/LoginDialog.h \
+	macosx/main.cpp \
+	macosx/odbcbench_macosx.h \
+	macosx/run_details.cpp \
+	macosx/SplitView.cp \
+	macosx/SplitView.h \
+	macosx/StatusDialog.cpp \
+	macosx/StatusDialog.h \
+	macosx/table_details.cpp \
+	macosx/TCarbonEvent.cp \
+	macosx/TCarbonEvent.h \
+	macosx/TestPool.cpp \
+	macosx/TestPool.h \
+	macosx/TestPoolItemList.cpp \
+	macosx/TestPoolItemList.h \
+	macosx/TRect.h \
+	macosx/TView.cp \
+	macosx/TView.h \
+	macosx/util.c \
+	macosx/util.h 

@@ -22,7 +22,23 @@
 AUTOMAKE_OPTIONS	= gnu 1.6
 SUBDIRS			= lib src scripts contrib
 
-EXTRA_DIST		= README.CVS LICENSE
+EXTRA_DIST		= README.CVS LICENSE \
+	mac/Makefile \
+	mac/Images/VSplitterDisabled.png \
+	mac/Images/VSplitter.png \
+	mac/Images/HRidges.png \
+	mac/Images/HRidgesDisabled.png \
+	mac/Images/VRidges.png \
+	mac/Images/HSplitter.png \
+	mac/Images/VRidgesDisabled.png \
+	mac/Images/HSplitterDisabled.png \
+	mac/odbc-bench_Prefix.pch \
+	mac/odbc-bench.xcode/project.pbxproj \
+	mac/English.lproj/main.nib/CVS/Root \
+	mac/English.lproj/main.nib/info.nib \
+	mac/English.lproj/main.nib/classes.nib \
+	mac/English.lproj/InfoPlist.strings \
+	mac/Info.plist
 
 
 # ----------------------------------------------------------------------
