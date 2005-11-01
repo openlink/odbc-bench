@@ -200,14 +200,10 @@ public:
 			r.bottom = (short) (rText.origin.y + rText.size.height);
 
 			ControlFontStyleRec fontStyle;
-			fontStyle.flags = 0;
+			fontStyle.flags = kControlUseFontMask;
+			fontStyle.font = kControlFontMiniSystemFont;
 			err = CreateStaticTextControl(statusDialog->getWindow(),
 				&r, CFSTR(""), &fontStyle, &m_textControl);
-
-			// we need mini static text
-			controlSize = kControlSizeMini;
-			SetControlData(m_textControl, kControlEntireControl,
-				kControlSizeTag, sizeof(controlSize), &controlSize);
 				
 			statusDialog->resizeY(rBar.size.height * 2);
 		}
@@ -314,7 +310,9 @@ public:
 			r.bottom = (short) (rText.origin.y + rText.size.height);
 
 			ControlFontStyleRec fontStyle;
-			fontStyle.flags = 0;
+			//PVK fontStyle.flags = 0;
+			fontStyle.font = kControlFontMiniSystemFont;
+			fontStyle.flags = kControlUseFontMask;
 			err = CreateStaticTextControl(statusDialog->getWindow(),
 				&r, CFSTR(""), &fontStyle, &testNameControl);
 
