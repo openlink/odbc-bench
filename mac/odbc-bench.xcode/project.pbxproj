@@ -851,7 +851,7 @@
 				195DF8CFFE9D517E11CA2CBB,
 			);
 			isa = PBXGroup;
-			name = "odbc-bench";
+			name = "ODBC Benchmark";
 			path = "";
 			refType = 4;
 			sourceTree = "<group>";
@@ -1030,16 +1030,16 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(DSTROOT)/Applications";
 				PREBINDING = NO;
-				PRODUCT_NAME = "odbc-bench";
+				PRODUCT_NAME = "ODBC Benchmark";
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
 			};
 			dependencies = (
 			);
 			isa = PBXNativeTarget;
-			name = "odbc-bench";
+			name = "ODBC Benchmark";
 			productInstallPath = "$(DSTROOT)/Applications";
-			productName = "odbc-bench";
+			productName = "ODBC Benchmark";
 			productReference = 8D0C4E970486CD37000505A6;
 			productType = "com.apple.product-type.application";
 		};
@@ -1142,7 +1142,7 @@
 			explicitFileType = wrapper.application;
 			includeInIndex = 0;
 			isa = PBXFileReference;
-			path = "odbc-bench.app";
+			path = "ODBC Benchmark.app";
 			refType = 3;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};

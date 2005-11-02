@@ -67,6 +67,7 @@ bool do_save_changes(OPL_TestPool *testPool, bool quitting);
 int OPL_add_test_to_the_pool(test_t *test);
 
 // Application menu
+void do_about();
 void do_preferences();
 OSStatus do_quit();
 

@@ -176,32 +176,6 @@ error:
 	return err;
 }
 
-// Close window
-OSStatus
-OPL_CloseWindow()
-{
-	OPL_TestPool *testPool;
-
-	testPool = OPL_TestPool::get();
-	if (testPool != NULL) {
-		EventRef event;
-		
-		if (testPool->isDirty() && !do_save_changes(testPool, false))
-			return noErr;
-			
-		WindowRef window = testPool->getWindow();
-		delete testPool;
-		RemoveWindowProperty(window, kPropertyCreator, kPropertyTag);
-			
-		CreateEvent(NULL, kEventClassWindow, kEventWindowClose, 0, 0, &event);
-		SetEventParameter(event, kEventParamDirectObject, typeWindowRef,
-			sizeof(window), &window);
-		SendEventToEventTarget(event, GetWindowEventTarget(window));
-	}
-	
-	return noErr;
-}
-
 // Process menu command
 pascal OSStatus
 window_event_handler(EventHandlerCallRef handlerRef, EventRef eventRef, void *userData)
@@ -209,26 +183,32 @@ window_event_handler(EventHandlerCallRef handlerRef, EventRef eventRef, void *us
 	OSStatus err = eventNotHandledErr;
 	UInt32 eventClass = GetEventClass(eventRef);
 	UInt32 eventKind = GetEventKind(eventRef);
-	HICommand cmd;
-
-	if (eventClass != kEventClassCommand && eventKind != kEventCommandProcess)
-		return err;
+	WindowRef window;
+	OPL_TestPool *testPool;
 	
-	// Obtain HICommand
-	err = GetEventParameter(eventRef, kEventParamDirectObject,  
-		typeHICommand, NULL, sizeof(cmd), NULL, &cmd);
+	if (eventClass != kEventClassWindow && eventKind != kEventWindowClose)
+		return err;
+
+	// obtain window
+	err = GetEventParameter(eventRef, kEventParamDirectObject,
+		typeWindowRef, NULL, sizeof(window), NULL, &window);
 	require_noerr(err, error);
 	
-	// Process commands
+	// get test pool
+	err = GetWindowProperty(window, kPropertyCreator, kPropertyTag,
+		sizeof(testPool), NULL, &testPool);
+	require_noerr(err, error);
+
+	// check dirty state
+	if (testPool != NULL && testPool->isDirty() &&
+		!do_save_changes(testPool, false))
+		return err;
+
+	// dispose test pool and window
+	delete testPool;
+	RemoveWindowProperty(window, kPropertyCreator, kPropertyTag);
+	DisposeWindow(window);
 	err = noErr;
-	switch (cmd.commandID) {
-	case kHICommandClose:
-		err = OPL_CloseWindow();
-		break;
-		
-	default:
-		return eventNotHandledErr;
-	}
 	
 error:
 	return err;
@@ -352,7 +332,7 @@ OPL_NewWindow(CFStringRef filename /* = NULL */)
 
 	// install window event handler
     static EventTypeSpec window_events[] = {
-		{ kEventClassCommand, kEventCommandProcess }
+		{ kEventClassWindow, kEventWindowClose }
 	};
 
 	static EventHandlerUPP g_eventHandlerUPP = NULL;
@@ -366,6 +346,23 @@ OPL_NewWindow(CFStringRef filename /* = NULL */)
 	
 error:
 	return err;
+}
+
+// Close window
+void
+OPL_CloseWindow()
+{
+	EventRef event;
+	WindowRef window;
+		
+	window = GetFrontWindowOfClass(kDocumentWindowClass, false);
+	if (window == NULL)
+		return;
+
+	CreateEvent(NULL, kEventClassWindow, kEventWindowClose, 0, 0, &event);
+	SetEventParameter(event, kEventParamDirectObject, typeWindowRef,
+		sizeof(window), &window);
+	SendEventToEventTarget(event, GetWindowEventTarget(window));
 }
 
 // Process menu command
@@ -388,7 +385,11 @@ app_event_handler(EventHandlerCallRef handlerRef, EventRef eventRef, void *userD
 	// Process commands
 	err = noErr;
 	switch (cmd.commandID) {
-// Application menu	
+// Application menu
+	case kHICommandAbout:
+		do_about();
+		break;
+		
 	case kHICommandPreferences:
 		do_preferences();
 		break;
@@ -731,8 +732,57 @@ CantInstallEventHandler:
 
 // Application menu
 
+static ControlID kAboutAppName = { 'ABOU', 0 };
+static ControlID kAboutCopyright = { 'ABOU', 1 };
+static ControlID kAboutNote = { 'ABOU', 2 };
+
+void
+do_about()
+{
+	OPL_Dialog dialog(CFSTR("About"));
+	
+	dialog.setStaticText(kAboutAppName,
+		OPL_char_to_CFString(PACKAGE_NAME));
+	dialog.setStaticText(kAboutCopyright, OPL_CFString_asprintf(
+"Version %s\n\n"
+"Copyright (c) 2000-2005 OpenLink Software\n"
+"Please report all bugs to <%s>\n\n"
+"This utility is released under the GNU General Public License (GPL)",
+		PACKAGE_VERSION, PACKAGE_BUGREPORT));
+	dialog.setStaticText(kAboutNote, OPL_char_to_CFString(
+"Disclaimer: The benchmarks in this application are loosely based "
+"on the TPC-A and TPC-C standard benchmarks, but this application "
+"does not claim to be a full or precise implementation, nor are "
+"the results obtained by this application necessarily comparable "
+"to the vendor's published results."));
+	
+	dialog.run();
+}
+
 static ControlID kPrefRefreshRate = { 'PREF', 0 };
 static ControlID kPrefLockTimeout = { 'PREF', 1 };
+
+void
+do_preferences()
+{
+	OPL_Dialog dialog(CFSTR("PreferencesDialog"));
+	
+	// set initial values
+	dialog.setEditText(kPrefRefreshRate, OPL_CFString_asprintf("%ld",
+		bench_get_long_pref(DISPLAY_REFRESH_RATE)));
+	dialog.setEditText(kPrefLockTimeout, OPL_CFString_asprintf("%ld",
+		bench_get_long_pref(LOCK_TIMEOUT)));
+	
+	// run dialog
+	if (!dialog.run())
+		return;
+
+	// fetch dialog data
+	bench_set_long_pref(DISPLAY_REFRESH_RATE,
+		dialog.getEditTextIntValue(kPrefRefreshRate));
+	bench_set_long_pref(LOCK_TIMEOUT,
+		dialog.getEditTextIntValue(kPrefLockTimeout));
+}
 
 OSStatus
 do_quit()
@@ -760,28 +810,6 @@ error:
 	return noErr;
 }
 
-void
-do_preferences()
-{
-	OPL_Dialog dialog(CFSTR("PreferencesDialog"));
-	
-	// set initial values
-	dialog.setEditText(kPrefRefreshRate, OPL_CFString_asprintf("%ld",
-		bench_get_long_pref(DISPLAY_REFRESH_RATE)));
-	dialog.setEditText(kPrefLockTimeout, OPL_CFString_asprintf("%ld",
-		bench_get_long_pref(LOCK_TIMEOUT)));
-	
-	// run dialog
-	if (!dialog.run())
-		return;
-
-	// fetch dialog data
-	bench_set_long_pref(DISPLAY_REFRESH_RATE,
-		dialog.getEditTextIntValue(kPrefRefreshRate));
-	bench_set_long_pref(LOCK_TIMEOUT,
-		dialog.getEditTextIntValue(kPrefLockTimeout));
-}
-
 // File menu
 
 void
@@ -791,10 +819,6 @@ do_file_new()
 	
 	err = OPL_NewWindow();
     require_noerr(err, error);
-
-	OPL_TestPool *testPool;
-	if ((testPool = OPL_TestPool::get()) != NULL)
-		testPool->setDirty(true);
 
 error:
 	/* nothing to do */;

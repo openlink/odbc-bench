@@ -29,7 +29,8 @@ OPL_Dialog::OPL_Dialog(CFStringRef resname):
 {
 	OSStatus err;
 	static EventTypeSpec dialog_events[] = {
-		{ kEventClassCommand, kEventCommandProcess }
+		{ kEventClassCommand, kEventCommandProcess },
+		{ kEventClassWindow, kEventWindowClose }
 	};
 
 	// create and show preferences dialog
@@ -58,32 +59,43 @@ OPL_Dialog::eventHandler(EventHandlerCallRef handlerRef, EventRef eventRef, void
 	HICommand cmd;
 	OPL_Dialog *self = (OPL_Dialog *) userData;
 
-	// Sanity checks
+	// Sanity check
 	if (!self->getWindow())
 		return err;
-	if (eventClass != kEventClassCommand && eventKind != kEventCommandProcess)
-		return err;
+		
+	switch (eventClass) {
+	case kEventClassCommand:
+		if (eventKind != kEventCommandProcess)
+			return err;
 	
-	// Obtain HICommand
-	err = GetEventParameter(eventRef, kEventParamDirectObject,  
-		typeHICommand, NULL, sizeof(cmd), NULL, &cmd);
-	require_noerr(err, error);
+		// Obtain HICommand
+		err = GetEventParameter(eventRef, kEventParamDirectObject,  
+			typeHICommand, NULL, sizeof(cmd), NULL, &cmd);
+		require_noerr(err, error);
 
-	// process command
-	err = noErr;
-	switch (cmd.commandID) {
-	case kHICommandOK:
-		self->m_status = true;
+		// process command
+		err = noErr;
+		switch (cmd.commandID) {
+		case kHICommandOK:
+			self->m_status = true;
+			break;
+			
+		case kHICommandCancel:
+			self->m_status = false;
+			break;
+
+		default:
+			return self->handleCommandEvent(cmd.commandID);
+		}
+
 		break;
-		
-	case kHICommandCancel:
-		self->m_status = false;
+	
+	case kEventClassWindow:
+		if (eventKind != kEventWindowClose)
+			return err;
 		break;
-		
-	default:
-		return self->handleCommandEvent(cmd.commandID);
 	}
-
+	
 	// we're done
 	self->endModal();
 	

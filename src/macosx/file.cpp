@@ -148,5 +148,6 @@ do_save_changes(OPL_TestPool *testPool, bool quitting)
 	do_save_selected(path, item_olist);
 	o_list_free(item_olist);
 
+	testPool->setDirty(false);
 	return true;
 }
