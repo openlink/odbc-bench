@@ -1022,13 +1022,12 @@
 			);
 			buildSettings = {
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "odbc-bench_Prefix.pch";
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(DSTROOT)/Applications";
+				INSTALL_PATH = "/Applications";
 				PREBINDING = NO;
 				PRODUCT_NAME = "ODBC Benchmark";
 				WRAPPER_EXTENSION = app;
@@ -1038,7 +1037,7 @@
 			);
 			isa = PBXNativeTarget;
 			name = "ODBC Benchmark";
-			productInstallPath = "$(DSTROOT)/Applications";
+			productInstallPath = "/Applications";
 			productName = "ODBC Benchmark";
 			productReference = 8D0C4E970486CD37000505A6;
 			productType = "com.apple.product-type.application";

@@ -27,6 +27,7 @@
 #include <stdarg.h>
 #include <wchar.h>
 
+#include <Carbon/Carbon.h>
 #include <CoreFoundation/CFString.h>
 
 #ifdef __cplusplus
