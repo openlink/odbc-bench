@@ -1,0 +1,23 @@
+Title ODBC Bench for Mac OS X
+Version 0.99.25
+Description odbc-bench - a TPC-A and TPC-C like benchmark program for databases
+
+Copyright (C) 2000-2005 by OpenLink Software 
+<odbc-bench@openlinksw.com>
+All Rights Reserved.
+
+
+
+DefaultLocation /
+DeleteWarning Deleting this package will delete the ODBC Bench application from your system.
+
+### Package Flags
+
+NeedsAuthorization YES
+Required NO
+Relocatable NO
+RequiresReboot NO
+UseUserMask NO
+OverwritePermissions NO
+InstallFat NO
+RootVolumeOnly NO

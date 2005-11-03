@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IFPkgDescriptionDeleteWarning</key>
+	<string>Deleting this package will delete the ODBC Bench application from your system.</string>
+	<key>IFPkgDescriptionDescription</key>
+	<string>odbc-bench - a TPC-A and TPC-C like benchmark program for databases
+
+Copyright (C) 2000-2005 by OpenLink Software 
+&lt;odbc-bench@openlinksw.com&gt;
+All Rights Reserved.
+
+
+</string>
+	<key>IFPkgDescriptionTitle</key>
+	<string>ODBC Bench for Mac OS X</string>
+	<key>IFPkgDescriptionVersion</key>
+	<string>0.99.25</string>
+</dict>
+</plist>

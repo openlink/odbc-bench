@@ -29,3 +29,6 @@ install:
 
 clean:
 	xcodebuild clean -buildstyle Deployment
+
+installer:
+	sudo ./gen-installer.sh
