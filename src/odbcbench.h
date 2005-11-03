@@ -61,10 +61,10 @@ extern "C" {
 #define PACKAGE			"odbc-bench"
 #define PACKAGE_BUGREPORT	"odbc-bench@openlinksw.com"
 #define PACKAGE_NAME 		"OpenLink ODBC Benchmark Utility"
-#define PACKAGE_STRING 		"OpenLink ODBC Benchmark Utility 0.99.22"
+#define PACKAGE_STRING 		"OpenLink ODBC Benchmark Utility 0.99.25"
 #define PACKAGE_TARNAME 	"odbc-bench"
-#define PACKAGE_VERSION 	"0.99.22"
-#define VERSION			"0.99.22"
+#define PACKAGE_VERSION 	"0.99.25"
+#define VERSION			"0.99.25"
 #endif
 
 extern void (*pane_log) (const char *format, ...);
