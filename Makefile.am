@@ -25,6 +25,7 @@ SUBDIRS			= lib src scripts contrib docs
 EXTRA_DIST		= \
 	README.CVS LICENSE \
 	bootstrap.sh \
+	odbcbenchrc \
 	admin/gtk.m4 \
 	mac/Makefile \
 	mac/Images/VSplitterDisabled.png \
