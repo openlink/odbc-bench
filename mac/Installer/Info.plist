@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleGetInfoString</key>
-	<string>ODBC Bench 0.99.25</string>
+	<string>ODBC Bench 1.0.0</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.openlink.odbc-bench</string>
 	<key>CFBundleName</key>
 	<string>ODBC Bench</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.99.25</string>
+	<string>1.0.0</string>
 	<key>IFMajorVersion</key>
-	<integer>0</integer>
+	<integer>1</integer>
 	<key>IFMinorVersion</key>
-	<integer>99</integer>
+	<integer>0</integer>
 	<key>IFPkgFlagAllowBackRev</key>
 	<false/>
 	<key>IFPkgFlagAuthorizationAction</key>

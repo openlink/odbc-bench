@@ -28,7 +28,7 @@ AC_REVISION($Id$)
 ##########################################################################
 
 AC_INIT([OpenLink ODBC Benchmark Utility],
-        [0.99.25],
+        [1.0.0],
 	[odbc-bench@openlinksw.com],
 	[odbc-bench])
 
