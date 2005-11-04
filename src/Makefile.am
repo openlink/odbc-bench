@@ -101,6 +101,7 @@ noinst_HEADERS	= \
 	olist.h
 
 EXTRA_DIST	= \
+	odbc_bench.dsp \
 	macosx/Dialog.cpp \
 	macosx/Dialog.h \
 	macosx/file.cpp \

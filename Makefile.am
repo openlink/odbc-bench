@@ -20,10 +20,12 @@
 #
 
 AUTOMAKE_OPTIONS	= gnu 1.6
-SUBDIRS			= lib src scripts contrib
+SUBDIRS			= lib src scripts contrib docs
 
 EXTRA_DIST		= \
 	README.CVS LICENSE \
+	bootstrap.sh \
+	admin/gtk.m4 \
 	mac/Makefile \
 	mac/Images/VSplitterDisabled.png \
 	mac/Images/VSplitter.png \
