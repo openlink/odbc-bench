@@ -96,11 +96,11 @@ $SYNC
 DEVDSK=`$HDID -nomount "$DISTRIB/TargetImage.dmg"`
 $SYNC
 
-$NEWFS -v "ODBC-Bench-$VERSION" "$DEVDSK"
+$NEWFS -v "ODBC-Bench-$VERSION" $DEVDSK
 check_failed "labeling disk image"
 $SYNC
 
-$HDIUTIL eject "$DEVDSK"
+$HDIUTIL eject $DEVDSK
 check_failed "ejecting disk image"
 $SYNC
 
@@ -112,7 +112,7 @@ $CP -R -f "$DISTRIB/odbc-bench.pkg" "/Volumes/ODBC-Bench-$VERSION/odbc-bench.pkg
 check_failed "copying odbc-bench.pkg to disk image"
 $SYNC
 
-$HDIUTIL eject "$DEVDSK"
+$HDIUTIL eject $DEVDSK
 check_failed "ejecting disk image"
 $SYNC
 
