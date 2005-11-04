@@ -30,5 +30,6 @@ install:
 clean:
 	xcodebuild clean -buildstyle Deployment
 
+.Phony: installer
 installer:
 	sudo ./gen-installer.sh
