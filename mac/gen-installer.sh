@@ -22,6 +22,8 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
+VERSION=0.99.25
+
 #
 #  Where to put the generated files
 #
@@ -59,11 +61,11 @@ check_failed() {
 #
 #  Install the package into a temp location
 #
-$MKDIR -p $DISTRIB
-$MKDIR -p $DISTRIB/tmp
+$MKDIR -p "$DISTRIB"
+$MKDIR -p "$DISTRIB/tmp"
 check_failed "create $DISTRIB/tmp directory"
 
-$XCODEBUILD install -buildstyle Deployment DSTROOT=$DISTRIB/tmp
+$XCODEBUILD install -buildstyle Deployment DSTROOT="$DISTRIB/tmp"
 check_failed "building/installing package"
 
 
@@ -71,50 +73,50 @@ check_failed "building/installing package"
 #  Create package
 #
 $PKGMAKER -build \
-	-p $DISTRIB/odbc-bench.pkg \
-	-f $DISTRIB/tmp \
-	-r $CUR/Resources \
-	-i $CUR/Installer/Info.plist \
-	-d $CUR/Installer/Description.plist 
+	-p "$DISTRIB/odbc-bench.pkg" \
+	-f "$DISTRIB/tmp" \
+	-r "$CUR/Resources" \
+	-i "$CUR/Installer/Info.plist" \
+	-d "$CUR/Installer/Description.plist" 
 check_failed "assembling odbc-bench.pkg"
 
-rm -rf $DISTRIB/tmp
+rm -rf "$DISTRIB/tmp"
 check_failed "removing $DISTRIB/tmp directory"
 
 #
 #  Generating disk image
 #
-$RM -rf $DISTRIB/ODBC-Bench-0.99.25.dmg
-$RM -rf $DISTRIB/TargetImage.dmg
+$RM -rf "$DISTRIB/ODBC-Bench-$VERSION.dmg"
+$RM -rf "$DISTRIB/TargetImage.dmg"
 
-$HDIUTIL create -megabytes 5 $DISTRIB/TargetImage.dmg -layout NONE -fs HFS+
+$HDIUTIL create -megabytes 5 "$DISTRIB/TargetImage.dmg" -layout NONE -fs HFS+
 check_failed "creating temp disk image"
 $SYNC
 
-DEVDSK=`$HDID -nomount $DISTRIB/TargetImage.dmg`
+DEVDSK=`$HDID -nomount "$DISTRIB/TargetImage.dmg"`
 $SYNC
 
-$NEWFS -v 'ODBC-Bench-0.99.25' $DEVDSK
+$NEWFS -v "ODBC-Bench-$VERSION" "$DEVDSK"
 check_failed "labeling disk image"
 $SYNC
 
-$HDIUTIL eject $DEVDSK
+$HDIUTIL eject "$DEVDSK"
 check_failed "ejecting disk image"
 $SYNC
 
-$HDID $DISTRIB/TargetImage.dmg
+$HDID "$DISTRIB/TargetImage.dmg"
 check_failed "mounting disk image"
 $SYNC
 
-$CP -R -f $DISTRIB/odbc-bench.pkg /Volumes/ODBC-Bench-0.99.25/odbc-bench.pkg
+$CP -R -f "$DISTRIB/odbc-bench.pkg" "/Volumes/ODBC-Bench-$VERSION/odbc-bench.pkg"
 check_failed "copying odbc-bench.pkg to disk image"
 $SYNC
 
-$HDIUTIL eject $DEVDSK
+$HDIUTIL eject "$DEVDSK"
 check_failed "ejecting disk image"
 $SYNC
 
-$HDIUTIL convert -format UDCO $DISTRIB/TargetImage.dmg -o $DISTRIB/ODBC-Bench-0.99.25.dmg
+$HDIUTIL convert -format UDCO "$DISTRIB/TargetImage.dmg" -o "$DISTRIB/ODBC-Bench-$VERSION.dmg"
 check_failed "converting disk image"
 
 $RM -rf $DISTRIB/TargetImage.dmg
