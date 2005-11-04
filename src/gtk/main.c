@@ -151,7 +151,7 @@ help_about_handler (GtkWidget * widget, gpointer data)
 
   sprintf (szTemp,
       "%s v.%s\n"
-      "(C) 2000-2004 OpenLink Software\n"
+      "(C) 2000-2005 OpenLink Software\n"
       "Please report all bugs to <%s>\n\n"
       "This utility is released under the GNU General Public License (GPL)\n\n"
       "Disclaimer: The benchmarks in this application are loosely based\n"
