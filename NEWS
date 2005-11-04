@@ -1,6 +1,10 @@
 Version: 1.0.0
 --------------
-New public release of odbc-bench code for Unix, Windows and Mac OS X
+New public release of odbc-bench code for:
+
+  * Unix 	commandline and GTK versions
+  * Windows	commandline and GTK versions
+  * Mac OS X	commandline and Carbon versions
 
 Version: 0.99.2 - 0.99.25
 -------------------------
