@@ -1,482 +1,482 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">/
-<HTML>/
-<HEAD>/
-<LINK REL="stylesheet" TYPE="text/css" HREF="openlink.css">/
-<TITLE>Using OpenLink ODBC Bench</TITLE>/
-<META NAME="AUTHOR" CONTENT="">/
-<META NAME="COPYRIGHT" CONTENT="OpenLink Software, 2002">/
-<META NAME="KEYWORDS" CONTENT="Virtuoso;OpenLink;Database;UDA;Web Server">/
-<META NAME="GENERATOR" CONTENT="OpenLink designed XSLT sheets and XT">/
-</HEAD>/
-<BODY BGCOLOR="#FFFFFF">/
-<A NAME="usage"></A>/
-<DIV CLASS="chaphead">/
-<H1>Using OpenLink ODBC Bench</H1>/
-</DIV>/
-<DIV CLASS="abstract">/
-<H2 CLASS="sect1head">Abstract</H2>/
-<DIV CLASS="abstracttxt">/
-<P>/
-An example usage of the OpenLink ODBC Bench Utility/
-</P>/
-</DIV>/
-</DIV>/
-<H2 CLASS="sect1head">Table of Contents</H2>/
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#useprep">Preparation</A>/
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">/
-</TABLE>/
-</TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#usenew">Getting started</A>/
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">/
-</TABLE>/
-</TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#useconfig">Configuring the Test</A>/
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">/
-</TABLE>/
-</TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#userun">Running the Test</A>/
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">/
-</TABLE>/
-</TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#useresults">Working with the Results</A>/
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">/
-</TABLE>/
-</TD>/
-</TR>/
-</TABLE>/
-<BR>/
-/
-/
-/
-/
-/
-<!-- NEED 15 -->/
-<H2 CLASS="sect1head">/
-<A NAME="useprep">Preparation</A>/
-</H2>/
-<P>Before the OpenLink ODBC Bench can be used for a test, the following need to be/
-setup:</P>/
-<UL>/
-<LI>/
-<P>Server end is configured and running.</P>/
-</LI>/
-<LI>/
-<P>Valid Client side Data Source Name configured.</P>/
-</LI>/
-</UL>/
-<BR>/
-/
-<!-- NEED 15 -->/
-<H2 CLASS="sect1head">/
-<A NAME="usenew">Getting started</A>/
-</H2>/
-<P>Once you have started the Program, you will be presented with the main/
-window from where all your tests will run. This window will look something/
-like this:</P>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/gtk1.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-/
-<P>The program will start with a new test. To clear any existing work,/
-use the "File New" menu item.</P>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/filenew.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-<BR>/
-/
-<!-- NEED 15 -->/
-<H2 CLASS="sect1head">/
-<A NAME="useconfig">Configuring the Test</A>/
-</H2>/
-<P>Once you have a Data Source Name (DSN) configured and ready for use,/
-a connection to the database using OpenLink ODBC Bench can be made./
-Using the &#147;Edit&#148; drop down menu select &#147;New Benchmark Item&#148;,/
-this will create a new item with which you can connect you DSN./
-</P>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/newbench.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-/
-<P>Here you can set the name of benchmark item and to what TPC/
-specification you want to run your bench test against, for this/
-example we will be using TPC-A.  Then click OK.</P>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/newtest.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-/
-<P>The TPC is a Benchmark specification, which can be used to verify/
-the integrity of a bench result set. For more details you can visit the/
-<A HREF="http://www.tpc.org/">TPC website</A>/
-here you can find out more about the different TPC/
-Specifications.</P>/
-/
-<P>Once you have created you benchmark item, you should notice that/
-this has been listed in the upper half of the OpenLink ODBC Bench&#146;s dialogue/
-window.</P>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/newentry.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-/
-<P>Now you need to associate the DSN with this item./
-From the &#147;Edit&#148; drop down menu you will want to select &#147;Login details&#148;./
-</P>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/editlogdet.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-/
-<P>This will present you with the following window:/
-</P>/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/login.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-/
-<P>From the drop down DSN picklist, you will want to select the DSN that you/
-want to use, for this example here we will be using a Virtuoso DSN,/
-here you can also set your Username (UID) and Password (PWD). Note/
-that the Password will be masked.</P>/
-/
-<P>Once you have chosen the DSN, and set the login details, click the/
-&#147;Login&#148; button to set the connection.</P>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/dsnok.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-/
-<P>You should now have your connection through OpenLink ODBC Bench established./
-The screen will report the details about the sucessful connection./
-If it reports an error, then double check the DSN settings. Alternatively/
-ensure that your UID and PWD are correct, and that the Caps Lock has not/
-been accidentally enabled.</P>/
-/
-<P>You should receive some indication that you have established your/
-connection to your database from the following information that is/
-displayed in the OpenLink ODBC Benchmark utilities dialogue boxes.</P>/
-/
-<P>Now that you have a connection you need to create a few tables in/
-the database, it is these tables that the benchmark will run against.</P>/
-/
-<P>To create these tables use the &#147;Edit&#148; tab once again and select/
-&#147;Table details&#148;.</P>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/edittable.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-/
-<P>You will then be presented with the below window, it is here that/
-you will configure the table details. Generally the default values should/
-suffice.</P>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/tabledetails.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-/
-<P>Note that the &#147;Schema for DBMS&#148; is normally set automatically./
-However if it is set to manuall, then make sure the appropriate/
-database scheme is chosen.</P>/
-/
-<P>Once you are happy with the &#147;Table Details&#148; click on &#147;Ok&#148; to/
-proceed. At this stage you have only set the &#147;Table Details&#148; you still/
-need to create the tables.</P>/
-/
-<P>To actually create the tables use the &#147;Action&#148; menu and select/
-&#147;Create tables &amp; procedures&#148; this will run the settings you specified/
-from the previous step and create the tables required.</P>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/actioncreate.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-/
-<P>You will probably see a few windows flash up on the screen,/
-depending on the speed of you machine and database connection, this is/
-merely status information of the tables being created and populated.</P>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/populate.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-/
-<P>Here is an example of the windows you see whilst the tables are/
-being created and populated. You will receive a window for each table,/
-this example is the ACCOUNT table, displaying the loading status.</P>/
-/
-<P>When all the table information has been stored you will be notified/
-in the lower half of the OpenLink ODBC Bench dialogue window.</P>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/tablesmade.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-/
-<P>As you can see in main dialogue box you should have a history of all/
-activity since the application was started.</P>/
-/
-<P>Currently this should show that you have successfully completed/
-creating the schema as specified.</P>/
-<BR>/
-/
-<!-- NEED 15 -->/
-<H2 CLASS="sect1head">/
-<A NAME="userun">Running the Test</A>/
-</H2>/
-<P>Now you should be ready to run the benchmark against your database,/
-at this stage you may want to go back and double check everything to/
-ensure that you have not missed anything vital.</P>/
-/
-<P>You need to configure the Benchmark parameters firstly, to do this/
-access the &#147;Edit&#148; tab, then &#147;Run Details&#148;. This will spawn the main/
-OpenLink ODBC Bench configuration window.</P>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/editrun.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-/
-<P>The &#147;Run Details&#148; configuration window should look as below.</P>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/rundetails.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-/
-<P>Here you can set the Threading options to either run at Single/
-Thread or Multiple Threads, if you choose multiple threads you can also/
-set the number of threads you wish to run in the &#147;No. Threads&#148; caption.</P>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/mthread.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-/
-<P>SQL Options, this allows you to choose through which method the/
-database receives it&#146;s SQL Statements whether from direct executed/
-SQL Text, prepared then executed with bound parameters or using stored/
-procedures.</P>/
-/
-<P>Execution Options, here you can set the method of executing the/
-Statements against the database. If you choose transactions you can also/
-set the Transaction Isolation Levels from the Transaction Isolation/
-Levels section.</P>/
-/
-<P>Notice that the Scrollable Cursors section is grayed out, you can/
-only set this section if you are using the &#147;Do 100 row query&#148;,/
-you can then select what type of cursor you want to use./
-All these settings should be configured to reflect the type of benchmark/
-you want to run, for your specific need and requirements. However/
-for this particular example the defaults will be used./
-Once you are happy with your configuration click &#147;Ok&#148; to proceed.</P>/
-/
-<P>You need to access the Action tab and then select the/
-&#147;Run Selected&#148; option. Note in order to run the selected, you need to/
-ensure that you have selected the Item you want to run.</P>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/actionrun.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-/
-<P>Once you click on &#147;run selected&#148; you will be presented with the/
-Run Duration window. Here you can set the duration for each test to run./
-</P>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/rundur.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-/
-<P>You can choose to have the test output directly into a &#147;XML&#148; file by/
-providing a filename and location, click the &#147;select &#133;&#148; button for/
-location properties.</P>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/selout.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-/
-<P>Then click on &#147;Start&#148; to run the benchmark. If you choose to/
-&#147;Run All&#148; then rather then running the particularly specified test/
-it should run all possible tests, note that this can be very time/
-consuming and also CPU intensive.</P>/
-/
-<P>The Benchmark should now be running providing you with a status/
-window so you can watch the progression of each test as it is run.</P>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="Example of a Single Thread test for a duration of 1 minute" alt="Example of a Single Thread test for a duration of 1 minute" src="images/stest.gif"></TD>/
-</TR>/
-<CAPTION>Example of a Single Thread test for a duration of 1 minute</CAPTION>/
-</TABLE>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="Example of a Multi Thread test running 2 threads/
-  for a duration of 1 minute" alt="Example of a Multi Thread test running 2 threads/
-  for a duration of 1 minute" src="images/mtest.gif"></TD>/
-</TR>/
-<CAPTION>Example of a Multi Thread test running 2 threads/
-  for a duration of 1 minute</CAPTION>/
-</TABLE>/
-/
-/
-<P>Note that you can stop the tests being run at any time using/
-the &#147;cancel&#148; button</P>/
-<BR>/
-/
-<!-- NEED 15 -->/
-<H2 CLASS="sect1head">/
-<A NAME="useresults">Working with the Results</A>/
-</H2>/
-/
-<P>When you benchmark as completed you will have all the results in/
-the main dialogue box or alternatively in the XML file you specified/
-earlier.</P>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/runend.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-/
-<P>Another alternative for storing the results information is to have/
-it directly written into a database, using the &#147;Results&#148; tab select/
-&#147;connect&#148; this will present you with the login window as specified/
-earlier, then select the DSN you want to use, provide the login details/
-and then click &#147;Ok&#148;.</P>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/resultsconnect.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/resdsn.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-/
-<P>Once you have the connection click the &#147;Results&#148; tab again and/
-selecting the &#147;Create the Table&#148; option, this will create a results table,/
-which will store all the Benchmarks test output information.</P>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/resultscreate.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-/
-<P>As you have completed your Bench test you may want to save your/
-specific &#147;Benchmark Item&#148; to use again at a later date. To do this/
-select the &#147;Edit&#148; menu and select &#147;Save selected item as&#133;&#148; this will/
-then spawn a directory listing type window, in which you can specify/
-a location and name of the &#147;Item&#148; to be saved.</P>/
-/
-<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">/
-<TR>/
-<TD><IMG title="" alt="" src="images/savesel.gif"></TD>/
-</TR>/
-<CAPTION>/
-</CAPTION>/
-</TABLE>/
-/
-<P>Your benchmark as now been completed using the basic outline of/
-the Application, you should now be confident enough to be able to/
-experiment with the different settings and increase your experience/
-with the OpenLink ODBC Benchmark Utility.</P>/
-/
-<BR>/
-<DIV CLASS="vtabfoot"> - Copyright 2002, OpenLink Software - </DIV>/
-</BODY>/
-</HTML>/
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<HTML>
+<HEAD>
+<LINK REL="stylesheet" TYPE="text/css" HREF="openlink.css">
+<TITLE>Using OpenLink ODBC Bench</TITLE>
+<META NAME="AUTHOR" CONTENT="">
+<META NAME="COPYRIGHT" CONTENT="OpenLink Software, 2002">
+<META NAME="KEYWORDS" CONTENT="Virtuoso;OpenLink;Database;UDA;Web Server">
+<META NAME="GENERATOR" CONTENT="OpenLink designed XSLT sheets and XT">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<A NAME="usage"></A>
+<DIV CLASS="chaphead">
+<H1>Using OpenLink ODBC Bench</H1>
+</DIV>
+<DIV CLASS="abstract">
+<H2 CLASS="sect1head">Abstract</H2>
+<DIV CLASS="abstracttxt">
+<P>
+An example usage of the OpenLink ODBC Bench Utility
+</P>
+</DIV>
+</DIV>
+<H2 CLASS="sect1head">Table of Contents</H2>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#useprep">Preparation</A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#usenew">Getting started</A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#useconfig">Configuring the Test</A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#userun">Running the Test</A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#useresults">Working with the Results</A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+</TABLE>
+</TD>
+</TR>
+</TABLE>
+<BR>
+
+
+
+
+
+<!-- NEED 15 -->
+<H2 CLASS="sect1head">
+<A NAME="useprep">Preparation</A>
+</H2>
+<P>Before the OpenLink ODBC Bench can be used for a test, the following need to be
+setup:</P>
+<UL>
+<LI>
+<P>Server end is configured and running.</P>
+</LI>
+<LI>
+<P>Valid Client side Data Source Name configured.</P>
+</LI>
+</UL>
+<BR>
+
+<!-- NEED 15 -->
+<H2 CLASS="sect1head">
+<A NAME="usenew">Getting started</A>
+</H2>
+<P>Once you have started the Program, you will be presented with the main
+window from where all your tests will run. This window will look something
+like this:</P>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/gtk1.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+
+<P>The program will start with a new test. To clear any existing work,
+use the "File New" menu item.</P>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/filenew.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+<BR>
+
+<!-- NEED 15 -->
+<H2 CLASS="sect1head">
+<A NAME="useconfig">Configuring the Test</A>
+</H2>
+<P>Once you have a Data Source Name (DSN) configured and ready for use,
+a connection to the database using OpenLink ODBC Bench can be made.
+Using the &#147;Edit&#148; drop down menu select &#147;New Benchmark Item&#148;,
+this will create a new item with which you can connect you DSN.
+</P>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/newbench.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+
+<P>Here you can set the name of benchmark item and to what TPC
+specification you want to run your bench test against, for this
+example we will be using TPC-A.  Then click OK.</P>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/newtest.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+
+<P>The TPC is a Benchmark specification, which can be used to verify
+the integrity of a bench result set. For more details you can visit the
+<A HREF="http://www.tpc.org/">TPC website</A>
+here you can find out more about the different TPC
+Specifications.</P>
+
+<P>Once you have created you benchmark item, you should notice that
+this has been listed in the upper half of the OpenLink ODBC Bench&#146;s dialogue
+window.</P>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/newentry.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+
+<P>Now you need to associate the DSN with this item.
+From the &#147;Edit&#148; drop down menu you will want to select &#147;Login details&#148;.
+</P>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/editlogdet.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+
+<P>This will present you with the following window:
+</P>
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/login.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+
+<P>From the drop down DSN picklist, you will want to select the DSN that you
+want to use, for this example here we will be using a Virtuoso DSN,
+here you can also set your Username (UID) and Password (PWD). Note
+that the Password will be masked.</P>
+
+<P>Once you have chosen the DSN, and set the login details, click the
+&#147;Login&#148; button to set the connection.</P>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/dsnok.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+
+<P>You should now have your connection through OpenLink ODBC Bench established.
+The screen will report the details about the sucessful connection.
+If it reports an error, then double check the DSN settings. Alternatively
+ensure that your UID and PWD are correct, and that the Caps Lock has not
+been accidentally enabled.</P>
+
+<P>You should receive some indication that you have established your
+connection to your database from the following information that is
+displayed in the OpenLink ODBC Benchmark utilities dialogue boxes.</P>
+
+<P>Now that you have a connection you need to create a few tables in
+the database, it is these tables that the benchmark will run against.</P>
+
+<P>To create these tables use the &#147;Edit&#148; tab once again and select
+&#147;Table details&#148;.</P>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/edittable.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+
+<P>You will then be presented with the below window, it is here that
+you will configure the table details. Generally the default values should
+suffice.</P>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/tabledetails.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+
+<P>Note that the &#147;Schema for DBMS&#148; is normally set automatically.
+However if it is set to manuall, then make sure the appropriate
+database scheme is chosen.</P>
+
+<P>Once you are happy with the &#147;Table Details&#148; click on &#147;Ok&#148; to
+proceed. At this stage you have only set the &#147;Table Details&#148; you still
+need to create the tables.</P>
+
+<P>To actually create the tables use the &#147;Action&#148; menu and select
+&#147;Create tables &amp; procedures&#148; this will run the settings you specified
+from the previous step and create the tables required.</P>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/actioncreate.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+
+<P>You will probably see a few windows flash up on the screen,
+depending on the speed of you machine and database connection, this is
+merely status information of the tables being created and populated.</P>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/populate.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+
+<P>Here is an example of the windows you see whilst the tables are
+being created and populated. You will receive a window for each table,
+this example is the ACCOUNT table, displaying the loading status.</P>
+
+<P>When all the table information has been stored you will be notified
+in the lower half of the OpenLink ODBC Bench dialogue window.</P>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/tablesmade.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+
+<P>As you can see in main dialogue box you should have a history of all
+activity since the application was started.</P>
+
+<P>Currently this should show that you have successfully completed
+creating the schema as specified.</P>
+<BR>
+
+<!-- NEED 15 -->
+<H2 CLASS="sect1head">
+<A NAME="userun">Running the Test</A>
+</H2>
+<P>Now you should be ready to run the benchmark against your database,
+at this stage you may want to go back and double check everything to
+ensure that you have not missed anything vital.</P>
+
+<P>You need to configure the Benchmark parameters firstly, to do this
+access the &#147;Edit&#148; tab, then &#147;Run Details&#148;. This will spawn the main
+OpenLink ODBC Bench configuration window.</P>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/editrun.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+
+<P>The &#147;Run Details&#148; configuration window should look as below.</P>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/rundetails.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+
+<P>Here you can set the Threading options to either run at Single
+Thread or Multiple Threads, if you choose multiple threads you can also
+set the number of threads you wish to run in the &#147;No. Threads&#148; caption.</P>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/mthread.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+
+<P>SQL Options, this allows you to choose through which method the
+database receives it&#146;s SQL Statements whether from direct executed
+SQL Text, prepared then executed with bound parameters or using stored
+procedures.</P>
+
+<P>Execution Options, here you can set the method of executing the
+Statements against the database. If you choose transactions you can also
+set the Transaction Isolation Levels from the Transaction Isolation
+Levels section.</P>
+
+<P>Notice that the Scrollable Cursors section is grayed out, you can
+only set this section if you are using the &#147;Do 100 row query&#148;,
+you can then select what type of cursor you want to use.
+All these settings should be configured to reflect the type of benchmark
+you want to run, for your specific need and requirements. However
+for this particular example the defaults will be used.
+Once you are happy with your configuration click &#147;Ok&#148; to proceed.</P>
+
+<P>You need to access the Action tab and then select the
+&#147;Run Selected&#148; option. Note in order to run the selected, you need to
+ensure that you have selected the Item you want to run.</P>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/actionrun.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+
+<P>Once you click on &#147;run selected&#148; you will be presented with the
+Run Duration window. Here you can set the duration for each test to run.
+</P>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/rundur.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+
+<P>You can choose to have the test output directly into a &#147;XML&#148; file by
+providing a filename and location, click the &#147;select &#133;&#148; button for
+location properties.</P>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/selout.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+
+<P>Then click on &#147;Start&#148; to run the benchmark. If you choose to
+&#147;Run All&#148; then rather then running the particularly specified test
+it should run all possible tests, note that this can be very time
+consuming and also CPU intensive.</P>
+
+<P>The Benchmark should now be running providing you with a status
+window so you can watch the progression of each test as it is run.</P>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="Example of a Single Thread test for a duration of 1 minute" alt="Example of a Single Thread test for a duration of 1 minute" src="images/stest.gif"></TD>
+</TR>
+<CAPTION>Example of a Single Thread test for a duration of 1 minute</CAPTION>
+</TABLE>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="Example of a Multi Thread test running 2 threads
+  for a duration of 1 minute" alt="Example of a Multi Thread test running 2 threads
+  for a duration of 1 minute" src="images/mtest.gif"></TD>
+</TR>
+<CAPTION>Example of a Multi Thread test running 2 threads
+  for a duration of 1 minute</CAPTION>
+</TABLE>
+
+
+<P>Note that you can stop the tests being run at any time using
+the &#147;cancel&#148; button</P>
+<BR>
+
+<!-- NEED 15 -->
+<H2 CLASS="sect1head">
+<A NAME="useresults">Working with the Results</A>
+</H2>
+
+<P>When you benchmark as completed you will have all the results in
+the main dialogue box or alternatively in the XML file you specified
+earlier.</P>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/runend.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+
+<P>Another alternative for storing the results information is to have
+it directly written into a database, using the &#147;Results&#148; tab select
+&#147;connect&#148; this will present you with the login window as specified
+earlier, then select the DSN you want to use, provide the login details
+and then click &#147;Ok&#148;.</P>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/resultsconnect.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/resdsn.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+
+<P>Once you have the connection click the &#147;Results&#148; tab again and
+selecting the &#147;Create the Table&#148; option, this will create a results table,
+which will store all the Benchmarks test output information.</P>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/resultscreate.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+
+<P>As you have completed your Bench test you may want to save your
+specific &#147;Benchmark Item&#148; to use again at a later date. To do this
+select the &#147;Edit&#148; menu and select &#147;Save selected item as&#133;&#148; this will
+then spawn a directory listing type window, in which you can specify
+a location and name of the &#147;Item&#148; to be saved.</P>
+
+<TABLE class="figure" border="0" cellpadding="0" cellspacing="0">
+<TR>
+<TD><IMG title="" alt="" src="images/savesel.gif"></TD>
+</TR>
+<CAPTION>
+</CAPTION>
+</TABLE>
+
+<P>Your benchmark as now been completed using the basic outline of
+the Application, you should now be confident enough to be able to
+experiment with the different settings and increase your experience
+with the OpenLink ODBC Benchmark Utility.</P>
+
+<BR>
+<DIV CLASS="vtabfoot"> - Copyright 2002, OpenLink Software - </DIV>
+</BODY>
+</HTML>

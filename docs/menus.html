@@ -1,712 +1,712 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">/
-<HTML>/
-<HEAD>/
-<LINK REL="stylesheet" TYPE="text/css" HREF="openlink.css">/
-<TITLE>OpenLink ODBC Bench Menus</TITLE>/
-<META NAME="AUTHOR" CONTENT="">/
-<META NAME="COPYRIGHT" CONTENT="OpenLink Software, 2002">/
-<META NAME="KEYWORDS" CONTENT="Virtuoso;OpenLink;Database;UDA;Web Server">/
-<META NAME="GENERATOR" CONTENT="OpenLink designed XSLT sheets and XT">/
-</HEAD>/
-<BODY BGCOLOR="#FFFFFF">/
-<A NAME="menus"></A>/
-<DIV CLASS="chaphead">/
-<H1>OpenLink ODBC Bench Menus</H1>/
-</DIV>/
-<DIV CLASS="abstract">/
-<H2 CLASS="sect1head">Abstract</H2>/
-<DIV CLASS="abstracttxt">/
-<P>/
-How to use each menu item of the OpenLink ODBC Bench Utility/
-</P>/
-</DIV>/
-</DIV>/
-<H2 CLASS="sect1head">Table of Contents</H2>/
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#filemenu">File Menu Options</A>/
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#filenew">New CTL+N</A></TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#fileopen">Open... CTL+O</A></TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#filesave">Save CTL+S</A></TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#filesaveas">Save As... CTL+A</A></TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#fileclose">Close</A></TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#filecloselog">Clear Log</A></TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#fileexit">Exit CTL+X</A></TD>/
-</TR>/
-</TABLE>/
-</TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#editmenu">Edit Menu Options</A>/
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#editnewbench">New Benchmark Item... CTL+Insert</A></TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#editdeldel">Delete selected items</A></TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#editsavesel">Save selected items as...</A></TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#editlogindet">Login details... CTL+L</A></TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#edittabdet">Table details... CTL+T</A></TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#editrundet">Run details... CTL+U</A></TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#editins">Insert file...</A></TD>/
-</TR>/
-</TABLE>/
-</TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#actionmenu">Action Menu Options</A>/
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#actioncreate">Create tables &amp; procedures </A></TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#actiondrop">Drop tables &amp; procedures</A></TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#actionrun">Run Selected</A></TD>/
-</TR>/
-</TABLE>/
-</TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#resultsmenu">Results Menu Options</A>/
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#resultconnec">Connect...</A></TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#resultdis">Disconnect</A></TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#resultcreate">Create the table</A></TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#resultdrop">Drop the table</A></TD>/
-</TR>/
-</TABLE>/
-</TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#prefermenu">Preferences menu</A>/
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#prefdisp">Display refresh rate...</A></TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#preflock">Lock timeout...</A></TD>/
-</TR>/
-</TABLE>/
-</TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#windowmenu">Window Menu Options</A>/
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">/
-</TABLE>/
-</TD>/
-</TR>/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#helpmenu">Help Menu Options</A>/
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">/
-<TR>/
-<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#helpabout">About CTL+F1</A></TD>/
-</TR>/
-</TABLE>/
-</TD>/
-</TR>/
-</TABLE>/
-<BR>/
-/
-/
-/
-/
-<!-- NEED 15 -->/
-<H2 CLASS="sect1head">/
-<A NAME="filemenu">File Menu Options</A>/
-</H2>/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="filenew">New CTL+N</A>/
-</H3>/
-<P>The New menu items launches a new benchmark configuration window. This/
-window occupies the foreground of the benchmark utility. Previous benchmark/
-windows move to the background.</P>/
-/
-/
-/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="fileopen">Open... CTL+O</A>/
-</H3>/
-<P>The Open menu item launches the "Select file to open" dialog box. This/
-box provides "Directories" and "Files" list boxes, which allow you to select/
-and load pre-existing benchmark configuration files. Alternatively, you may/
-type the full path to an existing benchmark configuration file in the/
-"Selection:" text box.</P>/
-/
-<P>The "Select file to open" dialog box also contains "Create Dir",/
-"Delete File", "Rename File" buttons and an unlabeled, directory navigation/
-button. You may use these tools to navigate and manage your computer's file/
-system.</P>/
-/
-/
-/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="filesave">Save CTL+S</A>/
-</H3>/
-<P>The Save menu item saves the current benchmark configuration/
-information. This Save feature initiates an auto-save, if the current/
-benchmark configuration was previously saved to a specified file. However,/
-the Save feature launches the "Select output file" dialog box, if the/
-benchmark configuration information has not been previously saved. /
-</P>/
-/
-<P>The "Select output file" dialog box provides "Directories" and/
-"Files" list boxes, which allow you to navigate to a pre-existing/
-configuration file. Alternatively, you may type the full path to a new/
-or existing configuration file in the "Selection:" text box. OpenLink ODBC/
-Bench will use the designated path and file to save the current benchmark/
-configuration information.</P>/
-/
-<P>The "Select output file" dialog box also contains "Create Dir",/
-"Delete File", "Rename File" buttons and an unlabeled, directory navigation/
-button. You may use these tools to navigate and manage your computer's file/
-system.</P>/
-/
-/
-/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="filesaveas">Save As... CTL+A</A>/
-</H3>/
-<P>The Save As... menu item launches the "Select output file" dialog/
-box. This box provides "Directories" and "Files" list boxes, which allow/
-you to navigate to a pre-existing benchmark configuration file./
-Alternatively, you may type the full path to a new or existing/
-configuration file in the "Selection:" text box. OpenLink ODBC Bench will/
-use the designated path and file to save the current benchmark configuration/
-information.</P>/
-/
-<P>The "Select output file" dialog box also contains "Create Dir",/
-"Delete File", "Rename File" buttons and an unlabeled, directory navigation/
-button. You may use these tools to navigate and manage your computer's/
-file system.</P>/
-/
-/
-/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="fileclose">Close</A>/
-</H3>/
-<P>The Close menu item closes the active bench test.</P>/
-/
-/
-/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="filecloselog">Clear Log</A>/
-</H3>/
-<P>The Clear Log menu item clears the informational output and test/
-results output, which appears in the bottom half of the bench test/
-configuration window.</P>/
-/
-/
-/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="fileexit">Exit CTL+X</A>/
-</H3>/
-<P>The Exit menu item closes the OpenLink ODBC Bench program.</P>/
-/
-/
-<BR>/
-/
-<!-- NEED 15 -->/
-<H2 CLASS="sect1head">/
-<A NAME="editmenu">Edit Menu Options</A>/
-</H2>/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="editnewbench">New Benchmark Item... CTL+Insert</A>/
-</H3>/
-<P>The New Benchmark Item... menu item contains a radio button. This/
-radio button allows you to select a TPC-A or TPC-C benchmark item. You/
-must select at least one TPC-A or TPC-C test item, before you can configure/
-other elements of the test. These TPC-A or TPC-C test items are the basic/
-units of the bench test, and one item must be associated with each Data/
-Source, which you intend to test.</P>/
-/
-/
-/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="editdeldel">Delete selected items</A>/
-</H3>/
-<P>The Delete selected items menu items allows you to delete one or more/
-benchmark test items from your benchmark configuration screen. You must/
-highlight the item or items before you invoke this feature.</P>/
-/
-/
-/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="editsavesel">Save selected items as...</A>/
-</H3>/
-<P>The Save selected items as... menu item allows you to save one or/
-more test items, which appear on your benchmark configuration screen. You/
-must highlight the item or items before you invoke this feature.</P>/
-/
-<P>Once clicked, the Save selected items as... menu item launches the/
-"Select output file" dialog box. This box provides "Directories" and "Files"/
-list boxes, which allow you to navigate to a pre-existing configuration/
-file. Alternatively, you may type the full path to a new or existing/
-configuration file in the "Selection:" text box. OpenLink ODBC Bench will/
-use the designated path and file to save the current benchmark configuration/
-information.</P>/
-/
-<P>The "Select output file" dialog box also contains "Create Dir",/
-"Delete File", "Rename File" buttons and an unlabeled, directory navigation/
-button. You may use these tools to navigate and manage your computer's file/
-system.</P>/
-/
-/
-/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="editlogindet">Login details... CTL+L</A>/
-</H3>/
-<P>The Login details... menu item associates an ODBC Data Source with/
-one or more TPC-A or TPC-C bench test items. To proceed, you must highlight/
-the desired test item(s). Then, use the "Login details" dialog box to/
-specify a Data Source, a Data Source user ID, and a Data Source password. /
-</P>/
-/
-/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="edittabdet">Table details... CTL+T</A>/
-</H3>/
-<P>The Table details... menu item launches the "Table Details" dialog box./
-The "Table Details" dialog box displays table, index, procedure, and/
-database schema configuration information per selected bench test item./
-Here is an overview of the configuration options, which you will encounter/
-within "Table Details":</P>/
-/
- <TABLE CLASS="data">/
-    <CAPTION>Table Details</CAPTION>/
-    /
-    /
-	/
-	    <TR>/
-<TH CLASS="data">Option</TH><TH CLASS="data">Action</TH>/
-</TR>/
-	/
-	/
-/
-<TR>/
-<TD CLASS="data">Create Tables</TD>/
-<TD CLASS="data">By default, the OpenLink ODBC Bench program writes four tables into/
-the database associated with the login Data Source. These tables are/
-Account, Branch, Teller, and History. You may use the "Create Tables" check/
-boxes to select or deselect specific tables.</TD>/
-</TR>/
-/
-<TR>/
-<TD CLASS="data">Load Tables</TD>/
-<TD CLASS="data">The OpenLink ODBC Bench program loads initial test data into the/
-Account, Branch, and Teller tables. You may use the "Load Tables" check/
-boxes to enable or disable the initial insertion of data into specific/
-tables.</TD>/
-</TR>/
-/
-<TR>/
-<TD CLASS="data">Indexes</TD>/
-<TD CLASS="data">The OpenLink ODBC Bench program creates unique indexes for the/
-Account, Branch, and Teller tables. Moreover, the program creates stored/
-procedures for each DBMS. You may uncheck the "Create Indexes" or "Create/
-Procedures" check boxes to suppress the creation of indexes or procedures./
-</TD>/
-</TR>/
-/
-<TR>/
-<TD CLASS="data">Records to Insert</TD>/
-<TD CLASS="data">The "Records to Insert" text boxes specify the initial number of/
-records, which OpenLink ODBC Bench will load into the Account, Branch, and/
-Teller tables. You may type your own values into each field.</TD>/
-</TR>/
-/
-<TR>/
-<TD CLASS="data">Schema for DBMS</TD>/
-<TD CLASS="data">OpenLink ODBC Bench should auto-detect the DBMS schema, which/
-corresponds to the benchmark item's login Data Source. (The schema/
-selection dictates the SQL standards that OpenLink ODBC Bench will use,/
-when it creates tables and procedures.) However, you may use the "Schema/
-for DBMS" drop-down box to select a different schema. If you cannot find/
-an appropriate schema, choose ANSI.</TD>/
-</TR>/
-	/
-    /
-</TABLE>/
-<BR>/
-/
-/
-<P>Be advised - You should not attempt to customize your bench tests,/
-if you are unfamiliar with OpenLink ODBC Bench. Improper configuration/
-will result in errors and unexpected results.</P>/
-/
-/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="editrundet">Run details... CTL+U</A>/
-</H3>/
-<P>The Run details... menu item launches the "Run Details" dialog box./
-The "Run Details" dialog box enables you to configure threading, SQL/
-execution, test execution, transaction isolation levels, and cursors. Here/
-is an overview of the features that you may configure within the/
-"Run Details" dialog box:</P>/
-/
-<UL>/
- <LI>/
-<P>/
-<STRONG>Threading Options</STRONG>/
-<P>You may use the Threading Options radio button to specify a/
-Single-Threaded or Multi-Threaded bench test. If you specify a/
-Multi-Threaded bench test, you must use the No Threads text box to input a/
-specific number of threads.</P>/
-</P>/
-</LI>/
-/
-<LI>/
-<P>/
-<STRONG>SQL Options</STRONG>/
-<P>The SQL Options radio button allows you to select the type of SQL/
-API calls, which you want to make:</P>/
-<UL>/
-<LI>"ExecDirect with SQL text" executes simple select statements with/
-SQLExecDirect.</LI>/
-<LI>/
-"Prepare/Execute, bound parameters" executes SQL statements with bound/
-parameters. This requires the use of SQLPrepare and SQLExecute.</LI>/
-<LI>/
-"Use Stored Procedures" causes OpenLink ODBC Bench to load simple SQL/
-statements using stored procedures which it wrote into the Data Source./
-</LI>/
-</UL>/
-</P>/
-</LI>/
-/
-<LI>/
-<P>/
-<STRONG>Execution Options</STRONG>/
-<P>You may use the "Execution Options" check boxes to customize your/
-bench test execution. Here are your available options:</P>/
-/
-<UL>/
-<LI>/
-Asynchronous - By default, OpenLink ODBC Bench executes SQL statements/
-in a synchronous manner. In other words, the application permits each ODBC/
-API function to complete, before it executes additional functions. However,/
-you may use the "Asynchronous" option to execute multiple functions/
-simultaneously.</LI>/
-<LI>/
-Use Transactions - OpenLink ODBC Bench commits each SQL statement by/
-default. However, you may use the "Use Transactions" feature to suppress/
-this auto-commit behavior. The "Use Transactions" feature causes OpenLink/
-ODBC Bench to group multiple statements and commit them in the context of/
-a single transaction.</LI>/
-<LI>/
-Do 100 Row Query - The "Do 100 Row Query" feature produces SQL statements/
-which return 100 row result sets. As a result, you may configure scrollable/
-cursors to handle these result sets.</LI>/
-</UL>/
-</P>/
-</LI>/
-/
-<LI>/
-<P>/
-<STRONG>Transaction Isolation Levels</STRONG>/
-<P>You may use the "Transaction Isolation Levels" radio button to/
-specify your transaction isolation level.</P>/
-</P>/
-</LI>/
-/
-<LI>/
-<P>/
-<STRONG>Scrollable Cursors</STRONG>/
-<P>You may use the "Scrollable Cursors" radio button to specify the/
-desired cursor modality. Likewise, use the Rowset size, Keyset size, and/
-Traversal Count to further configure your cursor usage. Be advised - these/
-scrollable cursors are only available, when the "Do 100 Row Query"/
-execution option is selected.</P>/
-</P>/
-</LI>/
-</UL>/
-/
-/
-/
-/
-/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="editins">Insert file...</A>/
-</H3>/
-<P>The Insert file... menu item launches the "Select file to insert"/
-dialog box. This dialog box provides "Directories" and "Files" list boxes,/
-which allow you to navigate to a pre-existing, bench test configuration/
-file. Alternatively, you may type the full path to an existing bench test/
-configuration file in the "Selection:" text box. OpenLink ODBC Bench will/
-use the designated path and file to load the specified benchmark/
-configuration information into one or more highlighted bench test items./
-</P>/
-/
-<P>The "Select output file" dialog box also contains "Create Dir",/
-"Delete File", "Rename File" buttons and an unlabeled, directory/
-navigation button. You may use these tools to navigate and manage your/
-computer's file system.</P>/
-/
-<BR>/
-/
-<!-- NEED 15 -->/
-<H2 CLASS="sect1head">/
-<A NAME="actionmenu">Action Menu Options</A>/
-</H2>/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="actioncreate">Create tables &amp; procedures </A>/
-</H3>/
-<P>The Create tables &amp; procedures menu item creates OpenLink ODBC/
-Bench's test tables and test procedures in the login Data Source. You/
-may use the Edit menu Table Details... feature to control what tables/
-are written. You may also use Table Details... to suppress the creation/
-of stored procedures.</P>/
-/
-/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="actiondrop">Drop tables &amp; procedures</A>/
-</H3>/
-<P>The Drop tables &amp; procedures menu item drops the test tables and/
-test procedures, which were created in the login Data Source.</P>/
-/
-/
-/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="actionrun">Run Selected</A>/
-</H3>/
-<P>The Run Selected menu item launches the "Run Duration" dialog box./
-This dialog box allows you to specify the duration of your bench test, the/
-location of results output, and the number of tests, which you want to run. /
-</P>/
-/
-<P>First, use the "Test duration (mins)" text box to specify the number/
-of minutes, which you want your bench test to execute. Next, use the/
-"Output file name" text box to name the file, which will contain your test/
-results. This file will appear in the root of your OpenLink ODBC Bench/
-installation. Alternatively, you may use the "Select..." button to choose/
-a new location.</P>/
-/
-<P>The "Select..." button launches the "Select output file name" dialog/
-box. This dialog box provides "Directories" and "Files" list boxes, which/
-allow you to navigate to a pre-existing, xml results file. Alternatively,/
-you may type the full path to a new or existing results file in the/
-"Selection:" text box. OpenLink ODBC Bench will use the designated path/
-and file to save benchmark results.</P>/
-/
-<P>The "Select output file name" dialog box also contains "Create Dir",/
-"Delete File", "Rename File" buttons and an unlabeled, directory navigation/
-button. You may use these tools to navigate and manage your computer's/
-file system.</P>/
-  /
-<P>Finally, use the "Start" button to run the specified bench test/
-against selected bench test items. Alternatively, use the "Run All"/
-button to run all possible bench test permutations against selected bench/
-test items.</P>/
-/
-<BR>/
-/
-<!-- NEED 15 -->/
-<H2 CLASS="sect1head">/
-<A NAME="resultsmenu">Results Menu Options</A>/
-</H2>/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="resultconnec">Connect...</A>/
-</H3>/
-<P>The Connect... menu item allows you to connect to an ODBC Data/
-Source and store bench test results in that Data Source. The Connect.../
-menu item launches a dialog box, which prompts for a Data Source name,/
-user ID, and password.</P>/
-/
-/
-/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="resultdis">Disconnect</A>/
-</H3>/
-<P>The Disconnect menu item terminates the connection between OpenLink/
-ODBC Bench and the results Data Source./
-</P>/
-/
-/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="resultcreate">Create the table</A>/
-</H3>/
-<P>The Create the table menu item creates a results table in the/
-results Data Source. The results table is comprised of the following fields:/
-</P>/
-/
-<TABLE CLASS="data">/
-    <CAPTION>Results Table Details</CAPTION>/
-    /
-    /
-	/
-	    <TR>/
-<TH CLASS="data">Field</TH><TH CLASS="data">Meaning</TH>/
-</TR>/
-	/
-	/
-/
-<TR>/
-  <TD CLASS="data">RUNT</TD>/
-  <TD CLASS="data">Timestamp indicating the start of the bench test</TD>/
-</TR>/
-<TR>/
-  <TD CLASS="data">URL</TD>/
-  <TD CLASS="data">Data Source used by the bench test</TD>/
-</TR>/
-<TR>/
-  <TD CLASS="data">OPTIONS</TD>/
-  <TD CLASS="data">SQL Options specified for the bench test</TD>/
-</TR>/
-<TR>/
-  <TD CLASS="data">TPS</TD>/
-  <TD CLASS="data">Transactions run per second</TD>/
-</TR>/
-<TR>/
-  <TD CLASS="data">TOTTIME</TD>/
-  <TD CLASS="data">Total transaction time</TD>/
-</TR>/
-<TR>/
-  <TD CLASS="data">NTRANS</TD>/
-  <TD CLASS="data">Number of transactions completed by the bench test</TD>/
-</TR>/
-<TR>/
-  <TD CLASS="data">SUB1S</TD>/
-  <TD CLASS="data">Percentage of transactions requiring less than 1 second to complete</TD>/
-</TR>/
-<TR>/
-  <TD CLASS="data">SUB2S</TD>/
-  <TD CLASS="data">Percentage of transactions requiring between 1 and 2 seconds to complete</TD>/
-</TR>/
-<TR>/
-  <TD CLASS="data">TRNTIME</TD>/
-  <TD CLASS="data">Average processing time for all transactions</TD>/
-</TR>/
-<TR>/
-  <TD CLASS="data">BTYPE</TD>/
-  <TD CLASS="data">Benchmark Type (TPC-A or TPC-C)</TD>/
-</TR>/
-<TR>/
-  <TD CLASS="data">DRVRNAME</TD>/
-  <TD CLASS="data">ODBC Driver Name</TD>/
-</TR>/
-<TR>/
-  <TD CLASS="data">DRVRVER</TD>/
-  <TD CLASS="data">ODBC Driver Version</TD>/
-</TR>/
-	/
-    /
-</TABLE>/
-<BR>/
-/
-/
-/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="resultdrop">Drop the table</A>/
-</H3>/
-<P>The Drop the table menu item drops the results table, which resides/
-in the results Data Source.</P>/
-/
-<BR>/
-/
-<!-- NEED 15 -->/
-<H2 CLASS="sect1head">/
-<A NAME="prefermenu">Preferences menu</A>/
-</H2>/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="prefdisp">Display refresh rate...</A>/
-</H3>/
-<P>The Display refresh rate... menu item launches an "Enter option"/
-dialog box. This dialog box allows you to specify the progress bar's/
-refresh interval.  You should specify larger millisecond intervals, to/
-decrease strain on older graphics cards.</P>/
-/
-/
-/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="preflock">Lock timeout...</A>/
-</H3>/
-<P>The Lock timeout... menu item launches an "Enter option" dialog box./
-This dialog box allows you to specify the lock timeout per thread. This/
-lock timeout specifies the number of milliseconds that an OpenLink ODBC/
-Bench process will wait, in the event that a deadlock occurs.</P>/
-/
-/
-<BR>/
-/
-<!-- NEED 15 -->/
-<H2 CLASS="sect1head">/
-<A NAME="windowmenu">Window Menu Options</A>/
-</H2>/
-<P>The Windows drop-down menu displays one radio button for each open/
-bench test. You may click on individual radio buttons to toggle between/
-the bench tests. Selected tests will occupy the OpenLink ODBC Bench/
-foreground. Deselected tests will move to the background. These tests will/
-remain hidden in the background until they are selected or closed.</P>/
-<BR>/
-/
-<!-- NEED 15 -->/
-<H2 CLASS="sect1head">/
-<A NAME="helpmenu">Help Menu Options</A>/
-</H2>/
-<!-- NEED 15 -->/
-<H3 CLASS="sect2head">/
-<A NAME="helpabout">About CTL+F1</A>/
-</H3>/
-<P>The About menu item opens a dialog box. This dialog box displays/
-the OpenLink ODBC Bench product name, version, and licensing scheme.</P>/
-/
-<BR>/
-/
-<DIV CLASS="vtabfoot"> - Copyright 2002, OpenLink Software - </DIV>/
-</BODY>/
-</HTML>/
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<HTML>
+<HEAD>
+<LINK REL="stylesheet" TYPE="text/css" HREF="openlink.css">
+<TITLE>OpenLink ODBC Bench Menus</TITLE>
+<META NAME="AUTHOR" CONTENT="">
+<META NAME="COPYRIGHT" CONTENT="OpenLink Software, 2002">
+<META NAME="KEYWORDS" CONTENT="Virtuoso;OpenLink;Database;UDA;Web Server">
+<META NAME="GENERATOR" CONTENT="OpenLink designed XSLT sheets and XT">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<A NAME="menus"></A>
+<DIV CLASS="chaphead">
+<H1>OpenLink ODBC Bench Menus</H1>
+</DIV>
+<DIV CLASS="abstract">
+<H2 CLASS="sect1head">Abstract</H2>
+<DIV CLASS="abstracttxt">
+<P>
+How to use each menu item of the OpenLink ODBC Bench Utility
+</P>
+</DIV>
+</DIV>
+<H2 CLASS="sect1head">Table of Contents</H2>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#filemenu">File Menu Options</A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#filenew">New CTL+N</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#fileopen">Open... CTL+O</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#filesave">Save CTL+S</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#filesaveas">Save As... CTL+A</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#fileclose">Close</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#filecloselog">Clear Log</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#fileexit">Exit CTL+X</A></TD>
+</TR>
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#editmenu">Edit Menu Options</A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#editnewbench">New Benchmark Item... CTL+Insert</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#editdeldel">Delete selected items</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#editsavesel">Save selected items as...</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#editlogindet">Login details... CTL+L</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#edittabdet">Table details... CTL+T</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#editrundet">Run details... CTL+U</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#editins">Insert file...</A></TD>
+</TR>
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#actionmenu">Action Menu Options</A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#actioncreate">Create tables &amp; procedures </A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#actiondrop">Drop tables &amp; procedures</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#actionrun">Run Selected</A></TD>
+</TR>
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#resultsmenu">Results Menu Options</A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#resultconnec">Connect...</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#resultdis">Disconnect</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#resultcreate">Create the table</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#resultdrop">Drop the table</A></TD>
+</TR>
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#prefermenu">Preferences menu</A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#prefdisp">Display refresh rate...</A></TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#preflock">Lock timeout...</A></TD>
+</TR>
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#windowmenu">Window Menu Options</A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc2" HREF="#helpmenu">Help Menu Options</A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+<TR>
+<TD><IMG ALT="" HEIGHT="10" WIDTH="35" SRC="images/misc/1x1.gif"></TD><TD NOWRAP><A CLASS="toc3" HREF="#helpabout">About CTL+F1</A></TD>
+</TR>
+</TABLE>
+</TD>
+</TR>
+</TABLE>
+<BR>
+
+
+
+
+<!-- NEED 15 -->
+<H2 CLASS="sect1head">
+<A NAME="filemenu">File Menu Options</A>
+</H2>
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="filenew">New CTL+N</A>
+</H3>
+<P>The New menu items launches a new benchmark configuration window. This
+window occupies the foreground of the benchmark utility. Previous benchmark
+windows move to the background.</P>
+
+
+
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="fileopen">Open... CTL+O</A>
+</H3>
+<P>The Open menu item launches the "Select file to open" dialog box. This
+box provides "Directories" and "Files" list boxes, which allow you to select
+and load pre-existing benchmark configuration files. Alternatively, you may
+type the full path to an existing benchmark configuration file in the
+"Selection:" text box.</P>
+
+<P>The "Select file to open" dialog box also contains "Create Dir",
+"Delete File", "Rename File" buttons and an unlabeled, directory navigation
+button. You may use these tools to navigate and manage your computer's file
+system.</P>
+
+
+
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="filesave">Save CTL+S</A>
+</H3>
+<P>The Save menu item saves the current benchmark configuration
+information. This Save feature initiates an auto-save, if the current
+benchmark configuration was previously saved to a specified file. However,
+the Save feature launches the "Select output file" dialog box, if the
+benchmark configuration information has not been previously saved. 
+</P>
+
+<P>The "Select output file" dialog box provides "Directories" and
+"Files" list boxes, which allow you to navigate to a pre-existing
+configuration file. Alternatively, you may type the full path to a new
+or existing configuration file in the "Selection:" text box. OpenLink ODBC
+Bench will use the designated path and file to save the current benchmark
+configuration information.</P>
+
+<P>The "Select output file" dialog box also contains "Create Dir",
+"Delete File", "Rename File" buttons and an unlabeled, directory navigation
+button. You may use these tools to navigate and manage your computer's file
+system.</P>
+
+
+
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="filesaveas">Save As... CTL+A</A>
+</H3>
+<P>The Save As... menu item launches the "Select output file" dialog
+box. This box provides "Directories" and "Files" list boxes, which allow
+you to navigate to a pre-existing benchmark configuration file.
+Alternatively, you may type the full path to a new or existing
+configuration file in the "Selection:" text box. OpenLink ODBC Bench will
+use the designated path and file to save the current benchmark configuration
+information.</P>
+
+<P>The "Select output file" dialog box also contains "Create Dir",
+"Delete File", "Rename File" buttons and an unlabeled, directory navigation
+button. You may use these tools to navigate and manage your computer's
+file system.</P>
+
+
+
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="fileclose">Close</A>
+</H3>
+<P>The Close menu item closes the active bench test.</P>
+
+
+
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="filecloselog">Clear Log</A>
+</H3>
+<P>The Clear Log menu item clears the informational output and test
+results output, which appears in the bottom half of the bench test
+configuration window.</P>
+
+
+
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="fileexit">Exit CTL+X</A>
+</H3>
+<P>The Exit menu item closes the OpenLink ODBC Bench program.</P>
+
+
+<BR>
+
+<!-- NEED 15 -->
+<H2 CLASS="sect1head">
+<A NAME="editmenu">Edit Menu Options</A>
+</H2>
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="editnewbench">New Benchmark Item... CTL+Insert</A>
+</H3>
+<P>The New Benchmark Item... menu item contains a radio button. This
+radio button allows you to select a TPC-A or TPC-C benchmark item. You
+must select at least one TPC-A or TPC-C test item, before you can configure
+other elements of the test. These TPC-A or TPC-C test items are the basic
+units of the bench test, and one item must be associated with each Data
+Source, which you intend to test.</P>
+
+
+
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="editdeldel">Delete selected items</A>
+</H3>
+<P>The Delete selected items menu items allows you to delete one or more
+benchmark test items from your benchmark configuration screen. You must
+highlight the item or items before you invoke this feature.</P>
+
+
+
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="editsavesel">Save selected items as...</A>
+</H3>
+<P>The Save selected items as... menu item allows you to save one or
+more test items, which appear on your benchmark configuration screen. You
+must highlight the item or items before you invoke this feature.</P>
+
+<P>Once clicked, the Save selected items as... menu item launches the
+"Select output file" dialog box. This box provides "Directories" and "Files"
+list boxes, which allow you to navigate to a pre-existing configuration
+file. Alternatively, you may type the full path to a new or existing
+configuration file in the "Selection:" text box. OpenLink ODBC Bench will
+use the designated path and file to save the current benchmark configuration
+information.</P>
+
+<P>The "Select output file" dialog box also contains "Create Dir",
+"Delete File", "Rename File" buttons and an unlabeled, directory navigation
+button. You may use these tools to navigate and manage your computer's file
+system.</P>
+
+
+
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="editlogindet">Login details... CTL+L</A>
+</H3>
+<P>The Login details... menu item associates an ODBC Data Source with
+one or more TPC-A or TPC-C bench test items. To proceed, you must highlight
+the desired test item(s). Then, use the "Login details" dialog box to
+specify a Data Source, a Data Source user ID, and a Data Source password. 
+</P>
+
+
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="edittabdet">Table details... CTL+T</A>
+</H3>
+<P>The Table details... menu item launches the "Table Details" dialog box.
+The "Table Details" dialog box displays table, index, procedure, and
+database schema configuration information per selected bench test item.
+Here is an overview of the configuration options, which you will encounter
+within "Table Details":</P>
+
+ <TABLE CLASS="data">
+    <CAPTION>Table Details</CAPTION>
+    
+    
+	
+	    <TR>
+<TH CLASS="data">Option</TH><TH CLASS="data">Action</TH>
+</TR>
+	
+	
+
+<TR>
+<TD CLASS="data">Create Tables</TD>
+<TD CLASS="data">By default, the OpenLink ODBC Bench program writes four tables into
+the database associated with the login Data Source. These tables are
+Account, Branch, Teller, and History. You may use the "Create Tables" check
+boxes to select or deselect specific tables.</TD>
+</TR>
+
+<TR>
+<TD CLASS="data">Load Tables</TD>
+<TD CLASS="data">The OpenLink ODBC Bench program loads initial test data into the
+Account, Branch, and Teller tables. You may use the "Load Tables" check
+boxes to enable or disable the initial insertion of data into specific
+tables.</TD>
+</TR>
+
+<TR>
+<TD CLASS="data">Indexes</TD>
+<TD CLASS="data">The OpenLink ODBC Bench program creates unique indexes for the
+Account, Branch, and Teller tables. Moreover, the program creates stored
+procedures for each DBMS. You may uncheck the "Create Indexes" or "Create
+Procedures" check boxes to suppress the creation of indexes or procedures.
+</TD>
+</TR>
+
+<TR>
+<TD CLASS="data">Records to Insert</TD>
+<TD CLASS="data">The "Records to Insert" text boxes specify the initial number of
+records, which OpenLink ODBC Bench will load into the Account, Branch, and
+Teller tables. You may type your own values into each field.</TD>
+</TR>
+
+<TR>
+<TD CLASS="data">Schema for DBMS</TD>
+<TD CLASS="data">OpenLink ODBC Bench should auto-detect the DBMS schema, which
+corresponds to the benchmark item's login Data Source. (The schema
+selection dictates the SQL standards that OpenLink ODBC Bench will use,
+when it creates tables and procedures.) However, you may use the "Schema
+for DBMS" drop-down box to select a different schema. If you cannot find
+an appropriate schema, choose ANSI.</TD>
+</TR>
+	
+    
+</TABLE>
+<BR>
+
+
+<P>Be advised - You should not attempt to customize your bench tests,
+if you are unfamiliar with OpenLink ODBC Bench. Improper configuration
+will result in errors and unexpected results.</P>
+
+
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="editrundet">Run details... CTL+U</A>
+</H3>
+<P>The Run details... menu item launches the "Run Details" dialog box.
+The "Run Details" dialog box enables you to configure threading, SQL
+execution, test execution, transaction isolation levels, and cursors. Here
+is an overview of the features that you may configure within the
+"Run Details" dialog box:</P>
+
+<UL>
+ <LI>
+<P>
+<STRONG>Threading Options</STRONG>
+<P>You may use the Threading Options radio button to specify a
+Single-Threaded or Multi-Threaded bench test. If you specify a
+Multi-Threaded bench test, you must use the No Threads text box to input a
+specific number of threads.</P>
+</P>
+</LI>
+
+<LI>
+<P>
+<STRONG>SQL Options</STRONG>
+<P>The SQL Options radio button allows you to select the type of SQL
+API calls, which you want to make:</P>
+<UL>
+<LI>"ExecDirect with SQL text" executes simple select statements with
+SQLExecDirect.</LI>
+<LI>
+"Prepare/Execute, bound parameters" executes SQL statements with bound
+parameters. This requires the use of SQLPrepare and SQLExecute.</LI>
+<LI>
+"Use Stored Procedures" causes OpenLink ODBC Bench to load simple SQL
+statements using stored procedures which it wrote into the Data Source.
+</LI>
+</UL>
+</P>
+</LI>
+
+<LI>
+<P>
+<STRONG>Execution Options</STRONG>
+<P>You may use the "Execution Options" check boxes to customize your
+bench test execution. Here are your available options:</P>
+
+<UL>
+<LI>
+Asynchronous - By default, OpenLink ODBC Bench executes SQL statements
+in a synchronous manner. In other words, the application permits each ODBC
+API function to complete, before it executes additional functions. However,
+you may use the "Asynchronous" option to execute multiple functions
+simultaneously.</LI>
+<LI>
+Use Transactions - OpenLink ODBC Bench commits each SQL statement by
+default. However, you may use the "Use Transactions" feature to suppress
+this auto-commit behavior. The "Use Transactions" feature causes OpenLink
+ODBC Bench to group multiple statements and commit them in the context of
+a single transaction.</LI>
+<LI>
+Do 100 Row Query - The "Do 100 Row Query" feature produces SQL statements
+which return 100 row result sets. As a result, you may configure scrollable
+cursors to handle these result sets.</LI>
+</UL>
+</P>
+</LI>
+
+<LI>
+<P>
+<STRONG>Transaction Isolation Levels</STRONG>
+<P>You may use the "Transaction Isolation Levels" radio button to
+specify your transaction isolation level.</P>
+</P>
+</LI>
+
+<LI>
+<P>
+<STRONG>Scrollable Cursors</STRONG>
+<P>You may use the "Scrollable Cursors" radio button to specify the
+desired cursor modality. Likewise, use the Rowset size, Keyset size, and
+Traversal Count to further configure your cursor usage. Be advised - these
+scrollable cursors are only available, when the "Do 100 Row Query"
+execution option is selected.</P>
+</P>
+</LI>
+</UL>
+
+
+
+
+
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="editins">Insert file...</A>
+</H3>
+<P>The Insert file... menu item launches the "Select file to insert"
+dialog box. This dialog box provides "Directories" and "Files" list boxes,
+which allow you to navigate to a pre-existing, bench test configuration
+file. Alternatively, you may type the full path to an existing bench test
+configuration file in the "Selection:" text box. OpenLink ODBC Bench will
+use the designated path and file to load the specified benchmark
+configuration information into one or more highlighted bench test items.
+</P>
+
+<P>The "Select output file" dialog box also contains "Create Dir",
+"Delete File", "Rename File" buttons and an unlabeled, directory
+navigation button. You may use these tools to navigate and manage your
+computer's file system.</P>
+
+<BR>
+
+<!-- NEED 15 -->
+<H2 CLASS="sect1head">
+<A NAME="actionmenu">Action Menu Options</A>
+</H2>
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="actioncreate">Create tables &amp; procedures </A>
+</H3>
+<P>The Create tables &amp; procedures menu item creates OpenLink ODBC
+Bench's test tables and test procedures in the login Data Source. You
+may use the Edit menu Table Details... feature to control what tables
+are written. You may also use Table Details... to suppress the creation
+of stored procedures.</P>
+
+
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="actiondrop">Drop tables &amp; procedures</A>
+</H3>
+<P>The Drop tables &amp; procedures menu item drops the test tables and
+test procedures, which were created in the login Data Source.</P>
+
+
+
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="actionrun">Run Selected</A>
+</H3>
+<P>The Run Selected menu item launches the "Run Duration" dialog box.
+This dialog box allows you to specify the duration of your bench test, the
+location of results output, and the number of tests, which you want to run. 
+</P>
+
+<P>First, use the "Test duration (mins)" text box to specify the number
+of minutes, which you want your bench test to execute. Next, use the
+"Output file name" text box to name the file, which will contain your test
+results. This file will appear in the root of your OpenLink ODBC Bench
+installation. Alternatively, you may use the "Select..." button to choose
+a new location.</P>
+
+<P>The "Select..." button launches the "Select output file name" dialog
+box. This dialog box provides "Directories" and "Files" list boxes, which
+allow you to navigate to a pre-existing, xml results file. Alternatively,
+you may type the full path to a new or existing results file in the
+"Selection:" text box. OpenLink ODBC Bench will use the designated path
+and file to save benchmark results.</P>
+
+<P>The "Select output file name" dialog box also contains "Create Dir",
+"Delete File", "Rename File" buttons and an unlabeled, directory navigation
+button. You may use these tools to navigate and manage your computer's
+file system.</P>
+  
+<P>Finally, use the "Start" button to run the specified bench test
+against selected bench test items. Alternatively, use the "Run All"
+button to run all possible bench test permutations against selected bench
+test items.</P>
+
+<BR>
+
+<!-- NEED 15 -->
+<H2 CLASS="sect1head">
+<A NAME="resultsmenu">Results Menu Options</A>
+</H2>
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="resultconnec">Connect...</A>
+</H3>
+<P>The Connect... menu item allows you to connect to an ODBC Data
+Source and store bench test results in that Data Source. The Connect...
+menu item launches a dialog box, which prompts for a Data Source name,
+user ID, and password.</P>
+
+
+
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="resultdis">Disconnect</A>
+</H3>
+<P>The Disconnect menu item terminates the connection between OpenLink
+ODBC Bench and the results Data Source.
+</P>
+
+
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="resultcreate">Create the table</A>
+</H3>
+<P>The Create the table menu item creates a results table in the
+results Data Source. The results table is comprised of the following fields:
+</P>
+
+<TABLE CLASS="data">
+    <CAPTION>Results Table Details</CAPTION>
+    
+    
+	
+	    <TR>
+<TH CLASS="data">Field</TH><TH CLASS="data">Meaning</TH>
+</TR>
+	
+	
+
+<TR>
+  <TD CLASS="data">RUNT</TD>
+  <TD CLASS="data">Timestamp indicating the start of the bench test</TD>
+</TR>
+<TR>
+  <TD CLASS="data">URL</TD>
+  <TD CLASS="data">Data Source used by the bench test</TD>
+</TR>
+<TR>
+  <TD CLASS="data">OPTIONS</TD>
+  <TD CLASS="data">SQL Options specified for the bench test</TD>
+</TR>
+<TR>
+  <TD CLASS="data">TPS</TD>
+  <TD CLASS="data">Transactions run per second</TD>
+</TR>
+<TR>
+  <TD CLASS="data">TOTTIME</TD>
+  <TD CLASS="data">Total transaction time</TD>
+</TR>
+<TR>
+  <TD CLASS="data">NTRANS</TD>
+  <TD CLASS="data">Number of transactions completed by the bench test</TD>
+</TR>
+<TR>
+  <TD CLASS="data">SUB1S</TD>
+  <TD CLASS="data">Percentage of transactions requiring less than 1 second to complete</TD>
+</TR>
+<TR>
+  <TD CLASS="data">SUB2S</TD>
+  <TD CLASS="data">Percentage of transactions requiring between 1 and 2 seconds to complete</TD>
+</TR>
+<TR>
+  <TD CLASS="data">TRNTIME</TD>
+  <TD CLASS="data">Average processing time for all transactions</TD>
+</TR>
+<TR>
+  <TD CLASS="data">BTYPE</TD>
+  <TD CLASS="data">Benchmark Type (TPC-A or TPC-C)</TD>
+</TR>
+<TR>
+  <TD CLASS="data">DRVRNAME</TD>
+  <TD CLASS="data">ODBC Driver Name</TD>
+</TR>
+<TR>
+  <TD CLASS="data">DRVRVER</TD>
+  <TD CLASS="data">ODBC Driver Version</TD>
+</TR>
+	
+    
+</TABLE>
+<BR>
+
+
+
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="resultdrop">Drop the table</A>
+</H3>
+<P>The Drop the table menu item drops the results table, which resides
+in the results Data Source.</P>
+
+<BR>
+
+<!-- NEED 15 -->
+<H2 CLASS="sect1head">
+<A NAME="prefermenu">Preferences menu</A>
+</H2>
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="prefdisp">Display refresh rate...</A>
+</H3>
+<P>The Display refresh rate... menu item launches an "Enter option"
+dialog box. This dialog box allows you to specify the progress bar's
+refresh interval.  You should specify larger millisecond intervals, to
+decrease strain on older graphics cards.</P>
+
+
+
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="preflock">Lock timeout...</A>
+</H3>
+<P>The Lock timeout... menu item launches an "Enter option" dialog box.
+This dialog box allows you to specify the lock timeout per thread. This
+lock timeout specifies the number of milliseconds that an OpenLink ODBC
+Bench process will wait, in the event that a deadlock occurs.</P>
+
+
+<BR>
+
+<!-- NEED 15 -->
+<H2 CLASS="sect1head">
+<A NAME="windowmenu">Window Menu Options</A>
+</H2>
+<P>The Windows drop-down menu displays one radio button for each open
+bench test. You may click on individual radio buttons to toggle between
+the bench tests. Selected tests will occupy the OpenLink ODBC Bench
+foreground. Deselected tests will move to the background. These tests will
+remain hidden in the background until they are selected or closed.</P>
+<BR>
+
+<!-- NEED 15 -->
+<H2 CLASS="sect1head">
+<A NAME="helpmenu">Help Menu Options</A>
+</H2>
+<!-- NEED 15 -->
+<H3 CLASS="sect2head">
+<A NAME="helpabout">About CTL+F1</A>
+</H3>
+<P>The About menu item opens a dialog box. This dialog box displays
+the OpenLink ODBC Bench product name, version, and licensing scheme.</P>
+
+<BR>
+
+<DIV CLASS="vtabfoot"> - Copyright 2002, OpenLink Software - </DIV>
+</BODY>
+</HTML>
