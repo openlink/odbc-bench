@@ -30,10 +30,10 @@
 #include "TestPoolItemList.h"
 #include "util.h"
 
-#define CMD_RUN_THREAD_OPTIONS		7000
-#define CMD_RUN_ARRAY_PARAMS		7001
-#define CMD_RUN_DO_100_ROW_QUERY	7002
-#define CMD_RUN_SCROLLABLE_CURSORS	7003
+#define CMD_RUN_THREAD_OPTIONS		'NTHR'
+#define CMD_RUN_ARRAY_PARAMS		'NARR'
+#define CMD_RUN_DO_100_ROW_QUERY	'100R'
+#define CMD_RUN_SCROLLABLE_CURSORS	'SCRC'
 
 static ControlID kControlRunThreadOptions = { 'RUN ', 0 };
 static ControlID kControlRunNumberOfThreadsTag = { 'RUN ', 1 };

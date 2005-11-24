@@ -38,27 +38,27 @@
 IBNibRef g_main_nib;
 
 // File menu
-#define CMD_CLEAR_LOG				3000
+#define CMD_CLEAR_LOG				'CLRL'
 
 // Edit menu
-#define CMD_NEW_ITEM				4000
-#define CMD_DELETE_ITEMS			4001
-#define CMD_SAVE_ITEMS				4002
-#define CMD_LOGIN_DETAILS			4003
-#define CMD_TABLE_DETAILS			4004
-#define CMD_RUN_DETAILS				4005
-#define CMD_INSERT_FILE				4006
+#define CMD_NEW_ITEM				'NITM'
+#define CMD_DELETE_ITEMS			'DITM'
+#define CMD_SAVE_ITEMS				'SITM'
+#define CMD_LOGIN_DETAILS			'LDTL'
+#define CMD_TABLE_DETAILS			'TDTL'
+#define CMD_RUN_DETAILS				'RDTL'
+#define CMD_INSERT_FILE				'IFIL'
 
 // Actions menu
-#define CMD_CREATE_TABLES			5000
-#define CMD_DROP_TABLES				5001
-#define CMD_RUN						5002
+#define CMD_CREATE_TABLES			'CTBL'
+#define CMD_DROP_TABLES				'DTBL'
+#define CMD_RUN						'RSEL'
 
 // Results menu
-#define CMD_RESULTS_CONNECT			6000
-#define CMD_RESULTS_DISCONNECT		6001
-#define CMD_RESULTS_CREATE_TABLE	6002
-#define CMD_RESULTS_DROP_TABLE		6003
+#define CMD_RESULTS_CONNECT			'RCON'
+#define CMD_RESULTS_DISCONNECT		'RDCN'
+#define CMD_RESULTS_CREATE_TABLE	'RCRE'
+#define CMD_RESULTS_DROP_TABLE		'RDRP'
 
 static ControlID kMainSplitViewID = { 'MAIN', 0 };
 static ControlID kMainItemViewID = { 'MAIN', 1 };
@@ -122,24 +122,6 @@ OPL_ItemViewItemDataCallback(ControlRef itemView, DataBrowserItemID itemID,
 		return errDataBrowserPropertyNotSupported;
     }
 
-#if 0
-	UInt16 width, newWidth;
-	err = GetDataBrowserTableViewNamedColumnWidth(itemView, property, &width);
-	require_noerr(err, error);
-	
-	// this is crap
-	newWidth = CharWidth('W') * CFStringGetLength(str);
-	if (newWidth > width) {
-		err = SetDataBrowserTableViewNamedColumnWidth(
-			itemView, property, newWidth);
-		require_noerr(err, error);
-		
-		// auto-size test item browser columns
-		err = AutoSizeDataBrowserListViewColumns(itemView);
-		require_noerr(err, error);
-	}
-#endif
-	
 error:
 	if (str_release != NULL)
 		CFRelease(str_release);
@@ -1071,8 +1053,8 @@ do_drop_tables()
 	pane_log("CLEANUP FINISHED\r\n");
 }
 
-#define CMD_RUN_BROWSE	8000
-#define CMD_RUN_ALL		8001
+#define CMD_RUN_BROWSE	'RBRO'
+#define CMD_RUN_ALL		'RALL'
 
 static ControlID kRunDuration = { 'RUND', 0 };
 static ControlID kRunOutputFile = { 'RUND', 1 };

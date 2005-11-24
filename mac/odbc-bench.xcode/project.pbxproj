@@ -1027,7 +1027,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "/Applications";
+				INSTALL_PATH = /Applications;
 				PREBINDING = NO;
 				PRODUCT_NAME = "ODBC Bench";
 				WRAPPER_EXTENSION = app;
@@ -1037,7 +1037,7 @@
 			);
 			isa = PBXNativeTarget;
 			name = "ODBC Bench";
-			productInstallPath = "/Applications";
+			productInstallPath = /Applications;
 			productName = "ODBC Bench";
 			productReference = 8D0C4E970486CD37000505A6;
 			productType = "com.apple.product-type.application";
