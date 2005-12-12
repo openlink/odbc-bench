@@ -90,38 +90,53 @@ OPL_ItemViewItemDataCallback(ControlRef itemView, DataBrowserItemID itemID,
     switch (property) {
     case kItemViewType:
 		str = (test->TestType == TPC_A) ? CFSTR("TPC-A") : CFSTR("TPC-C");
-		err = SetDataBrowserItemDataText(itemData, str);
 		break;
 
 	case kItemViewName:
 		str_release = str = OPL_char_to_CFString(test->szName);
-		err = SetDataBrowserItemDataText(itemData, str);
 		break;
 		
 	case kItemViewDSN:
 		str_release = str = OPL_char_to_CFString(test->szLoginDSN);
-		err = SetDataBrowserItemDataText(itemData, str);
 		break;
 		
 	case kItemViewDriverName:
 		str_release = str = OPL_char_to_CFString(test->szDriverName);
-		err = SetDataBrowserItemDataText(itemData, str);
 		break;
 		
 	case kItemViewDriverVer:
 		str_release = str = OPL_char_to_CFString(test->szDriverVer);
-		err = SetDataBrowserItemDataText(itemData, str);
 		break;
 		
 	case kItemViewDBMS:
 		str_release = str = OPL_char_to_CFString(test->szDBMS);
-		err = SetDataBrowserItemDataText(itemData, str);
 		break;
 		
 	default:
 		return errDataBrowserPropertyNotSupported;
     }
 
+	// resize columns
+	SInt16 outBaseline;
+	Point ioBound;
+	err = GetThemeTextDimensions(str, kThemeSystemFont, kThemeStateActive,
+		false, &ioBound, &outBaseline);
+	require_noerr(err, error);
+
+	UInt16 width;
+	err = GetDataBrowserTableViewNamedColumnWidth(itemView, property, &width);
+	require_noerr(err, error);
+
+	if (width < ioBound.h + 20) {
+		err = SetDataBrowserTableViewNamedColumnWidth(itemView,
+			property, ioBound.h + 20);
+		require_noerr(err, error);
+	}
+
+	// set item data text
+	err = SetDataBrowserItemDataText(itemData, str);
+	require_noerr(err, error);
+	
 error:
 	if (str_release != NULL)
 		CFRelease(str_release);
@@ -286,11 +301,7 @@ OPL_NewWindow(CFStringRef filename /* = NULL */)
     itemViewCallbacks.u.v1.itemDataCallback = g_itemItemDataUPP;
     err = SetDataBrowserCallbacks(itemView, &itemViewCallbacks); 
 	require_noerr(err, error);
-	
-	// auto-size test item browser columns
-	err = AutoSizeDataBrowserListViewColumns(itemView);
-	require_noerr(err, error);
-	
+
 	// set log browser callbacks
 	DataBrowserCallbacks logViewCallbacks;
 	logViewCallbacks.version = kDataBrowserLatestCallbacks;

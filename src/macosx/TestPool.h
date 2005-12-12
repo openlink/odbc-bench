@@ -57,8 +57,8 @@ public:
 		UpdateDataBrowserItems(m_itemView, kDataBrowserNoItem,
 			numItems, items, kDataBrowserItemNoProperty, kDataBrowserNoItem);
 
-		// auto-size test item browser columns
-		AutoSizeDataBrowserListViewColumns(m_itemView);
+		// update control
+		DrawOneControl(m_itemView);
 	}
 	
 	// Remove items
@@ -66,9 +66,6 @@ public:
 	{
 		RemoveDataBrowserItems(m_itemView, kDataBrowserNoItem,
 			numItems, items, kDataBrowserItemNoProperty);
-
-		// auto-size test item browser columns
-		AutoSizeDataBrowserListViewColumns(m_itemView);
 	}
 
 	// Append log message

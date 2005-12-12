@@ -249,7 +249,6 @@
             <ostype name="controlSignature">MAIN</ostype>
             <int name="controlID">1</int>
             <int name="hiliteStyle">1</int>
-            <boolean name="horzScrollBar">FALSE</boolean>
             <array count="6" name="listViewColumns">
               <object class="IBCarbonDBListViewColumn">
                 <ostype name="propertyID">TYPE</ostype>
@@ -264,7 +263,6 @@
                 <int name="propertyFlags">65536</int>
                 <int name="sortOrder">1</int>
                 <int name="minWidth">100</int>
-                <int name="maxWidth">1000</int>
                 <int name="textAlignment">-2</int>
                 <string name="titleString">Name</string>
               </object>
@@ -273,7 +271,6 @@
                 <int name="propertyFlags">65536</int>
                 <int name="sortOrder">1</int>
                 <int name="minWidth">100</int>
-                <int name="maxWidth">1000</int>
                 <int name="textAlignment">-2</int>
                 <string name="titleString">DSN</string>
               </object>
@@ -282,7 +279,6 @@
                 <int name="propertyFlags">65536</int>
                 <int name="sortOrder">1</int>
                 <int name="minWidth">100</int>
-                <int name="maxWidth">1000</int>
                 <int name="textAlignment">-2</int>
                 <string name="titleString">Driver Name</string>
               </object>
@@ -291,7 +287,6 @@
                 <int name="propertyFlags">65536</int>
                 <int name="sortOrder">1</int>
                 <int name="minWidth">100</int>
-                <int name="maxWidth">1000</int>
                 <int name="textAlignment">-2</int>
                 <string name="titleString">Driver Version</string>
               </object>
@@ -300,7 +295,6 @@
                 <int name="propertyFlags">65536</int>
                 <int name="sortOrder">1</int>
                 <int name="minWidth">100</int>
-                <int name="maxWidth">1000</int>
                 <int name="textAlignment">-2</int>
                 <string name="titleString">DBMS</string>
               </object>

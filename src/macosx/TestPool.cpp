@@ -76,15 +76,15 @@ OPL_TestPool::addItem(test_t *test)
 	m_nextItemID++;
 	CFNumberRef num = CFNumberCreate(NULL, kCFNumberSInt32Type, &m_nextItemID);
 	CFDictionarySetValue(m_items, num, test);
-	
+
 	// add new test item
 	DataBrowserItemID itemID = m_nextItemID;
 	err = AddDataBrowserItems(m_itemView, kDataBrowserNoItem,
 		1, &itemID, kDataBrowserItemNoProperty);
 	require_noerr(err, error);
-	
-	err = AutoSizeDataBrowserListViewColumns(m_itemView);
-	require_noerr(err, error);
+
+	// update control
+	DrawOneControl(m_itemView);
 	
 error:
 	return err;
