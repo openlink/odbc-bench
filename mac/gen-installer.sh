@@ -33,6 +33,7 @@ DISTRIB=${DISTRIB:-$CUR/distrib}
 #
 #  Used utilities
 #
+LN=/bin/ln
 CP=/bin/cp
 RM=/bin/rm
 
@@ -45,6 +46,31 @@ SYNC=/bin/sync
 XCODEBUILD=/usr/bin/xcodebuild
 PKGMAKER=/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker
 
+#
+#  Mac OS X settings
+#
+export MACOSX_VERSION=`sw_vers -productVersion`
+
+case $MACOSX_VERSION in
+  10.3*)
+  	export OS_VERSION=10.3
+	export OSNAME="MacOSX-10.3"
+	export XCODECONF="-buildstyle Deployment"
+	export PM_FLAGS=""
+	;;
+
+  10.4*)
+  	export OS_VERSION=10.4
+	export OSNAME="MacOSX-10.4-Universal"
+	export XCODECONF="-configuration Deployment"
+	export PM_FLAGS="-v"		# verbose packagemaker
+	;;
+
+      *)
+      	echo "As yet unsupported version [$MACOSX_VERSION] of Mac OS X"
+	exit 1
+	;;
+esac
 
 #
 #  Functions
@@ -65,29 +91,32 @@ $MKDIR -p "$DISTRIB"
 $MKDIR -p "$DISTRIB/tmp"
 check_failed "create $DISTRIB/tmp directory"
 
-$XCODEBUILD install -buildstyle Deployment DSTROOT="$DISTRIB/tmp"
+$XCODEBUILD $XCODECONF install DSTROOT="$DISTRIB/tmp"
 check_failed "building/installing package"
 
 
 #
 #  Create package
 #
-$PKGMAKER -build \
+$LN -sf "$CUR/Resources/ReadMe-$OS_VERSION.rtf" "$CUR/Resources/ReadMe.rtf"
+$PKGMAKER -build $PM_FLAGS \
 	-p "$DISTRIB/odbc-bench.pkg" \
 	-f "$DISTRIB/tmp" \
 	-r "$CUR/Resources" \
 	-i "$CUR/Installer/Info.plist" \
 	-d "$CUR/Installer/Description.plist" 
 check_failed "assembling odbc-bench.pkg"
+$RM -f "$CUR/Resources/ReadMe.rtf"
 
-rm -rf "$DISTRIB/tmp"
+
+$RM -rf "$DISTRIB/tmp"
 check_failed "removing $DISTRIB/tmp directory"
 
 #
 #  Generating disk image
 #
-$RM -rf "$DISTRIB/ODBC-Bench-$VERSION.dmg"
-$RM -rf "$DISTRIB/TargetImage.dmg"
+$RM -f "$DISTRIB/ODBC-Bench-$VERSION-$OSNAME.dmg"
+$RM -f "$DISTRIB/TargetImage.dmg"
 
 $HDIUTIL create -megabytes 5 "$DISTRIB/TargetImage.dmg" -layout NONE -fs HFS+
 check_failed "creating temp disk image"
@@ -116,7 +145,7 @@ $HDIUTIL eject $DEVDSK
 check_failed "ejecting disk image"
 $SYNC
 
-$HDIUTIL convert -format UDCO "$DISTRIB/TargetImage.dmg" -o "$DISTRIB/ODBC-Bench-$VERSION.dmg"
+$HDIUTIL convert -format UDCO "$DISTRIB/TargetImage.dmg" -o "$DISTRIB/ODBC-Bench-$VERSION-$OSNAME.dmg"
 check_failed "converting disk image"
 
 $RM -rf $DISTRIB/TargetImage.dmg

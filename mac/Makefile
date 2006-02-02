@@ -20,16 +20,61 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
+#  Makefile.mac
+#
 
-all:
-	xcodebuild -buildstyle Deployment
 
-install:
-	sudo xcodebuild install -buildstyle Deployment install DSTROOT=/
+#
+#  Determine build model (Deployment/Development)
+#
+ifeq (,$(MODEL))
+MODEL	:= Deployment
+endif
+
+#
+#  Determine which version of Mac OS X we are running
+#
+macosx_version	:= $(shell sw_vers -productVersion)
+
+#
+#  Mac OS X 10.2
+#
+ifeq (10.2, $(findstring 10.2, $(macosx_version)))
+    PROJBUILD := /usr/bin/pbxbuild -buildstyle $(MODEL)
+    BUILDDIR  := build
+endif
+
+#
+#  Mac OS X 10.3
+#
+ifeq (10.3, $(findstring 10.3, $(macosx_version)))
+    PROJBUILD := /usr/bin/xcodebuild -buildstyle $(MODEL)
+    BUILDDIR  := build
+endif
+
+#
+#  Mac OS X 10.4
+#
+ifeq (10.4, $(findstring 10.4, $(macosx_version)))
+    PROJBUILD := /usr/bin/xcodebuild -configuration $(MODEL)
+    BUILDDIR  := build/$(MODEL)
+endif
+
+
+
+all: compile
+
+compile:
+	$(PROJBUILD) build
+
+install: compile
+	sudo $(PROJBUILD) install DSTROOT=/
 
 clean:
-	xcodebuild clean -buildstyle Deployment
+	$(PROJBUILD) clean
 
-.Phony: installer
-installer:
+realclean: clean
+	rm -rf build
+
+installer: clean compile
 	sudo ./gen-installer.sh
