@@ -98,7 +98,7 @@ check_failed "building/installing package"
 #
 #  Create package
 #
-$LN -sf "$CUR/Resources/ReadMe-$OS_VERSION.rtf" "$CUR/Resources/ReadMe.rtf"
+$LN -f "$CUR/Resources/ReadMe-$OS_VERSION.rtf" "$CUR/Resources/ReadMe.rtf"
 $PKGMAKER -build $PM_FLAGS \
 	-p "$DISTRIB/odbc-bench.pkg" \
 	-f "$DISTRIB/tmp" \
