@@ -30,7 +30,8 @@ OPL_Dialog::OPL_Dialog(CFStringRef resname):
 	OSStatus err;
 	static EventTypeSpec dialog_events[] = {
 		{ kEventClassCommand, kEventCommandProcess },
-		{ kEventClassWindow, kEventWindowClose }
+		{ kEventClassWindow, kEventWindowClose },
+		{ kEventClassControl, kEventControlHit },
 	};
 
 	// create and show preferences dialog
@@ -94,6 +95,15 @@ OPL_Dialog::eventHandler(EventHandlerCallRef handlerRef, EventRef eventRef, void
 		if (eventKind != kEventWindowClose)
 			return err;
 		break;
+	case kEventClassControl:
+		if (eventKind != kEventControlHit)
+			return err;
+
+		ControlRef cntl;
+                err = GetEventParameter(eventRef, kEventParamDirectObject,  
+	                 typeControlRef, NULL, sizeof(cntl), NULL, &cntl);
+                require_noerr(err, error);
+                return self->handleControlHit(cntl);
 	}
 	
 	// we're done

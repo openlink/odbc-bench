@@ -938,12 +938,8 @@ do_login_details()
 	if (selectedItems->getItemCount() == 1) {
 		test_t *test = selectedItems->getItem(0);
 
-		dialog.setEditText(kLoginDSN, OPL_char_to_CFString(
-			test->szLoginDSN));
-		dialog.setEditText(kLoginUid, OPL_char_to_CFString(
-			test->szLoginUID));
-		dialog.setEditText(kLoginPwd, OPL_char_to_CFString(
-			test->szLoginPWD));
+		dialog.SetConnectAttr(test->szLoginDSN, test->szLoginUID,
+                        test->szLoginPWD); 
 	}
 
 	// run dialog
@@ -951,9 +947,9 @@ do_login_details()
 		return;
 	
 	// fetch dialog data
-	char *dsn = OPL_CFString_to_char(dialog.getEditText(kLoginDSN));
-	char *uid = OPL_CFString_to_char(dialog.getEditText(kLoginUid));
-	char *pwd = OPL_CFString_to_char(dialog.getPasswordEditText(kLoginPwd));
+	char *dsn = dialog.GetDSN();
+	char *uid = dialog.GetUID();
+	char *pwd = dialog.GetPWD();
 		
 	for (UInt32 i = 0; i < selectedItems->getItemCount(); i++) {
 		int rc;
@@ -1202,9 +1198,9 @@ do_results_connect()
 		return;
 	
 	// fetch dialog data
-	char *dsn = OPL_CFString_to_char(dialog.getEditText(kLoginDSN));
-	char *uid = OPL_CFString_to_char(dialog.getEditText(kLoginUid));
-	char *pwd = OPL_CFString_to_char(dialog.getPasswordEditText(kLoginPwd));
+	char *dsn = dialog.GetDSN();
+	char *uid = dialog.GetUID();
+	char *pwd = dialog.GetPWD();
 	
 	results_logout();
 	results_login(dsn, uid, pwd);

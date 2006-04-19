@@ -87,6 +87,8 @@ do_login (test_t * ptest)
   RETCODE rc;
   char *szDSN, *szUID, *szPWD;
   SQLHSTMT hstmt;
+  char tmp[4096];
+  char *fmt;
 
   szDSN = ptest->szLoginDSN;
   szUID = ptest->szLoginUID;
@@ -106,10 +108,19 @@ do_login (test_t * ptest)
   pane_log ("\r\n\r\nConnecting to %s : DSN=<%s> UID=<%s>\r\n",
       ptest->szName, szDSN, szUID);
 
+  fmt = strstr(szDSN, ".dsn") ? "FILEDSN=%s;UID=%s;PWD=%s;"
+  			      : "DSN=%s;UID=%s;PWD=%s;";
+  snprintf(tmp, sizeof(tmp), fmt, szDSN ? szDSN:"", szUID ? szUID:"",
+  	szPWD ? szPWD:"");
+
   rc = SQLAllocConnect (henv, &ptest->hdbc);
   if (rc == SQL_SUCCESS)
+    rc = SQLDriverConnect (ptest->hdbc, NULL, tmp, SQL_NTS,
+            NULL, 0, NULL, SQL_DRIVER_NOPROMPT);
+/******
     rc = SQLConnect (ptest->hdbc, (SQLCHAR *) szDSN, SQL_NTS,
 	(SQLCHAR *) szUID, SQL_NTS, (SQLCHAR *) szPWD, SQL_NTS);
+****/
 
   ptest->szSQLError[0] = 0;
   ptest->szSQLState[0] = 0;

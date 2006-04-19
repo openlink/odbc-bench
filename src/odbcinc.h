@@ -27,9 +27,11 @@
 #if defined (USE_IODBC_FRAMEWORK)
 #  include <iODBC/sql.h>
 #  include <iODBC/sqlext.h>
+#  include <iODBCinst/odbcinst.h>
 #else
 #  include <sql.h>
 #  include <sqlext.h>
+#  include <odbcinst.h>
 #endif
 
 #ifdef __cplusplus

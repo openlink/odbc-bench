@@ -4,7 +4,7 @@
   <object name="rootObject" class="NSCustomObject" id="1">
     <string name="customClass">NSApplication</string>
   </object>
-  <array count="240" name="allObjects">
+  <array count="251" name="allObjects">
     <object class="IBCarbonMenu" id="29">
       <string name="title">main</string>
       <array count="6" name="items">
@@ -237,7 +237,7 @@
     <reference idRef="147"/>
     <reference idRef="152"/>
     <object class="IBCarbonWindow" id="166">
-      <string name="windowRect">257 198 783 881 </string>
+      <string name="windowRect">120 89 646 772 </string>
       <string name="title">Window</string>
       <object name="rootControl" class="IBCarbonRootControl" id="167">
         <string name="bounds">0 0 526 683 </string>
@@ -362,7 +362,7 @@
     <reference idRef="222"/>
     <reference idRef="223"/>
     <object class="IBCarbonWindow" id="226">
-      <string name="windowRect">651 272 785 565 </string>
+      <string name="windowRect">228 198 362 491 </string>
       <string name="title">Preferences</string>
       <object name="rootControl" class="IBCarbonRootControl" id="227">
         <string name="bounds">0 0 134 293 </string>
@@ -414,6 +414,7 @@
       <boolean name="liveResize">TRUE</boolean>
       <boolean name="compositing">TRUE</boolean>
       <int name="carbonWindowClass">4</int>
+      <int name="windowPosition">1</int>
       <boolean name="isConstrained">FALSE</boolean>
       <boolean name="doesNotCycle">TRUE</boolean>
       <boolean name="inWindowMenu">FALSE</boolean>
@@ -426,7 +427,7 @@
     <reference idRef="232"/>
     <reference idRef="233"/>
     <object class="IBCarbonWindow" id="234">
-      <string name="windowRect">480 243 672 550 </string>
+      <string name="windowRect">301 196 493 503 </string>
       <string name="title">New Benchmark Item</string>
       <object name="rootControl" class="IBCarbonRootControl" id="235">
         <string name="bounds">0 0 192 307 </string>
@@ -488,13 +489,14 @@
       <boolean name="liveResize">TRUE</boolean>
       <boolean name="compositing">TRUE</boolean>
       <int name="carbonWindowClass">4</int>
+      <int name="windowPosition">1</int>
       <boolean name="isConstrained">FALSE</boolean>
       <boolean name="doesNotCycle">TRUE</boolean>
       <boolean name="inWindowMenu">FALSE</boolean>
     </object>
     <reference idRef="235"/>
     <object class="IBCarbonWindow" id="236">
-      <string name="windowRect">619 187 794 512 </string>
+      <string name="windowRect">292 144 467 469 </string>
       <string name="title">TPC-C Run Details</string>
       <object name="rootControl" class="IBCarbonRootControl" id="237">
         <string name="bounds">0 0 175 325 </string>
@@ -559,13 +561,14 @@
       <boolean name="liveResize">TRUE</boolean>
       <boolean name="compositing">TRUE</boolean>
       <int name="carbonWindowClass">4</int>
+      <int name="windowPosition">1</int>
       <boolean name="isConstrained">FALSE</boolean>
       <boolean name="doesNotCycle">TRUE</boolean>
       <boolean name="inWindowMenu">FALSE</boolean>
     </object>
     <reference idRef="237"/>
     <object class="IBCarbonWindow" id="238">
-      <string name="windowRect">576 348 924 750 </string>
+      <string name="windowRect">252 150 600 552 </string>
       <string name="title">TPC-A Table Details</string>
       <object name="rootControl" class="IBCarbonRootControl" id="239">
         <string name="bounds">0 0 348 402 </string>
@@ -745,6 +748,7 @@
       <boolean name="liveResize">TRUE</boolean>
       <boolean name="compositing">TRUE</boolean>
       <int name="carbonWindowClass">4</int>
+      <int name="windowPosition">1</int>
       <boolean name="isConstrained">FALSE</boolean>
       <boolean name="doesNotCycle">TRUE</boolean>
       <boolean name="inWindowMenu">FALSE</boolean>
@@ -1032,6 +1036,7 @@
       <boolean name="liveResize">TRUE</boolean>
       <boolean name="compositing">TRUE</boolean>
       <int name="carbonWindowClass">4</int>
+      <int name="windowPosition">1</int>
       <boolean name="isConstrained">FALSE</boolean>
       <boolean name="doesNotCycle">TRUE</boolean>
       <boolean name="inWindowMenu">FALSE</boolean>
@@ -1089,7 +1094,7 @@
     <reference idRef="389"/>
     <reference idRef="390"/>
     <object class="IBCarbonWindow" id="391">
-      <string name="windowRect">383 143 802 423 </string>
+      <string name="windowRect">287 203 706 483 </string>
       <string name="title">TPC-C Table Details</string>
       <object name="rootControl" class="IBCarbonRootControl" id="392">
         <string name="bounds">0 0 419 280 </string>
@@ -1266,6 +1271,7 @@
       <boolean name="liveResize">TRUE</boolean>
       <boolean name="compositing">TRUE</boolean>
       <int name="carbonWindowClass">4</int>
+      <int name="windowPosition">1</int>
       <boolean name="isConstrained">FALSE</boolean>
       <boolean name="doesNotCycle">TRUE</boolean>
       <boolean name="inWindowMenu">FALSE</boolean>
@@ -1297,23 +1303,23 @@
     <reference idRef="437"/>
     <reference idRef="438"/>
     <object class="IBCarbonWindow" id="466">
-      <string name="windowRect">667 302 829 626 </string>
+      <string name="windowRect">141 113 481 514 </string>
       <string name="title">Login Details</string>
       <object name="rootControl" class="IBCarbonRootControl" id="467">
-        <string name="bounds">0 0 162 324 </string>
-        <string name="viewFrame">0 0 324 162 </string>
-        <array count="8" name="subviews">
+        <string name="bounds">0 0 340 401 </string>
+        <string name="viewFrame">0 0 401 340 </string>
+        <array count="9" name="subviews">
           <object class="IBCarbonEditText" id="468">
-            <string name="bounds">51 108 67 301 </string>
-            <string name="viewFrame">108 51 193 16 </string>
+            <string name="bounds">238 108 254 372 </string>
+            <string name="viewFrame">108 238 264 16 </string>
             <ostype name="controlSignature">LOGN</ostype>
             <int name="controlID">1</int>
             <boolean name="isUnicode">TRUE</boolean>
             <boolean name="isSingleLine">TRUE</boolean>
           </object>
           <object class="IBCarbonEditText" id="470">
-            <string name="bounds">83 108 99 301 </string>
-            <string name="viewFrame">108 83 193 16 </string>
+            <string name="bounds">270 108 286 372 </string>
+            <string name="viewFrame">108 270 264 16 </string>
             <ostype name="controlSignature">LOGN</ostype>
             <int name="controlID">2</int>
             <boolean name="isPassword">TRUE</boolean>
@@ -1321,39 +1327,162 @@
             <boolean name="isSingleLine">TRUE</boolean>
           </object>
           <object class="IBCarbonStaticText" id="472">
-            <string name="bounds">22 20 38 97 </string>
-            <string name="viewFrame">20 22 77 16 </string>
+            <string name="bounds">209 20 225 97 </string>
+            <string name="viewFrame">20 209 77 16 </string>
             <string name="title">Datasource:</string>
           </object>
           <object class="IBCarbonStaticText" id="474">
-            <string name="bounds">50 44 66 97 </string>
-            <string name="viewFrame">44 50 53 16 </string>
+            <string name="bounds">237 44 253 97 </string>
+            <string name="viewFrame">44 237 53 16 </string>
             <string name="title">User ID:</string>
           </object>
           <object class="IBCarbonStaticText" id="471">
-            <string name="bounds">82 31 98 97 </string>
-            <string name="viewFrame">31 82 66 16 </string>
+            <string name="bounds">269 31 285 97 </string>
+            <string name="viewFrame">31 269 66 16 </string>
             <string name="title">Password:</string>
           </object>
           <object class="IBCarbonButton" id="473">
-            <string name="bounds">122 234 142 304 </string>
-            <string name="viewFrame">234 122 70 20 </string>
+            <string name="bounds">300 311 320 381 </string>
+            <string name="viewFrame">311 300 70 20 </string>
             <string name="title">Ok</string>
             <ostype name="command">ok  </ostype>
             <int name="buttonType">1</int>
           </object>
           <object class="IBCarbonButton" id="475">
-            <string name="bounds">122 152 142 222 </string>
-            <string name="viewFrame">152 122 70 20 </string>
+            <string name="bounds">300 224 320 294 </string>
+            <string name="viewFrame">224 300 70 20 </string>
             <string name="title">Cancel</string>
             <ostype name="command">not!</ostype>
             <int name="buttonType">2</int>
           </object>
-          <object class="IBCarbonComboBox" id="469">
-            <string name="bounds">20 105 40 304 </string>
-            <string name="viewFrame">105 20 199 20 </string>
+          <object class="IBCarbonTab" id="573">
+            <string name="bounds">5 20 192 375 </string>
+            <string name="viewFrame">20 5 355 187 </string>
+            <array count="2" name="subviews">
+              <object class="IBCarbonUserPane" id="575">
+                <string name="bounds">42 20 192 375 </string>
+                <string name="viewFrame">0 37 355 150 </string>
+                <array count="1" name="subviews">
+                  <object class="IBCarbonDBListView" id="576">
+                    <string name="bounds">41 19 195 376 </string>
+                    <string name="viewFrame">-1 -1 357 154 </string>
+                    <ostype name="controlSignature">LOGN</ostype>
+                    <int name="controlID">3</int>
+                    <ostype name="command">SDS </ostype>
+                    <int name="hiliteStyle">1</int>
+                    <int name="selectionFlags">10</int>
+                    <int name="listViewHeaderBtnHeight">0</int>
+                    <array count="1" name="listViewColumns">
+                      <object class="IBCarbonDBListViewColumn">
+                        <ostype name="propertyID">DSN </ostype>
+                        <int name="propertyFlags">65536</int>
+                        <int name="sortOrder">1</int>
+                        <int name="minWidth">260</int>
+                        <int name="maxWidth">400</int>
+                        <int name="textAlignment">-2</int>
+                      </object>
+                    </array>
+                  </object>
+                </array>
+                <ostype name="controlSignature">LOGN</ostype>
+                <int name="controlID">6</int>
+                <int name="featureBits">2</int>
+              </object>
+              <object class="IBCarbonUserPane" id="574">
+                <string name="bounds">42 20 192 375 </string>
+                <string name="viewFrame">0 37 355 150 </string>
+                <array count="3" name="subviews">
+                  <object class="IBCarbonDBListView" id="577">
+                    <string name="bounds">75 19 193 376 </string>
+                    <string name="viewFrame">-1 33 357 118 </string>
+                    <ostype name="controlSignature">LOGN</ostype>
+                    <int name="controlID">4</int>
+                    <ostype name="command">SFDS</ostype>
+                    <int name="hiliteStyle">1</int>
+                    <int name="selectionFlags">10</int>
+                    <int name="listViewHeaderBtnHeight">0</int>
+                    <array count="1" name="listViewColumns">
+                      <object class="IBCarbonDBListViewColumn">
+                        <ostype name="propertyID">FDSN</ostype>
+                        <ostype name="propertyType">ticn</ostype>
+                        <int name="propertyFlags">65536</int>
+                        <int name="sortOrder">1</int>
+                        <int name="minWidth">260</int>
+                        <int name="maxWidth">400</int>
+                        <int name="textAlignment">-2</int>
+                      </object>
+                    </array>
+                  </object>
+                  <object class="IBCarbonPopupButton" id="578">
+                    <string name="bounds">43 70 63 355 </string>
+                    <string name="viewFrame">50 1 285 20 </string>
+                    <ostype name="controlSignature">LOGN</ostype>
+                    <int name="controlID">8</int>
+                    <ostype name="command">SDIR</ostype>
+                    <int name="titleJustification">-2</int>
+                    <object name="menu" class="IBCarbonMenu" id="579">
+                      <string name="title">Popup</string>
+                      <array count="3" name="items">
+                        <object class="IBCarbonMenuItem" id="580">
+                          <boolean name="updateSingleItem">TRUE</boolean>
+                          <string name="title">Item 1</string>
+                        </object>
+                        <object class="IBCarbonMenuItem" id="582">
+                          <boolean name="updateSingleItem">TRUE</boolean>
+                          <string name="title">Item 2</string>
+                        </object>
+                        <object class="IBCarbonMenuItem" id="581">
+                          <boolean name="updateSingleItem">TRUE</boolean>
+                          <string name="title">Item 3</string>
+                        </object>
+                      </array>
+                    </object>
+                  </object>
+                  <object class="IBCarbonStaticText" id="583">
+                    <string name="bounds">47 23 60 70 </string>
+                    <string name="viewFrame">3 5 47 13 </string>
+                    <boolean name="small">TRUE</boolean>
+                    <int name="controlSize">1</int>
+                    <string name="title">Look in:</string>
+                  </object>
+                </array>
+                <ostype name="controlSignature">LOGN</ostype>
+                <int name="controlID">7</int>
+                <string name="title">FileDSN</string>
+                <int name="featureBits">2</int>
+              </object>
+            </array>
             <ostype name="controlSignature">LOGN</ostype>
-            <boolean name="autoSort">TRUE</boolean>
+            <int name="controlID">5</int>
+            <array count="2" name="tabItems">
+              <dictionary count="4">
+                <string>contentResID</string>
+                <string>0</string>
+                <string>tabEnabled</string>
+                <string>1</string>
+                <string>tabName</string>
+                <string>DSN</string>
+                <string>userPane</string>
+                <reference idRef="575"/>
+              </dictionary>
+              <dictionary count="4">
+                <string>contentResID</string>
+                <string>0</string>
+                <string>tabEnabled</string>
+                <string>1</string>
+                <string>tabName</string>
+                <string>FileDSN</string>
+                <string>userPane</string>
+                <reference idRef="574"/>
+              </dictionary>
+            </array>
+          </object>
+          <object class="IBCarbonEditText" id="584">
+            <string name="bounds">206 108 222 372 </string>
+            <string name="viewFrame">108 206 264 16 </string>
+            <ostype name="controlSignature">LOGN</ostype>
+            <boolean name="isUnicode">TRUE</boolean>
+            <boolean name="isSingleLine">TRUE</boolean>
           </object>
         </array>
       </object>
@@ -1362,13 +1491,13 @@
       <boolean name="liveResize">TRUE</boolean>
       <boolean name="compositing">TRUE</boolean>
       <int name="carbonWindowClass">4</int>
+      <int name="windowPosition">1</int>
       <boolean name="isConstrained">FALSE</boolean>
       <boolean name="doesNotCycle">TRUE</boolean>
       <boolean name="inWindowMenu">FALSE</boolean>
     </object>
     <reference idRef="467"/>
     <reference idRef="468"/>
-    <reference idRef="469"/>
     <reference idRef="470"/>
     <reference idRef="471"/>
     <reference idRef="472"/>
@@ -1485,6 +1614,7 @@
       <boolean name="liveResize">TRUE</boolean>
       <boolean name="compositing">TRUE</boolean>
       <int name="carbonWindowClass">4</int>
+      <int name="windowPosition">1</int>
       <boolean name="isConstrained">FALSE</boolean>
       <boolean name="doesNotCycle">TRUE</boolean>
       <boolean name="inWindowMenu">FALSE</boolean>
@@ -1503,7 +1633,7 @@
     <reference idRef="488"/>
     <reference idRef="489"/>
     <object class="IBCarbonWindow" id="492">
-      <string name="windowRect">361 300 484 764 </string>
+      <string name="windowRect">341 262 464 726 </string>
       <string name="title">Run Duration</string>
       <object name="rootControl" class="IBCarbonRootControl" id="493">
         <string name="bounds">0 0 123 464 </string>
@@ -1569,6 +1699,7 @@
       <boolean name="liveResize">TRUE</boolean>
       <boolean name="compositing">TRUE</boolean>
       <int name="carbonWindowClass">4</int>
+      <int name="windowPosition">1</int>
       <boolean name="isConstrained">FALSE</boolean>
       <boolean name="doesNotCycle">TRUE</boolean>
       <boolean name="inWindowMenu">FALSE</boolean>
@@ -1655,6 +1786,7 @@
       <boolean name="liveResize">TRUE</boolean>
       <boolean name="compositing">TRUE</boolean>
       <int name="carbonWindowClass">4</int>
+      <int name="windowPosition">1</int>
       <boolean name="isConstrained">FALSE</boolean>
       <boolean name="doesNotCycle">TRUE</boolean>
       <boolean name="inWindowMenu">FALSE</boolean>
@@ -1667,7 +1799,7 @@
     <reference idRef="510"/>
     <reference idRef="512"/>
     <object class="IBCarbonWindow" id="517">
-      <string name="windowRect">486 167 834 697 </string>
+      <string name="windowRect">253 158 601 688 </string>
       <string name="title">TPC-A Table Details</string>
       <object name="rootControl" class="IBCarbonRootControl" id="518">
         <string name="bounds">0 0 348 530 </string>
@@ -1896,6 +2028,7 @@
       <boolean name="liveResize">TRUE</boolean>
       <boolean name="compositing">TRUE</boolean>
       <int name="carbonWindowClass">4</int>
+      <int name="windowPosition">1</int>
       <boolean name="isConstrained">FALSE</boolean>
       <boolean name="doesNotCycle">TRUE</boolean>
       <boolean name="inWindowMenu">FALSE</boolean>
@@ -1931,7 +2064,7 @@
     <reference idRef="546"/>
     <reference idRef="547"/>
     <object class="IBCarbonWindow" id="548">
-      <string name="windowRect">588 276 776 608 </string>
+      <string name="windowRect">354 207 542 539 </string>
       <string name="title"></string>
       <object name="rootControl" class="IBCarbonRootControl" id="549">
         <string name="bounds">0 0 188 332 </string>
@@ -1980,6 +2113,7 @@
       <boolean name="liveResize">TRUE</boolean>
       <boolean name="compositing">TRUE</boolean>
       <int name="carbonWindowClass">4</int>
+      <int name="windowPosition">1</int>
       <boolean name="isConstrained">FALSE</boolean>
       <boolean name="doesNotCycle">TRUE</boolean>
       <boolean name="inWindowMenu">FALSE</boolean>
@@ -2036,6 +2170,7 @@
       <boolean name="liveResize">TRUE</boolean>
       <boolean name="compositing">TRUE</boolean>
       <int name="themeBrush">1</int>
+      <int name="windowPosition">1</int>
       <boolean name="isConstrained">FALSE</boolean>
       <boolean name="doesNotCycle">TRUE</boolean>
     </object>
@@ -2043,8 +2178,20 @@
     <reference idRef="563"/>
     <reference idRef="570"/>
     <reference idRef="571"/>
+    <reference idRef="573"/>
+    <reference idRef="574"/>
+    <reference idRef="575"/>
+    <reference idRef="576"/>
+    <reference idRef="577"/>
+    <reference idRef="578"/>
+    <reference idRef="579"/>
+    <reference idRef="580"/>
+    <reference idRef="581"/>
+    <reference idRef="582"/>
+    <reference idRef="583"/>
+    <reference idRef="584"/>
   </array>
-  <array count="240" name="allParents">
+  <array count="251" name="allParents">
     <reference idRef="1"/>
     <reference idRef="29"/>
     <reference idRef="131"/>
@@ -2208,7 +2355,6 @@
     <reference idRef="467"/>
     <reference idRef="467"/>
     <reference idRef="467"/>
-    <reference idRef="467"/>
     <reference idRef="1"/>
     <reference idRef="476"/>
     <reference idRef="487"/>
@@ -2285,6 +2431,18 @@
     <reference idRef="559"/>
     <reference idRef="559"/>
     <reference idRef="559"/>
+    <reference idRef="467"/>
+    <reference idRef="573"/>
+    <reference idRef="573"/>
+    <reference idRef="575"/>
+    <reference idRef="574"/>
+    <reference idRef="574"/>
+    <reference idRef="578"/>
+    <reference idRef="579"/>
+    <reference idRef="579"/>
+    <reference idRef="579"/>
+    <reference idRef="574"/>
+    <reference idRef="467"/>
   </array>
   <dictionary count="27" name="nameTable">
     <string>About</string>
@@ -2306,7 +2464,7 @@
     <string>Files Owner</string>
     <reference idRef="1"/>
     <string>ListView</string>
-    <reference idRef="488"/>
+    <reference idRef="576"/>
     <string>ListView1</string>
     <reference idRef="290"/>
     <string>MainWindow</string>
@@ -2342,5 +2500,5 @@
     <string>VirtuosoDatasourcesDialog</string>
     <reference idRef="476"/>
   </dictionary>
-  <unsigned_int name="nextObjectID">572</unsigned_int>
+  <unsigned_int name="nextObjectID">585</unsigned_int>
 </object>

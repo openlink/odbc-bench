@@ -25,17 +25,38 @@
 #define _MACOSX_LOGINDIALOG_H_
 
 #include "Dialog.h"
+#include "DSNList.h"
 
-extern ControlID kLoginDSN;
-extern ControlID kLoginUid;
-extern ControlID kLoginPwd;
 
 class OPL_LoginDialog: public OPL_Dialog {
 public:
 	OPL_LoginDialog(CFStringRef name, CFStringRef title);
+	virtual ~OPL_LoginDialog();
+        void dir_dblclick();
+        void SetConnectAttr(char *dsn, char *uid, char *pwd);
+        char *GetDSN();
+        char *GetUID();
+        char *GetPWD();
+
+protected:
+	OSStatus handleCommandEvent(UInt32 commandID);
+	OSStatus handleControlHit(ControlRef cntl);
 	
 private:
-	CFArrayRef getDSNList();
+
+        void loadDSNList();
+        void loadFDSNList(char *dsn_path);
+        void fill_dir_menu(char *path);
+
+	char def_path[1024];
+	char *cur_dir;
+	ControlRef dsnView;
+	ControlRef fdsnView;
+	ControlRef tab_panel;
+        OPL_DSNList *dsnlist;
+        OPL_DSNList *fdsnlist;
+        int tab_number;
+        ControlRef tabs[2];
 };
 
 #endif /* _MACOSX_LOGINDIALOG_H_ */

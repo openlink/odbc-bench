@@ -444,6 +444,8 @@
 		};
 		1E22DD4F08EEA30E00314488 = {
 			children = (
+				857C3B3A09F66809009FDE5F,
+				857C3B3B09F66809009FDE5F,
 				1E300DE508FC2A8700564761,
 				1E300DC808FC285E00564761,
 				1E300DC908FC285E00564761,
@@ -1007,6 +1009,46 @@
 //4A2
 //4A3
 //4A4
+//850
+//851
+//852
+//853
+//854
+		857C3B3A09F66809009FDE5F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = DSNList.cpp;
+			path = ../src/macosx/DSNList.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		857C3B3B09F66809009FDE5F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = DSNList.h;
+			path = ../src/macosx/DSNList.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		857C3B3C09F66809009FDE5F = {
+			fileRef = 857C3B3A09F66809009FDE5F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		857C3B3D09F66809009FDE5F = {
+			fileRef = 857C3B3B09F66809009FDE5F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//850
+//851
+//852
+//853
+//854
 //8D0
 //8D1
 //8D2
@@ -1055,6 +1097,7 @@
 				1E189D6C08EAC8C700DBF474,
 				1E189D6D08EAC8C700DBF474,
 				1E189D6E08EAC8C800DBF474,
+				857C3B3D09F66809009FDE5F,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1101,6 +1144,7 @@
 				1E300ED808FC34DF00564761,
 				CDBCE2D0090CD09200C4B449,
 				CDBCE2D2090CD0A500C4B449,
+				857C3B3C09F66809009FDE5F,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;

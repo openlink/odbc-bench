@@ -41,6 +41,7 @@
 		1E300EA708FC319D00564761 /* run_details.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1E300EA608FC319D00564761 /* run_details.cpp */; };
 		1E300ED808FC34DF00564761 /* table_details.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1E300ED708FC34DF00564761 /* table_details.cpp */; };
 		1E300F4908FC408F00564761 /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1E300F4808FC408F00564761 /* libxml2.2.dylib */; };
+		85E672A009F4BD4400E3A1BA /* DSNList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85E6729E09F4BD4400E3A1BA /* DSNList.cpp */; };
 		8D0C4E8D0486CD37000505A6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0867D6AAFE840B52C02AAC07 /* InfoPlist.strings */; };
 		8D0C4E8E0486CD37000505A6 /* main.nib in Resources */ = {isa = PBXBuildFile; fileRef = 02345980000FD03B11CA0E72 /* main.nib */; };
 		8D0C4E900486CD37000505A6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 20286C2BFDCF999611CA2CEA /* main.cpp */; settings = {ATTRIBUTES = (); }; };
@@ -141,6 +142,8 @@
 		32DBCF6D0370B57F00C91783 /* odbc-bench_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "odbc-bench_Prefix.pch"; sourceTree = "<group>"; };
 		4A9504C8FFE6A3BC11CA0CBA /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
 		4A9504CAFFE6A41611CA0CBA /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
+		85E6729E09F4BD4400E3A1BA /* DSNList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DSNList.cpp; path = ../src/macosx/DSNList.cpp; sourceTree = SOURCE_ROOT; };
+		85E6729F09F4BD4400E3A1BA /* DSNList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DSNList.h; path = ../src/macosx/DSNList.h; sourceTree = SOURCE_ROOT; };
 		8D0C4E960486CD37000505A6 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D0C4E970486CD37000505A6 /* ODBC Bench.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ODBC Bench.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDAE410409925712003250F8 /* iODBCinst.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iODBCinst.framework; path = /Library/Frameworks/iODBCinst.framework; sourceTree = "<absolute>"; };
@@ -189,6 +192,8 @@
 		1E22DD4F08EEA30E00314488 /* macosx */ = {
 			isa = PBXGroup;
 			children = (
+				85E6729E09F4BD4400E3A1BA /* DSNList.cpp */,
+				85E6729F09F4BD4400E3A1BA /* DSNList.h */,
 				1E300DE508FC2A8700564761 /* TestPoolItemList.h */,
 				1E300DC808FC285E00564761 /* SplitView.h */,
 				1E300DC908FC285E00564761 /* TCarbonEvent.h */,
@@ -399,6 +404,7 @@
 				1E300ED808FC34DF00564761 /* table_details.cpp in Sources */,
 				CDBCE2D0090CD09200C4B449 /* getopt.c in Sources */,
 				CDBCE2D2090CD0A500C4B449 /* getopt1.c in Sources */,
+				85E672A009F4BD4400E3A1BA /* DSNList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

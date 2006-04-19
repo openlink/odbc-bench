@@ -56,14 +56,25 @@ results_login (char *szDSN, char *szUID, char *szPWD)
 {
   RETCODE rc;
   char szBuff;
+  char tmp[4096];
+  char *fmt;
 
   results_logout ();
 
   rc = SQLAllocConnect (henv, &res_hdbc);
   IF_CERR_GO (res_hdbc, done, rc, NULL);
 
+  fmt = strstr(szDSN, ".dsn") ? "FILEDSN=%s;UID=%s;PWD=%s;"
+  			      : "DSN=%s;UID=%s;PWD=%s;";
+  snprintf(tmp, sizeof(tmp), fmt, szDSN ? szDSN:"", szUID ? szUID:"",
+  	szPWD ? szPWD:"");
+
+  rc = SQLDriverConnect (res_hdbc, NULL, tmp, SQL_NTS,
+          NULL, 0, NULL, SQL_DRIVER_NOPROMPT);
+/****
   rc = SQLConnect (res_hdbc, (SQLCHAR *) szDSN, SQL_NTS, (SQLCHAR *) szUID,
       SQL_NTS, (SQLCHAR *) szPWD, SQL_NTS);
+****/
   IF_CERR_GO (res_hdbc, done, rc, NULL);
 
   rc = SQLAllocStmt (res_hdbc, &res_hstmt);

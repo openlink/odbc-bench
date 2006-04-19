@@ -26,10 +26,6 @@
 
 #include <Carbon/Carbon.h>
 
-extern ControlID kLoginDSN;
-extern ControlID kLoginUid;
-extern ControlID kLoginPwd;
-
 // Simple ODBC login dialog
 class OPL_Dialog {
 public:
@@ -171,6 +167,15 @@ public:
 		CFRelease(list);
 	}
 
+	void DisplayTabControl(int index, ControlRef tabControl, int count, ControlRef *tabs)
+	{
+	  UInt16 i;
+
+	  for(i = 0; i < count; i++)
+            SetControlVisibility (tabs[i], i == index, true);
+          DrawOneControl(tabControl);
+	}
+	
 	// run dialog
 	bool run()
 	{
@@ -209,6 +214,11 @@ protected:
 		return eventNotHandledErr;
 	}
 	
+	virtual OSStatus handleControlHit(ControlRef /* cntl */)
+	{
+		return eventNotHandledErr;
+	}
+
 private:
 	WindowRef m_window;
 	

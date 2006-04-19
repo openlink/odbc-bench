@@ -21,6 +21,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#ifndef __ODBCBENCH_H_
+#define __ODBCBENCH_H_
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -145,7 +148,7 @@ struct test_s
   SQLHSTMT hstmt;		/* Statement handle */
 
   /* login data */
-  char szLoginDSN[128];
+  char szLoginDSN[256];
   char szLoginUID[256];
   char szLoginPWD[256];
 
@@ -235,4 +238,5 @@ void do_load_test (char *filename);
 
 #ifdef __cplusplus
 }
+#endif
 #endif
