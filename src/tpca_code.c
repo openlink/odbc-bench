@@ -3084,7 +3084,8 @@ fBindParameters (test_t * lpBench,
     double *pdBalance,
     SQLHSTMT hstmtUpdAcct,
     SQLHSTMT hstmtSelBal,
-    SQLHSTMT hstmtUpdTeller, SQLHSTMT hstmtUpdBranch, SQLHSTMT hstmtInsHist)
+    SQLHSTMT hstmtUpdTeller, SQLHSTMT hstmtUpdBranch, SQLHSTMT hstmtInsHist,
+    SQLLEN *pIndBalance)
 {
   BOOL fSuccess;
   RETCODE rc;
@@ -3116,7 +3117,7 @@ fBindParameters (test_t * lpBench,
       fSuccess &=
 	  fSQLBindParameter (lpBench->hstmt, 6, SQL_PARAM_INPUT_OUTPUT,
 	  SQL_C_DOUBLE, SQL_DOUBLE, sizeof (double), 0, pdBalance,
-	  sizeof (*pdBalance), NULL);
+	  sizeof (*pdBalance), pIndBalance);
       fSuccess &=
 	  fSQLBindParameter (lpBench->hstmt, 7, SQL_PARAM_INPUT, SQL_C_CHAR,
 	  SQL_CHAR, sizeof (filler), 0, filler, sizeof (filler), NULL);
@@ -4052,7 +4053,7 @@ fRunTrans (test_t * lpBench,	/* Benchmark info */
   if (!(fSuccess = fBindParameters (lpBench,
 	      &nAcctNum, &nTellerNum, &nBranchNum, &dDelta, &dBalance,
 	      hstmtUpdAcct, hstmtSelBal, hstmtUpdTeller, hstmtUpdBranch,
-	      hstmtInsHist)))
+	      hstmtInsHist, &cbBal)))
     fDone = TRUE;
 
   /* Main loop executes the transactions and checks for the duration */
@@ -4239,7 +4240,7 @@ fRunTrans (test_t * lpBench,	/* Benchmark info */
       if (!(fSuccess = fBindParameters (lpBench,
 		  &nAcctNum, &nTellerNum, &nBranchNum, &dDelta, &dBalance,
 		  hstmtUpdAcct, hstmtSelBal, hstmtUpdTeller, hstmtUpdBranch,
-		  hstmtInsHist)))
+		  hstmtInsHist, &cbBal)))
 	fDone = TRUE;
 #endif
       time (&tCurTime);
