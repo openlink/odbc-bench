@@ -29,7 +29,7 @@ INCLUDES	= \
 	-I$(top_srcdir)/lib \
 	@ODBC_CFLAGS@ \
 	@GTK_CFLAGS@ \
-	@XML_CFLAGS@
+	@XML_CPPFLAGS@
 
 else
 
@@ -38,7 +38,7 @@ bin_PROGRAMS	= odbc-bench-cmd
 INCLUDES	= \
 	-I$(top_srcdir)/lib \
 	@ODBC_CFLAGS@ \
-	@XML_CFLAGS@
+	@XML_CPPFLAGS@
 endif
 
 
