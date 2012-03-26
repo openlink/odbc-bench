@@ -60,6 +60,22 @@ ifeq (10.4, $(findstring 10.4, $(macosx_version)))
     BUILDDIR  := build/$(MODEL)
 endif
 
+#
+#  Mac OS X 10.5
+#
+ifeq (10.5, $(findstring 10.5, $(macosx_version)))
+    PROJBUILD := /usr/bin/xcodebuild -configuration $(MODEL)
+    BUILDDIR  := build/$(MODEL)
+endif
+
+#
+#  Mac OS X 10.6
+#
+ifeq (10.6, $(findstring 10.6, $(macosx_version)))
+    PROJBUILD := /usr/bin/xcodebuild -configuration $(MODEL)
+    BUILDDIR  := build/$(MODEL)
+endif
+
 
 
 all: compile
