@@ -38,6 +38,7 @@ src/odbc-bench-cmd
 #  Local files
 #
 contrib/RedHat/odbc-bench.spec
+odbc-bench*.tar.gz
 
 
 #
