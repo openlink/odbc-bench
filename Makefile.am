@@ -36,7 +36,9 @@ EXTRA_DIST		= \
 	mac/Images/HSplitter.png \
 	mac/Images/VRidgesDisabled.png \
 	mac/Images/HSplitterDisabled.png \
-	mac/Resources/ReadMe-10.*.rtf \
+	mac/Resources/ReadMe-10.3.rtf \
+	mac/Resources/ReadMe-10.4.rtf \
+	mac/Resources/ReadMe-10.5.rtf \
 	mac/Resources/Welcome.rtf \
 	mac/Resources/License.rtf \
 	mac/Resources/odbc-bench.info \
