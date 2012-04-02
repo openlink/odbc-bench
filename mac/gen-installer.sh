@@ -66,6 +66,20 @@ case $MACOSX_VERSION in
 	export PM_FLAGS="-v"		# verbose packagemaker
 	;;
 
+  10.5*)
+  	export OS_VERSION=10.5
+	export OSNAME="MacOSX-10.5-Universal"
+	export XCODECONF="-configuration Deployment"
+	export PM_FLAGS="-v"		# verbose packagemaker
+	;;
+
+  10.6*)
+  	export OS_VERSION=10.6
+	export OSNAME="MacOSX-10.6-Universal"
+	export XCODECONF="-configuration Deployment"
+	export PM_FLAGS="-v"		# verbose packagemaker
+	;;
+
       *)
       	echo "As yet unsupported version [$MACOSX_VERSION] of Mac OS X"
 	exit 1
