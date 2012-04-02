@@ -43,7 +43,7 @@
 		1E300F4908FC408F00564761 /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1E300F4808FC408F00564761 /* libxml2.2.dylib */; };
 		85E672A009F4BD4400E3A1BA /* DSNList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85E6729E09F4BD4400E3A1BA /* DSNList.cpp */; };
 		8D0C4E8D0486CD37000505A6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0867D6AAFE840B52C02AAC07 /* InfoPlist.strings */; };
-		8D0C4E8E0486CD37000505A6 /* main.nib in Resources */ = {isa = PBXBuildFile; fileRef = 02345980000FD03B11CA0E72 /* main.nib */; };
+		8D0C4E8E0486CD37000505A6 /* main.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02345980000FD03B11CA0E72 /* main.xib */; };
 		8D0C4E900486CD37000505A6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 20286C2BFDCF999611CA2CEA /* main.cpp */; settings = {ATTRIBUTES = (); }; };
 		8D0C4E920486CD37000505A6 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20286C33FDCF999611CA2CEA /* Carbon.framework */; };
 		CDAE410509925712003250F8 /* iODBCinst.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDAE410409925712003250F8 /* iODBCinst.framework */; };
@@ -82,7 +82,7 @@
 
 /* Begin PBXFileReference section */
 		0867D6ABFE840B52C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		1870340FFE93FCAF11CA0CD7 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/main.nib; sourceTree = "<group>"; };
+		1870340FFE93FCAF11CA0CD7 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xib; name = English; path = English.lproj/main.xib; sourceTree = "<group>"; };
 		1E189D5F08EAC8C700DBF474 /* HRidges.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = HRidges.png; path = Images/HRidges.png; sourceTree = SOURCE_ROOT; };
 		1E189D6008EAC8C700DBF474 /* HRidgesDisabled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = HRidgesDisabled.png; path = Images/HRidgesDisabled.png; sourceTree = SOURCE_ROOT; };
 		1E189D6108EAC8C700DBF474 /* HSplitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = HSplitter.png; path = Images/HSplitter.png; sourceTree = SOURCE_ROOT; };
@@ -271,7 +271,7 @@
 				1E189D4E08EAC84A00DBF474 /* Images */,
 				8D0C4E960486CD37000505A6 /* Info.plist */,
 				0867D6AAFE840B52C02AAC07 /* InfoPlist.strings */,
-				02345980000FD03B11CA0E72 /* main.nib */,
+				02345980000FD03B11CA0E72 /* main.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -358,7 +358,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D0C4E8D0486CD37000505A6 /* InfoPlist.strings in Resources */,
-				8D0C4E8E0486CD37000505A6 /* main.nib in Resources */,
+				8D0C4E8E0486CD37000505A6 /* main.xib in Resources */,
 				1E189D6708EAC8C700DBF474 /* HRidges.png in Resources */,
 				1E189D6808EAC8C700DBF474 /* HRidgesDisabled.png in Resources */,
 				1E189D6908EAC8C700DBF474 /* HSplitter.png in Resources */,
@@ -411,12 +411,12 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		02345980000FD03B11CA0E72 /* main.nib */ = {
+		02345980000FD03B11CA0E72 /* main.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
 				1870340FFE93FCAF11CA0CD7 /* English */,
 			);
-			name = main.nib;
+			name = main.xib;
 			sourceTree = "<group>";
 		};
 		0867D6AAFE840B52C02AAC07 /* InfoPlist.strings */ = {

@@ -7,7 +7,7 @@
 	<key>IFPkgDescriptionDescription</key>
 	<string>odbc-bench - a TPC-A and TPC-C like benchmark program for databases
 
-Copyright (C) 2000-2005 by OpenLink Software 
+Copyright (C) 2000-2012 by OpenLink Software 
 &lt;odbc-bench@openlinksw.com&gt;
 All Rights Reserved.
 
@@ -16,6 +16,6 @@ All Rights Reserved.
 	<key>IFPkgDescriptionTitle</key>
 	<string>ODBC Bench for Mac OS X</string>
 	<key>IFPkgDescriptionVersion</key>
-	<string>1.0.0</string>
+	<string>1.1</string>
 </dict>
 </plist>

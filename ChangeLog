@@ -1,3 +1,48 @@
+2012-04-02
+
+    * Added initial ReadMe.rtf for Mac OS X 10.5 installer
+    * Added support for Mac OS X 10.5 and 10.6
+    * Added inital .gitignore
+    * Fixed FSF address
+
+2012-03-26
+
+    * Added support for building on Mac OS X 10.5 and 10.6
+    * Converted Mac OS X UI from NIB to XIB format
+    * Updated FSF address
+
+2012-03-21
+
+    * Updated copyright year to 2012
+    * Removed old .cvsignore files
+
+2007-10-15
+
+    * Add XML macros in case system does not have XML installed (pvk)
+
+2006-08-09
+
+    * Fixed problem binding indicator (sm)
+
+2006-04-19
+
+    * Added support for FileDSN on Mac OS X (sm)
+
+2006-02-02
+
+    * Fixed problem with ReadMe.rtf link (pvk)
+
+2006-02-02
+
+    * Added support for building Mac OS X 10.4 Universal installer (pvk)
+
+2005-12-12
+
+    * Small UI fixes to resize test item view columns (mk)
+
+2005-11-24
+
+    * Use symbolic names for widgets on Mac OS X (mk)
 2005-11-04 12:26  source
 
 	* Finalized 1.0.0 release (pvk)

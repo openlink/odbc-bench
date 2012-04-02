@@ -5,7 +5,7 @@
 #  $Id$
 #
 #  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
-#  Copyright (C) 2000-2005 OpenLink Software <odbc-bench@openlinksw.com>
+#  Copyright (C) 2000-2012 OpenLink Software <odbc-bench@openlinksw.com>
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-VERSION=1.0.0
+VERSION=1.1
 
 #
 #  Where to put the generated files
@@ -62,6 +62,20 @@ case $MACOSX_VERSION in
   10.4*)
   	export OS_VERSION=10.4
 	export OSNAME="MacOSX-10.4-Universal"
+	export XCODECONF="-configuration Deployment"
+	export PM_FLAGS="-v"		# verbose packagemaker
+	;;
+
+  10.5*)
+  	export OS_VERSION=10.5
+	export OSNAME="MacOSX-10.5-Universal"
+	export XCODECONF="-configuration Deployment"
+	export PM_FLAGS="-v"		# verbose packagemaker
+	;;
+
+  10.6*)
+  	export OS_VERSION=10.6
+	export OSNAME="MacOSX-10.6-Universal"
 	export XCODECONF="-configuration Deployment"
 	export PM_FLAGS="-v"		# verbose packagemaker
 	;;

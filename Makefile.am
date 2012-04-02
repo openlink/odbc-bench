@@ -2,7 +2,7 @@
 #  Makefile.am
 # 
 #  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
-#  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
+#  Copyright (C) 2000-2012 OpenLink Software <odbc-bench@openlinksw.com>
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -36,7 +36,9 @@ EXTRA_DIST		= \
 	mac/Images/HSplitter.png \
 	mac/Images/VRidgesDisabled.png \
 	mac/Images/HSplitterDisabled.png \
-	mac/Resources/ReadMe.rtf \
+	mac/Resources/ReadMe-10.3.rtf \
+	mac/Resources/ReadMe-10.4.rtf \
+	mac/Resources/ReadMe-10.5.rtf \
 	mac/Resources/Welcome.rtf \
 	mac/Resources/License.rtf \
 	mac/Resources/odbc-bench.info \
@@ -44,9 +46,7 @@ EXTRA_DIST		= \
 	mac/Installer/Description.plist \
 	mac/Installer/Info.plist \
 	mac/odbc-bench.xcode/project.pbxproj \
-	mac/English.lproj/main.nib/objects.xib \
-	mac/English.lproj/main.nib/info.nib \
-	mac/English.lproj/main.nib/classes.nib \
+	mac/English.lproj/main.xib \
 	mac/English.lproj/InfoPlist.strings \
 	mac/Info.plist 
 

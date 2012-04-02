@@ -4,7 +4,7 @@
 #  $Id$
 #
 #  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
-#  Copyright (C) 2000-2005 OpenLink Software <odbc-bench@openlinksw.com>
+#  Copyright (C) 2000-2012 OpenLink Software <odbc-bench@openlinksw.com>
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -56,6 +56,22 @@ endif
 #  Mac OS X 10.4
 #
 ifeq (10.4, $(findstring 10.4, $(macosx_version)))
+    PROJBUILD := /usr/bin/xcodebuild -configuration $(MODEL)
+    BUILDDIR  := build/$(MODEL)
+endif
+
+#
+#  Mac OS X 10.5
+#
+ifeq (10.5, $(findstring 10.5, $(macosx_version)))
+    PROJBUILD := /usr/bin/xcodebuild -configuration $(MODEL)
+    BUILDDIR  := build/$(MODEL)
+endif
+
+#
+#  Mac OS X 10.6
+#
+ifeq (10.6, $(findstring 10.6, $(macosx_version)))
     PROJBUILD := /usr/bin/xcodebuild -configuration $(MODEL)
     BUILDDIR  := build/$(MODEL)
 endif

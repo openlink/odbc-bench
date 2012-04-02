@@ -4,7 +4,7 @@
  *  $Id$
  *
  *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
- *  Copyright (C) 2000-2003 OpenLink Software <odbc-bench@openlinksw.com>
+ *  Copyright (C) 2000-2012 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -64,10 +64,10 @@ extern "C" {
 #define PACKAGE			"odbc-bench"
 #define PACKAGE_BUGREPORT	"odbc-bench@openlinksw.com"
 #define PACKAGE_NAME 		"OpenLink ODBC Benchmark Utility"
-#define PACKAGE_STRING 		"OpenLink ODBC Benchmark Utility 1.0.0"
+#define PACKAGE_STRING 		"OpenLink ODBC Benchmark Utility 1.1"
 #define PACKAGE_TARNAME 	"odbc-bench"
-#define PACKAGE_VERSION 	"1.0.0"
-#define VERSION			"1.0.0"
+#define PACKAGE_VERSION 	"1.1"
+#define VERSION			"1.1"
 #endif
 
 extern void (*pane_log) (const char *format, ...);
