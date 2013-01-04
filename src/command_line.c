@@ -4,7 +4,7 @@
  *  $Id$
  *
  *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
- *  Copyright (C) 2000-2012 OpenLink Software <odbc-bench@openlinksw.com>
+ *  Copyright (C) 2000-2013 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ static void
 usage (void)
 {
   fprintf (stderr, "%s\n", PACKAGE_STRING);
-  fprintf (stderr, "Copyright (C) 2000-2012 OpenLink Software\n");
+  fprintf (stderr, "Copyright (C) 2000-2013 OpenLink Software\n");
   fprintf (stderr, "Please report all bugs to <%s>\n\n", PACKAGE_BUGREPORT);
   fprintf (stderr,
       "This utility is released under the GNU General Public License (GPL)\n\n");

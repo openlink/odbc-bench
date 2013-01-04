@@ -4,7 +4,7 @@
  *  $Id$
  *
  *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
- *  Copyright (C) 2000-2012 OpenLink Software <odbc-bench@openlinksw.com>
+ *  Copyright (C) 2000-2013 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -738,7 +738,7 @@ do_about()
 		OPL_char_to_CFString(PACKAGE_NAME));
 	dialog.setStaticText(kAboutCopyright, OPL_CFString_asprintf(
 "Version %s\n\n"
-"Copyright (c) 2000-2012 OpenLink Software\n"
+"Copyright (c) 2000-2013 OpenLink Software\n"
 "Please report all bugs to <%s>\n\n"
 "This utility is released under the GNU General Public License (GPL)",
 		PACKAGE_VERSION, PACKAGE_BUGREPORT));
