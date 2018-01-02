@@ -7,7 +7,7 @@
 #  Generate Makefile.in and configure script for distribution
 #
 #  odbc-bench - a TPC-A and TPC-C like benchmark program for databases 
-#  Copyright (C) 2000-2013 OpenLink Software <odbc-bench@openlinksw.com>
+#  Copyright (C) 2000-2018 OpenLink Software <odbc-bench@openlinksw.com>
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
