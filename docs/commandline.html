@@ -34,38 +34,51 @@ program when running it, the list of which are as follows:</p>
 
 <pre class="screen">
 $ ./odbc_bench_cmd -?
-OpenLink ODBC Benchmark Utility 0.99.12
+OpenLink ODBC Benchmark Utility 1.1
 Copyright (C) 2000-2018 OpenLink Software
 Please report all bugs to <odbc-bench@openlinksw.com>
 This utility is licensed under GPL
 
 Usage :
 
-  -d -dsn   - login dsn
-  -u -uid   - user id
-  -p -pwd   - password
-  -r -runs  - number of runs (default 1)
-  -m -time  - duration of the run (mins) (default 5)
-  -t -threads    - number of threads (default 1)
-  -P -arrayparm  - size for used array of parameters (default 1)
-  -s -test       - exec | proc | prepare (default RunAll tests)
-  -n -autocommit - don't try to use transactions
-  -1 -query      - do 100 row query
-  -a -async      - asynchronous execution
-  -c -cursor_type    - cursor type = forward | static | keyset | dynamic | mixed
-  -i -txn_isolation  - transaction isolation level = uncommitted | committed | repeatable | serializable
-  -S -rowset_size    - rowset size
-  -K -keyset_size    - keyset size
-  -T -trav_count     - traversal count
-  -C -create_tables  - create the tables
-  -rcreate_table     - create the results table
-  -rdsn   - login dsn for result table
-  -ruid   - user id for result table
-  -rpwd   - password for result table
-  -rfile  - output filename for results data
-  -v      - print additional info on stdout
-  -V      - print debug info on stdout
-  -R      - doesn't do rollbacks on deadlock
+  -d -dsn            - DSN to test
+  -u -uid            - user id for test DSN (default '""')
+  -p -pwd            - password for test DSN (default '""')
+  -C -create_tables  - create the tables and procedures, then exit
+                       (default 'don't create the tables and procedures')
+  -D -drop_tables    - drop the tables and procedures, then exit
+                       (default 'don't drop the tables and procedures')
+  -r -runs           - number of runs (default '1')
+  -m -time           - duration of the run (mins) (default '1')
+  -t -threads        - number of threads (default '1')
+  -P -arrayparm      - size for used array of parameters (default '1') 
+  -s -test           - test type = exec | proc | prepare | runall 
+                                 (default 'exec')
+  -x -txn            - use transactions (default 'do not use transactions')
+  -1 -query          - do 100 row query (default 'do not run 100 row query')
+  -a -async          - asynchronous execution (default 'synchronous execution')
+  -c -cursor_type    - cursor type = forward | static | keyset 
+                                   | dynamic | mixed 
+                                   (default 'forward')
+  -i -txn_isolation  - transaction isolation level = uncommitted | committed 
+                                                   | repeatable | serializable
+                                                   (default 'Driver Default')
+  -S -rowset_size    - rowset size (default '1')
+  -K -keyset_size    - keyset size (default '1')
+  -T -trav_count     - traversal count (default '1')
+  -rdsn              - DSN for results
+  -ruid              - user id for results DSN (default '""')
+  -rpwd              - password for results DSN (default '""')
+  -rcreate_table     - create the results table, then exit
+  -rdrop_table       - drop the results table, then exit
+  -rfile             - output filename for XML results data
+  -v                 - print info on stdout (error messages, test results,
+                       messages about opening and closing connections)
+                       (default 'print nothing to stdout')
+  -V                 - same as -v, plus test progress details
+                       (default 'don't print test progress to stdout')
+  -R                 - don't do rollbacks on deadlock 
+                       (default 'rollback transactions on deadlock')
 </pre>
 
 <p>Examples:</p>
