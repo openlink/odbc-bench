@@ -1,5 +1,5 @@
 odbc-bench - a TPC-A and TPC-C like benchmark program for databases
-Copyright (C) 2000-2019 OpenLink Software <odbc-bench@openlinksw.com>
+Copyright (C) 2000-2020 OpenLink Software <odbc-bench@openlinksw.com>
 All Rights Reserved.
 
 This software is released under the GNU General Public License (see COPYING).

@@ -4,7 +4,7 @@
  *  $Id$
  *
  *  odbc-bench - a TPC-A and TPC-C like benchmark program for databases
- *  Copyright (C) 2000-2019 OpenLink Software <odbc-bench@openlinksw.com>
+ *  Copyright (C) 2000-2020 OpenLink Software <odbc-bench@openlinksw.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -151,7 +151,7 @@ help_about_handler (GtkWidget * widget, gpointer data)
 
   sprintf (szTemp,
       "%s v.%s\n"
-      "(C) 2000-2019 OpenLink Software\n"
+      "(C) 2000-2020 OpenLink Software\n"
       "Please report all bugs to <%s>\n\n"
       "This utility is released under the GNU General Public License (GPL)\n\n"
       "Disclaimer: The benchmarks in this application are loosely based\n"
